@@ -160,3 +160,97 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# React Native
+# Generated files
+ios/build/
+ios/Pods/
+ios/Podfile.lock
+android/build/
+android/app/build/
+android/.gradle/
+android/app/.cxx/
+android/app/BUCK
+android/app/*.keystore
+android/app/build/intermediates/
+android/app/build/outputs/
+android/.idea/
+android/app/.idea/
+
+# Expo specific files
+.expo/
+.expo-shared/
+
+# Logs
+*.log
+
+# Miscellaneous
+.DS_Store
+.env
+.env.*
+*.swp
+*.swo
+.idea/
+.vscode/
+.history/
+.tmp/
+*.tmp
+*.orig
+
+# Buck
+buck-out/
+\.buckd/
+*.keystore
+
+# MacOS
+*.DS_Store
+
+# Watchman
+.watchmanconfig
+
+# Xcode
+xcuserdata/
+*.xcworkspace
+*.xcodeproj/
+Carthage/
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+# Build generated files
+fastlane/fastlane_dSYM.zip
+fastlane/fastlane_dSYM.tar
+fastlane/fastlane_session
+fastlane/LaneFile.swift
+
+# Android Studio
+*.iml
+.gradle/
+.idea/
+android/.gradle/
+android/.idea/
+local.properties
+.DS_Store
+*.jks
+
+# OS generated files
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# IntelliJ IDEA
+*.iml
+.idea/
+.idea_modules/
+*.ipr
+*.iws
+
+# Linux users
+*~
