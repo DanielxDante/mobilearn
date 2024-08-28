@@ -33,6 +33,18 @@ Run app.py
 
 ## Want to Deploy?
 
+### Build .apk and .dmg files
 
+Download EAS cli
+> cd frontend && npm install -g eas-cli  
+> eas login  
+> eas build:configure  
+> eas build --platform all  
+
+> eas build -p android --profile preview  # Generates .apk  
+> eas build -p ios --profile preview  # Generates .tar.gz
+
+
+### Deploy APIs
 
 """Work in Progress"""
