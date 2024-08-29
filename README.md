@@ -6,45 +6,58 @@ CCDS24-0181 Online Life-Long Learning App With Personalized Recommendation
 
 ### Setup Local Environment
 
-Install Miniconda
+1. Install Miniconda
+2. Create conda environment with Python 3.9
 
-Create conda environment with Python 3.9
-> conda create -n mobilearn python=3.9  
+```bash
+conda create -n mobilearn python=3.9
+```
 
-Activate conda environment before installing libraries
-> conda activate mobilearn
+3. Activate conda environment before installing libraries
+
+```bash
+conda activate mobilearn
+```
 
 ## Want to run Frontend?
 
-Download npm through NodeJS
+1. Download npm through NodeJS
+2. Download requirements in package-lock.json
 
-Download requirements in package-lock.json
-> npm ci  
+```bash
+npm ci
+```
 
-Start Expo
-> npx expo start
+3. Start Expo
+
+```bash
+npx expo start
+```
 
 ## Want to run Backend?
 
-Download requirements
-> pip install -r requirements.txt
+1. Download requirements
 
-Run app.py
+```bash
+pip install -r requirements.txt
+```
+
+2. Run app.py
 
 ## Want to Deploy?
 
 ### Build .apk and .dmg files
 
-Download EAS cli
-> cd frontend && npm install -g eas-cli  
-> eas login  
-> eas build:configure  
-> eas build --platform all  
+1. Download EAS cli
 
-> eas build -p android --profile preview  # Generates .apk  
-> eas build -p ios --profile preview  # Generates .tar.gz
+```bash
+cd frontend && npm install -g eas-cli  
+eas login  
+eas build:configure  
+eas build --platform all  
 
+eas build -p android --profile preview  # Generates .apk  
+eas build -p ios --profile preview  # Generates .tar.gz
+```
 
 ### Deploy APIs
-
-"""Work in Progress"""
