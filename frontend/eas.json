@@ -7,13 +7,12 @@
       "developmentClient": true,
       "distribution": "internal"
     },
-    "preview": {
+    "local": {
       "ios": {
         "simulator": false
       },
       "android": {
-        "buildType": "apk",
-        "simulator": false
+        "buildType": "apk"
       }
     },
     "production": {}
