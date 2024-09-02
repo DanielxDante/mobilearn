@@ -54,10 +54,10 @@ pip install -r requirements.txt
 cd frontend && npm install -g eas-cli  
 eas login  
 eas build:configure  
-eas build --platform all  
-
-eas build -p android --profile preview  # Generates .apk  
-eas build -p ios --profile preview  # Generates .tar.gz
+eas build -p android --profile local  # Generates .apk  
+eas build -p ios --profile local  # Generates .tar.gz
 ```
 
 ### Deploy APIs
+
+WIP
