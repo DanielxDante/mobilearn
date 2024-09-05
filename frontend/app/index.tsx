@@ -1,23 +1,25 @@
-import React from "react";
-import { Text, View, ScrollView } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { Link } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useState, useEffect } from "react";
+import { ActivityIndicator, SafeAreaView } from "react-native";
+import { useRouter } from "expo-router";
 
-export default function App() {
-  return (
-    <SafeAreaView className="">
-      <ScrollView contentContainerStyle={{ height: '100%', }}>
-        <View className="w-full flex justify-center items-center h-full px-4">
-          <View className="relative mt-5">
-            <Text className="text-3xl text-black font-bold text-center">
-              Welcome to MobiLearn
-            </Text>
-            <Link href="/signin">Go To Signin</Link>
-            <Link href="/home">Go To Home</Link>
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+export default function Index() {
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+      router.push("/shared/loginPage"); // Redirect to the login page
+    }, 2000); // Adjust the timeout as needed
+  }, [router]);
+
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#0000ff" />
+      </SafeAreaView>
+    );
+  }
+
+  return null;
 }
