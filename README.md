@@ -1,63 +1,31 @@
-# MobiLearn
+# MobiLearn - Online Life-Long Learning App with Personalized Recommendation
 
-CCDS24-0181 Online Life-Long Learning App With Personalized Recommendation
+Welcome to  **MobiLearn** , an online platform designed to empower learners by providing personalized learning experiences. Whether you're pursuing professional development or personal growth, LifeLearn uses advanced AI algorithms to recommend courses that best suit your learning style, progress, and goals.
 
-## Get Started
+## Features
 
-### Setup Local Environment
+- Diverse Course Categories: Explore a wide range of courses in various domains including technology, business, arts, sciences, and more.
+- Personalized Recommendations: LifeLearn leverages AI to analyze your learning history, preferences, and goals to offer personalized course suggestions.
+- Community Support: Engage with a community of learners and participate in forums.
 
-1. Install Miniconda
-2. Create conda environment with Python 3.9
+## Project Structure
 
-```bash
-conda create -n mobilearn python=3.9
-```
+**/Work In Progress/**
 
-3. Activate conda environment before installing libraries
+## Contribution
 
-```bash
-conda activate mobilearn
-```
+We welcome contributions to MobiLearn! Please follow these steps to contribute:
 
-## Want to run Frontend?
+1. Fork the repository.
+2. Create a new branch (git checkout -b feature-name).
+3. Commit your changes (git commit -m 'Add feature').
+4. Push to the branch (git push origin feature-name).
+5. Create a pull request.
 
-1. Download npm through NodeJS
-2. Download requirements in package-lock.json
+## License
 
-```bash
-npm ci
-```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-3. Start Expo
+## Contact
 
-```bash
-npx expo start
-```
-
-## Want to run Backend?
-
-1. Download requirements
-
-```bash
-pip install -r requirements.txt
-```
-
-2. Run app.py
-
-## Want to Deploy?
-
-### Build .apk and .dmg files
-
-1. Download EAS cli
-
-```bash
-cd frontend && npm install -g eas-cli  
-eas login  
-eas build:configure  
-eas build -p android --profile local  # Generates .apk  
-eas build -p ios --profile local  # Generates .tar.gz
-```
-
-### Deploy APIs
-
-WIP
+For any inquiries or support, please reach out to the MobiLearn team at ZhangJ@ntu.edu.sg
