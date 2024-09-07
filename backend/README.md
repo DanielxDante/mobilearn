@@ -33,7 +33,7 @@ docker compose up -d
 
 > Ensure you do not have another psql instance running on the same port
 >
-> To make sure your docker instance is up, run psql cli instance locally with: psql -h localhost -U justtravel -d postgres
+> To make sure your docker instance is up, run psql cli instance locally with: psql -h localhost -U mobilearn -d postgres
 
 5. Run flask app
 
