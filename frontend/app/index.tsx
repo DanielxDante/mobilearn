@@ -9,7 +9,7 @@ export default function Index() {
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
-      router.push("/shared/loginPage"); // Redirect to the login page
+      router.push("/shared/carouselPage"); // Redirect to the login page
     }, 2000); // Adjust the timeout as needed
   }, [router]);
 
