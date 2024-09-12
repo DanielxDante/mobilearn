@@ -1,6 +1,7 @@
 import { SplashScreen, Stack } from "expo-router";
 import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
+import { StatusBar } from "expo-status-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,7 +27,7 @@ const RootLayout = () => {
     if (!fontsLoaded && !error) return null;
 
     return (
-        <Stack>
+        <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" options={{ headerShown: false }} />
         </Stack>
     );
