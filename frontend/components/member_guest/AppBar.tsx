@@ -52,7 +52,7 @@ const AppBar: React.FC<AppBarProps> = ({ options }) => {
 const styles = StyleSheet.create({
     dropdown: {
         margin: 5,
-        height: 50,
+        height: 55,
         backgroundColor: "white",
         padding: 12,
     },
@@ -73,7 +73,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     selectedTextStyle: {
-        fontSize: 16,
+        fontSize: 18,
+        fontFamily: "Inter-Bold",
+        color: "#356FC5",
     },
     iconStyle: {
         width: 20,

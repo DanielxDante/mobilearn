@@ -1,3 +1,4 @@
 import images from "./images";
+import temporaryImages from "./temporaryImages";
 
-export { images };
+export { images, temporaryImages };

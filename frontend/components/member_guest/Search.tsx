@@ -23,7 +23,7 @@ const Search: React.FC<SearchBarProps> = ({ onSearch }) => {
     };
 
     return (
-        <View className="p-2 border-2 border-slate-300 rounded-2xl flex ">
+        <View className="p-2 border-2 border-[#D9D9D9] rounded-2xl flex ">
             <View className="flex-row items-center">
                 <TextInput
                     className="h-5 border-1 rounded-md px-4 flex-1"

@@ -1,11 +1,17 @@
 import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
-import { AppBar, Search } from "../../components/member_guest";
-import { images } from "../../constants";
+import {
+    AppBar,
+    Search,
+    ContinueWatching,
+} from "../../components/member_guest";
+import { images, temporaryImages } from "../../constants";
 
 const Home = () => {
+    const router = useRouter();
     // placeholder for channels
     const channelData = [
         { label: "Channel 1", value: "1" },
@@ -17,6 +23,7 @@ const Home = () => {
         { label: "Channel 7", value: "7" },
         { label: "Channel 8", value: "8" },
     ];
+    // placeholder for list of search data returned
     const [searchData, setSearchData] = useState<
         { id: string; title: string }[]
     >([
@@ -24,7 +31,25 @@ const Home = () => {
         { id: "2", title: "Second Item" },
         { id: "3", title: "Third Item" },
     ]);
-
+    // placeholder for list of courses
+    const courseData = [
+        {
+            id: "1",
+            title: "UI/UX Design Essentials",
+            school: "Tech innovations University",
+            rating: "4.9",
+            completionRate: 0.79,
+            image: temporaryImages.course1,
+        },
+        {
+            id: "2",
+            title: "Graphic Design Fundamentals",
+            school: "Creative Arts Institute",
+            rating: "4.7",
+            completionRate: 0.35,
+            image: temporaryImages.course2,
+        },
+    ];
     const [filteredData, setFilteredData] = useState(searchData);
     const [query, setQuery] = useState<string>("");
     // Function to handle search results from SearchBar
@@ -47,12 +72,17 @@ const Home = () => {
                     <AppBar options={channelData} />
                 </View>
                 {/* Notification bell icon */}
-                <TouchableOpacity className="p-3 items-center">
+                <TouchableOpacity
+                    className="p-3 items-center"
+                    onPress={() => {
+                        router.push("/shared/notification");
+                    }}
+                >
                     <Image source={images.notifbell} className="h-8 w-8" />
                 </TouchableOpacity>
             </View>
             {/* Search bar */}
-            <View className="m-5">
+            <View className="mx-5 my-2">
                 <Search onSearch={handleSearch} />
                 {query && filteredData.length > 0 && (
                     <FlatList
@@ -65,6 +95,10 @@ const Home = () => {
                         )}
                     />
                 )}
+            </View>
+            {/* Continue Watching */}
+            <View className="mt-3 mx-5">
+                <ContinueWatching courseData={courseData} />
             </View>
         </SafeAreaView>
     );
