@@ -26,8 +26,8 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
                     className="w-20 h-20"
                     resizeMode="contain"
                 />
-                <View className="px-3">
-                    <Text className="font-interSemiBold text-default-blue text-base">
+                <View className="px-3 flex-1">
+                    <Text className="font-interSemiBold text-default-blue text-base" numberOfLines={1}>
                         {item.title}
                     </Text>
                     <Text className="font-interReg text-xs text-default-blue">
@@ -39,16 +39,16 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
                             {item.rating}
                         </Text>
                     </View>
-                    <View className="flex-col border border-red-200">
+                    <View className="flex-col">
                         <Progress.Bar
                             progress={item.completionRate}
                             color="#356FC5"
                             borderColor="#D9D9D9"
                             unfilledColor="#D9D9D9"
-                            width={220}
+                            width={250}
                         ></Progress.Bar>
-                        <View className="flex-row justify-end border border-black">
-                            <Text>{item.completionRate}</Text>
+                        <View className="flex-row justify-end">
+                            <Text className="text-[10px] font-interReg text-slate-500 mr-1">{item.completionRate * 100}% completed</Text>
                         </View>
                     </View>
                 </View>
