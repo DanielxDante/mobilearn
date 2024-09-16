@@ -8,10 +8,13 @@ import {
     Dimensions,
 } from "react-native";
 import React, { useState, memo, useRef, useCallback } from "react";
-import { AutocompleteDropdown, IAutocompleteDropdownRef } from "react-native-autocomplete-dropdown";
+import {
+    AutocompleteDropdown,
+    AutocompleteDropdownItem,
+    IAutocompleteDropdownRef,
+} from "react-native-autocomplete-dropdown";
 
 import { images } from "../../constants";
-import { IAutocompleteDropdownContext } from "react-native-autocomplete-dropdown/lib/typescript/src/AutocompleteDropdownContext";
 
 interface courseData {
     id: string;
@@ -30,29 +33,37 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
 
     const searchRef = useRef<any>(null);
 
-    const getSuggestions = useCallback(async (query:string) => {
+    const getSuggestions = useCallback(async (query: string) => {
         const filtertoken = query.toLowerCase();
-        if (typeof query !== 'string' || query.length < 3) {
-            setSuggestionsList([])
-            return
+        if (typeof query !== "string" || query.length < 2) {
+            setSuggestionsList([]);
+            return;
         }
-        setLoading(true)
-        const suggestions = courseListData.filter( item => item.title.toLowerCase().includes(filtertoken)).map(item => ({
-            id: item.id,
-            title: item.title,
-        }))
-        setSuggestionsList(suggestions)
-        setLoading(false)
-    }, [])
+        setLoading(true);
+        const suggestions = courseListData
+            .filter((item) => item.title.toLowerCase().includes(filtertoken))
+            .map((item) => ({
+                id: item.id,
+                title: item.title,
+            }));
+        setSuggestionsList(suggestions);
+        setLoading(false);
+    }, []);
 
     const onClearPress = useCallback(() => {
-        setSuggestionsList([])
-    }, [])
+        setSuggestionsList([]);
+    }, []);
 
-    const onOpenSuggestionsList = useCallback(() => {} , [])
+    const onOpenSuggestionsList = useCallback(() => {}, []);
+
+    const renderItem = (item: AutocompleteDropdownItem) => (
+        <View className="p-3 bg-white rounded-3xl">
+            <Text className="text-black">{item.title}</Text>
+        </View>
+    );
 
     return (
-        <AutocompleteDropdown 
+        <AutocompleteDropdown
             ref={searchRef}
             controller={(controller: IAutocompleteDropdownRef | null) => {
                 dropdownController.current = controller;
@@ -60,41 +71,47 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
             direction="down"
             dataSet={suggestionsList}
             onChangeText={getSuggestions}
-            onSelectItem={item => {
-                item && setSelectedItem(item.id)
+            onSelectItem={(item) => {
+                item && setSelectedItem(item.id);
             }}
             debounce={600}
-            suggestionsListMaxHeight={50}
+            suggestionsListMaxHeight={150}
             onClear={onClearPress}
             onOpenSuggestionsList={onOpenSuggestionsList}
             loading={loading}
             useFilter={false}
             textInputProps={{
-                placeholder: 'Search',
+                placeholder: "Search",
                 autoCorrect: false,
-                autoCapitalize: 'none',
-            style: {
-                borderRadius: 25,
-                backgroundColor: '#DFDFDF',
-                color: '#000000',
-                paddingLeft: 18,
-            },
+                autoCapitalize: "none",
+                style: {
+                    borderRadius: 25,
+                    backgroundColor: "#FFFFFF",
+                    color: "#000000",
+                    paddingLeft: 18,
+                },
             }}
             rightButtonsContainerStyle={{
-                right: 8,
-                height: 30,
-    
-                alignSelf: 'center',
+                right: 15,
+                alignSelf: "center",
             }}
             inputContainerStyle={{
-                backgroundColor: '#DFDFDF',
+                backgroundColor: "#FFFFFF",
                 borderRadius: 25,
+                borderWidth: 1,
+                borderColor: "#B1B1B1",
+                height: 40,
             }}
             suggestionsListContainerStyle={{
-                backgroundColor: '#383b42',
+                backgroundColor: "#FFFFFF",
+                borderRadius: 15,
+                borderWidth: 1,
+                borderColor: "#B1B1B1",
+                shadowColor: "#000",
+                shadowRadius: 3,
             }}
-            containerStyle={{ flexGrow: 1, flexShrink: 1 }}
-            renderItem={(item, text) => <Text style={{ color: '#fff', padding: 15 }}>{item.title}</Text>}
+            // containerStyle={{ flexGrow: 1, flexShrink: 1 }}
+            renderItem={renderItem}
             //   ChevronIconComponent={<Feather name="chevron-down" size={20} color="#fff" />}
             //   ClearIconComponent={<Feather name="x-circle" size={18} color="#fff" />}
             inputHeight={50}
@@ -104,80 +121,5 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
         />
     );
 };
-
-    //     <View className="p-2 border-2 border-[#D9D9D9] rounded-2xl flex ">
-    //         <View className="flex-row items-center">
-    //             <TextInput
-    //                 className="h-5 border-1 rounded-md px-4 flex-1"
-    //                 placeholder="Search"
-    //                 value={searchQuery}
-    //                 onChangeText={handleSearch}
-    //             />
-    //             <TouchableOpacity>
-    //                 <Image source={images.search} className="w-7 h-7" />
-    //             </TouchableOpacity>
-    //         </View>
-    //         <Dropdown
-    //         style={styles.dropdown}
-    //         placeholderStyle={styles.placeholderStyle}
-    //         selectedTextStyle={styles.selectedTextStyle}
-    //         inputSearchStyle={styles.inputSearchStyle}
-    //         renderRightIcon={() => (
-    //             <Image source={images.hamburger} style={styles.iconStyle} />
-    //         )}
-    //         data={filteredData}
-    //         search
-    //         maxHeight={300}
-    //         labelField="title"
-    //         valueField="id"
-    //         placeholder="Select item"
-    //         searchPlaceholder="Search..."
-    //         value={selectedId}
-    //         onChange={(item) => {
-    //             setSelectedId(item.id)
-    //         }}
-    //         renderItem={(item) => (<TouchableOpacity className="p-5 border-b-2 border-b-slate-200">
-    //                         <Text>{item.title}</Text>
-    //                         </TouchableOpacity>)}
-    //         />
-    //     </View>
-
-const styles = StyleSheet.create({
-    dropdown: {
-        margin: 5,
-        height: 55,
-        backgroundColor: "white",
-        padding: 12,
-    },
-    icon: {
-        marginRight: 5,
-    },
-    item: {
-        padding: 17,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    textItem: {
-        flex: 1,
-        fontSize: 16,
-    },
-    placeholderStyle: {
-        fontSize: 16,
-    },
-    selectedTextStyle: {
-        fontSize: 18,
-        fontFamily: "Inter-Bold",
-        color: "#356FC5",
-    },
-    iconStyle: {
-        width: 20,
-        height: 20,
-    },
-    inputSearchStyle: {
-        height: 40,
-        fontSize: 16,
-    },
-});
 
 export default Search;

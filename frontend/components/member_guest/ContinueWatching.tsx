@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import * as Progress from "react-native-progress";
 
@@ -18,8 +18,10 @@ interface ContinueWatchingProps {
 }
 
 const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
-    const renderItem = ({ item }: { item: Course }) => (
-        <TouchableOpacity>
+    const first2Courses = courseData.slice(0, 2);
+
+    const renderItem = (item: Course) => (
+        <TouchableOpacity key={item.id}>
             <View className="border-2 border-slate-100 shadow-2xl rounded-md mt-3 flex flex-row px-2">
                 <Image
                     source={item.image}
@@ -27,7 +29,10 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
                     resizeMode="contain"
                 />
                 <View className="px-3 flex-1">
-                    <Text className="font-interSemiBold text-default-blue text-base" numberOfLines={1}>
+                    <Text
+                        className="font-interSemiBold text-default-blue text-base"
+                        numberOfLines={1}
+                    >
                         {item.title}
                     </Text>
                     <Text className="font-interReg text-xs text-default-blue">
@@ -48,7 +53,9 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
                             width={250}
                         ></Progress.Bar>
                         <View className="flex-row justify-end">
-                            <Text className="text-[10px] font-interReg text-slate-500 mr-1">{item.completionRate * 100}% completed</Text>
+                            <Text className="text-[10px] font-interReg text-slate-500 mr-1">
+                                {item.completionRate * 100}% completed
+                            </Text>
                         </View>
                     </View>
                 </View>
@@ -61,11 +68,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
             <Text className="text-lg font-interBold text-default-blue">
                 Continue Watching
             </Text>
-            <FlatList
-                data={courseData}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-            />
+            {first2Courses.map(renderItem)}
         </View>
     );
 };

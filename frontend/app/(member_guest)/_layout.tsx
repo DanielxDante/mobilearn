@@ -100,6 +100,38 @@ const MemberGuestLayout = () => {
                         ),
                     }}
                 />
+                <Tabs.Screen
+                    name="suggestionsSeeAll"
+                    options={{
+                        title: "SuggestionsSeeAll",
+                        headerShown: false,
+                        tabBarIcon: ({ color, focused }) => (
+                            <TabIcon
+                                icon={icons.home}
+                                color={color}
+                                name="Profile"
+                                focused={focused}
+                            />
+                        ),
+                        href: null,
+                    }}
+                />
+                <Tabs.Screen
+                    name="topCoursesSeeAll"
+                    options={{
+                        title: "topCoursesSeeAll",
+                        headerShown: false,
+                        tabBarIcon: ({ color, focused }) => (
+                            <TabIcon
+                                icon={icons.home}
+                                color={color}
+                                name="Top Courses"
+                                focused={focused}
+                            />
+                        ),
+                        href: null,
+                    }}
+                />
             </Tabs>
             <StatusBar backgroundColor="#161622" style="light" />
         </>
