@@ -35,7 +35,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
                     </Text>
                     <View className="flex flex-row items-center">
                         <Image source={images.starRating} className="h-4 w-4" />
-                        <Text className="text-[11px] px-2 font-interReg">
+                        <Text className="text-[10px] px-1 font-interReg">
                             {item.rating}
                         </Text>
                     </View>
