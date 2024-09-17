@@ -1,0 +1,22 @@
+{
+    "course": [
+        {
+            "id": 1,
+            "name": "React",
+            "description": "React is a JavaScript library for building user interfaces.",
+            "price": 100
+        },
+        {
+            "id": 2,
+            "name": "Angular",
+            "description": "Angular is a platform and framework for building single-page client applications using HTML and TypeScript.",
+            "price": 150
+        },
+        {
+            "id": 3,
+            "name": "Vue",
+            "description": "Vue.js is a progressive JavaScript framework for building user interfaces.",
+            "price": 200
+        }
+    ]
+}

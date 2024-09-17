@@ -47,6 +47,19 @@ const SignUpPage = () => {
                     <Text className="text-white font-semibold">HOMEPAGE</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Temporary button to redirect to admin page*/}
+            <View className="flex flex-row space-x-4 mt-4">
+                <TouchableOpacity
+                    className="bg-[#356FC5] py-2 px-6 rounded-lg items-center border-2 border-[#356FC5]"
+                    onPress={() => {
+                        router.push("/(admin)/home");
+                        console.log("Admin logged in");
+                    }}
+                >
+                    <Text className="text-white font-semibold">ADMIN</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
