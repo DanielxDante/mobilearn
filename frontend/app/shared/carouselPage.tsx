@@ -7,7 +7,6 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
-  Animated,
 } from "react-native";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
@@ -46,16 +45,14 @@ export default function OnboardingCarousel() {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const timerRef = useRef<any>(null);
+  const currentIndexRef = useRef<number>(0);
 
   useEffect(() => {
     // Automatically move to the next slide every 3 seconds
     timerRef.current = setInterval(() => {
-      let nextIndex = currentSlideIndex + 1;
-      if (nextIndex >= slides.length) {
-        nextIndex = 0;
-      }
+      let nextIndex = (currentSlideIndex + 1) % slides.length;
       flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
-      setCurrentSlideIndex(nextIndex);
+      currentIndexRef.current = nextIndex; 
     }, 3000); // Change slide every 3 seconds
 
     return () => clearInterval(timerRef.current); // Clear the timer when unmounted
