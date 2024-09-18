@@ -1,6 +1,6 @@
-import { View, Text, Image } from "react-native";
+import { View, Image } from "react-native";
 import React from "react";
-import { Tabs, Redirect } from "expo-router";
+import { Tabs } from "expo-router";
 
 import icons from "../../constants/Icons";
 import { StatusBar } from "expo-status-bar";
@@ -14,7 +14,7 @@ interface TabIconProps {
 
 const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
     return (
-        <View className="items-center justify-center">
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
             <Image
                 source={icon}
                 resizeMode="contain"

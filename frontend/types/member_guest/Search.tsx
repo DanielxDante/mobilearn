@@ -57,8 +57,15 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
     const onOpenSuggestionsList = useCallback(() => {}, []);
 
     const renderItem = (item: AutocompleteDropdownItem) => (
-        <View className="p-3 bg-white rounded-3xl">
-            <Text className="text-black">{item.title}</Text>
+        <View
+            style={{
+                padding: 10,
+                backgroundColor: "white",
+                borderRadius: 15,
+                borderColor: "#FFFFFF",
+            }}
+        >
+            <Text style={{ color: "black" }}>{item.title}</Text>
         </View>
     );
 
@@ -121,5 +128,7 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
         />
     );
 };
+
+const styles = StyleSheet.create({});
 
 export default Search;
