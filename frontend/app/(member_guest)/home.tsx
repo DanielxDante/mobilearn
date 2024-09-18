@@ -3,8 +3,8 @@ import {
     Text,
     TouchableOpacity,
     Image,
-    FlatList,
     ScrollView,
+    StyleSheet,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,11 +15,21 @@ import {
     Search,
     ContinueWatching,
     SuggestionsSection,
-} from "../../components/member_guest";
+} from "../../types/member_guest";
 import { images, temporaryImages } from "../../constants";
 import { AutocompleteDropdownContextProvider } from "react-native-autocomplete-dropdown";
+import { useFonts } from "expo-font";
+import { Colors } from "@/constants/Colors";
 
 const Home = () => {
+    const [fontsLoaded, error] = useFonts({
+        "Inter-Regular": require("@/assets/fonts/Inter-Regular.ttf"),
+        "Inter-Bold": require("@/assets/fonts/Inter-Bold.ttf"),
+        "Inter-SemiBold": require("@/assets/fonts/Inter-SemiBold.ttf"),
+        "Inter-Medium": require("@/assets/fonts/Inter-Medium.ttf"),
+        "Inter-Light": require("@/assets/fonts/Inter-Light.ttf"),
+    });
+
     const router = useRouter();
     // placeholder for channels
     const channelData = [
@@ -122,35 +132,38 @@ const Home = () => {
 
     return (
         <AutocompleteDropdownContextProvider>
-            <SafeAreaView className="h-full w-full flex bg-white">
-                <View className="flex flex-row">
+            <SafeAreaView style={styles.container}>
+                <View style={styles.header}>
                     {/* App bar for channel selection and dropdown */}
-                    <View className="flex-1">
+                    <View style={styles.appBarContainer}>
                         <AppBar options={channelData} />
                     </View>
                     {/* Notification bell icon */}
                     <TouchableOpacity
-                        className="p-3 items-center"
+                        style={styles.notificationButton}
                         onPress={() => {
                             router.push("/shared/notification");
                         }}
                     >
-                        <Image source={images.notifbell} className="h-8 w-8" />
+                        <Image
+                            source={images.notifbell}
+                            style={styles.notificationIcon}
+                        />
                     </TouchableOpacity>
                 </View>
                 <ScrollView>
                     {/* Search bar */}
-                    <View className="mx-5 my-2">
+                    <View style={styles.searchContainer}>
                         <Search courseListData={courseListData} />
                     </View>
                     {/* Continue Watching */}
-                    <View className="mt-3 mx-5">
+                    <View style={styles.continueWatchingContainer}>
                         <ContinueWatching courseData={continueWatchingData} />
                     </View>
                     {/* Suggestions for You */}
-                    <View className="mt-3">
-                        <View className="flex flex-row items-center justify-between mb-3">
-                            <Text className="text-lg font-interBold text-default-blue mx-5">
+                    <View style={styles.suggestionsContainer}>
+                        <View style={styles.suggestionsHeader}>
+                            <Text style={styles.suggestionsTitle}>
                                 Suggestions for You
                             </Text>
                             <TouchableOpacity
@@ -158,17 +171,15 @@ const Home = () => {
                                     router.push("/suggestionsSeeAll");
                                 }}
                             >
-                                <Text className="text-[#6C6C6C] font-interReg text-xs underline underline-offset-2 mr-3">
-                                    See All
-                                </Text>
+                                <Text style={styles.seeAllText}>See All</Text>
                             </TouchableOpacity>
                         </View>
                         <SuggestionsSection courseData={suggestionsData} />
                     </View>
                     {/* Top Courses */}
-                    <View className="mt-2">
-                        <View className="flex flex-row items-center justify-between mb-3">
-                            <Text className="text-lg font-interBold text-default-blue mx-5">
+                    <View style={styles.topCoursesContainer}>
+                        <View style={styles.topCoursesHeader}>
+                            <Text style={styles.topCoursesTitle}>
                                 Top Courses
                             </Text>
                             <TouchableOpacity
@@ -176,9 +187,7 @@ const Home = () => {
                                     router.push("/topCoursesSeeAll");
                                 }}
                             >
-                                <Text className="text-[#6C6C6C] font-interReg text-xs underline underline-offset-2 mr-3">
-                                    See All
-                                </Text>
+                                <Text style={styles.seeAllText}>See All</Text>
                             </TouchableOpacity>
                         </View>
                         <SuggestionsSection courseData={topCourseData} />
@@ -188,5 +197,71 @@ const Home = () => {
         </AutocompleteDropdownContextProvider>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "white",
+    },
+    header: {
+        flexDirection: "row",
+    },
+    appBarContainer: {
+        flex: 1,
+    },
+    notificationButton: {
+        padding: 12,
+        alignItems: "center",
+    },
+    notificationIcon: {
+        height: 32,
+        width: 32,
+    },
+    searchContainer: {
+        marginHorizontal: 20,
+        marginVertical: 8,
+    },
+    continueWatchingContainer: {
+        marginTop: 12,
+        marginHorizontal: 20,
+    },
+    suggestionsContainer: {
+        marginTop: 12,
+    },
+    suggestionsHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 1,
+        marginTop: 8,
+    },
+    suggestionsTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: Colors.defaultBlue,
+        marginHorizontal: 20,
+    },
+    seeAllText: {
+        color: "#6C6C6C",
+        fontSize: 12,
+        textDecorationLine: "underline",
+        marginRight: 12,
+    },
+    topCoursesContainer: {
+        marginTop: 10,
+    },
+    topCoursesHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 1,
+    },
+    topCoursesTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: Colors.defaultBlue, // Adjust to your theme color
+        marginHorizontal: 20,
+    },
+});
 
 export default Home;
