@@ -5,6 +5,8 @@ import SignInButton from "../../components/Button";
 import InputField from "../../components/InputField";
 import mobilearnHat from "../../assets/images/MobilearnHat.png";
 import { useAppStore } from "../../store/appStore"; // Import the store
+import { loginPageConstants as Constants } from "@/constants/TextConstants";
+
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
@@ -54,7 +56,7 @@ export default function LoginPage() {
             marginBottom: 24,
           }}
         >
-          SIGN IN
+          {Constants.pageTitle}
         </Text>
         <Text
           style={{
@@ -64,26 +66,24 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          Sign In To Access Your Personalized Learning Journey
+          {Constants.pageSubTitle}
         </Text>
       </View>
       <View style={{ width: "100%" }}>
         <InputField
-          inputTitle="Email"
-          placeholder="youremail@gmail.com"
+          inputTitle={Constants.fields[0].inputTitle}
+          placeholder={Constants.fields[0].placeHolder}
           value={email}
           onChangeText={setEmail}
         />
         <InputField
-          inputTitle="Password"
-          placeholder="Password"
+          inputTitle={Constants.fields[1].inputTitle}
+          placeholder={Constants.fields[1].placeHolder}
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
         />
-        {/* <Link href="/forgot-password" style={tailwind("text-blue-500 mt-2")}>
-            Forgot Password?
-          </Link> */}
+
         <SignInButton text="Sign In" onPress={handleSignIn} />
         <View
           style={{
