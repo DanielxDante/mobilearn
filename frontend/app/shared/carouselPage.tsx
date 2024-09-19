@@ -52,7 +52,7 @@ export default function OnboardingCarousel() {
     timerRef.current = setInterval(() => {
       let nextIndex = (currentSlideIndex + 1) % slides.length;
       flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
-      currentIndexRef.current = nextIndex; 
+      currentIndexRef.current = nextIndex;
     }, 3000); // Change slide every 3 seconds
 
     return () => clearInterval(timerRef.current); // Clear the timer when unmounted
@@ -97,9 +97,16 @@ export default function OnboardingCarousel() {
 
   return (
     // this is the main view
-    <View style={{ flexDirection: "column", backgroundColor: "white", width }}>
+    <View
+      style={{
+        flexDirection: "column",
+        backgroundColor: "white",
+        width,
+        justifyContent: "center",
+      }}
+    >
       <FlatList
-        style={{ height: height * 0.6 }}
+        style={{ height: height * 0.8 }}
         ref={flatListRef}
         data={slides}
         renderItem={renderItem}
@@ -116,7 +123,8 @@ export default function OnboardingCarousel() {
           //height: height * 0.05,
           flexDirection: "row",
           justifyContent: "center",
-          marginBottom: 80,
+          marginTop: -60,
+          marginBottom: 60,
         }}
       >
         {slides.map((_, index) => (
