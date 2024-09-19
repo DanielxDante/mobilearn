@@ -1,6 +1,9 @@
 import { router } from "expo-router";
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
+import Button from "../../components/MediumButton";
+import { SignInUpPageConstants as Constants } from "@/constants/TextConstants";
+import SignInUp from "../../assets/images/SignInUp.png";
 
 const SignUpPage = () => {
   return (
@@ -14,7 +17,7 @@ const SignUpPage = () => {
       }}
     >
       <Image
-        source={require("../../assets/images/SignInUp.png")}
+        source={SignInUp}
         style={{
           width: 256,
           height: 288,
@@ -35,7 +38,7 @@ const SignUpPage = () => {
           //paddingHorizontal: 40,
         }}
       >
-        Unlock Your Learning Potential
+        {Constants.signUpPageTitle}
       </Text>
       <Text
         style={{
@@ -45,7 +48,7 @@ const SignUpPage = () => {
           marginHorizontal: 32,
         }}
       >
-        Your Gateway To Personalized Courses, And Guidance For Success.
+        {Constants.signUpPageSubtitle}
       </Text>
 
       <View
@@ -55,50 +58,22 @@ const SignUpPage = () => {
           columnGap: 16,
         }}
       >
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#356FC5",
-            paddingVertical: 8,
-            paddingHorizontal: 24,
-            borderRadius: 8,
-            alignItems: "center",
-            borderWidth: 2,
-            borderColor: "#356FC5",
-          }}
+        <Button
+          text={Constants.signInButtonText}
+          isBlue={true}
           onPress={() => {
             router.push("/shared/loginPage");
-            console.log("Continue pressed");
+            console.log("login pressed");
           }}
-        >
-          <Text
-            style={{
-              color: "white",
-              fontWeight: "600",
-            }}
-          >
-            SIGN IN
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: "white",
-            paddingVertical: 8,
-            paddingHorizontal: 24,
-            borderRadius: 8,
-            borderWidth: 2,
-            borderColor: "#356FC5",
-            alignItems: "center",
+        ></Button>
+        <Button
+          text={Constants.signUpButtonText}
+          isBlue={false}
+          onPress={() => {
+            router.push("/shared/signupSelection");
+            console.log("signup pressed");
           }}
-        >
-          <Text
-            style={{
-              color: "#356FC5",
-              fontWeight: "600",
-            }}
-          >
-            SIGN UP
-          </Text>
-        </TouchableOpacity>
+        ></Button>
       </View>
 
       {/* Temporary button to redirect to homepage*/}
@@ -108,30 +83,14 @@ const SignUpPage = () => {
           marginTop: 16,
         }}
       >
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#356FC5",
-            paddingVertical: 8,
-            paddingHorizontal: 24,
-            borderRadius: 8,
-            alignItems: "center",
-            borderWidth: 2,
-            borderColor: "#356FC5",
-          }}
+        <Button
+          text={Constants.homepageButtonText}
+          isBlue={true}
           onPress={() => {
             router.push("/(member_guest)/home");
-            console.log("Continue pressed");
+            console.log("Homepage pressed");
           }}
-        >
-          <Text
-            style={{
-              color: "white",
-              fontWeight: "600",
-            }}
-          >
-            HOMEPAGE
-          </Text>
-        </TouchableOpacity>
+        ></Button>
       </View>
 
       {/* Temporary button to redirect to admin page*/}
@@ -142,30 +101,14 @@ const SignUpPage = () => {
           marginTop: 16,
         }}
       >
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#356FC5",
-            paddingVertical: 8,
-            paddingHorizontal: 24,
-            borderRadius: 8,
-            alignItems: "center",
-            borderWidth: 2,
-            borderColor: "#356FC5",
-          }}
+        <Button
+          text={Constants.adminButtonText}
+          isBlue={false}
           onPress={() => {
             router.push("/(admin)/home");
             console.log("Admin logged in");
           }}
-        >
-          <Text
-            style={{
-              color: "white",
-              fontWeight: "600",
-            }}
-          >
-            ADMIN
-          </Text>
-        </TouchableOpacity>
+        ></Button>
       </View>
     </View>
   );
