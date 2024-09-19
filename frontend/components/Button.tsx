@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
-import tailwind from "tailwind-rn";
 
 interface ButtonProps {
   onPress: () => void;
@@ -13,9 +12,20 @@ const Button: React.FC<ButtonProps> = ({ text, onPress }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={"bg-blue-500 p-4 rounded-lg"}
+      style={{
+        backgroundColor: "#356fc5",
+        padding: 16,
+        borderRadius: 8,
+      }}
     >
-      <Text className={"text-white text-center text-lg font-semibold"}>
+      <Text
+        style={{
+          color: "white",
+          textAlign: "center",
+          fontSize: 18,
+          fontWeight: "600",
+        }}
+      >
         {text}
       </Text>
     </TouchableOpacity>

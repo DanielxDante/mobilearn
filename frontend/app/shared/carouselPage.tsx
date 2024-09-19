@@ -1,51 +1,17 @@
 import { router } from "expo-router";
 import React, { useRef, useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, FlatList, Image, Dimensions } from "react-native";
+import { carouselPageConstants as Constants } from "@/constants/TextConstants";
+import MediumButton from "@/components/MediumButton";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
-
-const slides = [
-  {
-    id: "1",
-    image: require("../../assets/images/slide1.png"), // Use the image you uploaded
-    title: "Enter the World of E-Learning",
-    subtitle:
-      "Begin Your Educational Journey With Access To A Diverse Range Of Courses.",
-  },
-  {
-    id: "2",
-    image: require("../../assets/images/slide2.png"),
-    title: "Embark on Your Learning Adventure",
-    subtitle:
-      "Explore interactive lessons, quizzes, and multimedia content to enhance your understanding.",
-  },
-  {
-    id: "3",
-    image: require("../../assets/images/slide3.png"),
-    title: "Engage with Expert Instructors",
-    subtitle: "Connect with knowledgeable tutors for personalized guidance.",
-  },
-  {
-    id: "4",
-    image: require("../../assets/images/slide4.png"),
-    title: "Personalize Your Learning Path",
-    subtitle:
-      "Customize your learning with progress tracking, and interactive activities.",
-  },
-];
 
 export default function OnboardingCarousel() {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const timerRef = useRef<any>(null);
   const currentIndexRef = useRef<number>(0);
+  const slides = Constants.slides;
 
   useEffect(() => {
     // Automatically move to the next slide every 3 seconds
@@ -68,6 +34,7 @@ export default function OnboardingCarousel() {
       <Image
         source={item.image}
         style={{ width: width * 0.8, height: height * 0.3 }} // Scale image proportionally
+        resizeMode="contain"
       />
       <Text
         style={{
@@ -149,38 +116,14 @@ export default function OnboardingCarousel() {
           marginVertical: 110,
         }}
       >
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#356FC5",
-            paddingVertical: 10,
-            paddingHorizontal: 50,
-            borderRadius: 2,
-          }}
+        <MediumButton
+          text={Constants.contButtonText}
+          isBlue={true}
           onPress={() => {
             router.push("/shared/signinupPage");
             console.log("Continue pressed");
           }}
-        >
-          <Text style={{ color: "white", fontSize: 16 }}>CONTINUE</Text>
-        </TouchableOpacity>
-
-        {/* <TouchableOpacity
-          style={{ marginTop: 10 }}
-          onPress={() => {
-            router.push("/shared/loginPage");
-            console.log("Skip pressed");
-          }}
-        >
-          <Text
-            style={{
-              color: "#777",
-              fontSize: 14,
-              textDecorationLine: "underline",
-            }}
-          >
-            SKIP
-          </Text>
-        </TouchableOpacity> */}
+        ></MediumButton>
       </View>
     </View>
   );
