@@ -26,7 +26,6 @@ const SignUpPage = () => {
         }}
         resizeMode="contain" // Adjust as needed
       />
-
       <Text
         style={{
           fontSize: 32,
@@ -50,7 +49,6 @@ const SignUpPage = () => {
       >
         {Constants.signUpPageSubtitle}
       </Text>
-
       <View
         style={{
           flexDirection: "row",
@@ -75,7 +73,6 @@ const SignUpPage = () => {
           }}
         ></Button>
       </View>
-
       {/* Temporary button to redirect to homepage*/}
       <View
         style={{
@@ -92,7 +89,6 @@ const SignUpPage = () => {
           }}
         ></Button>
       </View>
-
       {/* Temporary button to redirect to admin page*/}
       <View
         style={{
