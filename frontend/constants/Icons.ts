@@ -9,6 +9,7 @@ import completedIcon from "../assets/images/notifications/completedIcon.png";
 import failureIcon from "../assets/images/notifications/failureIcon.png";
 import redBackground from "../assets/images/notifications/redBackground.png";
 import successIcon from "../assets/images/notifications/successIcon.png";
+import userCount from "../assets/images/courses/userCount.png";
 
 export default {
     home,
@@ -22,4 +23,5 @@ export default {
     failureIcon,
     redBackground,
     successIcon,
+    userCount,
 };
