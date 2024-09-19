@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ActivityIndicator, SafeAreaView } from "react-native";
+import { ActivityIndicator, SafeAreaView, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
 export default function Index() {
@@ -15,7 +15,7 @@ export default function Index() {
 
     if (isLoading) {
         return (
-            <SafeAreaView className="flex-1 justify-center items-center">
+            <SafeAreaView style={styles.container}>
                 <ActivityIndicator size="large" color="#0000ff" />
             </SafeAreaView>
         );
@@ -23,3 +23,11 @@ export default function Index() {
 
     return null;
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+});
