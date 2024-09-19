@@ -4,6 +4,7 @@ import { Tabs } from "expo-router";
 
 import icons from "../../constants/Icons";
 import { StatusBar } from "expo-status-bar";
+import { Colors } from "@/constants/Colors";
 
 interface TabIconProps {
     icon: any;
@@ -14,7 +15,16 @@ interface TabIconProps {
 
 const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
     return (
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <View
+            style={{
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: focused ? Colors.tabsIconGray : "transparent",
+                borderRadius: 4,
+                paddingVertical: focused ? 4 : 0,
+                paddingHorizontal: focused ? 8 : 0,
+            }}
+        >
             <Image
                 source={icon}
                 resizeMode="contain"
@@ -31,10 +41,10 @@ const MemberGuestLayout = () => {
             <Tabs
                 screenOptions={{
                     tabBarShowLabel: false,
-                    tabBarActiveTintColor: "white",
-                    tabBarInactiveTintColor: "gray",
+                    tabBarActiveTintColor: Colors.defaultBlue,
+                    tabBarInactiveTintColor: Colors.tabsIconGray,
                     tabBarStyle: {
-                        backgroundColor: "#356FC5",
+                        backgroundColor: Colors.defaultBlue,
                         borderTopColor: "transparent",
                         height: 60,
                     },
@@ -62,7 +72,7 @@ const MemberGuestLayout = () => {
                         headerShown: false,
                         tabBarIcon: ({ color, focused }) => (
                             <TabIcon
-                                icon={icons.home}
+                                icon={icons.course}
                                 color={color}
                                 name="Course"
                                 focused={focused}
@@ -77,7 +87,7 @@ const MemberGuestLayout = () => {
                         headerShown: false,
                         tabBarIcon: ({ color, focused }) => (
                             <TabIcon
-                                icon={icons.home}
+                                icon={icons.chat}
                                 color={color}
                                 name="Chat"
                                 focused={focused}
@@ -92,7 +102,7 @@ const MemberGuestLayout = () => {
                         headerShown: false,
                         tabBarIcon: ({ color, focused }) => (
                             <TabIcon
-                                icon={icons.home}
+                                icon={icons.profile}
                                 color={color}
                                 name="Profile"
                                 focused={focused}
