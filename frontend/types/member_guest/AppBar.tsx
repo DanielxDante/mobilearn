@@ -1,8 +1,7 @@
 import { StyleSheet, View, Text, Image } from "react-native";
 import React, { useState } from "react";
 import { Dropdown } from "react-native-element-dropdown";
-
-import { images } from "../../constants";
+import { memberGuestAppBarConstants as Constants } from "@/constants/TextConstants";
 
 interface Option {
     label: string;
@@ -31,15 +30,18 @@ const AppBar: React.FC<AppBarProps> = ({ options }) => {
             selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}
             renderRightIcon={() => (
-                <Image source={images.hamburger} style={styles.iconStyle} />
+                <Image
+                    source={Constants.hamburgerIcon}
+                    style={styles.iconStyle}
+                />
             )}
             data={options}
             search
             maxHeight={300}
             labelField="label"
             valueField="value"
-            placeholder="Select item"
-            searchPlaceholder="Search..."
+            placeholder={Constants.dropDownPlaceholder}
+            searchPlaceholder={Constants.searchPlaceholder}
             value={value}
             onChange={(item) => {
                 setValue(item);

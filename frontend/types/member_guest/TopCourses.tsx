@@ -9,24 +9,20 @@ import {
 } from "react-native";
 import React from "react";
 
-import { images } from "../../constants";
 import { useFonts } from "expo-font";
 import { Colors } from "@/constants/Colors";
-
-interface Course {
-    id: string;
-    title: string;
-    school: string;
-    rating: string;
-    completionRate: number;
-    image: any;
-}
+import { memberGuestTopCoursesSectionConstants as Constants } from "@/constants/TextConstants";
+import Course from "../shared/Course";
 
 interface ContinueWatchingProps {
     courseData: Course[];
+    onSelect: (id: string) => void;
 }
 
-const TopCourses: React.FC<ContinueWatchingProps> = ({ courseData }) => {
+const TopCourses: React.FC<ContinueWatchingProps> = ({
+    courseData,
+    onSelect,
+}) => {
     const [fontsLoaded, error] = useFonts({
         "Inter-Regular": require("@/assets/fonts/Inter-Regular.ttf"),
         "Inter-Bold": require("@/assets/fonts/Inter-Bold.ttf"),
@@ -38,7 +34,10 @@ const TopCourses: React.FC<ContinueWatchingProps> = ({ courseData }) => {
     const first3Courses = courseData.slice(0, 3);
 
     const renderItem = ({ item }: { item: Course }) => (
-        <TouchableOpacity style={styles.courseContainer}>
+        <TouchableOpacity
+            style={styles.courseContainer}
+            onPress={() => onSelect(item.id)}
+        >
             <View style={styles.courseInfo}>
                 <Image
                     source={item.image}
@@ -57,7 +56,7 @@ const TopCourses: React.FC<ContinueWatchingProps> = ({ courseData }) => {
                 </Text>
                 <View style={styles.ratingContainer}>
                     <Image
-                        source={images.starRating}
+                        source={Constants.starIcon}
                         style={styles.ratingIcon}
                     />
                     <Text style={styles.ratingText}>{item.rating}</Text>
@@ -91,7 +90,7 @@ const { width, height } = Dimensions.get("window");
 const styles = StyleSheet.create({
     courseContainer: {
         marginHorizontal: 6,
-        marginBottom: 10,
+        marginBottom: 20,
         width: width * 0.35,
         height: height * 0.23,
         flex: 1,
@@ -128,6 +127,7 @@ const styles = StyleSheet.create({
     ratingText: {
         fontSize: 10,
         paddingHorizontal: 4,
+        paddingTop: 1,
         fontFamily: "Inter-Regular",
     },
     listContainer: {

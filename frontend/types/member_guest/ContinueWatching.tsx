@@ -2,24 +2,20 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React from "react";
 import * as Progress from "react-native-progress";
 
-import { images } from "../../constants";
 import { useFonts } from "expo-font";
 import { Colors } from "@/constants/Colors";
-
-interface Course {
-    id: string;
-    title: string;
-    school: string;
-    rating: string;
-    completionRate: number;
-    image: any;
-}
+import { memberGuestContinueWatchingConstants as Constants } from "@/constants/TextConstants";
+import Course from "../shared/Course";
 
 interface ContinueWatchingProps {
     courseData: Course[];
+    onSelect: (id: string) => void;
 }
 
-const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
+const ContinueWatching: React.FC<ContinueWatchingProps> = ({
+    courseData,
+    onSelect,
+}) => {
     const [fontsLoaded, error] = useFonts({
         "Inter-Regular": require("@/assets/fonts/Inter-Regular.ttf"),
         "Inter-Bold": require("@/assets/fonts/Inter-Bold.ttf"),
@@ -30,7 +26,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
     const first2Courses = courseData.slice(0, 2);
 
     const renderItem = (item: Course) => (
-        <TouchableOpacity key={item.id}>
+        <TouchableOpacity key={item.id} onPress={() => onSelect(item.id)}>
             <View style={styles.courseContainer}>
                 <Image
                     source={item.image}
@@ -44,7 +40,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
                     <Text style={styles.courseSchool}>{item.school}</Text>
                     <View style={styles.ratingContainer}>
                         <Image
-                            source={images.starRating}
+                            source={Constants.starIcon}
                             style={styles.ratingIcon}
                         />
                         <Text style={styles.ratingText}>{item.rating}</Text>
@@ -59,7 +55,8 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
                         />
                         <View style={styles.progressTextContainer}>
                             <Text style={styles.progressText}>
-                                {item.completionRate * 100}% completed
+                                {item.completionRate * 100}
+                                {Constants.completionRateText}
                             </Text>
                         </View>
                     </View>
@@ -70,7 +67,9 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({ courseData }) => {
 
     return (
         <View>
-            <Text style={styles.headerText}>Continue Watching</Text>
+            <Text style={styles.headerText}>
+                {Constants.continueWatchingSubtitle}
+            </Text>
             {first2Courses.map(renderItem)}
         </View>
     );

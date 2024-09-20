@@ -9,25 +9,19 @@ import {
 } from "react-native";
 import React from "react";
 
-import { images } from "../../constants";
 import { useFonts } from "expo-font";
 import { Colors } from "@/constants/Colors";
-
-interface Course {
-    id: string;
-    title: string;
-    school: string;
-    rating: string;
-    completionRate: number;
-    image: any;
-}
+import { memberGuestSuggestionsSectionConstants as Constants } from "@/constants/TextConstants";
+import Course from "../shared/Course";
 
 interface ContinueWatchingProps {
     courseData: Course[];
+    onSelect: (id: string) => void;
 }
 
 const SuggestionsSection: React.FC<ContinueWatchingProps> = ({
     courseData,
+    onSelect,
 }) => {
     const [fontsLoaded, error] = useFonts({
         "Inter-Regular": require("@/assets/fonts/Inter-Regular.ttf"),
@@ -40,7 +34,10 @@ const SuggestionsSection: React.FC<ContinueWatchingProps> = ({
     const first3Courses = courseData.slice(0, 3);
 
     const renderItem = ({ item }: { item: Course }) => (
-        <TouchableOpacity style={styles.courseContainer}>
+        <TouchableOpacity
+            style={styles.courseContainer}
+            onPress={() => onSelect(item.id)}
+        >
             <View style={styles.courseInfo}>
                 <Image
                     source={item.image}
@@ -59,7 +56,7 @@ const SuggestionsSection: React.FC<ContinueWatchingProps> = ({
                 </Text>
                 <View style={styles.ratingContainer}>
                     <Image
-                        source={images.starRating}
+                        source={Constants.starIcon}
                         style={styles.ratingIcon}
                     />
                     <Text style={styles.ratingText}>{item.rating}</Text>
@@ -130,6 +127,7 @@ const styles = StyleSheet.create({
     ratingText: {
         fontSize: 10,
         paddingHorizontal: 4,
+        paddingTop: 1,
         fontFamily: "Inter-Regular",
     },
     listContainer: {
