@@ -247,7 +247,13 @@ const Home = () => {
                             </Text>
                             <TouchableOpacity
                                 onPress={() => {
-                                    router.push("/topCoursesSeeAll");
+                                    router.push({
+                                        pathname: "/topCoursesSeeAll",
+                                        params: {
+                                            suggestions:
+                                                JSON.stringify(topCourseData),
+                                        },
+                                    });
                                 }}
                             >
                                 <Text style={styles.seeAllText}>See All</Text>
