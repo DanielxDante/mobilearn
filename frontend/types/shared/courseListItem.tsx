@@ -11,6 +11,7 @@ import React from "react";
 import images from "@/constants/images";
 import { Colors } from "@/constants/Colors";
 import icons from "../../constants/Icons";
+import Course from "./Course";
 
 interface CourseListItemProps {
     item: Course;
@@ -61,7 +62,7 @@ const CourseListItem: React.FC<CourseListItemProps> = ({ item, onSelect }) => {
     );
 };
 
-const { width, height } = Dimensions.get("window");
+const { height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
     courseContainer: {
