@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         fontFamily: "Plus-Jakarta-Sans",
         marginLeft: 25,
         paddingBottom: 2,
-        fontSize: 25,
+        fontSize: 22,
         fontWeight: "bold",
     },
     listContainer: {

@@ -7,7 +7,6 @@ import mobilearnHat from "../../assets/images/MobilearnHat.png";
 import { useAppStore } from "../../store/appStore"; // Import the store
 import { loginPageConstants as Constants } from "@/constants/TextConstants";
 
-
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
@@ -83,7 +82,6 @@ export default function LoginPage() {
           value={password}
           onChangeText={setPassword}
         />
-
         <SignInButton text="Sign In" onPress={handleSignIn} />
         <View
           style={{
