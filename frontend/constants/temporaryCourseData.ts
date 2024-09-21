@@ -1,4 +1,5 @@
 import { temporaryImages } from "@/constants";
+import Course from "@/types/shared/Course";
 
 // placeholder for channels
 export const channelData = [
@@ -37,14 +38,58 @@ export const courseListData: Course[] = [
     },
     {
         id: "3",
-        title: "Lorem Ipsum 1",
-        school: "Smoke University",
+        title: "Product Design and Innovation",
+        school: "Innovation Institute",
         description:
-            "Learn how to do well in school with the power of illusions.",
-        rating: "2.5",
-        completionRate: 0.69,
-        image: temporaryImages.course2,
-        enrolledCount: 335,
+            "Explore the intersection of creativity and technology in product design. Learn how to develop innovative solutions and create products that meet both user needs and market demands.",
+        rating: "4.9",
+        completionRate: 0.78,
+        image: temporaryImages.course3,
+        enrolledCount: 623,
+    },
+    {
+        id: "4",
+        title: "Typography and Layout Design",
+        school: "Creative Arts Academy",
+        description:
+            "Master the art of typography and learn effective layout design to create visually engaging content. This course covers essential principles of design, typography hierarchies, and grid systems.",
+        rating: "4.7",
+        completionRate: 0,
+        image: temporaryImages.course4, // assuming you have an image for this course
+        enrolledCount: 512,
+    },
+    {
+        id: "5",
+        title: "Branding and Identity Design",
+        school: "Visual Arts School",
+        description:
+            "Learn the principles of branding and identity design to create memorable and impactful brands. This course covers logo creation, brand strategy, and building a cohesive visual identity.",
+        rating: "4.8",
+        completionRate: 0,
+        image: temporaryImages.course5, // assuming you have an image for this course
+        enrolledCount: 748,
+    },
+    {
+        id: "6",
+        title: "Game Design and Development",
+        school: "Tech Creators Institute",
+        description:
+            "Dive into the world of game design and development. This course teaches the fundamentals of game mechanics, storytelling, and coding, empowering you to build immersive and engaging games.",
+        rating: "4.6",
+        completionRate: 1,
+        image: temporaryImages.course6, // assuming you have an image for this course
+        enrolledCount: 892,
+    },
+    {
+        id: "7",
+        title: "Web Design Fundamentals",
+        school: "Digital Design Academy",
+        description:
+            "Learn the core principles of web design, including layout, color theory, typography, and user experience. This course covers the essential skills needed to build visually appealing and user-friendly websites.",
+        rating: "4.7",
+        completionRate: 1,
+        image: temporaryImages.course7, // assuming you have an image for this course
+        enrolledCount: 1054,
     },
 ];
 // placeholder for list of Continue Watching courses

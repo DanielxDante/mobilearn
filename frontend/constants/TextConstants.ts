@@ -111,3 +111,11 @@ export const memberGuestTopCoursesSeeAll = {
     backButton: require("@/assets/images/notifications/backButton.png"),
     appBarTitle: "Top Courses",
 };
+
+export const memberGuestCoursePage = {
+    appBarTitle: "My Courses",
+    notifBellButton: require("@/assets/images/member_guest_images/notifBell.png"),
+    savedCoursesTitle: "Saved Courses",
+    inProgressCoursesTitle: "In Progress",
+    completedCoursesTitle: "Completed",
+};

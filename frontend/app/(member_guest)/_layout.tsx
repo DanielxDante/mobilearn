@@ -66,15 +66,15 @@ const MemberGuestLayout = () => {
                     }}
                 />
                 <Tabs.Screen
-                    name="course"
+                    name="coursePage"
                     options={{
-                        title: "Course",
+                        title: "CoursePage",
                         headerShown: false,
                         tabBarIcon: ({ color, focused }) => (
                             <TabIcon
                                 icon={icons.course}
                                 color={color}
-                                name="Course"
+                                name="CoursePage"
                                 focused={focused}
                             />
                         ),
