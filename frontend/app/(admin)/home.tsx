@@ -24,7 +24,7 @@ const AdminHome = () => {
     return (
         <SafeAreaView className='h-full w-full flex bg-white'>
             <View>
-                <Text style={{ fontFamily: 'Inter-Bold' }}>Home</Text>
+                <Text style={{ fontFamily: 'Inter-Bold' }}>Admin View</Text>
             </View>
         </SafeAreaView>
     )
