@@ -1,42 +1,95 @@
-import React from "react";
-import { Text, View, Image } from "react-native";
+import React, { useState } from "react";
+import { Text, View, Image, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SignInButton from "../../components/Button";
 import InputField from "../../components/InputField";
 import mobilearnHat from "../../assets/images/MobilearnHat.png";
+import { useAppStore } from "../../store/appStore"; // Import the store
+import { loginPageConstants as Constants } from "@/constants/TextConstants";
+
+const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const login = useAppStore((state) => state.login);
+
+  const handleSignIn = () => {
+    console.log("Signing in!");
+    login({ email, password }); // Call the login function from the store
+  };
+
   return (
-    <SafeAreaView className={"flex-1 px-4 bg-white"}>
-      <View className={"w-full items-center mb-6"}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        paddingHorizontal: 16,
+        backgroundColor: "white",
+        justifyContent: "center",
+      }}
+    >
+      <View
+        style={{
+          width: "100%",
+          alignItems: "center",
+          //marginBottom: 48,
+          marginTop: -64,
+        }}
+      >
         {/* Logo at the top */}
         <Image
           source={mobilearnHat}
-          className={"w-32 h-24"} // Adjust the size as needed
+          style={{
+            width: 128,
+            height: 96,
+          }}
           resizeMode="contain" // Adjust as needed
         />
+        <Text
+          style={{
+            fontSize: 36,
+            color: "#356FC5",
+            fontWeight: "bold",
+            textAlign: "center",
+            marginBottom: 24,
+          }}
+        >
+          {Constants.pageTitle}
+        </Text>
+        <Text
+          style={{
+            color: "#6C6C6C",
+            textAlign: "center",
+            marginBottom: 16,
+            maxWidth: 0.8 * width,
+          }}
+        >
+          {Constants.pageSubTitle}
+        </Text>
       </View>
-      <View className={"w-full"}>
-        <Text className={"text-3xl text-[#356FC5] font-bold text-center mb-6"}>
-          SIGN IN
-        </Text>
-        <Text className={"text-gray-500 text-center mb-8"}>
-          Sign In To Access Your Personalized Learning Journey
-        </Text>
-        <InputField inputTitle="Email" placeholder="youremail@gmail.com" />
+      <View style={{ width: "100%" }}>
         <InputField
-          inputTitle="Password"
-          placeholder="Password"
+          inputTitle={Constants.fields[0].inputTitle}
+          placeholder={Constants.fields[0].placeHolder}
+          value={email}
+          onChangeText={setEmail}
+        />
+        <InputField
+          inputTitle={Constants.fields[1].inputTitle}
+          placeholder={Constants.fields[1].placeHolder}
           secureTextEntry={true}
+          value={password}
+          onChangeText={setPassword}
         />
-        {/* <Link href="/forgot-password" style={tailwind("text-blue-500 mt-2")}>
-            Forgot Password?
-          </Link> */}
-        <SignInButton
-          text="Sign In"
-          onPress={() => console.log("Sign In Pressed")}
-        />
-        <View className={"flex-row justify-center mt-4"}>
+        <SignInButton text="Sign In" onPress={handleSignIn} />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            marginTop: 16,
+          }}
+        >
           <Text>Don’t have an Account? </Text>
           {/* <Link href="/signup" style={tailwind("text-blue-500")}>
               Sign Up here

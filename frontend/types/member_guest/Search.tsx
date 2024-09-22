@@ -1,33 +1,21 @@
-import {
-    View,
-    Text,
-    TextInput,
-    Image,
-    TouchableOpacity,
-    StyleSheet,
-    Dimensions,
-} from "react-native";
-import React, { useState, memo, useRef, useCallback } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import React, { useState, useRef, useCallback } from "react";
+
 import {
     AutocompleteDropdown,
     AutocompleteDropdownItem,
     IAutocompleteDropdownRef,
 } from "react-native-autocomplete-dropdown";
-
-import { images } from "../../constants";
-
-interface courseData {
-    id: string;
-    title: string;
-}
+import { memberGuestSearchConstants as Constants } from "@/constants/TextConstants";
+import Course from "@/types/shared/Course";
 
 interface SearchBarProps {
-    courseListData: courseData[];
+    courseListData: Course[];
 }
 
 const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
     const [loading, setLoading] = useState(false);
-    const [suggestionsList, setSuggestionsList] = useState<courseData[]>([]);
+    const [suggestionsList, setSuggestionsList] = useState<Course[]>([]);
     const [selectedItem, setSelectedItem] = useState<string | null>(null);
     const dropdownController = useRef<IAutocompleteDropdownRef | null>(null);
 
@@ -40,12 +28,9 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
             return;
         }
         setLoading(true);
-        const suggestions = courseListData
-            .filter((item) => item.title.toLowerCase().includes(filtertoken))
-            .map((item) => ({
-                id: item.id,
-                title: item.title,
-            }));
+        const suggestions = courseListData.filter((item) =>
+            item.title.toLowerCase().includes(filtertoken)
+        );
         setSuggestionsList(suggestions);
         setLoading(false);
     }, []);
@@ -57,8 +42,22 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
     const onOpenSuggestionsList = useCallback(() => {}, []);
 
     const renderItem = (item: AutocompleteDropdownItem) => (
-        <View className="p-3 bg-white rounded-3xl">
-            <Text className="text-black">{item.title}</Text>
+        <View
+            style={{
+                backgroundColor: "white",
+                borderRadius: 15,
+                borderColor: "#FFFFFF",
+            }}
+        >
+            <Text
+                style={{
+                    color: "black",
+                    padding: 10,
+                    paddingLeft: 15,
+                }}
+            >
+                {item.title}
+            </Text>
         </View>
     );
 
@@ -81,7 +80,7 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
             loading={loading}
             useFilter={false}
             textInputProps={{
-                placeholder: "Search",
+                placeholder: Constants.inputPlaceholder,
                 autoCorrect: false,
                 autoCapitalize: "none",
                 style: {
@@ -110,16 +109,14 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
                 shadowColor: "#000",
                 shadowRadius: 3,
             }}
-            // containerStyle={{ flexGrow: 1, flexShrink: 1 }}
             renderItem={renderItem}
-            //   ChevronIconComponent={<Feather name="chevron-down" size={20} color="#fff" />}
-            //   ClearIconComponent={<Feather name="x-circle" size={18} color="#fff" />}
             inputHeight={50}
             showChevron={false}
             closeOnBlur={false}
-            //  showClear={false}
         />
     );
 };
+
+const styles = StyleSheet.create({});
 
 export default Search;

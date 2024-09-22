@@ -1,7 +1,6 @@
 import { SplashScreen, Stack } from "expo-router";
 import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
-import { StatusBar } from "expo-status-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -12,6 +11,7 @@ const RootLayout = () => {
         "Inter-SemiBold": require("../assets/fonts/Inter-SemiBold.ttf"),
         "Inter-Medium": require("../assets/fonts/Inter-Medium.ttf"),
         "Inter-Light": require("../assets/fonts/Inter-Light.ttf"),
+        "Plus-Jakarta-Sans": require("@/assets/fonts/PlusJakartaSans.ttf"),
     });
 
     useEffect(() => {

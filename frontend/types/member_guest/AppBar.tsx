@@ -1,8 +1,7 @@
 import { StyleSheet, View, Text, Image } from "react-native";
 import React, { useState } from "react";
 import { Dropdown } from "react-native-element-dropdown";
-
-import { images } from "../../constants";
+import { memberGuestAppBarConstants as Constants } from "@/constants/TextConstants";
 
 interface Option {
     label: string;
@@ -19,8 +18,8 @@ const AppBar: React.FC<AppBarProps> = ({ options }) => {
 
     const renderItem = (item: Option) => {
         return (
-            <View className="p-3 flex flex-row justify-between align-middle">
-                <Text className="flex-1 text-sm">{item.label}</Text>
+            <View style={styles.container}>
+                <Text>{item.label}</Text>
             </View>
         );
     };
@@ -31,25 +30,35 @@ const AppBar: React.FC<AppBarProps> = ({ options }) => {
             selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}
             renderRightIcon={() => (
-                <Image source={images.hamburger} style={styles.iconStyle} />
+                <Image
+                    source={Constants.hamburgerIcon}
+                    style={styles.iconStyle}
+                />
             )}
             data={options}
             search
             maxHeight={300}
             labelField="label"
             valueField="value"
-            placeholder="Select item"
-            searchPlaceholder="Search..."
+            placeholder={Constants.dropDownPlaceholder}
+            searchPlaceholder={Constants.searchPlaceholder}
             value={value}
             onChange={(item) => {
                 setValue(item);
             }}
             renderItem={renderItem}
+            itemContainerStyle={styles.itemContainerStyle}
         />
     );
 };
 
 const styles = StyleSheet.create({
+    container: {
+        padding: 1,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignContent: "center",
+    },
     dropdown: {
         margin: 5,
         height: 55,
@@ -84,6 +93,10 @@ const styles = StyleSheet.create({
     inputSearchStyle: {
         height: 40,
         fontSize: 16,
+    },
+    itemContainerStyle: {
+        paddingLeft: 5,
+        paddingVertical: 3,
     },
 });
 
