@@ -1,4 +1,7 @@
 import images from "./Images";
 import temporaryImages from "./temporaryImages";
 
-export { images, temporaryImages };
+export { 
+    images,
+    temporaryImages,
+};

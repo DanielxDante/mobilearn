@@ -1,6 +1,5 @@
 import React from "react";
 import { Text, TextInput, TextInputProps, View } from "react-native";
-import tailwind from "tailwind-rn";
 
 interface InputFieldProps extends TextInputProps {
   inputTitle?: string;

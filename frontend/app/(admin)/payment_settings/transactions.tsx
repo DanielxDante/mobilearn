@@ -1,17 +1,14 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, StyleSheet } from 'react-native'
-import { router } from "expo-router";
+import { View, StyleSheet, FlatList } from 'react-native';
 
+import { usePaymentStore } from '@/store/paymentStore';
 import BackButton from '@/components/BackButton';
 import HeaderText from "@/components/HeaderText";
-import IconTextButton from '@/components/IconTextButton';
-import icons from '@/constants/Icons';
-import { 
-    ADMIN_MEMBER_MANAGE,
-} from '@/constants/pages';
 
-const MemberSettings = () => {
+const PaymentTransactions = () => {
+    // const { PlatformTransactions } = usePaymentStore();
+
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
@@ -20,21 +17,20 @@ const MemberSettings = () => {
                     style={styles.backButton}
                 />
                 <HeaderText
-                    text={"Member Management"}
+                    text={"Payment Transactions"}
                     style={styles.headerText}
                 />
             </View>
-            {/* Member Settings List */}
-            <View style={styles.settingsContainer}>
-                <IconTextButton 
-                    icon={icons.tele}
-                    text={"Manage Members"}
-                    onPress={() => {
-                        router.push(ADMIN_MEMBER_MANAGE);
-                    }}
-                    style={styles.iconTextButton}
-                />
-            </View>
+            {/* <FlatList
+                data={transactionData}
+                renderItem={({ item }) => (
+                    <TransactionItem 
+                        transaction={item}
+                    />
+                )}
+                keyExtractor={(item) => item.timestamp}
+                contentContainerStyle={styles.listContainer}
+            /> */}
         </SafeAreaView>
     );
 }
@@ -57,13 +53,10 @@ const styles = StyleSheet.create({
         fontSize: 25,
         marginLeft: 20
     },
-    settingsContainer: {
-        flexDirection: "column",
-        marginTop: 30,
-    },
-    iconTextButton: {
-        paddingBottom: 40
+    listContainer: {
+        paddingHorizontal: 25,
+        paddingVertical: 20,
     },
 });
 
-export default MemberSettings;
+export default PaymentTransactions;
