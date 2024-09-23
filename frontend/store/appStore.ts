@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import axios, { AxiosResponse } from "axios";
 
 import { IAppInfo, AppState, ILogin } from "@/types/shared/appState";
-import { AUTH_LOGIN_URL } from "@/constants/AuthConstants";
+import { AUTH_LOGIN_URL } from "@/constants/Routes";
 
 export const initAppInfo: IAppInfo = {
   title: "MobiLearn",
@@ -29,13 +29,6 @@ export const useAppStore = create(
           console.error("Login error:", error);
         }
       },
-      // example of how to use axios with zustand
-      // login: async (payload: ILogin) => {
-      //     const loginResponse = await axios.post(AUTH_LOGIN_URL, payload).then((res) => res);
-      //     if (loginResponse.status === 200) {
-      //         set({ token: loginResponse.data.token });
-      //     }
-      // }
     }),
     {
       name: "app-store",

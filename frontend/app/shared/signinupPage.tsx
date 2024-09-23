@@ -101,7 +101,7 @@ const SignUpPage = () => {
           text={Constants.adminButtonText}
           isBlue={false}
           onPress={() => {
-            router.push("/(admin)/home");
+            router.push("/(admin)");
             console.log("Admin logged in");
           }}
         ></Button>
