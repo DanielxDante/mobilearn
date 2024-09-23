@@ -1,4 +1,4 @@
-import { temporaryImages } from "@/constants";
+import temporaryImages from "@/constants/temporaryImages";
 import Course from "@/types/shared/Course";
 
 // placeholder for channels

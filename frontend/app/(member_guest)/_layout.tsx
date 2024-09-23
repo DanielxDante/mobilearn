@@ -4,16 +4,10 @@ import { Tabs } from "expo-router";
 
 import icons from "../../constants/Icons";
 import { StatusBar } from "expo-status-bar";
+import { ITabIcon } from "@/types/shared/layout";
 import { Colors } from "@/constants/Colors";
 
-interface TabIconProps {
-    icon: any;
-    color: string;
-    name: string;
-    focused: boolean;
-}
-
-const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
+const TabIcon = ({ icon, color, name, focused }: ITabIcon) => {
     return (
         <View
             style={{

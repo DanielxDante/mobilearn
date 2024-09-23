@@ -8,14 +8,14 @@ import {
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFonts } from "expo-font";
 import { router } from "expo-router";
 
-import icons from "../../constants/Icons";
+import icons from "@/constants/Icons";
 import { Colors } from "@/constants/Colors";
 import NotificationItem, {
     AppNotification,
 } from "@/types/shared/NotificationItem";
+import BackButton from "@/components/BackButton";
 
 // placeholder for notification data
 const notificationData: AppNotification[] = [
@@ -50,29 +50,11 @@ const sortedNotification = notificationData.sort((a, b) => {
 });
 
 const Notification = () => {
-    const [fontsLoaded, error] = useFonts({
-        "Inter-Regular": require("@/assets/fonts/Inter-Regular.ttf"),
-        "Inter-Bold": require("@/assets/fonts/Inter-Bold.ttf"),
-        "Inter-SemiBold": require("@/assets/fonts/Inter-SemiBold.ttf"),
-        "Inter-Medium": require("@/assets/fonts/Inter-Medium.ttf"),
-        "Inter-Light": require("@/assets/fonts/Inter-Light.ttf"),
-        "Plus-Jakarta-Sans": require("@/assets/fonts/PlusJakartaSans.ttf"),
-    });
-
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
             <View style={styles.appBarContainer}>
-                <TouchableOpacity
-                    onPress={() => {
-                        router.back();
-                    }}
-                >
-                    <Image
-                        source={icons.backButton}
-                        style={styles.backButton}
-                    />
-                </TouchableOpacity>
+                <BackButton />
                 <Text style={styles.notificationHeader}>Notification</Text>
             </View>
             {/* Notification Area */}
@@ -97,12 +79,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         marginTop: 20,
         alignItems: "center",
-    },
-    backButton: {
-        height: 25,
-        width: 25,
-        marginLeft: 25,
-        padding: 5,
     },
     notificationHeader: {
         color: Colors.defaultBlue,

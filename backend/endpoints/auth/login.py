@@ -39,8 +39,9 @@ class LoginEndpoint(Resource):
         
         if user and Bcrypt().check_password_hash(user.password_hash, password):
             token = create_access_token(identity=username)
+            username = user.username
             return Response(
-                json.dumps({'message': 'Login successful', 'token': f"Bearer {token}"}),
+                json.dumps({'message': 'Login successful', 'username': username, 'token': f"Bearer {token}"}),
                 status=200, mimetype='application/json'
             )
         else:

@@ -1,7 +1,7 @@
 import React from "react";
 import { Stack } from "expo-router";
 
-const AdminHomeLayout = () => {
+const PaymentSettingsHomeLayout = () => {
     return (
         <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -9,4 +9,4 @@ const AdminHomeLayout = () => {
     )
 };
 
-export default AdminHomeLayout;
+export default PaymentSettingsHomeLayout;

@@ -1,4 +1,4 @@
-const VERSION = process.env.VERSION ?? "1.0";
+export const VERSION = process.env.VERSION ?? "1.0";
 export const BACKEND_BASE_URL =
   process.env.BACKEND_BASE_URL ?? "http://localhost:8080";
 
