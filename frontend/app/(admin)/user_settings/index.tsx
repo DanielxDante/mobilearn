@@ -10,7 +10,7 @@ import icons from '@/constants/Icons';
 import { 
     ADMIN_MEMBER_SETTINGS,
     ADMIN_INSTRUCTOR_SETTINGS
-} from '@/constants/Pages';
+} from '@/constants/pages';
 
 const UserSettings = () => {
     return (

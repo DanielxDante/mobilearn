@@ -13,7 +13,7 @@ import {
     ADMIN_CONTENT_SETTINGS,
     ADMIN_PAYMENT_SETTINGS,
     ADMIN_SYSTEM_SETTINGS 
-} from '@/constants/Pages';
+} from '@/constants/pages';
 
 const AdminHome = () => {
     const segments = useSegments();
@@ -82,7 +82,7 @@ const AdminHome = () => {
             {/* Logout Button */}
             <View style={styles.footerContainer}>
                 <LargeButton
-                    text={"Logout"}
+                    text={"LOGOUT"}
                     isBlue={true}
                     onPress={() => {
                         router.push("/shared/signinupPage");

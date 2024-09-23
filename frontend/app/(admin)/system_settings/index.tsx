@@ -9,8 +9,8 @@ import IconTextButton from '@/components/IconTextButton';
 import icons from '@/constants/Icons';
 import { 
     ADMIN_SYSTEM_INFO,
-    ADMIN_SYSTEM_POLICY
-} from '@/constants/Pages';
+    ADMIN_SYSTEM_POLICY 
+} from '@/constants/pages';
 
 const SystemSettings = () => {
     return (

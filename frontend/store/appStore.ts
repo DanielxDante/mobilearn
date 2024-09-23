@@ -1,14 +1,14 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, { AxiosResponse } from "axios";
 
-import { IAppInfo, AppState, ILogin } from "@/types/shared/appState";
+import { ILogin } from "@/types/shared/appState";
 import { AUTH_LOGIN_URL } from "@/constants/Routes";
 
-export const initAppInfo: IAppInfo = {
-  title: "MobiLearn",
-  description:
-    "MobiLearn is a mobile learning platform that allows you to learn on the go.",
+export type AppState = {
+  token: string;
+  login: (payload: ILogin) => Promise<void>;
 };
 
 export const useAppStore = create(
@@ -32,7 +32,7 @@ export const useAppStore = create(
     }),
     {
       name: "app-store",
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => AsyncStorage),
     }
   )
 );

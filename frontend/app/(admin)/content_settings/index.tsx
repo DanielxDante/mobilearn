@@ -11,7 +11,7 @@ import {
     ADMIN_CHANNELS_MANAGE,
     ADMIN_COURSES_MANAGE,
     ADMIN_COURSES_REQUEST
-} from '@/constants/Pages';
+} from '@/constants/pages';
 
 const ContentSettings = () => {
     return (

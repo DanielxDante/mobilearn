@@ -10,7 +10,7 @@ import icons from '@/constants/Icons';
 import { 
     ADMIN_PAYMENT_CONFIGS,
     ADMIN_PAYMENT_TRANSACTIONS
-} from '@/constants/Pages';
+} from '@/constants/pages';
 
 const PaymentSettings = () => {
     return (
