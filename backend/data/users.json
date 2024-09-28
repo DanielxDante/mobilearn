@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "id": 0,
+      "username": "admin",
+      "email": "admin@gmail.com",
+      "password_hash": "admin"
+    },
+    {
+      "id": 1,
+      "username": "instructor",
+      "email": "instructor@gmail.com",
+      "password_hash": "instructor"
+    },
+    {
+      "id": 2,
+      "username": "student",
+      "email": "student@gmail.com",
+      "password_hash": "student"
+    }
+  ]
+}

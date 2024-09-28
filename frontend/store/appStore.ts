@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
 
 import { ILogin } from "@/types/shared/appState";
@@ -19,8 +19,10 @@ export const useAppStore = create(
         try {
           const loginResponse = await axios.post(AUTH_LOGIN_URL, payload);
           if (loginResponse.status === 200) {
+            console.log("LOGIN SUCCESS!");
             set({ token: loginResponse.data.token });
             // navigate to correct home page
+            // should handle somekind of role token(?) and navigate to corresponding page
           } else {
             // Handle error cases
           }

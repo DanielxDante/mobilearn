@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import MediumButton from "@/components/MediumButton";
 import { signUpSelectionConstants as Constants } from "@/constants/TextConstants";
+import { router } from "expo-router";
 
 const RoleSelectionScreen = () => {
   return (
@@ -28,7 +29,7 @@ const RoleSelectionScreen = () => {
         />
         <MediumButton
           text={Constants.roles[1].buttonText}
-          onPress={() => console.log("Student selected")}
+          onPress={() => router.push("/shared/signUpPage")}
         ></MediumButton>
       </View>
 
