@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, StyleSheet, Image } from 'react-native'
 
 import BackButton from '@/components/BackButton';
-import images from '@/constants/Images';
+import images from '@/constants/images';
 import { VERSION } from "@/constants/Routes";
 
 const SystemInfo = () => {

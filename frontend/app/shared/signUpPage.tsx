@@ -1,25 +1,35 @@
 import React, { useState } from "react";
 import { Text, View, Image, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import RegisterButton from "../../components/Button";
-import InputField from "../../components/InputField";
+import { router } from "expo-router";
+
+import RegisterButton from "@/components/Button";
+import InputField from "@/components/InputField";
 //import mobilearnHat from "../../assets/images/MobilearnHat.png";
-import { useAppStore } from "../../store/appStore"; // Import the store
+import useAuthStore from "@/store/authStore"; // Import the store
 import { signUpPageConstants as Constants } from "@/constants/TextConstants";
+import {MEMBER_LOGIN_PAGE} from "@/constants/pages";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
+  const signup = useAuthStore(
+    (state) => state.signup
+  );
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [conPassword, setConPassword] = useState("");
 
-  const login = useAppStore((state) => state.login);
-
-  const handleRegistration = () => {
-    console.log("Registering!");
-    //login({ email, password }); // Call the login function from the store
+  const handleRegistration = async () => {
+    try {
+      await signup(name, email, password, "member");
+      router.push(MEMBER_LOGIN_PAGE)
+    } catch (error) {
+      console.log(error);
+      alert("An error occurred while logging in");
+    }
   };
 
   return (

@@ -2,7 +2,7 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Get started
+## Get started locally
 
 1. Download npm through NodeJS
 2. Install dependencies
@@ -10,7 +10,14 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    ```bash
    npm ci
    ```
-3. Start the app
+3. Create .env.local file to store environment variables. Store the following variables:
+
+```bash
+EXPO_PUBLIC_VERSION=1.0
+EXPO_PUBLIC_LOCAL_IP_ADDR=<your-own-local-ip-address>
+```
+
+4. Start the app
 
    ```bash
     npx expo start

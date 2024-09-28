@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React from "react";
 
-import images from "@/constants/Images";
+import images from "@/constants/images";
 import { Colors } from "@/constants/Colors";
 import icons from "../../constants/Icons";
 import Course from "./Course";

@@ -14,7 +14,7 @@ VERSION = '1.0'
 app = Flask(__name__)
 api = Api(app, version=VERSION, title=APP_NAME, description=f"{APP_NAME} API")
 jwt = JWTManager(app)
-CORS(app, resources={r"/*": {"origins": "*"}}, origins="*")
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # api paths under namespaces automatically have name prepended 
 ns_auth = Namespace(name='auth', description='Authentication operations')
