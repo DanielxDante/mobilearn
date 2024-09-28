@@ -1,45 +1,25 @@
 import React, { useState } from "react";
 import { Text, View, Image, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
-
-import SignInButton from "@/components/Button";
-import InputField from "@/components/InputField";
-import mobilearnHat from "@/assets/images/MobilearnHat.png";
-import useAuthStore from "@/store/authStore";
-import { loginPageConstants as Constants } from "@/constants/TextConstants";
-import {
-  MEMBER_GUEST_HOME,
-  ADMIN_HOME,
-} from "@/constants/pages";
+import RegisterButton from "../../components/Button";
+import InputField from "../../components/InputField";
+//import mobilearnHat from "../../assets/images/MobilearnHat.png";
+import { useAppStore } from "../../store/appStore"; // Import the store
+import { signUpPageConstants as Constants } from "@/constants/TextConstants";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
-  const login = useAuthStore(
-    (state) => state.login
-  );
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [conPassword, setConPassword] = useState("");
 
-  const handleSignIn = async () => {
-    try {
-      const newRole = await login(email, password, "member");
+  const login = useAppStore((state) => state.login);
 
-      if (newRole === "member") {
-        router.push(MEMBER_GUEST_HOME);
-      } else if (newRole === "admin") {
-        router.push(ADMIN_HOME);
-      }
-      // TODO: Redirect to instructors home page once done
-      // else if (newRole === "instructor") {
-      //   router.push(INSTRUCTOR_HOME);
-      // }
-    } catch (error) {
-      console.log(error);
-      alert("An error occurred while logging in");
-    }
+  const handleRegistration = () => {
+    console.log("Registering!");
+    //login({ email, password }); // Call the login function from the store
   };
 
   return (
@@ -60,14 +40,14 @@ export default function LoginPage() {
         }}
       >
         {/* Logo at the top */}
-        <Image
+        {/* <Image
           source={mobilearnHat}
           style={{
             width: 128,
             height: 96,
           }}
           resizeMode="contain" // Adjust as needed
-        />
+        /> */}
         <Text
           style={{
             fontSize: 36,
@@ -94,17 +74,33 @@ export default function LoginPage() {
         <InputField
           inputTitle={Constants.fields[0].inputTitle}
           placeholder={Constants.fields[0].placeHolder}
-          value={username}
-          onChangeText={setUsername}
+          value={name}
+          onChangeText={setName}
         />
         <InputField
           inputTitle={Constants.fields[1].inputTitle}
           placeholder={Constants.fields[1].placeHolder}
+          value={email}
+          onChangeText={setEmail}
+        />
+        <InputField
+          inputTitle={Constants.fields[2].inputTitle}
+          placeholder={Constants.fields[2].placeHolder}
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
         />
-        <SignInButton text="Sign In" onPress={handleSignIn} />
+        <InputField
+          inputTitle={Constants.fields[3].inputTitle}
+          placeholder={Constants.fields[3].placeHolder}
+          secureTextEntry={true}
+          value={conPassword}
+          onChangeText={setConPassword}
+        />
+        <RegisterButton
+          text={Constants.regButtonText}
+          onPress={handleRegistration}
+        />
         <View
           style={{
             flexDirection: "row",
