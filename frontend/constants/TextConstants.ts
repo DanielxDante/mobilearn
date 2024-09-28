@@ -47,8 +47,8 @@ export const loginPageConstants = {
   pageSubTitle: "Sign In To Access Your Personalized Learning Journey",
   fields: [
     {
-      inputTitle: "Username",
-      placeHolder: "AdamSmith",
+      inputTitle: "Email",
+      placeHolder: "Email",
     },
     { inputTitle: "Password", placeHolder: "Password" },
   ],
@@ -75,7 +75,7 @@ export const signUpPageConstants = {
   pageSubTitle: "Create Your Account To Embark On A Journey Of Learning.",
   fields: [
     {
-      inputTitle: "Full Name",
+      inputTitle: "Username",
       placeHolder: "John Cena",
     },
     {

@@ -23,6 +23,7 @@ const useAuthStore = create<AuthState>()(
       token: "",
       role: "guest",
       signup: async (username, email, password, role) => {
+        console.log("Signing up...")
         const response = await axios.post(AUTH_SIGNUP_URL, 
           { username, email, password, role },
           { headers: { 'Content-Type': 'application/json' } }
@@ -36,6 +37,7 @@ const useAuthStore = create<AuthState>()(
         }
       },
       login: async (email, password, role) => {
+        console.log("Logging in...")
         const response = await axios.post(AUTH_LOGIN_URL,
           { email, password, role },
           { headers: { 'Content-Type': 'application/json' } }
@@ -50,6 +52,7 @@ const useAuthStore = create<AuthState>()(
         }
       },
       logout: async () => {
+        console.log("Logging out...")
         set({ username: "", email: "", token: "", role: "guest" });
       }
     }),

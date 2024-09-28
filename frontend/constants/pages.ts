@@ -1,6 +1,9 @@
 import { Href } from "expo-router";
 
-export const BASE_HOME = "/(app)"; 
+export const BASE_HOME = "/(app)";
+
+// SHARED PAGES
+export const MEMBER_LOGIN_PAGE = "/shared/loginPage" as Href<string>;
 
 // MEMBER/GUEST PAGES
 export const MEMBER_GUEST_NAMESPACE = "(member_guest)";

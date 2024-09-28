@@ -20,7 +20,6 @@ export default function LoginPage() {
     (state) => state.login
   );
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignIn = async () => {
@@ -94,8 +93,8 @@ export default function LoginPage() {
         <InputField
           inputTitle={Constants.fields[0].inputTitle}
           placeholder={Constants.fields[0].placeHolder}
-          value={username}
-          onChangeText={setUsername}
+          value={email}
+          onChangeText={setEmail}
         />
         <InputField
           inputTitle={Constants.fields[1].inputTitle}
