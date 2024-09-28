@@ -47,8 +47,8 @@ export const loginPageConstants = {
   pageSubTitle: "Sign In To Access Your Personalized Learning Journey",
   fields: [
     {
-      inputTitle: "Email",
-      placeHolder: "youremail@gmail.com",
+      inputTitle: "Username",
+      placeHolder: "AdamSmith",
     },
     { inputTitle: "Password", placeHolder: "Password" },
   ],

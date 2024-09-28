@@ -10,14 +10,14 @@ import { loginPageConstants as Constants } from "@/constants/TextConstants";
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const login = useAppStore((state) => state.login);
 
   const handleSignIn = () => {
     console.log("Signing in!");
-    login({ email, password }); // Call the login function from the store
+    login({ username, password }); // Call the login function from the store
   };
 
   return (
@@ -72,8 +72,8 @@ export default function LoginPage() {
         <InputField
           inputTitle={Constants.fields[0].inputTitle}
           placeholder={Constants.fields[0].placeHolder}
-          value={email}
-          onChangeText={setEmail}
+          value={username}
+          onChangeText={setUsername}
         />
         <InputField
           inputTitle={Constants.fields[1].inputTitle}
