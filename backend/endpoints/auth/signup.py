@@ -3,12 +3,13 @@ from flask import Response, request
 from flask_restx import Resource
 
 from app import api
-from models.user import User
+from models.user import User, ROLES
 
 parser = api.parser()
 parser.add_argument('username', type=str, help='Username', location='json', required=True)
 parser.add_argument('password', type=str, help='Password', location='json', required=True)
 parser.add_argument('email', type=str, help='Email', location='json', required=True)
+parser.add_argument('role', type=str, help='Role', location='json', required=True, choices=ROLES)
 
 class SignupEndpoint(Resource):
     @api.doc(
@@ -25,7 +26,8 @@ class SignupEndpoint(Resource):
             {
                 "username": "foo",
                 "password": "bar",
-                "email": "foobar@gmail.com"
+                "email": "foobar@gmail.com",
+                "role": "member"
             }
             """
     )
@@ -35,8 +37,9 @@ class SignupEndpoint(Resource):
         username = data.get('username')
         password = data.get('password')
         email = data.get('email')
+        role = data.get('role')
         
-        User.add_user(username, password, email)
+        User.add_user(username, password, email, role)
         
         return Response(
             json.dumps({'message': 'Signup successful'}),

@@ -3,6 +3,8 @@ import { Href } from "expo-router";
 export const BASE_HOME = "/(app)"; 
 
 // MEMBER/GUEST PAGES
+export const MEMBER_GUEST_NAMESPACE = "(member_guest)";
+export const MEMBER_GUEST_HOME = `/${MEMBER_GUEST_NAMESPACE}/home` as Href<string>;
 
 // INSTRUCTOR PAGES
 

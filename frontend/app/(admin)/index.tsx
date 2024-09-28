@@ -14,8 +14,12 @@ import {
     ADMIN_PAYMENT_SETTINGS,
     ADMIN_SYSTEM_SETTINGS 
 } from '@/constants/pages';
+import useAuthStore from '@/store/authStore';
 
 const AdminHome = () => {
+    const logout = useAuthStore(
+        (state) => state.logout
+    );
     const segments = useSegments();
 
     // hardware back doesnt automatically log out the admin
@@ -84,7 +88,8 @@ const AdminHome = () => {
                 <LargeButton
                     text={"LOGOUT"}
                     isBlue={true}
-                    onPress={() => {
+                    onPress={async () => {
+                        await logout();
                         router.push("/shared/signinupPage");
                         console.log("Admin logout");
                     }}

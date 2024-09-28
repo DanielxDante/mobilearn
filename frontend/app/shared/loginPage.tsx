@@ -1,23 +1,44 @@
 import React, { useState } from "react";
 import { Text, View, Image, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SignInButton from "../../components/Button";
-import InputField from "../../components/InputField";
-import mobilearnHat from "../../assets/images/MobilearnHat.png";
-import { useAppStore } from "../../store/appStore"; // Import the store
+import { router } from "expo-router";
+
+import SignInButton from "@/components/Button";
+import InputField from "@/components/InputField";
+import mobilearnHat from "@/assets/images/MobilearnHat.png";
+import useAuthStore from "@/store/authStore";
 import { loginPageConstants as Constants } from "@/constants/TextConstants";
+import {
+  MEMBER_GUEST_HOME,
+  ADMIN_HOME,
+} from "@/constants/pages";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
+  const login = useAuthStore(
+    (state) => state.login
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const login = useAppStore((state) => state.login);
+  const handleSignIn = async () => {
+    try {
+      const newRole = await login(email, password, "member");
 
-  const handleSignIn = () => {
-    console.log("Signing in!");
-    login({ email, password }); // Call the login function from the store
+      if (newRole === "member") {
+        router.push(MEMBER_GUEST_HOME);
+      } else if (newRole === "admin") {
+        router.push(ADMIN_HOME);
+      }
+      // TODO: Redirect to instructors home page once done
+      // else if (newRole === "instructor") {
+      //   router.push(INSTRUCTOR_HOME);
+      // }
+    } catch (error) {
+      console.log(error);
+      alert("An error occurred while logging in");
+    }
   };
 
   return (

@@ -5,11 +5,12 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token
 
 from app import api
-from models.user import User
+from models.user import User, ROLES
 
 parser = api.parser()
-parser.add_argument('username', type=str, help='Username', location='json', required=True)
+parser.add_argument('email', type=str, help='Email', location='json', required=True)
 parser.add_argument('password', type=str, help='Password', location='json', required=True)
+parser.add_argument('role', type=str, help='Role', location='json', required=True, choices=ROLES)
 
 class LoginEndpoint(Resource):
     @api.doc(
@@ -24,24 +25,34 @@ class LoginEndpoint(Resource):
             Example request JSON:
 
             {
-                "username": "foo",
+                "email": "foobar@gmail.com",
                 "password": "bar",
+                "role": "member"
             }
             """
     )
     @api.expect(parser)
     def post(self):
         data = request.get_json()
-        username = data.get('username')
+        email = data.get('email')
         password = data.get('password')
+        role = data.get('role')
+
+        # TODO: simple backdoor for admin for now, to be further secured later on
+        if (email == "admin" and password == "admin"):
+            token = create_access_token(identity=email)
+            return Response(
+                json.dumps({'message': 'Login successful', 'username': 'admin', 'role': 'admin', 'token': f"Bearer {token}"}),
+                status=200, mimetype='application/json'
+            )
         
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(email=email, role=role).first()
         
         if user and Bcrypt().check_password_hash(user.password_hash, password):
-            token = create_access_token(identity=username)
+            token = create_access_token(identity=email)
             username = user.username
             return Response(
-                json.dumps({'message': 'Login successful', 'username': username, 'token': f"Bearer {token}"}),
+                json.dumps({'message': 'Login successful', 'username': username, 'role': role, 'token': f"Bearer {token}"}),
                 status=200, mimetype='application/json'
             )
         else:

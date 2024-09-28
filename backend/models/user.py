@@ -1,7 +1,10 @@
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import Enum
 from flask_bcrypt import Bcrypt
 
 from database import db
+
+ROLES = ('member', 'instructor', 'admin')
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -9,6 +12,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    role = db.Column(Enum(*ROLES, name='roles'), nullable=False, default='member')
 
     @hybrid_property
     def password(self):
@@ -23,8 +27,8 @@ class User(db.Model):
         self.password_hash = Bcrypt().generate_password_hash(password_plain).decode('utf-8')
 
     @staticmethod
-    def add_user(username, password, email):
-        user = User(username=username, email=email)
+    def add_user(username, password, email, role):
+        user = User(username=username, email=email, role=role)
         user.password = password # separate from __init__ to use password.setter
         db.session.add(user)
         db.session.commit()
@@ -38,6 +42,10 @@ class User(db.Model):
     @staticmethod
     def get_users():
         return User.query.all()
+    
+    @staticmethod
+    def get_users_role(role):
+        return User.query.filter_by(role=role).all()
     
     @staticmethod
     def get_user_by_id(id):
