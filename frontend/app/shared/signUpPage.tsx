@@ -26,7 +26,7 @@ export default function LoginPage() {
             router.push(MEMBER_LOGIN_PAGE);
         } catch (error) {
             console.log(error);
-            alert("An error occurred while logging in");
+            alert("An error occurred while signing up");
         }
     };
 
