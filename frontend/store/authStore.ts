@@ -64,6 +64,7 @@ const useAuthStore = create<AuthState>()(
             email: email,
             token: responseData.token,
             role: responseData.role,
+            gender: responseData.gender,
           });
           return responseData.role;
         } else {
@@ -72,7 +73,13 @@ const useAuthStore = create<AuthState>()(
       },
       logout: async () => {
         console.log("Logging out...");
-        set({ username: "", email: "", token: "", role: "guest" });
+        set({
+          username: "",
+          email: "",
+          token: "",
+          role: "guest",
+          gender: "male",
+        });
       },
     }),
     {
