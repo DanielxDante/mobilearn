@@ -5,78 +5,78 @@ import { signUpSelectionConstants as Constants } from "@/constants/textConstants
 import { router } from "expo-router";
 
 const RoleSelectionScreen = () => {
-    return (
-        <View style={styles.container}>
-            <Text style={styles.prompt}>{Constants.pageTitle}</Text>
+  return (
+    <View style={styles.container}>
+      <Text style={styles.prompt}>{Constants.pageTitle}</Text>
 
-            <View style={styles.roleContainer}>
-                <Image
-                    source={Constants.roles[0].image}
-                    style={styles.image}
-                    resizeMode="contain"
-                />
-                <MediumButton
-                    text={Constants.roles[0].buttonText}
-                    onPress={() => console.log("Instructor selected")}
-                ></MediumButton>
-            </View>
+      <View style={styles.roleContainer}>
+        <Image
+          source={Constants.roles[0].image}
+          style={styles.image}
+          resizeMode="contain"
+        />
+        <MediumButton
+          text={Constants.roles[0].buttonText}
+          onPress={() => console.log("Instructor selected")}
+        ></MediumButton>
+      </View>
 
-            <View style={styles.roleContainer}>
-                <Image
-                    source={Constants.roles[1].image}
-                    style={styles.image}
-                    resizeMode="contain"
-                />
-                <MediumButton
-                    text={Constants.roles[1].buttonText}
-                    onPress={() => router.push("/shared/signUpPage")}
-                ></MediumButton>
-            </View>
+      <View style={styles.roleContainer}>
+        <Image
+          source={Constants.roles[1].image}
+          style={styles.image}
+          resizeMode="contain"
+        />
+        <MediumButton
+          text={Constants.roles[1].buttonText}
+          onPress={() => router.push("/shared/memberSignUpPage")}
+        ></MediumButton>
+      </View>
 
-            <Text style={styles.message}>{Constants.pageSubTitle}</Text>
-        </View>
-    );
+      <Text style={styles.message}>{Constants.pageSubTitle}</Text>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "white",
-        padding: 16,
-        rowGap: 32,
-    },
-    prompt: {
-        fontSize: 24,
-        fontWeight: "bold",
-        marginBottom: 24,
-        color: "#356fc5",
-    },
-    roleContainer: {
-        rowGap: 24,
-        marginBottom: 24,
-    },
-    image: {
-        width: 192, // Adjust as needed
-        height: 128, // Adjust as needed
-    },
-    button: {
-        backgroundColor: "blue",
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 5,
-        marginTop: 16,
-    },
-    buttonText: {
-        color: "white",
-        fontWeight: "bold",
-    },
-    message: {
-        color: "gray",
-        textAlign: "center",
-        marginTop: 0,
-    },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    padding: 16,
+    rowGap: 32,
+  },
+  prompt: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 24,
+    color: "#356fc5",
+  },
+  roleContainer: {
+    rowGap: 24,
+    marginBottom: 24,
+  },
+  image: {
+    width: 192, // Adjust as needed
+    height: 128, // Adjust as needed
+  },
+  button: {
+    backgroundColor: "blue",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+    marginTop: 16,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  message: {
+    color: "gray",
+    textAlign: "center",
+    marginTop: 0,
+  },
 });
 
 export default RoleSelectionScreen;

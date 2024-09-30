@@ -82,6 +82,10 @@ export const signUpPageConstants = {
       inputTitle: "Email",
       placeHolder: "youremail@gmail.com",
     },
+    {
+      inputTitle: "Gender",
+      options: ["Male", "Female"],
+    },
     { inputTitle: "Password", placeHolder: "Password" },
     {
       inputTitle: "Confirm Password",
@@ -89,6 +93,15 @@ export const signUpPageConstants = {
     },
   ],
   regButtonText: "Register",
+};
+
+export const registrationSuccessMember = {
+  pageTitle: "MobiLearn",
+  blueSubTitle: "You have registered as a",
+  role: "Student",
+  subTitle: "Welcome to A Lifelong Of Learning.",
+  linkText: "Sign In",
+  image: require("../assets/images/Instructor.png"),
 };
 
 export const memberGuestHomeConstants = {
