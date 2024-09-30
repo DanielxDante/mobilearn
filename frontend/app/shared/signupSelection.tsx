@@ -17,7 +17,7 @@ const RoleSelectionScreen = () => {
         />
         <MediumButton
           text={Constants.roles[0].buttonText}
-          onPress={() => console.log("Instructor selected")}
+          onPress={() => router.push("/shared/instructorSignUpPage")}
         ></MediumButton>
       </View>
 
