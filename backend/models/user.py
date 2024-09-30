@@ -5,6 +5,7 @@ from flask_bcrypt import Bcrypt
 from database import db
 
 ROLES = ('member', 'instructor', 'admin')
+GENDERS = ('male', 'female')
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -13,6 +14,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     role = db.Column(Enum(*ROLES, name='roles'), nullable=False, default='member')
+    gender = db.Column(Enum(*GENDERS, name='genders'), nullable=False, default='male')
 
     @hybrid_property
     def password(self):
@@ -27,8 +29,8 @@ class User(db.Model):
         self.password_hash = Bcrypt().generate_password_hash(password_plain).decode('utf-8')
 
     @staticmethod
-    def add_user(username, password, email, role):
-        user = User(username=username, email=email, role=role)
+    def add_user(username, password, email, role, gender):
+        user = User(username=username, email=email, role=role, gender=gender)
         user.password = password # separate from __init__ to use password.setter
         db.session.add(user)
         db.session.commit()
