@@ -24,7 +24,7 @@ export default function signUpPage() {
 
   const handleRegistration = async () => {
     try {
-      await signup(name, email, password, "member");
+      await signup(name, email, password, "member", gender.toLowerCase());
       router.push(MEMBER_REGISTRATION_SUCCESS);
     } catch (error) {
       console.log(error);
@@ -49,15 +49,6 @@ export default function signUpPage() {
           marginTop: -64,
         }}
       >
-        {/* Logo at the top */}
-        {/* <Image
-          source={mobilearnHat}
-          style={{
-            width: 128,
-            height: 96,
-          }}
-          resizeMode="contain" // Adjust as needed
-        /> */}
         <Text
           style={{
             fontSize: 36,
