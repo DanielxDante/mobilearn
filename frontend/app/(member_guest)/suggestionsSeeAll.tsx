@@ -11,10 +11,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { router, useLocalSearchParams } from "expo-router";
 
-import { Colors } from "@/constants/Colors";
+import { Colors } from "@/constants/colors";
 import CourseListItem from "@/types/shared/courseListItem";
 import Course from "@/types/shared/Course";
-import { memberGuestSuggestionsSeeAll as Constants } from "@/constants/TextConstants";
+import { memberGuestSuggestionsSeeAll as Constants } from "@/constants/textConstants";
 
 const SuggestionsSeeAll = () => {
     const [fontsLoaded, error] = useFonts({

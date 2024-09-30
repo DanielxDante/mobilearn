@@ -16,7 +16,7 @@ import {
     ContinueWatching,
     SuggestionsSection,
     TopCourses,
-} from "../../types/member_guest";
+} from "../../components/member_guest";
 import {
     channelData,
     courseListData,
@@ -26,8 +26,8 @@ import {
 } from "@/constants/temporaryCourseData";
 import { AutocompleteDropdownContextProvider } from "react-native-autocomplete-dropdown";
 import { useFonts } from "expo-font";
-import { Colors } from "@/constants/Colors";
-import { memberGuestHomeConstants as Constants } from "@/constants/TextConstants";
+import { Colors } from "@/constants/colors";
+import { memberGuestHomeConstants as Constants } from "@/constants/textConstants";
 
 const Home = () => {
     const [fontsLoaded, error] = useFonts({

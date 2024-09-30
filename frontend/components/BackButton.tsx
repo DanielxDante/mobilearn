@@ -1,8 +1,8 @@
-import React from 'react';
-import { Image, TouchableOpacity, StyleSheet, ImageStyle } from 'react-native';
-import { router } from 'expo-router';
+import React from "react";
+import { Image, TouchableOpacity, StyleSheet, ImageStyle } from "react-native";
+import { router } from "expo-router";
 
-import icons from '@/constants/Icons';
+import icons from "@/constants/icons";
 
 interface IBackButton {
     style?: ImageStyle;
@@ -21,8 +21,8 @@ const BackButton = ({ style }: IBackButton) => {
                 style={[styles.backButton, style]}
             />
         </TouchableOpacity>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     backButton: {
