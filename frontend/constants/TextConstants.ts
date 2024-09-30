@@ -51,6 +51,7 @@ export const loginPageConstants = {
       placeHolder: "Email",
     },
     { inputTitle: "Password", placeHolder: "Password" },
+    { inputTitle: "Domain", options: ["Member", "Instructor"] },
   ],
   signInButtonText: "Sign In",
 };
