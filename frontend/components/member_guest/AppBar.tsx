@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text, Image } from "react-native";
 import React, { useState } from "react";
 import { Dropdown } from "react-native-element-dropdown";
-import { memberGuestAppBarConstants as Constants } from "@/constants/TextConstants";
+import { memberGuestAppBarConstants as Constants } from "@/constants/textConstants";
 
 interface Option {
     label: string;

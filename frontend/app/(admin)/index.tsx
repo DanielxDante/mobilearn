@@ -1,41 +1,43 @@
-import React, { useEffect } from 'react'
-import { View, StyleSheet, BackHandler } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useEffect } from "react";
+import { View, StyleSheet, BackHandler } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useSegments } from "expo-router";
 
 import LargeButton from "@/components/LargeButton";
 import HeaderText from "@/components/HeaderText";
-import IconTextButton from '@/components/IconTextButton';
-import icons from '@/constants/Icons';
-import { 
+import IconTextButton from "@/components/IconTextButton";
+import icons from "@/constants/icons";
+import {
     ADMIN_NAMESPACE,
     ADMIN_USER_SETTINGS,
     ADMIN_CONTENT_SETTINGS,
     ADMIN_PAYMENT_SETTINGS,
-    ADMIN_SYSTEM_SETTINGS 
-} from '@/constants/pages';
-import useAuthStore from '@/store/authStore';
+    ADMIN_SYSTEM_SETTINGS,
+} from "@/constants/pages";
+import useAuthStore from "@/store/authStore";
 
 const AdminHome = () => {
-    const logout = useAuthStore(
-        (state) => state.logout
-    );
+    const logout = useAuthStore((state) => state.logout);
     const segments = useSegments();
 
     // hardware back doesnt automatically log out the admin
     useEffect(() => {
-        const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-            // Get the current route
-            const currentRoute = segments[segments.length - 1];
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            () => {
+                // Get the current route
+                const currentRoute = segments[segments.length - 1];
 
-            // If we're on the admin home page, go to hardware home
-            if (currentRoute === ADMIN_NAMESPACE) { // (admin) = index.tsx under /(admin)
-                BackHandler.exitApp(); // Exit the app
-                return true;
+                // If we're on the admin home page, go to hardware home
+                if (currentRoute === ADMIN_NAMESPACE) {
+                    // (admin) = index.tsx under /(admin)
+                    BackHandler.exitApp(); // Exit the app
+                    return true;
+                }
+
+                return false;
             }
-
-            return false;
-        });
+        );
 
         return () => backHandler.remove();
     }, [router, segments]);
@@ -44,14 +46,11 @@ const AdminHome = () => {
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
             <View style={styles.appBarContainer}>
-                <HeaderText
-                    text={"Settings"}
-                    style={styles.headerText}
-                />
+                <HeaderText text={"Settings"} style={styles.headerText} />
             </View>
             {/* Settings List */}
             <View style={styles.settingsContainer}>
-                <IconTextButton 
+                <IconTextButton
                     icon={icons.card}
                     text={"User Management"}
                     onPress={() => {
@@ -59,7 +58,7 @@ const AdminHome = () => {
                     }}
                     style={styles.iconTextButton}
                 />
-                <IconTextButton 
+                <IconTextButton
                     icon={icons.doc}
                     text={"Content Management"}
                     onPress={() => {
@@ -67,7 +66,7 @@ const AdminHome = () => {
                     }}
                     style={styles.iconTextButton}
                 />
-                <IconTextButton 
+                <IconTextButton
                     icon={icons.mic}
                     text={"Payment Management"}
                     onPress={() => {
@@ -75,7 +74,7 @@ const AdminHome = () => {
                     }}
                     style={styles.iconTextButton}
                 />
-                <IconTextButton 
+                <IconTextButton
                     icon={icons.tele}
                     text={"System Management"}
                     onPress={() => {
@@ -96,8 +95,8 @@ const AdminHome = () => {
                 />
             </View>
         </SafeAreaView>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -108,18 +107,18 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         marginTop: 40,
         alignItems: "center",
-        marginLeft: 30
+        marginLeft: 30,
     },
     headerText: {
         fontSize: 25,
-        marginLeft: 25
+        marginLeft: 25,
     },
     settingsContainer: {
         flexDirection: "column",
         marginTop: 30,
     },
     iconTextButton: {
-        paddingBottom: 40
+        paddingBottom: 40,
     },
     footerContainer: {
         justifyContent: "space-between",

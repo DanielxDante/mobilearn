@@ -14,12 +14,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import { courseListData } from "@/constants/temporaryCourseData";
-import { Colors } from "@/constants/Colors";
-import { memberGuestCoursePage as Constants } from "@/constants/TextConstants";
+import { Colors } from "@/constants/colors";
+import { memberGuestCoursePage as Constants } from "@/constants/textConstants";
 import courseListItem from "@/types/shared/courseListItem";
 import Course from "@/types/shared/Course";
 import { useFonts } from "expo-font";
-import CourseSectionTabs from "@/types/member_guest/CourseSectionTabs";
+import CourseSectionTabs from "@/components/member_guest/CourseSectionTabs";
 import CourseListItem from "@/types/shared/courseListItem";
 
 const CoursePage = () => {

@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import React from "react";
 
-import Icons from "@/constants/Icons";
+import Icons from "@/constants/icons";
 import { useFonts } from "expo-font";
-import { Colors } from "@/constants/Colors";
+import { Colors } from "@/constants/colors";
 import { timeAgo } from "./timeAgo";
 
 export interface AppNotification {

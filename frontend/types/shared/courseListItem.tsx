@@ -9,8 +9,8 @@ import {
 import React from "react";
 
 import images from "@/constants/images";
-import { Colors } from "@/constants/Colors";
-import icons from "../../constants/Icons";
+import { Colors } from "@/constants/colors";
+import icons from "../../constants/icons";
 import Course from "./Course";
 
 interface CourseListItemProps {
