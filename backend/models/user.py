@@ -13,6 +13,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     role = db.Column(Enum(*ROLES, name='roles'), nullable=False, default='member')
+    status = db.Column(db.Boolean, nullable=False, default=True)
 
     @hybrid_property
     def password(self):

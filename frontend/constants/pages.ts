@@ -37,3 +37,4 @@ export const ADMIN_PAYMENT_TRANSACTIONS = `${ADMIN_PAYMENT_SETTINGS}/transaction
 export const ADMIN_SYSTEM_SETTINGS = `${ADMIN_HOME}/system_settings` as Href<string>;
 export const ADMIN_SYSTEM_INFO = `${ADMIN_SYSTEM_SETTINGS}/info` as Href<string>;
 export const ADMIN_SYSTEM_POLICY = `${ADMIN_SYSTEM_SETTINGS}/policy` as Href<string>;
+export const ADMIN_SYSTEM_FEATURES = `${ADMIN_SYSTEM_SETTINGS}/features` as Href<string>;

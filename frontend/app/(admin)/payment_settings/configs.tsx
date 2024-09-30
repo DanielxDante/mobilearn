@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
 import { router } from "expo-router";
 
-import { usePaymentStore } from '@/store/paymentStore';
+import { useAdminStore } from '@/store/adminStore';
 import BackButton from '@/components/BackButton';
 import HeaderText from "@/components/HeaderText";
 import LargeButton from '@/components/LargeButton';
@@ -16,7 +16,7 @@ const PaymentConfigs = () => {
         platformRoutingNumber,
         setPlatformAccountHolderName,
         setPlatformBankAccountNumber,
-        setPlatformRoutingNumber } = usePaymentStore();
+        setPlatformRoutingNumber } = useAdminStore();
 
     const [accountHolderName, setAccountHolderName] = useState(platformAccountHolderName);
     const [bankAccountNumber, setBankAccountNumber] = useState(platformBankAccountNumber);

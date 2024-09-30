@@ -9,7 +9,8 @@ import IconTextButton from '@/components/IconTextButton';
 import icons from '@/constants/Icons';
 import { 
     ADMIN_SYSTEM_INFO,
-    ADMIN_SYSTEM_POLICY 
+    ADMIN_SYSTEM_POLICY,
+    ADMIN_SYSTEM_FEATURES
 } from '@/constants/pages';
 
 const SystemSettings = () => {
@@ -40,6 +41,14 @@ const SystemSettings = () => {
                     text={"Terms and Privacy Policy"}
                     onPress={() => {
                         router.push(ADMIN_SYSTEM_POLICY);
+                    }}
+                    style={styles.iconTextButton}
+                />
+                <IconTextButton 
+                    icon={icons.tele}
+                    text={"Enable/Disable Features"}
+                    onPress={() => {
+                        router.push(ADMIN_SYSTEM_FEATURES);
                     }}
                     style={styles.iconTextButton}
                 />

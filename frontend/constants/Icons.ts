@@ -14,7 +14,9 @@ import card from "@/assets/images/icons/card.png";
 import doc from "@/assets/images/icons/doc.png";
 import mic from "@/assets/images/icons/mic.png";
 import tele from "@/assets/images/icons/tele.png";
-import chevron from "@/assets/images/icons/chevron.png";
+import chevronRight from "@/assets/images/icons/chevronRight.png";
+import chevronUp from "@/assets/images/icons/chevronUp.png";
+import chevronDown from "@/assets/images/icons/chevronDown.png";
 
 export default {
     home,
@@ -33,5 +35,7 @@ export default {
     doc,
     mic,
     tele,
-    chevron
+    chevronRight,
+    chevronUp,
+    chevronDown
 };

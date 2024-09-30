@@ -5,7 +5,7 @@ import { ImageSourcePropType } from 'react-native';
 import icons from '@/constants/Icons';
 
 interface IIconTextButton {
-    icon: ImageSourcePropType;
+    icon: ImageSourcePropType | null;
     text: string;
     onPress: () => void;
     style?: ViewStyle;
@@ -15,17 +15,19 @@ const IconTextButton = ({ icon, text, onPress, style }: IIconTextButton) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
         {/* Icon from props */}
-        <Image
+        {icon && (
+          <Image
             source={icon}
             style={styles.icon}
         />
-
+        )}
+        
         {/* Text */}
         <Text style={styles.text}>{text}</Text>
 
         {/* Forward Icon */}
         <Image
-            source={icons.chevron}
+            source={icons.chevronRight}
             style={styles.icon}
         />
     </TouchableOpacity>
@@ -34,8 +36,8 @@ const IconTextButton = ({ icon, text, onPress, style }: IIconTextButton) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row', // Align items horizontally
-    alignItems: 'center', // Vertically center all items
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingLeft: 40,
     paddingRight: 25,
     paddingVertical: 10,
