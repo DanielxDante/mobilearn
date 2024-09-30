@@ -1,8 +1,14 @@
-import React from 'react';
-import { Image, Text, TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
-import { ImageSourcePropType } from 'react-native';
+import React from "react";
+import {
+    Image,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    ViewStyle,
+} from "react-native";
+import { ImageSourcePropType } from "react-native";
 
-import icons from '@/constants/Icons';
+import icons from "@/constants/icons";
 
 interface IIconTextButton {
     icon: ImageSourcePropType | null;

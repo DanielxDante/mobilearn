@@ -5,27 +5,27 @@ import { router } from "expo-router";
 
 import RegisterButton from "@/components/Button";
 import InputField from "@/components/InputField";
+import InputDropDownField from "@/components/InputDropDownField";
 //import mobilearnHat from "../../assets/images/MobilearnHat.png";
 import useAuthStore from "@/store/authStore"; // Import the store
-import { signUpPageConstants as Constants } from "@/constants/TextConstants";
-import {MEMBER_LOGIN_PAGE} from "@/constants/pages";
+import { signUpPageConstants as Constants } from "@/constants/textConstants";
+import { MEMBER_REGISTRATION_SUCCESS } from "@/constants/pages";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
-export default function LoginPage() {
-  const signup = useAuthStore(
-    (state) => state.signup
-  );
+export default function signUpPage() {
+  const signup = useAuthStore((state) => state.signup);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [gender, setGender] = useState("");
   const [password, setPassword] = useState("");
   const [conPassword, setConPassword] = useState("");
 
   const handleRegistration = async () => {
     try {
       await signup(name, email, password, "member");
-      router.push(MEMBER_LOGIN_PAGE)
+      router.push(MEMBER_REGISTRATION_SUCCESS);
     } catch (error) {
       console.log(error);
       alert("An error occurred while logging in");
@@ -93,16 +93,22 @@ export default function LoginPage() {
           value={email}
           onChangeText={setEmail}
         />
-        <InputField
+        <InputDropDownField
           inputTitle={Constants.fields[2].inputTitle}
-          placeholder={Constants.fields[2].placeHolder}
+          options={Constants.fields[2].options}
+          value={gender}
+          onChange={setGender}
+        />
+        <InputField
+          inputTitle={Constants.fields[3].inputTitle}
+          placeholder={Constants.fields[3].placeHolder}
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
         />
         <InputField
-          inputTitle={Constants.fields[3].inputTitle}
-          placeholder={Constants.fields[3].placeHolder}
+          inputTitle={Constants.fields[4].inputTitle}
+          placeholder={Constants.fields[4].placeHolder}
           secureTextEntry={true}
           value={conPassword}
           onChangeText={setConPassword}
@@ -117,12 +123,7 @@ export default function LoginPage() {
             justifyContent: "center",
             marginTop: 16,
           }}
-        >
-          <Text>Don’t have an Account? </Text>
-          {/* <Link href="/signup" style={tailwind("text-blue-500")}>
-              Sign Up here
-            </Link> */}
-        </View>
+        ></View>
       </View>
     </SafeAreaView>
   );

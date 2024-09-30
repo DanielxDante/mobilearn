@@ -2,10 +2,10 @@ import { View, Image } from "react-native";
 import React from "react";
 import { Tabs } from "expo-router";
 
-import icons from "../../constants/Icons";
+import icons from "../../constants/icons";
 import { StatusBar } from "expo-status-bar";
 import { ITabIcon } from "@/types/shared/layout";
-import { Colors } from "@/constants/Colors";
+import { Colors } from "@/constants/colors";
 
 const TabIcon = ({ icon, color, name, focused }: ITabIcon) => {
     return (

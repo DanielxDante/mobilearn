@@ -3,9 +3,9 @@ import React from "react";
 import * as Progress from "react-native-progress";
 
 import { useFonts } from "expo-font";
-import { Colors } from "@/constants/Colors";
-import { memberGuestContinueWatchingConstants as Constants } from "@/constants/TextConstants";
-import Course from "../shared/Course";
+import { Colors } from "@/constants/colors";
+import { memberGuestContinueWatchingConstants as Constants } from "@/constants/textConstants";
+import Course from "../../types/shared/Course";
 
 interface ContinueWatchingProps {
     courseData: Course[];

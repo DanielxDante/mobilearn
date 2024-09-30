@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import React from "react";
 
-import { memberGuestCoursePage as Constants } from "@/constants/TextConstants";
-import { Colors } from "@/constants/Colors";
+import { memberGuestCoursePage as Constants } from "@/constants/textConstants";
+import { Colors } from "@/constants/colors";
 
 interface CourseSectionTabsProps {
     selectedSection: number;

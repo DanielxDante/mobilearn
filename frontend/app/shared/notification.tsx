@@ -10,8 +10,8 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
-import icons from "@/constants/Icons";
-import { Colors } from "@/constants/Colors";
+import icons from "@/constants/icons";
+import { Colors } from "@/constants/colors";
 import NotificationItem, {
     AppNotification,
 } from "@/types/shared/NotificationItem";

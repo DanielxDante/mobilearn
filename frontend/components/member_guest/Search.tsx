@@ -6,7 +6,7 @@ import {
     AutocompleteDropdownItem,
     IAutocompleteDropdownRef,
 } from "react-native-autocomplete-dropdown";
-import { memberGuestSearchConstants as Constants } from "@/constants/TextConstants";
+import { memberGuestSearchConstants as Constants } from "@/constants/textConstants";
 import Course from "@/types/shared/Course";
 
 interface SearchBarProps {

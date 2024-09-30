@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import React from "react";
 
-import Icons from "@/constants/Icons";
+import Icons from "@/constants/icons";
 import { useFonts } from "expo-font";
-import { Colors } from "@/constants/Colors";
-import { timeAgo } from "./timeAgo";
+import { Colors } from "@/constants/colors";
+import { timeAgo } from "./member_guest/timeAgo";
 
 export interface AppNotification {
     type: "success" | "failure" | "completed";

@@ -13,14 +13,23 @@ const InputField: React.FC<InputFieldProps> = ({
   ...rest
 }) => {
   return (
-    <View className={"mb-4"}>
+    <View style={{ marginBottom: 16 }}>
       {inputTitle && (
-        <Text className={"text-[#356FC5] text-lg mb-2"}>{inputTitle}</Text>
+        <Text style={{ fontSize: 18, color: "#356FC5", marginBottom: 8 }}>
+          {inputTitle}
+        </Text>
       )}
       <TextInput
         placeholder={placeholder}
         secureTextEntry={secureTextEntry}
-        className={"border-2 border-[#356FC5] py-2 px-4 text-lg rounded-lg"}
+        style={{
+          borderWidth: 2,
+          borderColor: "#356FC5",
+          paddingVertical: 8,
+          paddingHorizontal: 16,
+          fontSize: 18,
+          borderRadius: 8,
+        }}
         {...rest}
       />
     </View>
