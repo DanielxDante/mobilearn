@@ -4,7 +4,7 @@ import React from "react";
 import Icons from "@/constants/icons";
 import { useFonts } from "expo-font";
 import { Colors } from "@/constants/colors";
-import { timeAgo } from "./timeAgo";
+import { timeAgo } from "./member_guest/timeAgo";
 
 export interface AppNotification {
     type: "success" | "failure" | "completed";

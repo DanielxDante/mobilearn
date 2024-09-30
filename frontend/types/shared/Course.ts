@@ -7,4 +7,6 @@ export default interface Course {
     completionRate: number;
     image: any;
     enrolledCount: number;
+    program: string;
+    enabled: true | false;
 }
