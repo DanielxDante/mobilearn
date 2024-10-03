@@ -16,11 +16,10 @@ import { router } from "expo-router";
 import { courseListData } from "@/constants/temporaryCourseData";
 import { Colors } from "@/constants/colors";
 import { memberGuestCoursePage as Constants } from "@/constants/textConstants";
-import courseListItem from "@/types/shared/courseListItem";
+import CourseListItem from "@/components/CourseListItem";
 import Course from "@/types/shared/Course";
 import { useFonts } from "expo-font";
-import CourseSectionTabs from "@/components/member_guest/CourseSectionTabs";
-import CourseListItem from "@/types/shared/courseListItem";
+import CourseSectionTabs from "@/components/CourseSectionTabs";
 
 const CoursePage = () => {
     const [fontsLoaded, error] = useFonts({

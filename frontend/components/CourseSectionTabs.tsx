@@ -11,6 +11,8 @@ import React from "react";
 import { memberGuestCoursePage as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
 
+// COURSE SECTION TABS CURRENTLY USED IN MEMBER_GUEST
+
 interface CourseSectionTabsProps {
     selectedSection: number;
     onPress: (section: number) => void;

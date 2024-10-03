@@ -1,6 +1,6 @@
 // timeAgo used in NotificationItem.tsx to calculate time since notification
 
-export const timeAgo = (timestamp: string): string => {
+export const TimeAgo = (timestamp: string): string => {
     const now = new Date();
     const past = new Date(timestamp);
     const seconds = Math.floor((now.getTime() - past.getTime()) / 1000);

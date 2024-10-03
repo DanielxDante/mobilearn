@@ -51,6 +51,7 @@ export const loginPageConstants = {
       placeHolder: "Email",
     },
     { inputTitle: "Password", placeHolder: "Password" },
+    { inputTitle: "Domain", options: ["Member", "Instructor"] },
   ],
   signInButtonText: "Sign In",
 };
@@ -85,6 +86,44 @@ export const signUpPageConstants = {
     {
       inputTitle: "Gender",
       options: ["Male", "Female"],
+    },
+    { inputTitle: "Password", placeHolder: "Password" },
+    {
+      inputTitle: "Confirm Password",
+      placeHolder: "Password",
+    },
+  ],
+  regButtonText: "Register",
+};
+
+export const instructorSignUpPageConstants = {
+  pageTitle: "SIGN UP",
+  pageSubTitle:
+    "Create your account to embark on a Mission to illuminate minds.",
+  fields: [
+    {
+      inputTitle: "Username",
+      placeHolder: "John Cena",
+    },
+    {
+      inputTitle: "Email",
+      placeHolder: "youremail@gmail.com",
+    },
+    {
+      inputTitle: "Gender",
+      options: ["Male", "Female"],
+    },
+    {
+      inputTitle: "Phone number",
+      placeHolder: "+6591825901",
+    },
+    {
+      inputTitle: "Company",
+      placeHolder: "DanielDantePteLtd",
+    },
+    {
+      inputTitle: "Position in Company",
+      placeHolder: "Chief Tech Officer",
     },
     { inputTitle: "Password", placeHolder: "Password" },
     {

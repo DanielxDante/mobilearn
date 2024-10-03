@@ -53,30 +53,37 @@ const useAuthStore = create<AuthState>()(
                     { email, password, role },
                     { headers: { "Content-Type": "application/json" } }
                 );
-
-                const responseData = response.data;
-                if (response.status === 200) {
-                    set({
-                        username: responseData.username,
-                        email: email,
-                        token: responseData.token,
-                        role: responseData.role,
-                    });
-                    return responseData.role;
-                } else {
-                    throw new Error("An unexpected error occurred");
-                }
+              const responseData = response.data;
+              if (response.status === 200) {
+                set({
+                  username: responseData.username,
+                  email: email,
+                  token: responseData.token,
+                  role: responseData.role,
+                  gender: responseData.gender,
+                });
+                return responseData.role;
+              } else {
+                throw new Error("An unexpected error occurred");
+              }
             },
             logout: async () => {
-                console.log("Logging out...");
-                set({ username: "", email: "", token: "", role: "guest" });
-            },
+              console.log("Logging out...");
+              set({
+                username: "",
+                email: "",
+                token: "",
+                role: "guest",
+                gender: "male",
+              });
+          },
         }),
-        {
-            name: "auth-store",
-            storage: createJSONStorage(() => AsyncStorage),
-        }
-    )
+    {
+      name: "auth-store",
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
+
 );
 
 export default useAuthStore;

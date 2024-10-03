@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { Dropdown } from "react-native-element-dropdown";
 import { memberGuestAppBarConstants as Constants } from "@/constants/textConstants";
 
+// AppBar used in member_guest homepage
+
 interface Option {
     label: string;
     value: string;
