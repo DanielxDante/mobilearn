@@ -137,9 +137,9 @@ const MemberGuestLayout = () => {
                     }}
                 />
                 <Tabs.Screen
-                    name="continueWatching.tsx"
+                    name="continueWatching"
                     options={{
-                        title: "continueWatching.tsx",
+                        title: "continueWatching",
                         headerShown: false,
                         tabBarIcon: ({ color, focused }) => (
                             <TabIcon
@@ -153,9 +153,9 @@ const MemberGuestLayout = () => {
                     }}
                 />
                 <Tabs.Screen
-                    name="suggestionsSection.tsx"
+                    name="suggestionsSection"
                     options={{
-                        title: "suggestionsSection.tsx",
+                        title: "suggestionsSection",
                         headerShown: false,
                         tabBarIcon: ({ color, focused }) => (
                             <TabIcon
@@ -169,9 +169,9 @@ const MemberGuestLayout = () => {
                     }}
                 />
                 <Tabs.Screen
-                    name="topCourses.tsx"
+                    name="topCourses"
                     options={{
-                        title: "topCourses.tsx",
+                        title: "topCourses",
                         headerShown: false,
                         tabBarIcon: ({ color, focused }) => (
                             <TabIcon
