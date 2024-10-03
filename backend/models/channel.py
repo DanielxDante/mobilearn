@@ -4,11 +4,11 @@ import random
 from flask import jsonify
 
 class Channel(db.Model):
-    __tablename__ = 'channel'
+    __tablename__ = 'channels'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80), unique=True, nullable=False)
     invite_code = db.Column(db.String(6), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    created_on = db.Column(db.DateTime, default=datetime.now, nullable=False)
     num_user = db.Column(db.Integer, nullable=False, default=0) #Indicates number of people in channel
 
     @staticmethod

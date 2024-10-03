@@ -1,6 +1,7 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import Enum
 from flask_bcrypt import Bcrypt
+from datetime import datetime
 
 from database import db
 
@@ -15,6 +16,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     role = db.Column(Enum(*ROLES, name='roles'), nullable=False, default='member')
     gender = db.Column(Enum(*GENDERS, name='genders'), nullable=False, default='male')
+    created_on = db.Column(db.DateTime, default=datetime.now, nullable=False)
 
     @hybrid_property
     def password(self):

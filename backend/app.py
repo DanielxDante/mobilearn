@@ -39,7 +39,7 @@ def setup_environment():
     """ Setup flask app environment """
     db.init_app(app)
     with app.app_context():
-        from models import user, course, channel
+        from models import user, channel, course
 
         create_tables()
         check_db()
