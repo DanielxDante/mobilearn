@@ -9,6 +9,8 @@ import {
 import { memberGuestSearchConstants as Constants } from "@/constants/textConstants";
 import Course from "@/types/shared/Course";
 
+// SEARCH CURRENTLY USED IN MEMBER_GUEST, MIGHT BE CHANGED IF MORE INFORMATION NEEDED
+
 interface SearchBarProps {
     courseListData: Course[];
 }

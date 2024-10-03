@@ -23,6 +23,7 @@ ns_instructor = Namespace(name='instructor', description='Instructor operations'
 ns_admin = Namespace(name='admin', description='Adminstrator operations')
 ns_recommender = Namespace(name='recommender', description='Recommender system operations')
 ns_internal = Namespace(name='internal', description='Internal operations') # optional
+ns_channel = Namespace(name='channel', description='Channel operations')
 ns_course = Namespace(name='course', description='Course operations')
 
 POSTGRES_DB = os.getenv('POSTGRES_DB')
@@ -38,7 +39,7 @@ def setup_environment():
     """ Setup flask app environment """
     db.init_app(app)
     with app.app_context():
-        from models import user, course
+        from models import user, course, channel
 
         create_tables()
         check_db()
@@ -56,8 +57,14 @@ def init_auth_endpoints():
 def init_course_endpoints():
     from endpoints.course.course import CourseEndpoint
 
-    course_path = f"/{VERSION}/course"
+    course_path = f"/{VERSION}/addCourse"
     ns_course.add_resource(CourseEndpoint, course_path)
+
+def init_channel_endpoints():
+    from endpoints.channel.channel import ChannelEndpoint
+
+    channel_path = f"/{VERSION}/addChannel"
+    ns_channel.add_resource(ChannelEndpoint, channel_path)
 
 def init_user_endpoints():
     pass
@@ -83,6 +90,9 @@ def init():
 
     init_course_endpoints()
     api.add_namespace(ns_course)
+
+    init_channel_endpoints()
+    api.add_namespace(ns_channel)
 
     init_user_endpoints()
     api.add_namespace(ns_user)

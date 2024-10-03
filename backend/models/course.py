@@ -14,9 +14,6 @@ class Course(db.Model):
 
     @staticmethod
     def add_course(title, school, description=None, image=None):
-
-        # Debugging: Print existing courses
-        print("Existing courses before insertion")
         existing_courses = Course.query.all()
         for course in existing_courses:
             print(course.title, course.school)
@@ -30,7 +27,7 @@ class Course(db.Model):
         try:
             db.session.add(new_course)
             db.session.commit()
-            return jsonify({"message": "Course added successfully"}), 201
+            return jsonify({"message": "Course added successfully"}), 200
         except Exception as e:
             db.session.rollback()
             print(f"Error occured: {e}")

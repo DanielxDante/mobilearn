@@ -136,6 +136,54 @@ const MemberGuestLayout = () => {
                         href: null,
                     }}
                 />
+                <Tabs.Screen
+                    name="continueWatching"
+                    options={{
+                        title: "continueWatching",
+                        headerShown: false,
+                        tabBarIcon: ({ color, focused }) => (
+                            <TabIcon
+                                icon={icons.home}
+                                color={color}
+                                name="Continue Watching"
+                                focused={focused}
+                            />
+                        ),
+                        href: null,
+                    }}
+                />
+                <Tabs.Screen
+                    name="suggestionsSection"
+                    options={{
+                        title: "suggestionsSection",
+                        headerShown: false,
+                        tabBarIcon: ({ color, focused }) => (
+                            <TabIcon
+                                icon={icons.home}
+                                color={color}
+                                name="Suggestions Section"
+                                focused={focused}
+                            />
+                        ),
+                        href: null,
+                    }}
+                />
+                <Tabs.Screen
+                    name="topCourses"
+                    options={{
+                        title: "topCourses",
+                        headerShown: false,
+                        tabBarIcon: ({ color, focused }) => (
+                            <TabIcon
+                                icon={icons.home}
+                                color={color}
+                                name="Top Courses"
+                                focused={focused}
+                            />
+                        ),
+                        href: null,
+                    }}
+                />
             </Tabs>
             <StatusBar backgroundColor="#161622" style="light" />
         </>
