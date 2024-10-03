@@ -4,7 +4,7 @@ import React from "react";
 import Icons from "@/constants/icons";
 import { useFonts } from "expo-font";
 import { Colors } from "@/constants/colors";
-import { timeAgo } from "./member_guest/timeAgo";
+import { TimeAgo } from "./TimeAgo";
 
 export interface AppNotification {
     type: "success" | "failure" | "completed";
@@ -72,7 +72,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
             </View>
             <View style={styles.timeStampContainer}>
                 <Text style={styles.timestamp}>
-                    {timeAgo(notification.timestamp)}
+                    {TimeAgo(notification.timestamp)}
                 </Text>
             </View>
         </TouchableOpacity>

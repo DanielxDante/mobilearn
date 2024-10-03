@@ -10,13 +10,12 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
-import {
-    AppBar,
-    Search,
-    ContinueWatching,
-    SuggestionsSection,
-    TopCourses,
-} from "../../components/member_guest";
+import AppBar from "@/components/AppBar";
+import Search from "@/components/Search";
+import ContinueWatching from "./continueWatching";
+import SuggestionsSection from "./suggestionsSection";
+import TopCourses from "./topCourses";
+
 import {
     channelData,
     courseListData,
@@ -24,6 +23,7 @@ import {
     suggestionsData,
     topCourseData,
 } from "@/constants/temporaryCourseData";
+
 import { AutocompleteDropdownContextProvider } from "react-native-autocomplete-dropdown";
 import { useFonts } from "expo-font";
 import { Colors } from "@/constants/colors";
