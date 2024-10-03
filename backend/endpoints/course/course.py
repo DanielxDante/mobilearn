@@ -57,7 +57,8 @@ class CourseEndpoint(Resource):
             'rating': course.rating,
             'completionRate': course.completionRate, 
             'image': course.image,
-            'enrolledCount': course.enrolledCount
+            'enrolledCount': course.enrolledCount,
+            'created_on': course.created_on
         } for course in courses]
 
         return Response(

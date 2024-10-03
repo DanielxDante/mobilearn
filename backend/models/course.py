@@ -1,8 +1,9 @@
 from database import db
+from datetime import datetime
 from flask import jsonify
 
 class Course(db.Model):
-    __tablename__ = 'course'
+    __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80), unique=True, nullable=False)
     school = db.Column(db.String(80), unique=True, nullable=False)
@@ -11,6 +12,7 @@ class Course(db.Model):
     completionRate = db.Column(db.Float, nullable=False, default=0.0)
     image = db.Column(db.String(500), nullable=True)
     enrolledCount = db.Column(db.Integer, nullable=False, default=0)
+    created_on = db.Column(db.DateTime, default=datetime.now, nullable=False)
 
     @staticmethod
     def add_course(title, school, description=None, image=None):

@@ -43,7 +43,7 @@ class ChannelEndpoint(Resource):
             'id': channel.id,
             'title': channel.title, 
             'invite_code': channel.invite_code,
-            'created_at': channel.created_at,
+            'created_on': channel.created_on,
             'num_user': channel.num_user
         } for channel in channels]
 
