@@ -4,7 +4,7 @@ import {
     StyleSheet,
     Image,
     TouchableOpacity,
-    Button,
+    ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,7 +16,7 @@ import { Colors } from "@/constants/colors";
 import InputField from "@/components/InputField";
 
 const EditProfile = () => {
-    const { username, email } = useAuthStore();
+    const { username, email, gender } = useAuthStore();
 
     const [newProfilePicture, setNewProfilePicture] = useState("");
     const [newUsername, setNewUsername] = useState("");
@@ -48,67 +48,75 @@ const EditProfile = () => {
                 <Text style={styles.header}>{Constants.appBarTitle}</Text>
             </View>
             {/* Page body */}
-            <View style={styles.body}>
-                <View style={styles.upperBody}>
-                    {/* Profile picture */}
-                    <TouchableOpacity style={styles.profilePictureContainer}>
-                        <Image
-                            source={require("@/assets/images/member_guest_images/temporaryImages/gerard.jpg")}
-                            style={styles.profilePicture}
-                        />
-                        <View style={styles.editProfilePicture}>
+            <ScrollView>
+                <View style={styles.body}>
+                    <View style={styles.upperBody}>
+                        {/* Profile picture */}
+                        <TouchableOpacity
+                            style={styles.profilePictureContainer}
+                        >
                             <Image
-                                source={Constants.editProfilePicture}
-                                style={styles.editProfilePicturePen}
+                                source={require("@/assets/images/member_guest_images/temporaryImages/gerard.jpg")}
+                                style={styles.profilePicture}
+                            />
+                            <View style={styles.editProfilePicture}>
+                                <Image
+                                    source={Constants.editProfilePicture}
+                                    style={styles.editProfilePicturePen}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                        {/* Edit fields */}
+                        <View style={styles.editFields}>
+                            <InputField
+                                inputTitle={Constants.fields[0].inputTitle}
+                                placeholder={username}
+                                value={newUsername}
+                                onChangeText={setNewUsername}
+                            />
+                            <InputField
+                                inputTitle={Constants.fields[1].inputTitle}
+                                placeholder={email}
+                                value={newEmail}
+                                onChangeText={setNewEmail}
+                            />
+                            <InputField
+                                inputTitle={Constants.fields[2].inputTitle}
+                                placeholder={gender}
+                                value={newGender}
+                                onChangeText={setNewGender}
+                            />
+                            <InputField
+                                inputTitle={Constants.fields[3].inputTitle}
+                                placeholder={
+                                    Constants.fields[3].placeholder ?? "******"
+                                }
+                                value={password}
+                                onChangeText={setPassword}
+                            />
+                            <InputField
+                                inputTitle={Constants.fields[4].inputTitle}
+                                placeholder={
+                                    Constants.fields[4].placeholder ?? "******"
+                                }
+                                value={confirmPassword}
+                                onChangeText={setConfirmPassword}
                             />
                         </View>
-                    </TouchableOpacity>
-                    {/* Edit fields */}
-                    <View style={styles.editFields}>
-                        <InputField
-                            inputTitle={Constants.fields[0].inputTitle}
-                            placeholder={username}
-                            value={newUsername}
-                            onChangeText={setNewUsername}
-                        />
-                        <InputField
-                            inputTitle={Constants.fields[1].inputTitle}
-                            placeholder={email}
-                            value={newEmail}
-                            onChangeText={setNewEmail}
-                        />
-                        {/* <InputField
-                        inputTitle={Constants.fields[2].inputTitle}
-                        placeholder={gender}
-                        value={newGender}
-                        onChangeText={setNewGender}
-                    /> */}
-                        <InputField
-                            inputTitle={Constants.fields[3].inputTitle}
-                            placeholder={Constants.fields[3].placeholder}
-                            value={password}
-                            onChangeText={setPassword}
-                        />
-                        <InputField
-                            inputTitle={Constants.fields[4].inputTitle}
-                            placeholder={Constants.fields[4].placeholder}
-                            value={confirmPassword}
-                            onChangeText={setConfirmPassword}
-                        />
+                    </View>
+                    {/* Save button container */}
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity
+                            onPress={handleSave}
+                            style={styles.saveButton}
+                        >
+                            <Text style={styles.buttonText}>
+                                {Constants.saveChanges}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
-                {/* Save button container */}
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        onPress={handleSave}
-                        style={styles.saveButton}
-                    >
-                        <Text style={styles.buttonText}>
-                            {Constants.saveChanges}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };
