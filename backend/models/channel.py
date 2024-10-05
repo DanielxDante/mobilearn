@@ -1,37 +1,32 @@
+from sqlalchemy import Enum, Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.associationproxy import association_proxy
+
 from database import db
-from datetime import datetime
-import random
-from flask import jsonify
+from . import STATUSES
 
 class Channel(db.Model):
     __tablename__ = 'channels'
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(80), unique=True, nullable=False)
-    invite_code = db.Column(db.String(6), unique=True, nullable=False)
-    created_on = db.Column(db.DateTime, default=datetime.now, nullable=False)
-    num_user = db.Column(db.Integer, nullable=False, default=0) #Indicates number of people in channel
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+    description = Column(String, nullable=True)
+    invite_code = Column(String, nullable=False)
+    created = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
+    updated = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
+    status = Column(Enum(*STATUSES), nullable=False, default='active')
+
+    # Many-to-many relationship with User
+    user_associations = relationship("UserChannel", back_populates="channel")
+    users = association_proxy('user_associations', 'user')
+
+    # Many-to-many relationship with Community
+    community_associations = relationship("ChannelCommunity", back_populates="channel")
+    communities = association_proxy('community_associations', 'community')
 
     @staticmethod
-    def add_channel(title):
-        new_channel = Channel(
-            title = title,
-            invite_code = Channel.generate_invite_code()
-        )
-        try:
-            db.session.add(new_channel)
-            db.session.commit()
-            return jsonify({"message": "Channel added successfully"}), 200
-        except Exception as e:
-            db.session.rollback()
-            print(f"Error occured: {e}")
-            return jsonify({"error": str(e)}), 400
-
-    @staticmethod    
-    def generate_invite_code():
-        while True:
-            invite_code = str(random.randint(0, 999999)).zfill(6)
-            if not Channel.query.filter_by(invite_code=invite_code).first():
-                return invite_code
+    def add_channel():
+        pass
 
     @staticmethod   
     def get_channels():
@@ -42,8 +37,8 @@ class Channel(db.Model):
         return Channel.query.get(id)
     
     @staticmethod
-    def get_channel_by_title(title):
-        return Channel.query.filter_by(title=title).first()
+    def get_channel_by_name(name):
+        return Channel.query.filter_by(name=name).first()
     
     def __repr__(self):
-        return f'<ID: {self.id}>, Channel: {self.title}, Invite_code: {self.invite_code}'
+        return f'<ID: {self.id}>, Channel: {self.name}, Invite_code: {self.invite_code}'

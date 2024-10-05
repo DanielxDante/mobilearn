@@ -1,22 +1,45 @@
+from sqlalchemy import Enum, Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import Enum
 from flask_bcrypt import Bcrypt
-from datetime import datetime
 
 from database import db
+from . import STATUSES
+
+# split instructor into separate class
+# if the attributes between the different tiers of users are too different,
+# consider creating separate classes for each tier of user
 
 ROLES = ('member', 'instructor', 'admin')
 GENDERS = ('male', 'female')
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(120), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    role = db.Column(Enum(*ROLES, name='roles'), nullable=False, default='member')
-    gender = db.Column(Enum(*GENDERS, name='genders'), nullable=False, default='male')
-    created_on = db.Column(db.DateTime, default=datetime.now, nullable=False)
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String, unique=True, nullable=False)
+    username = Column(String, nullable=False)
+    password_hash = Column(String, nullable=False)
+    role = Column(Enum(*ROLES), nullable=False, default='member')
+    gender = Column(Enum(*GENDERS), nullable=False, default='male')
+    profile_picture_url = Column(String, nullable=True) # CDN link to profile picture
+    created = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
+    updated = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
+    latest_login = Column(DateTime, nullable=False)
+    status = Column(Enum(*STATUSES), nullable=False, default='active')
+
+    # Many-to-many relationship with Group
+    group_associations = relationship("UserGroup", back_populates="user", cascade="all, delete-orphan")
+    groups = association_proxy('group_associations', 'group')
+
+    # One-to-many relationship with Message
+    sent_messages = relationship("Message", foreign_keys="Message.sender_id", back_populates="sender")
+    received_messages = relationship("Message", foreign_keys="Message.recipient_id", back_populates="recipient")
+
+    # Many-to=many relationship with Channel
+    channel_associations = relationship("UserChannel", back_populates="user")
+    channels = association_proxy('channel_associations', 'channel')
 
     @hybrid_property
     def password(self):
@@ -32,7 +55,11 @@ class User(db.Model):
 
     @staticmethod
     def add_user(username, password, email, role, gender):
-        user = User(username=username, email=email, role=role, gender=gender)
+        user = User(
+            username=username,
+            email=email,
+            role=role,
+            gender=gender)
         user.password = password # separate from __init__ to use password.setter
         db.session.add(user)
         db.session.commit()
@@ -64,4 +91,4 @@ class User(db.Model):
         return User.query.filter_by(email=email).first()
 
     def __repr__(self):
-        return f'<User {self.username}>'
+        return f'<User {self.email}>'

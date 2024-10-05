@@ -6,8 +6,8 @@ import { router } from "expo-router";
 
 import BackButton from '@/components/BackButton';
 import HeaderText from "@/components/HeaderText";
-import { Search } from '@/types/member_guest';
-import icons from '@/constants/Icons';
+import Search from '@/components/Search';
+import icons from '@/constants/icons';
 import MemberCard from '@/components/MemberCard';
 
 const members = [

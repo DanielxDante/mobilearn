@@ -6,7 +6,7 @@ from app import api
 from models.course import Course
 
 parser = api.parser()
-parser.add_argument('title', type=str, help='Title', location='json', required=True)
+parser.add_argument('name', type=str, help='name', location='json', required=True)
 parser.add_argument('school', type=str, help='School', location='json', required=True)
 parser.add_argument('description', type=str, help='Description', location='json')
 parser.add_argument('image', type=str, help='Image', location='json')
@@ -24,7 +24,7 @@ class CourseEndpoint(Resource):
             Example request JSON:
             
             {
-                'title': course.title, 
+                'name': course.name, 
                 'school': course.school,      
                 'description': course.description,
                 'image': course.image,
@@ -35,15 +35,15 @@ class CourseEndpoint(Resource):
     @api.expect(parser)
     def post(self):
         data = request.get_json()
-        title = data.get('title')
+        name = data.get('name')
         school = data.get('school')
         description = data.get('description')
         image = data.get('image')
 
-        Course.add_course(title, school, description, image)
+        Course.add_course(name, school, description, image)
 
         return Response(
-            json.dumps({'message': f'Course ({title}) created'}),
+            json.dumps({'message': f'Course ({name}) created'}),
             status=200, mimetype="application/json"
         )
 
@@ -51,7 +51,7 @@ class CourseEndpoint(Resource):
         courses = Course.get_courses()
         response_data = [{
             'id': course.id,
-            'title': course.title, 
+            'name': course.name, 
             'school': course.school,      
             'description': course.description, 
             'rating': course.rating,

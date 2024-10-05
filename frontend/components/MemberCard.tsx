@@ -3,7 +3,7 @@ import { Card, Paragraph, Button } from 'react-native-paper';
 import { TouchableOpacity, StyleSheet, Image } from 'react-native'
 import { router } from "expo-router";
 
-import icons from '@/constants/Icons';
+import icons from '@/constants/icons';
 
 interface IMemberCard {
     title: string;
