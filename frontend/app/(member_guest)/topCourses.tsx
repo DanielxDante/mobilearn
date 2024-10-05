@@ -12,7 +12,7 @@ import React from "react";
 import { useFonts } from "expo-font";
 import { Colors } from "@/constants/colors";
 import { memberGuestTopCoursesSectionConstants as Constants } from "@/constants/textConstants";
-import Course from "../../types/shared/Course";
+import Course from "@/types/shared/Course";
 
 interface ContinueWatchingProps {
     courseData: Course[];
