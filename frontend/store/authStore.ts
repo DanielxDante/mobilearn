@@ -9,11 +9,13 @@ export interface AuthState {
     username: string;
     email: string;
     token: string;
+    gender: string;
     role: "guest" | "member" | "instructor" | "admin";
     signup: (
         username: string,
         email: string,
         password: string,
+        gender: string,
         role: "member" | "instructor"
     ) => Promise<void>;
     login: (
@@ -30,12 +32,13 @@ const useAuthStore = create<AuthState>()(
             username: "",
             email: "",
             token: "",
+            gender: "",
             role: "guest",
-            signup: async (username, email, password, role) => {
+            signup: async (username, email, password, role, gender) => {
                 console.log("Signing up...");
                 const response = await axios.post(
                     AUTH_SIGNUP_URL,
-                    { username, email, password, role },
+                    { username, email, password, role, gender },
                     { headers: { "Content-Type": "application/json" } }
                 );
 
@@ -53,37 +56,36 @@ const useAuthStore = create<AuthState>()(
                     { email, password, role },
                     { headers: { "Content-Type": "application/json" } }
                 );
-              const responseData = response.data;
-              if (response.status === 200) {
-                set({
-                  username: responseData.username,
-                  email: email,
-                  token: responseData.token,
-                  role: responseData.role,
-                  gender: responseData.gender,
-                });
-                return responseData.role;
-              } else {
-                throw new Error("An unexpected error occurred");
-              }
+                const responseData = response.data;
+                if (response.status === 200) {
+                    set({
+                        username: responseData.username,
+                        email: email,
+                        token: responseData.token,
+                        role: responseData.role,
+                        gender: responseData.gender,
+                    });
+                    return responseData.role;
+                } else {
+                    throw new Error("An unexpected error occurred");
+                }
             },
             logout: async () => {
-              console.log("Logging out...");
-              set({
-                username: "",
-                email: "",
-                token: "",
-                role: "guest",
-                gender: "male",
-              });
-          },
+                console.log("Logging out...");
+                set({
+                    username: "",
+                    email: "",
+                    token: "",
+                    role: "guest",
+                    gender: "",
+                });
+            },
         }),
-    {
-      name: "auth-store",
-      storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
-
+        {
+            name: "auth-store",
+            storage: createJSONStorage(() => AsyncStorage),
+        }
+    )
 );
 
 export default useAuthStore;
