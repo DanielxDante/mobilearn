@@ -105,82 +105,50 @@ const MemberGuestLayout = () => {
                     }}
                 />
                 <Tabs.Screen
-                    name="suggestionsSeeAll"
-                    options={{
-                        title: "SuggestionsSeeAll",
-                        headerShown: false,
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon
-                                icon={icons.home}
-                                color={color}
-                                name="Profile"
-                                focused={focused}
-                            />
-                        ),
-                        href: null,
-                    }}
-                />
-                <Tabs.Screen
-                    name="topCoursesSeeAll"
-                    options={{
-                        title: "topCoursesSeeAll",
-                        headerShown: false,
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon
-                                icon={icons.home}
-                                color={color}
-                                name="Top Courses"
-                                focused={focused}
-                            />
-                        ),
-                        href: null,
-                    }}
-                />
-                <Tabs.Screen
                     name="continueWatching"
                     options={{
-                        title: "continueWatching",
+                        title: "Continue Watching",
                         headerShown: false,
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon
-                                icon={icons.home}
-                                color={color}
-                                name="Continue Watching"
-                                focused={focused}
-                            />
-                        ),
                         href: null,
                     }}
                 />
                 <Tabs.Screen
                     name="suggestionsSection"
                     options={{
-                        title: "suggestionsSection",
+                        title: "Suggestions Section",
                         headerShown: false,
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon
-                                icon={icons.home}
-                                color={color}
-                                name="Suggestions Section"
-                                focused={focused}
-                            />
-                        ),
+                        href: null,
+                    }}
+                />
+                <Tabs.Screen
+                    name="suggestionsSeeAll"
+                    options={{
+                        title: "Suggestions See All",
+                        headerShown: false,
                         href: null,
                     }}
                 />
                 <Tabs.Screen
                     name="topCourses"
                     options={{
-                        title: "topCourses",
+                        title: "Top Courses",
                         headerShown: false,
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon
-                                icon={icons.home}
-                                color={color}
-                                name="Top Courses"
-                                focused={focused}
-                            />
-                        ),
+                        href: null,
+                    }}
+                />
+                <Tabs.Screen
+                    name="topCoursesSeeAll"
+                    options={{
+                        title: "Top Courses See All",
+                        headerShown: false,
+                        href: null,
+                    }}
+                />
+                <Tabs.Screen
+                    name="editProfile"
+                    options={{
+                        title: "Edit Profile",
+                        headerShown: false,
                         href: null,
                     }}
                 />

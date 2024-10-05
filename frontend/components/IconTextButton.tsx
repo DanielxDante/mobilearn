@@ -9,6 +9,7 @@ import {
 import { ImageSourcePropType } from "react-native";
 
 import icons from "@/constants/icons";
+import { Colors } from "@/constants/colors";
 
 interface IIconTextButton {
     icon: ImageSourcePropType;
@@ -27,7 +28,7 @@ const IconTextButton = ({ icon, text, onPress, style }: IIconTextButton) => {
             <Text style={styles.text}>{text}</Text>
 
             {/* Forward Icon */}
-            <Image source={icons.chevron} style={styles.icon} />
+            <Image source={icons.chevron} style={styles.iconChevron} />
         </TouchableOpacity>
     );
 };
@@ -43,12 +44,18 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: 20,
+        height: 17,
+        width: 17,
+    },
+    iconChevron: {
+        height: 15,
+        width: 12,
     },
     text: {
         flex: 1, // Makes the text take up all available space
-        fontSize: 16,
-        color: "#000",
-        fontFamily: "Plus-Jakarta-Sans",
+        fontSize: 15,
+        color: Colors.defaultBlue,
+        fontFamily: "Inter-SemiBold",
     },
 });
 

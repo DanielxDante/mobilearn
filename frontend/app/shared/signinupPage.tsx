@@ -73,7 +73,7 @@ const SignUpPage = () => {
                     }}
                 ></Button>
             </View>
-            {/* Temporary button to redirect to homepage*/}
+            {/* Temporary button to redirect to homepage */}
             <View
                 style={{
                     flexDirection: "row",

@@ -15,6 +15,8 @@ import doc from "@/assets/images/icons/doc.png";
 import mic from "@/assets/images/icons/mic.png";
 import tele from "@/assets/images/icons/tele.png";
 import chevron from "@/assets/images/icons/chevron.png";
+import logout from "@/assets/images/icons/logout.png";
+import editProfilePicture from "@/assets/images/icons/editProfilePicture.png";
 
 export default {
     home,
@@ -33,5 +35,7 @@ export default {
     doc,
     mic,
     tele,
-    chevron
+    chevron,
+    logout,
+    editProfilePicture,
 };
