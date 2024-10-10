@@ -1,0 +1,202 @@
+import temporaryImages from "@/constants/temporaryImages";
+import Course from "@/types/shared/Course";
+
+// placeholder for channels
+export const channelData = [
+    { label: "Channel 1", value: "1" },
+    { label: "Channel 2", value: "2" },
+    { label: "Channel 3", value: "3" },
+    { label: "Channel 4", value: "4" },
+    { label: "Channel 5", value: "5" },
+    { label: "Channel 6", value: "6" },
+    { label: "Channel 7", value: "7" },
+    { label: "Channel 8", value: "8" },
+];
+// placeholder for list of search data returned
+export const courseListData: Course[] = [
+    {
+        id: "1",
+        title: "UI/UX Design Essentials",
+        school: "Tech innovations University",
+        description:
+            "This comprehensive program covers the fundamentals of user interface and user experience design, equipping you with the skills to create intuitive, user-centered digital products. Learn key principles of design, wireframing, prototyping, and usability testing through hands-on projects and expert guidance. Ideal for beginners and aspiring designers, this course will help you transform ideas into impactful user experiences. Join us to elevate your design skills and build a portfolio that stands out!",
+        rating: "4.9",
+        completionRate: 0.79,
+        image: temporaryImages.course1,
+        enrolledCount: 3479,
+    },
+    {
+        id: "2",
+        title: "Graphic Design Fundamentals",
+        school: "Creative Arts Institute",
+        description:
+            "This engaging program introduces you to core design principles, including color theory, typography, layout, and composition. Through hands-on projects and real-world applications, you'll develop essential skills to create compelling graphics for various media. Perfect for beginners and aspiring designers, this course empowers you to express your creativity and build a strong foundation for a career in graphic design. Join us and unleash your artistic potential!",
+        rating: "4.7",
+        completionRate: 0.35,
+        image: temporaryImages.course2,
+        enrolledCount: 1457,
+    },
+    {
+        id: "3",
+        title: "Product Design and Innovation",
+        school: "Innovation Institute",
+        description:
+            "Explore the intersection of creativity and technology in product design. Learn how to develop innovative solutions and create products that meet both user needs and market demands.",
+        rating: "4.9",
+        completionRate: 0.78,
+        image: temporaryImages.course3,
+        enrolledCount: 623,
+    },
+    {
+        id: "4",
+        title: "Typography and Layout Design",
+        school: "Creative Arts Academy",
+        description:
+            "Master the art of typography and learn effective layout design to create visually engaging content. This course covers essential principles of design, typography hierarchies, and grid systems.",
+        rating: "4.7",
+        completionRate: 0,
+        image: temporaryImages.course4, // assuming you have an image for this course
+        enrolledCount: 512,
+    },
+    {
+        id: "5",
+        title: "Branding and Identity Design",
+        school: "Visual Arts School",
+        description:
+            "Learn the principles of branding and identity design to create memorable and impactful brands. This course covers logo creation, brand strategy, and building a cohesive visual identity.",
+        rating: "4.8",
+        completionRate: 0,
+        image: temporaryImages.course5, // assuming you have an image for this course
+        enrolledCount: 748,
+    },
+    {
+        id: "6",
+        title: "Game Design and Development",
+        school: "Tech Creators Institute",
+        description:
+            "Dive into the world of game design and development. This course teaches the fundamentals of game mechanics, storytelling, and coding, empowering you to build immersive and engaging games.",
+        rating: "4.6",
+        completionRate: 1,
+        image: temporaryImages.course6, // assuming you have an image for this course
+        enrolledCount: 892,
+    },
+    {
+        id: "7",
+        title: "Web Design Fundamentals",
+        school: "Digital Design Academy",
+        description:
+            "Learn the core principles of web design, including layout, color theory, typography, and user experience. This course covers the essential skills needed to build visually appealing and user-friendly websites.",
+        rating: "4.7",
+        completionRate: 1,
+        image: temporaryImages.course7, // assuming you have an image for this course
+        enrolledCount: 1054,
+    },
+];
+// placeholder for list of Continue Watching courses
+export const continueWatchingData: Course[] = [
+    {
+        id: "1",
+        title: "UI/UX Design Essentials",
+        school: "Tech innovations University",
+        description:
+            "This comprehensive program covers the fundamentals of user interface and user experience design, equipping you with the skills to create intuitive, user-centered digital products. Learn key principles of design, wireframing, prototyping, and usability testing through hands-on projects and expert guidance. Ideal for beginners and aspiring designers, this course will help you transform ideas into impactful user experiences. Join us to elevate your design skills and build a portfolio that stands out!",
+        rating: "4.9",
+        completionRate: 0.79,
+        image: temporaryImages.course1,
+        enrolledCount: 3479,
+    },
+    {
+        id: "2",
+        title: "Graphic Design Fundamentals",
+        school: "Creative Arts Institute",
+        description:
+            "This engaging program introduces you to core design principles, including color theory, typography, layout, and composition. Through hands-on projects and real-world applications, you'll develop essential skills to create compelling graphics for various media. Perfect for beginners and aspiring designers, this course empowers you to express your creativity and build a strong foundation for a career in graphic design. Join us and unleash your artistic potential!",
+        rating: "4.7",
+        completionRate: 0.35,
+        image: temporaryImages.course2,
+        enrolledCount: 1457,
+    },
+    {
+        id: "3",
+        title: "Lorem Ipsum 1",
+        school: "Smoke University",
+        description:
+            "Learn how to do well in school with the power of illusions.",
+        rating: "2.5",
+        completionRate: 0.69,
+        image: temporaryImages.course2,
+        enrolledCount: 335,
+    },
+];
+// placeholder for list of suggestions courses
+export const suggestionsData: Course[] = [
+    {
+        id: "1",
+        title: "UI/UX Design Essentials",
+        school: "Tech innovations University",
+        description:
+            "This comprehensive program covers the fundamentals of user interface and user experience design, equipping you with the skills to create intuitive, user-centered digital products. Learn key principles of design, wireframing, prototyping, and usability testing through hands-on projects and expert guidance. Ideal for beginners and aspiring designers, this course will help you transform ideas into impactful user experiences. Join us to elevate your design skills and build a portfolio that stands out!",
+        rating: "4.9",
+        completionRate: 0.79,
+        image: temporaryImages.course1,
+        enrolledCount: 3479,
+    },
+    {
+        id: "2",
+        title: "Graphic Design Fundamentals",
+        school: "Creative Arts Institute",
+        description:
+            "This engaging program introduces you to core design principles, including color theory, typography, layout, and composition. Through hands-on projects and real-world applications, you'll develop essential skills to create compelling graphics for various media. Perfect for beginners and aspiring designers, this course empowers you to express your creativity and build a strong foundation for a career in graphic design. Join us and unleash your artistic potential!",
+        rating: "4.7",
+        completionRate: 0.35,
+        image: temporaryImages.course2,
+        enrolledCount: 1457,
+    },
+    {
+        id: "3",
+        title: "Lorem Ipsum 1",
+        school: "Smoke University",
+        description:
+            "Learn how to do well in school with the power of illusions.",
+        rating: "2.5",
+        completionRate: 0.69,
+        image: temporaryImages.course2,
+        enrolledCount: 335,
+    },
+];
+// placeholder for list of Top Courses courses
+export const topCourseData: Course[] = [
+    {
+        id: "1",
+        title: "UI/UX Design Essentials",
+        school: "Tech innovations University",
+        description:
+            "This comprehensive program covers the fundamentals of user interface and user experience design, equipping you with the skills to create intuitive, user-centered digital products. Learn key principles of design, wireframing, prototyping, and usability testing through hands-on projects and expert guidance. Ideal for beginners and aspiring designers, this course will help you transform ideas into impactful user experiences. Join us to elevate your design skills and build a portfolio that stands out!",
+        rating: "4.9",
+        completionRate: 0.79,
+        image: temporaryImages.course1,
+        enrolledCount: 3479,
+    },
+    {
+        id: "2",
+        title: "Graphic Design Fundamentals",
+        school: "Creative Arts Institute",
+        description:
+            "This engaging program introduces you to core design principles, including color theory, typography, layout, and composition. Through hands-on projects and real-world applications, you'll develop essential skills to create compelling graphics for various media. Perfect for beginners and aspiring designers, this course empowers you to express your creativity and build a strong foundation for a career in graphic design. Join us and unleash your artistic potential!",
+        rating: "4.7",
+        completionRate: 0.35,
+        image: temporaryImages.course2,
+        enrolledCount: 1457,
+    },
+    {
+        id: "3",
+        title: "Lorem Ipsum 1",
+        school: "Smoke University",
+        description:
+            "Learn how to do well in school with the power of illusions.",
+        rating: "2.5",
+        completionRate: 0.69,
+        image: temporaryImages.course2,
+        enrolledCount: 335,
+    },
+];
