@@ -5,16 +5,21 @@ import {
     Image,
     ScrollView,
     StyleSheet,
+    BackHandler,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { router, useSegments } from "expo-router";
 
 import AppBar from "@/components/AppBar";
 import Search from "@/components/Search";
 import ContinueWatching from "./continueWatching";
 import SuggestionsSection from "./suggestionsSection";
 import TopCourses from "./topCourses";
+import {
+    MEMBER_GUEST_NAMESPACE
+} from "@/constants/pages";
+import useAuthStore from "@/store/authStore";
 
 import {
     channelData,
@@ -30,15 +35,26 @@ import { Colors } from "@/constants/colors";
 import { memberGuestHomeConstants as Constants } from "@/constants/textConstants";
 
 const Home = () => {
-    const [fontsLoaded, error] = useFonts({
-        "Inter-Regular": require("@/assets/fonts/Inter-Regular.ttf"),
-        "Inter-Bold": require("@/assets/fonts/Inter-Bold.ttf"),
-        "Inter-SemiBold": require("@/assets/fonts/Inter-SemiBold.ttf"),
-        "Inter-Medium": require("@/assets/fonts/Inter-Medium.ttf"),
-        "Inter-Light": require("@/assets/fonts/Inter-Light.ttf"),
-    });
+    const segments = useSegments();
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            () => {
+                // Get the current route
+                const currentRoute = segments[segments.length - 1];
+                console.log(currentRoute);
+                // If we're on the member home page, go to hardware home
+                if (currentRoute === MEMBER_GUEST_NAMESPACE) {
+                    BackHandler.exitApp(); // Exit the app
+                    return true;
+                }
 
-    const router = useRouter();
+                return false;
+            }
+        );
+
+    return () => backHandler.remove();
+}, [router, segments]);
 
     const handleSelectCourse = (id: string) => {
         // TODO: INCLUDE COURSE NAVIGATION

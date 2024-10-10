@@ -73,7 +73,7 @@ const Profile = () => {
                     onPress={async () => {
                         await logout();
                         router.push("/shared/signinupPage");
-                        console.log("Admin logout");
+                        console.log("Member logout");
                     }}
                     style={styles.iconTextButton}
                 />

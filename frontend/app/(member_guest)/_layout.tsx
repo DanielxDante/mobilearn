@@ -45,7 +45,7 @@ const MemberGuestLayout = () => {
                 }}
             >
                 <Tabs.Screen
-                    name="home"
+                    name="index"
                     options={{
                         title: "Home",
                         headerShown: false,
