@@ -13,9 +13,9 @@ import { router, useSegments } from "expo-router";
 
 import AppBar from "@/components/AppBar";
 import Search from "@/components/Search";
-import ContinueWatching from "./continueWatching";
-import SuggestionsSection from "./suggestionsSection";
-import TopCourses from "./topCourses";
+import ContinueWatching from "@/app/(member_guest)/continueWatching";
+import SuggestionsSection from "@/app/(member_guest)/suggestionsSection";
+import TopCourses from "@/app/(member_guest)/topCourses";
 import {
     MEMBER_GUEST_NAMESPACE
 } from "@/constants/pages";
@@ -103,7 +103,7 @@ const Home = () => {
                             <TouchableOpacity
                                 onPress={() => {
                                     router.push({
-                                        pathname: "/suggestionsSeeAll",
+                                        pathname: "/(member_guest)/suggestionsSeeAll",
                                         params: {
                                             suggestions:
                                                 JSON.stringify(suggestionsData),
@@ -130,7 +130,7 @@ const Home = () => {
                             <TouchableOpacity
                                 onPress={() => {
                                     router.push({
-                                        pathname: "/topCoursesSeeAll",
+                                        pathname: "/(member_guest)/topCoursesSeeAll",
                                         params: {
                                             suggestions:
                                                 JSON.stringify(topCourseData),
