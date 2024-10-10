@@ -152,6 +152,14 @@ const MemberGuestLayout = () => {
                         href: null,
                     }}
                 />
+                <Tabs.Screen
+                    name="paymentMethod"
+                    options={{
+                        title: "Payment Method",
+                        headerShown: false,
+                        href: null,
+                    }}
+                />
             </Tabs>
             <StatusBar backgroundColor="#161622" style="light" />
         </>

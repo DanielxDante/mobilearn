@@ -55,7 +55,7 @@ const Profile = () => {
                     icon={icons.card}
                     text={Constants.paymentMethodTitle}
                     onPress={() => {
-                        console.log("Payment method button pressed");
+                        router.push("/(member_guest)/paymentMethod")
                     }}
                     style={styles.iconTextButton}
                 />

@@ -259,6 +259,11 @@ export const memberGuestEditProfilePage = {
   saveChanges: "Save",
 };
 
+export const memberGuestPaymentMethodPage = {
+  appBarTitle: "Payment Method",
+  title: "Select Payment Method",
+}
+
 export const inputDropDownFieldConstants = {
   selectOption: "Please select an option",
 };

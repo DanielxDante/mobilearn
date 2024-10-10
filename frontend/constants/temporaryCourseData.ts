@@ -24,6 +24,8 @@ export const courseListData: Course[] = [
         completionRate: 0.79,
         image: temporaryImages.course1,
         enrolledCount: 3479,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "2",
@@ -35,6 +37,8 @@ export const courseListData: Course[] = [
         completionRate: 0.35,
         image: temporaryImages.course2,
         enrolledCount: 1457,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "3",
@@ -46,6 +50,8 @@ export const courseListData: Course[] = [
         completionRate: 0.78,
         image: temporaryImages.course3,
         enrolledCount: 623,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "4",
@@ -57,6 +63,8 @@ export const courseListData: Course[] = [
         completionRate: 0,
         image: temporaryImages.course4, // assuming you have an image for this course
         enrolledCount: 512,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "5",
@@ -68,6 +76,8 @@ export const courseListData: Course[] = [
         completionRate: 0,
         image: temporaryImages.course5, // assuming you have an image for this course
         enrolledCount: 748,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "6",
@@ -79,6 +89,8 @@ export const courseListData: Course[] = [
         completionRate: 1,
         image: temporaryImages.course6, // assuming you have an image for this course
         enrolledCount: 892,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "7",
@@ -90,6 +102,8 @@ export const courseListData: Course[] = [
         completionRate: 1,
         image: temporaryImages.course7, // assuming you have an image for this course
         enrolledCount: 1054,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
 ];
 // placeholder for list of Continue Watching courses
@@ -104,6 +118,8 @@ export const continueWatchingData: Course[] = [
         completionRate: 0.79,
         image: temporaryImages.course1,
         enrolledCount: 3479,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "2",
@@ -115,6 +131,8 @@ export const continueWatchingData: Course[] = [
         completionRate: 0.35,
         image: temporaryImages.course2,
         enrolledCount: 1457,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "3",
@@ -126,6 +144,8 @@ export const continueWatchingData: Course[] = [
         completionRate: 0.69,
         image: temporaryImages.course2,
         enrolledCount: 335,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
 ];
 // placeholder for list of suggestions courses
@@ -140,6 +160,8 @@ export const suggestionsData: Course[] = [
         completionRate: 0.79,
         image: temporaryImages.course1,
         enrolledCount: 3479,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "2",
@@ -151,6 +173,8 @@ export const suggestionsData: Course[] = [
         completionRate: 0.35,
         image: temporaryImages.course2,
         enrolledCount: 1457,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "3",
@@ -162,6 +186,8 @@ export const suggestionsData: Course[] = [
         completionRate: 0.69,
         image: temporaryImages.course2,
         enrolledCount: 335,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
 ];
 // placeholder for list of Top Courses courses
@@ -176,6 +202,8 @@ export const topCourseData: Course[] = [
         completionRate: 0.79,
         image: temporaryImages.course1,
         enrolledCount: 3479,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "2",
@@ -187,6 +215,8 @@ export const topCourseData: Course[] = [
         completionRate: 0.35,
         image: temporaryImages.course2,
         enrolledCount: 1457,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
     {
         id: "3",
@@ -198,5 +228,7 @@ export const topCourseData: Course[] = [
         completionRate: 0.69,
         image: temporaryImages.course2,
         enrolledCount: 335,
+        program: "Bachelor of Engineering in Computer Science",
+        enabled: true,
     },
 ];
