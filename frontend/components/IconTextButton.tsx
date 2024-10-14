@@ -9,6 +9,7 @@ import {
 import { ImageSourcePropType } from "react-native";
 
 import icons from "@/constants/icons";
+import { Colors } from "@/constants/colors";
 
 interface IIconTextButton {
     icon: ImageSourcePropType | null;
@@ -31,33 +32,39 @@ const IconTextButton = ({ icon, text, onPress, style }: IIconTextButton) => {
         {/* Text */}
         <Text style={styles.text}>{text}</Text>
 
-        {/* Forward Icon */}
-        <Image
-            source={icons.chevronRight}
-            style={styles.icon}
-        />
-    </TouchableOpacity>
-  );
+            {/* Text */}
+            <Text style={styles.text}>{text}</Text>
+
+            {/* Forward Icon */}
+            <Image source={icons.chevron} style={styles.iconChevron} />
+        </TouchableOpacity>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 40,
-    paddingRight: 25,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-  },
-  icon: {
-    marginRight: 20,
-  },
-  text: {
-    flex: 1, // Makes the text take up all available space
-    fontSize: 16,
-    color: '#000',
-    fontFamily: 'Plus-Jakarta-Sans',
-  },
+    container: {
+        flexDirection: "row", // Align items horizontally
+        alignItems: "center", // Vertically center all items
+        paddingLeft: 40,
+        paddingRight: 25,
+        paddingVertical: 10,
+        backgroundColor: "#fff",
+    },
+    icon: {
+        marginRight: 20,
+        height: 17,
+        width: 17,
+    },
+    iconChevron: {
+        height: 15,
+        width: 12,
+    },
+    text: {
+        flex: 1, // Makes the text take up all available space
+        fontSize: 15,
+        color: Colors.defaultBlue,
+        fontFamily: "Inter-SemiBold",
+    },
 });
 
 export default IconTextButton;

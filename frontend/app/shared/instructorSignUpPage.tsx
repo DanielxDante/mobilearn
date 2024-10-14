@@ -12,6 +12,7 @@ import { instructorSignUpPageConstants as Constants } from "@/constants/textCons
 import { MEMBER_REGISTRATION_SUCCESS } from "@/constants/pages";
 import icons from "@/constants/icons"; //here is a backbutton icon here
 import LargeButton from "@/components/LargeButton";
+import PhoneNumberInputField from "@/components/PhoneNumberInputField";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
@@ -23,11 +24,29 @@ export default function signUpPage() {
   const [gender, setGender] = useState("");
   const [password, setPassword] = useState("");
   const [conPassword, setConPassword] = useState("");
-  const [number, setNumber] = useState("");
+  const [combinedPhoneNumber, setCombinedPhoneNumber] = useState("");
   const [company, setCompany] = useState("");
   const [position, setPosition] = useState("");
 
   const [internalPage, setInternalPage] = useState(1); // 1 for first page, 2 for second page
+
+  const handleAreaCodeChange = (areaCode: string) => {
+    // Extract only the numeric part from the selected area code (e.g., "+1" from "+1 USA")
+    const numericAreaCode = areaCode.split(" ")[0];
+    // Split the combined phone number to separate the existing phone number
+    const currentPhoneNumber = combinedPhoneNumber.replace(/^\+\d{1,3}\s/, ""); // Remove area code from combined string
+    const newCombinedPhoneNumber = `${numericAreaCode} ${currentPhoneNumber}`; // Merge new numeric area code with current phone number
+    setCombinedPhoneNumber(newCombinedPhoneNumber);
+    console.log(newCombinedPhoneNumber);
+  };
+
+  const handlePhoneNumberChange = (phoneNumber: string) => {
+    // Keep only the area code part from the existing combined phone number
+    const areaCode = combinedPhoneNumber.split(" ")[0]; // Get the area code part
+    const newCombinedPhoneNumber = `${areaCode} ${phoneNumber}`; // Merge area code with new phone number
+    setCombinedPhoneNumber(newCombinedPhoneNumber);
+    console.log(newCombinedPhoneNumber);
+  };
 
   const handleNextPage = () => {
     setInternalPage(2);
@@ -64,15 +83,6 @@ export default function signUpPage() {
           marginTop: -64,
         }}
       >
-        {/* Logo at the top */}
-        {/* <Image
-          source={mobilearnHat}
-          style={{
-            width: 128,
-            height: 96,
-          }}
-          resizeMode="contain" // Adjust as needed
-        /> */}
         {internalPage === 2 && (
           <TouchableOpacity
             onPress={handleBack}
@@ -131,14 +141,16 @@ export default function signUpPage() {
             value={gender}
             onChange={setGender}
           />
-          <InputField
-            inputTitle={Constants.fields[3].inputTitle}
-            placeholder={Constants.fields[3].placeHolder}
-            value={number}
-            onChangeText={setNumber}
+          <PhoneNumberInputField
+            areaCodes={Constants.areaCodes}
+            phoneNumber={
+              combinedPhoneNumber.split(" ").slice(1).join(" ") || ""
+            } // Extract phone number
+            onPhoneNumberChange={handlePhoneNumberChange}
+            onAreaCodeChange={handleAreaCodeChange}
+            selectedAreaCode={combinedPhoneNumber.split(" ")[0] || "+1"} // Extract area code
           />
           <RegisterButton text="Next" onPress={handleNextPage} />
-          {/* // Can have a button here, use the same registration button but change the text and functionality to increment the page */}
         </View>
       )}
       {/* Internal Second Page */}

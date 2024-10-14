@@ -17,6 +17,7 @@ import tele from "@/assets/images/icons/tele.png";
 import chevronRight from "@/assets/images/icons/chevronRight.png";
 import chevronUp from "@/assets/images/icons/chevronUp.png";
 import chevronDown from "@/assets/images/icons/chevronDown.png";
+import editProfilePicture from "@/assets/images/icons/editProfilePicture.png";
 
 export default {
     home,
@@ -37,5 +38,6 @@ export default {
     tele,
     chevronRight,
     chevronUp,
-    chevronDown
+    chevronDown,
+    editProfilePicture,
 };

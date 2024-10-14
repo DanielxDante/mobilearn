@@ -1,3 +1,5 @@
+import PhoneNumberInputField from "@/components/PhoneNumberInputField";
+
 export const carouselPageConstants = {
   slides: [
     //THE IMAGE PATHS WORK FROM HERE!!!
@@ -131,6 +133,33 @@ export const instructorSignUpPageConstants = {
       placeHolder: "Password",
     },
   ],
+  areaCodes: [
+    "+1 USA",
+    "+65 Singapore",
+    "+86 China",
+    "+44 United Kingdom",
+    "+49 Germany",
+    "+33 France",
+    "+61 Australia",
+    "+62 Indonesia",
+    "+64 New Zealand",
+    "+91 India",
+    "+52 Mexico",
+    "+81 Japan",
+    "+82 South Korea",
+    "+7 Russia",
+    "+55 Brazil",
+    "+234 Nigeria",
+    "+351 Portugal",
+    "+46 Sweden",
+    "+48 Poland",
+    "+971 United Arab Emirates",
+    "+94 Sri Lanka",
+    "+27 South Africa",
+    "+39 Italy",
+    "+34 Spain",
+    "+93 Afghanistan",
+  ],
   regButtonText: "Register",
 };
 
@@ -141,6 +170,10 @@ export const registrationSuccessMember = {
   subTitle: "Welcome to A Lifelong Of Learning.",
   linkText: "Sign In",
   image: require("../assets/images/Instructor.png"),
+};
+
+export const notificationsConstants = {
+  pageTitle: "Notification",
 };
 
 export const memberGuestHomeConstants = {
@@ -190,4 +223,48 @@ export const memberGuestCoursePage = {
   savedCoursesTitle: "Saved Courses",
   inProgressCoursesTitle: "In Progress",
   completedCoursesTitle: "Completed",
+};
+
+export const memberGuestProfilePage = {
+  appBarTitle: "My Profile",
+  editIcon: require("@/assets/images/icons/edit.png"),
+  paymentMethodTitle: "Payment Method",
+  donateTitle: "Donate",
+  logOutTitle: "Log out",
+};
+
+export const memberGuestEditProfilePage = {
+  appBarTitle: "Edit Profile",
+  editProfilePicture: require("@/assets/images/icons/editProfilePicture.png"),
+  fields: [
+    {
+      inputTitle: "Username",
+    },
+    {
+      inputTitle: "Email",
+    },
+    {
+      inputTitle: "Gender",
+      options: ["Male", "Female"],
+    },
+    {
+      inputTitle: "Password",
+      placeholder: "******",
+    },
+    {
+      inputTitle: "Confirm Password",
+      placeholder: "******",
+    },
+  ],
+  saveChanges: "Save",
+};
+
+export const inputDropDownFieldConstants = {
+  selectOption: "Please select an option",
+};
+
+export const phoneNumberInputFieldConstants = {
+  search: "Search...",
+  enterPhone: "Enter your phone number",
+  seachAreaCode: "Search area codes",
 };
