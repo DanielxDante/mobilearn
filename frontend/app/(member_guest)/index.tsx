@@ -59,6 +59,13 @@ const Home = () => {
     const handleSelectCourse = (id: string) => {
         // TODO: INCLUDE COURSE NAVIGATION
         console.log("Course " + id + " Selected");
+        const courseSelected = courseListData.find(course => course.id === id);
+        router.push({
+            pathname: "../shared/courseDetails",
+            params: {
+                course: JSON.stringify(courseSelected),
+            }
+        });
     };
 
     return (
