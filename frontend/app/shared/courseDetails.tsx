@@ -20,38 +20,40 @@ const CourseDetails = () => {
     const course: Course =
         typeof courseSelected === "string" ? JSON.parse(courseSelected) : [];
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView>
         <VideoPlayer uri={"https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"}/>
         {/* Course Information */}
-        <Text style={styles.title}>{ course.title }</Text>
-        <Text style={styles.school}>{ course.school }</Text>
-        <View style={styles.enrolledCountContainer}>
-            <Image source={icons.userCount} style={styles.enrolledCountIcon}/>
-            <Text style={styles.enrolledCount}>{ course.enrolledCount }{Constants.enrolledCountText}</Text>
+        <View style={styles.container}>
+            <Text style={styles.title}>{ course.title }</Text>
+            <Text style={styles.school}>{ course.school }</Text>
+            <View style={styles.enrolledCountContainer}>
+                <Image source={icons.userCount} style={styles.enrolledCountIcon}/>
+                <Text style={styles.enrolledCount}>{ course.enrolledCount }{Constants.enrolledCountText}</Text>
+            </View>
+            <Text style={styles.courseDetailsHeader}>{Constants.courseDetails}</Text>
+            <Text style={styles.courseDescription}>{course.description}</Text>
+            {/* Course Information Lecture/Learning Time/Certification */}
+            <View style={styles.courseInfo}>
+                <View style={styles.courseInfoLeft}>
+                    <View style={styles.courseInfoLeftTitle}>
+                        <Image source={icons.lecture} style={styles.courseInfoLeftIcon}/>
+                        <Text style={styles.courseInfoLeftText}>{Constants.lecture}</Text>
+                    </View>
+                    <View style={styles.courseInfoLeftTitle}>
+                        <Image source={icons.clock} style={styles.courseInfoLeftIcon}/>
+                        <Text style={styles.courseInfoLeftText}>{Constants.learningTime}</Text>
+                    </View>
+                    <View style={styles.courseInfoLeftTitle}>
+                        <Image source={icons.certification} style={styles.courseInfoLeftIcon}/>
+                        <Text  style={styles.courseInfoLeftText}>{Constants.certification}</Text>
+                    </View>
+                </View>
+                <View style={styles.courseInfoRight}>
+                    <Text style={styles.courseInfoRightText}>{numLectures}{Constants.numLectures}</Text>
+                    <Text style={styles.courseInfoRightText}>{learningTime}</Text>
+                    <Text style={styles.courseInfoRightText}>{certicationType}</Text>
+                </View>
         </View>
-        <Text style={styles.courseDetailsHeader}>{Constants.courseDetails}</Text>
-        <Text style={styles.courseDescription}>{course.description}</Text>
-        {/* Course Information Lecture/Learning Time/Certification */}
-        <View style={styles.courseInfo}>
-            <View style={styles.courseInfoLeft}>
-                <View style={styles.courseInfoLeftTitle}>
-                    <Image source={icons.lecture} style={styles.courseInfoLeftIcon}/>
-                    <Text style={styles.courseInfoLeftText}>{Constants.lecture}</Text>
-                </View>
-                <View style={styles.courseInfoLeftTitle}>
-                    <Image source={icons.clock} style={styles.courseInfoLeftIcon}/>
-                    <Text style={styles.courseInfoLeftText}>{Constants.learningTime}</Text>
-                </View>
-                <View style={styles.courseInfoLeftTitle}>
-                    <Image source={icons.certification} style={styles.courseInfoLeftIcon}/>
-                    <Text  style={styles.courseInfoLeftText}>{Constants.certification}</Text>
-                </View>
-            </View>
-            <View style={styles.courseInfoRight}>
-                <Text style={styles.courseInfoRightText}>{numLectures}{Constants.numLectures}</Text>
-                <Text style={styles.courseInfoRightText}>{learningTime}</Text>
-                <Text style={styles.courseInfoRightText}>{certicationType}</Text>
-            </View>
         </View>
     </SafeAreaView>
   )
