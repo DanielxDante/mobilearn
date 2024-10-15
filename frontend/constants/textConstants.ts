@@ -273,3 +273,12 @@ export const phoneNumberInputFieldConstants = {
   enterPhone: "Enter your phone number",
   seachAreaCode: "Search area codes",
 };
+
+export const courseDetailsConstants = {
+  enrolledCountText: " students already enrolled",
+  courseDetails: "Course Details",
+  lecture: "Lecture",
+  learningTime: "Learning Time",
+  certification: "Certification",
+  numLectures: "+ Lectures",
+}

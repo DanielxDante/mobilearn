@@ -63,7 +63,7 @@ const Home = () => {
         router.push({
             pathname: "../shared/courseDetails",
             params: {
-                course: JSON.stringify(courseSelected),
+                courseSelected: JSON.stringify(courseSelected),
             }
         });
     };
