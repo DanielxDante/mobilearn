@@ -13,12 +13,10 @@ import { router, useSegments } from "expo-router";
 
 import AppBar from "@/components/AppBar";
 import Search from "@/components/Search";
-import ContinueWatching from "@/app/(member_guest)/continueWatching";
-import SuggestionsSection from "@/app/(member_guest)/suggestionsSection";
-import TopCourses from "@/app/(member_guest)/topCourses";
-import {
-    MEMBER_GUEST_NAMESPACE
-} from "@/constants/pages";
+import ContinueWatching from "@/app/(member_guest)/home/continueWatching";
+import SuggestionsSection from "@/app/(member_guest)/home/suggestionsSection";
+import TopCourses from "@/app/(member_guest)/home/topCourses";
+import { MEMBER_GUEST_NAMESPACE } from "@/constants/pages";
 import useAuthStore from "@/store/authStore";
 
 import {
@@ -53,18 +51,20 @@ const Home = () => {
             }
         );
 
-    return () => backHandler.remove();
-}, [router, segments]);
+        return () => backHandler.remove();
+    }, [router, segments]);
 
     const handleSelectCourse = (id: string) => {
         // TODO: INCLUDE COURSE NAVIGATION
         console.log("Course " + id + " Selected");
-        const courseSelected = courseListData.find(course => course.id === id);
+        const courseSelected = courseListData.find(
+            (course) => course.id === id
+        );
         router.push({
-            pathname: "../shared/courseDetails",
+            pathname: "../shared/course/courseDetails",
             params: {
                 courseSelected: JSON.stringify(courseSelected),
-            }
+            },
         });
     };
 
@@ -110,7 +110,8 @@ const Home = () => {
                             <TouchableOpacity
                                 onPress={() => {
                                     router.push({
-                                        pathname: "/(member_guest)/suggestionsSeeAll",
+                                        pathname:
+                                            "/(member_guest)/home/suggestionsSeeAll",
                                         params: {
                                             suggestions:
                                                 JSON.stringify(suggestionsData),
@@ -137,7 +138,8 @@ const Home = () => {
                             <TouchableOpacity
                                 onPress={() => {
                                     router.push({
-                                        pathname: "/(member_guest)/topCoursesSeeAll",
+                                        pathname:
+                                            "/(member_guest)/home/topCoursesSeeAll",
                                         params: {
                                             suggestions:
                                                 JSON.stringify(topCourseData),
