@@ -9,14 +9,15 @@ export const MEMBER_REGISTRATION_SUCCESS =
 
 // MEMBER/GUEST PAGES
 export const MEMBER_GUEST_NAMESPACE = "(member_guest)";
+export const MEMBER_GUEST_TABS_NAMESPACE = `${MEMBER_GUEST_NAMESPACE}/(tabs)`;
 export const MEMBER_GUEST_HOME =
-    `/${MEMBER_GUEST_NAMESPACE}/index` as Href<string>;
+    `/${MEMBER_GUEST_TABS_NAMESPACE}/index` as Href<string>;
 export const MEMBER_GUEST_COURSEPAGE =
-    `/${MEMBER_GUEST_NAMESPACE}/coursePage` as Href<string>;
+    `/${MEMBER_GUEST_TABS_NAMESPACE}/coursePage` as Href<string>;
 export const MEMBER_GUEST_CHAT =
-    `/${MEMBER_GUEST_NAMESPACE}/chat` as Href<string>;
+    `/${MEMBER_GUEST_TABS_NAMESPACE}/chat` as Href<string>;
 export const MEMBER_GUEST_PROFILE =
-    `/${MEMBER_GUEST_NAMESPACE}/profile` as Href<string>;
+    `/${MEMBER_GUEST_TABS_NAMESPACE}/profile` as Href<string>;
 
 // INSTRUCTOR PAGES
 
