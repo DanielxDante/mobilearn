@@ -4,6 +4,7 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import Button from "../../components/MediumButton";
 import { SignInUpPageConstants as Constants } from "@/constants/textConstants";
 import SignInUp from "../../assets/images/SignInUp.png";
+import { MEMBER_GUEST_NAMESPACE } from "@/constants/pages";
 
 const SignUpPage = () => {
     return (
@@ -84,7 +85,7 @@ const SignUpPage = () => {
                     text={Constants.homepageButtonText}
                     isBlue={true}
                     onPress={() => {
-                        router.push("/(member_guest)");
+                        router.push("/(member_guest)/(tabs)");
                         console.log("Homepage pressed");
                     }}
                 ></Button>
