@@ -45,7 +45,7 @@ const MemberGuestLayout = () => {
                 }}
             >
                 <Tabs.Screen
-                    name="home"
+                    name="index"
                     options={{
                         title: "Home",
                         headerShown: false,
@@ -148,6 +148,14 @@ const MemberGuestLayout = () => {
                     name="editProfile"
                     options={{
                         title: "Edit Profile",
+                        headerShown: false,
+                        href: null,
+                    }}
+                />
+                <Tabs.Screen
+                    name="paymentMethod"
+                    options={{
+                        title: "Payment Method",
                         headerShown: false,
                         href: null,
                     }}

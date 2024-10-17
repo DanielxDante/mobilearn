@@ -20,8 +20,9 @@ export default function LoginPage() {
   const [domain, setDomain] = useState("");
 
   const handleSignIn = async () => {
+    const role = domain.toLowerCase() as "member" | "instructor"
     try {
-      const newRole = await login(email, password, domain.toLowerCase());
+      const newRole = await login(email, password, role);
 
       if (newRole === "member") {
         router.push(MEMBER_GUEST_HOME);
@@ -89,20 +90,20 @@ export default function LoginPage() {
       <View style={{ width: "100%" }}>
         <InputField
           inputTitle={Constants.fields[0].inputTitle}
-          placeholder={Constants.fields[0].placeHolder}
+          placeholder={Constants.fields[0].placeHolder || ""}
           value={email}
           onChangeText={setEmail}
         />
         <InputField
           inputTitle={Constants.fields[1].inputTitle}
-          placeholder={Constants.fields[1].placeHolder}
+          placeholder={Constants.fields[1].placeHolder || ""}
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
         />
         <InputDropDownField
           inputTitle={Constants.fields[2].inputTitle}
-          options={Constants.fields[2].options}
+          options={Constants.fields[2].options || []}
           value={domain}
           onChange={setDomain}
         />

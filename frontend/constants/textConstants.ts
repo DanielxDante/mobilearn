@@ -259,6 +259,11 @@ export const memberGuestEditProfilePage = {
   saveChanges: "Save",
 };
 
+export const memberGuestPaymentMethodPage = {
+  appBarTitle: "Payment Method",
+  title: "Select Payment Method",
+}
+
 export const inputDropDownFieldConstants = {
   selectOption: "Please select an option",
 };
@@ -268,3 +273,14 @@ export const phoneNumberInputFieldConstants = {
   enterPhone: "Enter your phone number",
   seachAreaCode: "Search area codes",
 };
+
+export const courseDetailsConstants = {
+  enrolledCountText: " students already enrolled",
+  courseDetails: "Course Details",
+  lecture: "Lecture",
+  learningTime: "Learning Time",
+  certification: "Certification",
+  numLectures: "+ Lectures",
+  skillsTitle: "Skills",
+  enrollNowButton: "ENROLL NOW",
+}

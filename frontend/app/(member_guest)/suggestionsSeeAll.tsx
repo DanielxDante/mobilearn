@@ -17,13 +17,6 @@ import Course from "@/types/shared/Course";
 import { memberGuestSuggestionsSeeAll as Constants } from "@/constants/textConstants";
 
 const SuggestionsSeeAll = () => {
-  const [fontsLoaded, error] = useFonts({
-    "Inter-Regular": require("@/assets/fonts/Inter-Regular.ttf"),
-    "Inter-Bold": require("@/assets/fonts/Inter-Bold.ttf"),
-    "Inter-SemiBold": require("@/assets/fonts/Inter-SemiBold.ttf"),
-    "Inter-Medium": require("@/assets/fonts/Inter-Medium.ttf"),
-    "Inter-Light": require("@/assets/fonts/Inter-Light.ttf"),
-  });
 
   const { suggestions } = useLocalSearchParams();
   const parsedSuggestions: Course[] =

@@ -5,7 +5,7 @@ import * as Progress from "react-native-progress";
 import { useFonts } from "expo-font";
 import { Colors } from "@/constants/colors";
 import { memberGuestContinueWatchingConstants as Constants } from "@/constants/textConstants";
-import Course from "../../types/shared/Course";
+import Course from "@/types/shared/Course";
 
 interface ContinueWatchingProps {
     courseData: Course[];
@@ -16,13 +16,6 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
     courseData,
     onSelect,
 }) => {
-    const [fontsLoaded, error] = useFonts({
-        "Inter-Regular": require("@/assets/fonts/Inter-Regular.ttf"),
-        "Inter-Bold": require("@/assets/fonts/Inter-Bold.ttf"),
-        "Inter-SemiBold": require("@/assets/fonts/Inter-SemiBold.ttf"),
-        "Inter-Medium": require("@/assets/fonts/Inter-Medium.ttf"),
-        "Inter-Light": require("@/assets/fonts/Inter-Light.ttf"),
-    });
     const first2Courses = courseData.slice(0, 2);
 
     const renderItem = (item: Course) => (

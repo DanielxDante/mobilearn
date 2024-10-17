@@ -84,7 +84,7 @@ const SignUpPage = () => {
                     text={Constants.homepageButtonText}
                     isBlue={true}
                     onPress={() => {
-                        router.push("/(member_guest)/home");
+                        router.push("/(member_guest)");
                         console.log("Homepage pressed");
                     }}
                 ></Button>

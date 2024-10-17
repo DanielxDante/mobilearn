@@ -6,7 +6,6 @@ import {
     Image,
     Dimensions,
     Animated,
-    FlatList,
     ScrollView,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
@@ -18,17 +17,9 @@ import { Colors } from "@/constants/colors";
 import { memberGuestCoursePage as Constants } from "@/constants/textConstants";
 import CourseListItem from "@/components/CourseListItem";
 import Course from "@/types/shared/Course";
-import { useFonts } from "expo-font";
 import CourseSectionTabs from "@/components/CourseSectionTabs";
 
 const CoursePage = () => {
-    const [fontsLoaded, error] = useFonts({
-        "Inter-Regular": require("@/assets/fonts/Inter-Regular.ttf"),
-        "Inter-Bold": require("@/assets/fonts/Inter-Bold.ttf"),
-        "Inter-SemiBold": require("@/assets/fonts/Inter-SemiBold.ttf"),
-        "Inter-Medium": require("@/assets/fonts/Inter-Medium.ttf"),
-        "Inter-Light": require("@/assets/fonts/Inter-Light.ttf"),
-    });
     // selectedSection: 0 for Saved, 1 for In Progress, 2 for Completed
     const [selectedSection, setSelectedSection] = useState(0);
     const [courses, setCourses] = useState<{
@@ -93,6 +84,13 @@ const CoursePage = () => {
     const handleSelectCourse = (id: string) => {
         // TODO: INCLUDE COURSE NAVIGATION
         console.log("Course " + id + " Selected");
+        const courseSelected = courseListData.find(course => course.id === id);
+        router.push({
+            pathname: "../shared/courseDetails",
+            params: {
+                courseSelected: JSON.stringify(courseSelected),
+            }
+        });
     };
 
     return (
