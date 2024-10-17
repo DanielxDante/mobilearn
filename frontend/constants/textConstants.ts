@@ -281,4 +281,6 @@ export const courseDetailsConstants = {
   learningTime: "Learning Time",
   certification: "Certification",
   numLectures: "+ Lectures",
+  skillsTitle: "Skills",
+  enrollNowButton: "ENROLL NOW",
 }
