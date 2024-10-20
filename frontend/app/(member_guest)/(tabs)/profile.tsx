@@ -55,7 +55,7 @@ const Profile = () => {
                     icon={icons.card}
                     text={Constants.paymentMethodTitle}
                     onPress={() => {
-                        console.log("Payment method button pressed");
+                        router.push("/(member_guest)/paymentMethod")
                     }}
                     style={styles.iconTextButton}
                 />
@@ -73,7 +73,7 @@ const Profile = () => {
                     onPress={async () => {
                         await logout();
                         router.push("/shared/signinupPage");
-                        console.log("Admin logout");
+                        console.log("Member logout");
                     }}
                     style={styles.iconTextButton}
                 />

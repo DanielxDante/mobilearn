@@ -2,7 +2,7 @@ import { View, Image } from "react-native";
 import React from "react";
 import { Tabs } from "expo-router";
 
-import icons from "../../constants/icons";
+import icons from "../../../constants/icons";
 import { StatusBar } from "expo-status-bar";
 import { ITabIcon } from "@/types/shared/layout";
 import { Colors } from "@/constants/colors";
@@ -45,7 +45,7 @@ const MemberGuestLayout = () => {
                 }}
             >
                 <Tabs.Screen
-                    name="home"
+                    name="index"
                     options={{
                         title: "Home",
                         headerShown: false,
@@ -104,7 +104,7 @@ const MemberGuestLayout = () => {
                         ),
                     }}
                 />
-                <Tabs.Screen
+                {/* <Tabs.Screen
                     name="continueWatching"
                     options={{
                         title: "Continue Watching",
@@ -152,6 +152,14 @@ const MemberGuestLayout = () => {
                         href: null,
                     }}
                 />
+                <Tabs.Screen
+                    name="paymentMethod"
+                    options={{
+                        title: "Payment Method",
+                        headerShown: false,
+                        href: null,
+                    }}
+                /> */}
             </Tabs>
             <StatusBar backgroundColor="#161622" style="light" />
         </>
