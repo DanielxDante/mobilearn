@@ -16,7 +16,7 @@ import Search from "@/components/Search";
 import ContinueWatching from "@/app/(member_guest)/home/continueWatching";
 import SuggestionsSection from "@/app/(member_guest)/home/suggestionsSection";
 import TopCourses from "@/app/(member_guest)/home/topCourses";
-import { MEMBER_GUEST_NAMESPACE } from "@/constants/pages";
+import { MEMBER_GUEST_TABS } from "@/constants/pages";
 import useAuthStore from "@/store/authStore";
 
 import {
@@ -39,9 +39,9 @@ const Home = () => {
             "hardwareBackPress",
             () => {
                 // Get the current route
-                const currentRoute = segments[segments.length - 2];
+                const currentRoute = segments[segments.length - 1];
                 // If we're on the member home page, go to hardware home
-                if (currentRoute === MEMBER_GUEST_NAMESPACE) {
+                if (currentRoute === MEMBER_GUEST_TABS) {
                     BackHandler.exitApp(); // Exit the app
                     return true;
                 }
