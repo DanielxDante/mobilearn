@@ -1,11 +1,13 @@
-import { View, Text, StyleSheet } from "react-native";
-import React, { useState } from "react";
+import { View, Text, StyleSheet, BackHandler } from "react-native";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import BackButton from "@/components/BackButton";
 import { Colors } from "@/constants/colors";
 import { memberGuestPaymentMethodPage as Constants } from "@/constants/textConstants";
 import PaymentOptions from "@/components/PaymentOptions";
+import { router, useSegments } from "expo-router";
+import { MEMBER_GUEST_NAMESPACE } from "@/constants/pages";
 
 const UserPaymentMethod = () => {
     const [selectedMethod, setSelectedMethod] = useState<number | null>(null);
@@ -14,6 +16,28 @@ const UserPaymentMethod = () => {
         setSelectedMethod(methodId);
         console.log("Payment method: " + methodId);
     };
+
+    const segments = useSegments();
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            () => {
+                console.log("Reached here!");
+                // Get the current route
+                const currentRoute = segments[segments.length - 2];
+                console.log(currentRoute);
+                // If we're on the member home page, go to hardware home
+                if (currentRoute === MEMBER_GUEST_NAMESPACE) {
+                    BackHandler.exitApp(); // Exit the app
+                    return true;
+                }
+
+                return false;
+            }
+        );
+
+        return () => backHandler.remove();
+    }, [router, segments]);
 
     const handleContinue = () => {
         if (selectedMethod !== null) {
