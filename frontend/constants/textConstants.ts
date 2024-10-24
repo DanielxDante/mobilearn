@@ -292,6 +292,11 @@ export const paymentProgressBarConstants = {
 };
 
 export const paymentOverviewConstants = {
-    stepText: [1, 2, 3],
-    stepLabel: ["Overview", "Payment Method", "Completed"],
+    title: "Overview",
+    courseNameSubtitle: "Course Name: ",
+    numLectures: "+ Lectures",
+    skillsTitle: "Skills",
+    totalPrice: "Total Price",
+    dollar: "$",
+    continueButton: "Continue",
 };

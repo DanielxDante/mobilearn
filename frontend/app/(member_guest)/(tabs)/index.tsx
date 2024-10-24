@@ -39,8 +39,7 @@ const Home = () => {
             "hardwareBackPress",
             () => {
                 // Get the current route
-                const currentRoute = segments[segments.length - 1];
-                console.log(currentRoute);
+                const currentRoute = segments[segments.length - 2];
                 // If we're on the member home page, go to hardware home
                 if (currentRoute === MEMBER_GUEST_NAMESPACE) {
                     BackHandler.exitApp(); // Exit the app
@@ -61,7 +60,7 @@ const Home = () => {
             (course) => course.id === id
         );
         router.push({
-            pathname: "../shared/course/courseDetails",
+            pathname: "../../shared/course/courseDetails",
             params: {
                 courseSelected: JSON.stringify(courseSelected),
             },

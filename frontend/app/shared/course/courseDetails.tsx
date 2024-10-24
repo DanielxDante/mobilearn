@@ -110,11 +110,9 @@ const CourseDetails = () => {
                     </View>
                     {/* Skills section */}
                     <View>
-                        <View>
-                            <Text style={styles.skillsTitle}>
-                                {Constants.skillsTitle}
-                            </Text>
-                        </View>
+                        <Text style={styles.skillsTitle}>
+                            {Constants.skillsTitle}
+                        </Text>
                         <View style={styles.skillsContainer}>
                             {skills.map((skill, index) => (
                                 <TouchableOpacity
@@ -137,8 +135,7 @@ const CourseDetails = () => {
                                 router.push({
                                     pathname: "./paymentOverview",
                                     params: {
-                                        courseSelected:
-                                            JSON.stringify(courseSelected),
+                                        courseSelected: courseSelected,
                                     },
                                 })
                             }
