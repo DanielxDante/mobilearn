@@ -14,7 +14,7 @@ import { paymentOverviewConstants as Constants } from "@/constants/textConstants
 import { Colors } from "@/constants/colors";
 import BackButton from "@/components/BackButton";
 import PaymentProgressBar from "@/components/PaymentProgressBar";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import Course from "@/types/shared/Course";
 import icons from "@/constants/icons";
 
@@ -130,7 +130,17 @@ const PaymentOverview = () => {
                 {/* Horizontal line */}
                 <View style={styles.horizontalLine}></View>
                 {/* Continue Button */}
-                <TouchableOpacity style={styles.continueButton}>
+                <TouchableOpacity
+                    style={styles.continueButton}
+                    onPress={() =>
+                        router.push({
+                            pathname: "./paymentMethod",
+                            params: {
+                                courseSelected: courseSelected,
+                            },
+                        })
+                    }
+                >
                     <Text style={styles.continueText}>
                         {Constants.continueButton}
                     </Text>
@@ -145,6 +155,7 @@ const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "white",
     },
     appBarContainer: {
         flexDirection: "row",
@@ -265,7 +276,7 @@ const styles = StyleSheet.create({
     continueText: {
         fontSize: 15,
         fontFamily: "Inter-Regular",
-        color: "#DEDEDE",
+        color: "#EFEFEF",
     },
 });
 

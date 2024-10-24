@@ -303,3 +303,11 @@ export const paymentOverviewConstants = {
     dollarIcon: icons.dollar,
     currency: "$",
 };
+
+export const paymentMethodConstants = {
+    title: "Select Payment Method",
+    dollarIcon: icons.dollar,
+    totalPrice: "Total Price",
+    currency: "$",
+    continueButton: "CONTINUE",
+};
