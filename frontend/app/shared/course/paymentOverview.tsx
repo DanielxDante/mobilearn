@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     Image,
     ScrollView,
+    Dimensions,
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,6 +30,7 @@ const PaymentOverview = () => {
         "Visual communication",
         "Editorial design",
     ];
+    const price = 35;
 
     const { courseSelected } = useLocalSearchParams();
     const course: Course =
@@ -108,10 +110,37 @@ const PaymentOverview = () => {
                         ))}
                     </View>
                 </View>
+                {/* Price section */}
+                <View style={styles.priceContainer}>
+                    <View style={styles.priceContainerLeft}>
+                        <Image
+                            source={Constants.dollarIcon}
+                            style={styles.dollarIcon}
+                        />
+                        <Text style={styles.totalPrice}>
+                            {"  "}
+                            {Constants.totalPrice}
+                        </Text>
+                    </View>
+                    <Text style={styles.totalPrice}>
+                        {price}
+                        {Constants.currency}
+                    </Text>
+                </View>
+                {/* Horizontal line */}
+                <View style={styles.horizontalLine}></View>
+                {/* Continue Button */}
+                <TouchableOpacity style={styles.continueButton}>
+                    <Text style={styles.continueText}>
+                        {Constants.continueButton}
+                    </Text>
+                </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>
     );
 };
+
+const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
     container: {
@@ -194,6 +223,49 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontFamily: "Inter-Regular",
         color: Colors.defaultBlue,
+    },
+    priceContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginTop: 30,
+        marginHorizontal: 20,
+        marginBottom: 10,
+    },
+    priceContainerLeft: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    dollarIcon: {
+        height: 20,
+        width: 20,
+        resizeMode: "contain",
+    },
+    totalPrice: {
+        fontSize: 15,
+        fontFamily: "Inter-SemiBold",
+        color: Colors.defaultBlue,
+    },
+    horizontalLine: {
+        borderWidth: 1,
+        width: width * 0.9,
+        alignSelf: "center",
+        borderColor: "#DEDEDE",
+    },
+    continueButton: {
+        height: 50,
+        width: width * 0.8,
+        backgroundColor: Colors.defaultBlue,
+        alignSelf: "center",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 40,
+        borderRadius: 8,
+    },
+    continueText: {
+        fontSize: 15,
+        fontFamily: "Inter-Regular",
+        color: "#DEDEDE",
     },
 });
 

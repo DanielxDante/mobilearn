@@ -18,9 +18,10 @@ import chevron from "@/assets/images/icons/chevron.png";
 import logout from "@/assets/images/icons/logout.png";
 import editProfilePicture from "@/assets/images/icons/editProfilePicture.png";
 import playVideo from "@/assets/images/icons/playVideo.png";
-import lecture from "@/assets/images/courses/lecture.png"
-import clock from "@/assets/images/courses/clock.png"
-import certification from "@/assets/images/courses/certification.png"
+import lecture from "@/assets/images/courses/lecture.png";
+import clock from "@/assets/images/courses/clock.png";
+import certification from "@/assets/images/courses/certification.png";
+import dollar from "@/assets/images/icons/dollar.png";
 
 export default {
     home,
@@ -46,4 +47,5 @@ export default {
     lecture,
     clock,
     certification,
+    dollar,
 };

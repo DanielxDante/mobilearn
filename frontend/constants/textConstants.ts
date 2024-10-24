@@ -1,4 +1,5 @@
 import PhoneNumberInputField from "@/components/PhoneNumberInputField";
+import icons from "@/constants/icons";
 
 export const carouselPageConstants = {
     slides: [
@@ -298,5 +299,7 @@ export const paymentOverviewConstants = {
     skillsTitle: "Skills",
     totalPrice: "Total Price",
     dollar: "$",
-    continueButton: "Continue",
+    continueButton: "CONTINUE",
+    dollarIcon: icons.dollar,
+    currency: "$",
 };
