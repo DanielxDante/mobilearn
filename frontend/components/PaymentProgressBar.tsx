@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import React from "react";
 
 import { Colors } from "@/constants/colors";
@@ -11,8 +11,8 @@ interface PaymentProgressBarProps {
 const PaymentProgressBar: React.FC<PaymentProgressBarProps> = ({ active }) => {
     return (
         <View style={styles.progressContainer}>
+            {/* Step 1 */}
             <View style={styles.circleContainer}>
-                {/* Step 1 */}
                 <View style={styles.progressStep}>
                     <View
                         style={
@@ -30,9 +30,18 @@ const PaymentProgressBar: React.FC<PaymentProgressBarProps> = ({ active }) => {
                         </Text>
                     </View>
                 </View>
-                {/* Horizontal Line */}
-                <View style={styles.line}></View>
-                {/* Step 2 */}
+                <Text
+                    style={
+                        active === 1 ? styles.stepLabelActive : styles.stepLabel
+                    }
+                >
+                    {Constants.stepLabel[0]}
+                </Text>
+            </View>
+            {/* Horizontal Line */}
+            <View style={styles.line}></View>
+            {/* Step 2 */}
+            <View style={styles.circleContainer}>
                 <View style={styles.progressStep}>
                     <View
                         style={
@@ -50,9 +59,19 @@ const PaymentProgressBar: React.FC<PaymentProgressBarProps> = ({ active }) => {
                         </Text>
                     </View>
                 </View>
-                {/* Horizontal Line */}
-                <View style={styles.line}></View>
-                {/* Step 3 */}
+                <Text
+                    style={
+                        active === 2 ? styles.stepLabelActive : styles.stepLabel
+                    }
+                    numberOfLines={2}
+                >
+                    {Constants.stepLabel[1]}
+                </Text>
+            </View>
+            {/* Horizontal Line */}
+            <View style={styles.line}></View>
+            {/* Step 3 */}
+            <View style={styles.circleContainer}>
                 <View style={styles.progressStep}>
                     <View
                         style={
@@ -70,22 +89,6 @@ const PaymentProgressBar: React.FC<PaymentProgressBarProps> = ({ active }) => {
                         </Text>
                     </View>
                 </View>
-            </View>
-            <View style={styles.labelContainer}>
-                <Text
-                    style={
-                        active === 1 ? styles.stepLabelActive : styles.stepLabel
-                    }
-                >
-                    {Constants.stepLabel[0]}
-                </Text>
-                <Text
-                    style={
-                        active === 2 ? styles.stepLabelActive : styles.stepLabel
-                    }
-                >
-                    {Constants.stepLabel[1]}
-                </Text>
                 <Text
                     style={
                         active === 3 ? styles.stepLabelActive : styles.stepLabel
@@ -98,21 +101,23 @@ const PaymentProgressBar: React.FC<PaymentProgressBarProps> = ({ active }) => {
     );
 };
 
+const { width } = Dimensions.get("window");
+
 const styles = StyleSheet.create({
     progressContainer: {
-        justifyContent: "center",
         marginBottom: 24,
         paddingHorizontal: 50,
-        alignItems: "center",
+        flexDirection: "row",
     },
     circleContainer: {
-        flexDirection: "row",
         alignItems: "center",
+        width: width * 0.2,
     },
     labelContainer: {
         flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
+        borderWidth: 2,
+        gap: 20,
     },
     progressStep: {
         alignItems: "center",
@@ -165,6 +170,7 @@ const styles = StyleSheet.create({
         height: 2,
         backgroundColor: Colors.defaultBlue,
         marginHorizontal: 10,
+        marginTop: 30,
     },
 });
 

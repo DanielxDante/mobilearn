@@ -17,7 +17,7 @@ const PaymentOverview = () => {
                 <BackButton />
             </View>
             {/* Progress Bar */}
-            <PaymentProgressBar active={2} />
+            <PaymentProgressBar active={1} />
         </SafeAreaView>
     );
 };
