@@ -86,7 +86,7 @@ const PaymentMethod = () => {
                     style={styles.continueButton}
                     onPress={() =>
                         router.push({
-                            pathname: "./paymentMethod",
+                            pathname: "./paymentCardDetails",
                             params: {
                                 courseSelected: courseSelected,
                                 paymentSelected: selectedMethod,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginTop: 30,
+        marginTop: 80,
         marginHorizontal: 20,
         marginBottom: 10,
     },

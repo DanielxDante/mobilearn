@@ -311,3 +311,25 @@ export const paymentMethodConstants = {
     currency: "$",
     continueButton: "CONTINUE",
 };
+
+export const paymentCardDetailsConstants = {
+    title: "Add Card Details",
+    cardNumberPlaceholder: "Card Number",
+    cvvNumberPlaceholder: "CVV Number",
+    expiryDatePlaceholder: "Expiry Date",
+    namePlaceholder: "Name on Card",
+    dollarIcon: icons.dollar,
+    totalPrice: "Total Price",
+    currency: "$",
+    continueButton: "CONTINUE",
+    disclaimer:
+        "We will store and use your card details for smooth and secure future purchases.",
+};
+
+export const paymentCompletedConstants = {
+    completePurchase: require("@/assets/images/member_guest_images/completePurchase.png"),
+    completePurchaseSlide: require("@/assets/images/member_guest_images/completePurchaseSlide.png"),
+    congratulations: "Congratulations!",
+    congratulationSubtext: "Start Your Learning Today",
+    continueButton: "CONTINUE",
+};
