@@ -59,8 +59,8 @@ const PaymentCardDetails = () => {
                 <View style={styles.cardDetailsContainer}>
                     <PaymentInputField
                         placeholder={Constants.cardNumberPlaceholder}
-                        maxLength={16}
-                        numbersOnly={true}
+                        maxLength={20}
+                        isCardNumber={true}
                     />
                     <View style={styles.cardSecondRow}>
                         <PaymentInputField
@@ -72,11 +72,12 @@ const PaymentCardDetails = () => {
                         <PaymentInputField
                             placeholder={Constants.expiryDatePlaceholder}
                             maxLength={5}
-                            numbersOnly={true}
+                            isExpiryDate={true}
                         />
                     </View>
                     <PaymentInputField
                         placeholder={Constants.namePlaceholder}
+                        numbersOnly={false}
                     />
                     <Text style={styles.disclaimer}>
                         {Constants.disclaimer}
