@@ -22,24 +22,47 @@ const PaymentCardDetails = () => {
     // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
     const price = 35;
 
-    const { courseSelected } = useLocalSearchParams();
+    // CREDIT CARD CONST
+    const CARDNUMBERLENGTH = 19;
+    const CVVLENGTH = 3;
+    const EXPIRYDATELENGTH = 5;
+    const NAMELENGTHMAXIMUM = 50;
+
+    const { courseSelected, paymentSelected } = useLocalSearchParams();
     const course: Course =
         typeof courseSelected === "string" ? JSON.parse(courseSelected) : [];
 
-    const [selectedMethod, setSelectedMethod] = useState<number | null>(null);
-
-    const handleSelectMethod = (methodId: number) => {
-        setSelectedMethod(methodId);
-        console.log("Payment method: " + methodId);
-    };
+    const [cardNumber, setCardNumber] = useState("");
+    const [cvv, setCvv] = useState("");
+    const [expiryDate, setExpiryDate] = useState("");
+    const [name, setName] = useState("");
 
     const handleContinue = () => {
-        if (selectedMethod !== null) {
-            console.log(`Selected Payment Method ID: ${selectedMethod}`);
+        if (paymentSelected !== null) {
+            // INSERT PAYMENT API CALL HERE
+            console.log(
+                `Payment made with Payment Method ID: ${paymentSelected}`
+            );
+            router.push({
+                pathname: "./paymentCompleted",
+                params: {
+                    courseSelected: courseSelected,
+                },
+            });
             // Proceed to the next step in your payment process
         } else {
-            console.log("No payment method selected");
+            console.log("Payment not made");
         }
+    };
+
+    const isFormValid = () => {
+        return (
+            cardNumber.length === CARDNUMBERLENGTH &&
+            cvv.length === CVVLENGTH &&
+            expiryDate.length == EXPIRYDATELENGTH &&
+            name.length <= NAMELENGTHMAXIMUM &&
+            name.length > 0
+        );
     };
 
     return (
@@ -59,25 +82,30 @@ const PaymentCardDetails = () => {
                 <View style={styles.cardDetailsContainer}>
                     <PaymentInputField
                         placeholder={Constants.cardNumberPlaceholder}
-                        maxLength={20}
+                        maxLength={CARDNUMBERLENGTH}
                         isCardNumber={true}
+                        onChangeText={setCardNumber}
                     />
                     <View style={styles.cardSecondRow}>
                         <PaymentInputField
                             placeholder={Constants.cvvNumberPlaceholder}
                             secureTextEntry={true}
-                            maxLength={3}
+                            maxLength={CVVLENGTH}
                             numbersOnly={true}
+                            onChangeText={setCvv}
                         />
                         <PaymentInputField
                             placeholder={Constants.expiryDatePlaceholder}
-                            maxLength={5}
+                            maxLength={EXPIRYDATELENGTH}
                             isExpiryDate={true}
+                            onChangeText={setExpiryDate}
                         />
                     </View>
                     <PaymentInputField
                         placeholder={Constants.namePlaceholder}
+                        maxLength={NAMELENGTHMAXIMUM}
                         numbersOnly={false}
+                        onChangeText={setName}
                     />
                     <Text style={styles.disclaimer}>
                         {Constants.disclaimer}
@@ -105,14 +133,8 @@ const PaymentCardDetails = () => {
                 {/* Continue Button */}
                 <TouchableOpacity
                     style={styles.continueButton}
-                    onPress={() =>
-                        router.push({
-                            pathname: "./paymentCompleted",
-                            params: {
-                                courseSelected: courseSelected,
-                            },
-                        })
-                    }
+                    onPress={handleContinue}
+                    disabled={!isFormValid()}
                 >
                     <Text style={styles.continueText}>
                         {Constants.continueButton}

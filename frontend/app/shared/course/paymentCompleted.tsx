@@ -53,7 +53,7 @@ const PaymentCompleted = () => {
                     style={styles.continueButton}
                     onPress={() =>
                         router.push({
-                            pathname: "./paymentCardDetails",
+                            pathname: "../../(member_guest)/(tabs)",
                             params: {
                                 courseSelected: courseSelected,
                             },

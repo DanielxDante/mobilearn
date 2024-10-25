@@ -30,16 +30,26 @@ const PaymentMethod = () => {
 
     const handleSelectMethod = (methodId: number) => {
         setSelectedMethod(methodId);
-        console.log("Payment method: " + methodId);
     };
 
     const handleContinue = () => {
         if (selectedMethod !== null) {
             console.log(`Selected Payment Method ID: ${selectedMethod}`);
+            router.push({
+                pathname: "./paymentCardDetails",
+                params: {
+                    courseSelected: courseSelected,
+                    paymentSelected: selectedMethod,
+                },
+            });
             // Proceed to the next step in your payment process
         } else {
             console.log("No payment method selected");
         }
+    };
+
+    const isPaymentSelected = () => {
+        return selectedMethod !== null;
     };
 
     return (
@@ -84,15 +94,8 @@ const PaymentMethod = () => {
                 {/* Continue Button */}
                 <TouchableOpacity
                     style={styles.continueButton}
-                    onPress={() =>
-                        router.push({
-                            pathname: "./paymentCardDetails",
-                            params: {
-                                courseSelected: courseSelected,
-                                paymentSelected: selectedMethod,
-                            },
-                        })
-                    }
+                    onPress={handleContinue}
+                    disabled={!isPaymentSelected()}
                 >
                     <Text style={styles.continueText}>
                         {Constants.continueButton}
