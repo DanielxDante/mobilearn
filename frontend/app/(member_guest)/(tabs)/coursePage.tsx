@@ -84,12 +84,14 @@ const CoursePage = () => {
     const handleSelectCourse = (id: string) => {
         // TODO: INCLUDE COURSE NAVIGATION
         console.log("Course " + id + " Selected");
-        const courseSelected = courseListData.find(course => course.id === id);
+        const courseSelected = courseListData.find(
+            (course) => course.id === id
+        );
         router.push({
-            pathname: "../shared/courseDetails",
+            pathname: "../../shared/course/courseDetails",
             params: {
                 courseSelected: JSON.stringify(courseSelected),
-            }
+            },
         });
     };
 

@@ -9,7 +9,8 @@ export const MEMBER_REGISTRATION_SUCCESS =
 
 // MEMBER/GUEST PAGES
 export const MEMBER_GUEST_NAMESPACE = "(member_guest)";
-export const MEMBER_GUEST_TABS_NAMESPACE = `${MEMBER_GUEST_NAMESPACE}/(tabs)`;
+export const MEMBER_GUEST_TABS = "(tabs)";
+export const MEMBER_GUEST_TABS_NAMESPACE = `${MEMBER_GUEST_NAMESPACE}/${MEMBER_GUEST_TABS}`;
 export const MEMBER_GUEST_HOME =
     `/${MEMBER_GUEST_TABS_NAMESPACE}/index` as Href<string>;
 export const MEMBER_GUEST_COURSEPAGE =
