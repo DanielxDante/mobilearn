@@ -3,6 +3,8 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import MediumButton from "@/components/MediumButton";
 import { signUpSelectionConstants as Constants } from "@/constants/textConstants";
 import { router } from "expo-router";
+import { MEMBER_FLOW_PAGE } from "@/constants/pages";
+import { INSTRUCTOR_FLOW_PAGE } from "@/constants/pages";
 
 const RoleSelectionScreen = () => {
   return (
@@ -17,7 +19,7 @@ const RoleSelectionScreen = () => {
         />
         <MediumButton
           text={Constants.roles[0].buttonText}
-          onPress={() => router.push("/shared/instructorSignUpPage")}
+          onPress={() => router.push(INSTRUCTOR_FLOW_PAGE)}
         ></MediumButton>
       </View>
 
@@ -29,7 +31,7 @@ const RoleSelectionScreen = () => {
         />
         <MediumButton
           text={Constants.roles[1].buttonText}
-          onPress={() => router.push("/shared/memberSignUpPage")}
+          onPress={() => router.push(MEMBER_FLOW_PAGE)}
         ></MediumButton>
       </View>
 
