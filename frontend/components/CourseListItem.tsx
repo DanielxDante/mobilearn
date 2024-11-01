@@ -11,7 +11,7 @@ import React from "react";
 import images from "@/constants/images";
 import { Colors } from "@/constants/colors";
 import icons from "@/constants/icons";
-import Course from "@/types/shared/Course";
+import Course from "@/types/shared/Course/Course";
 
 interface CourseListItemProps {
     item: Course;
@@ -22,7 +22,7 @@ const CourseListItem: React.FC<CourseListItemProps> = ({ item, onSelect }) => {
     return (
         <TouchableOpacity
             style={styles.courseContainer}
-            onPress={() => onSelect(item.id)}
+            onPress={() => onSelect(item.id.toString())}
         >
             <Image
                 source={item.image}

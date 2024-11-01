@@ -16,7 +16,7 @@ import { courseListData } from "@/constants/temporaryCourseData";
 import { Colors } from "@/constants/colors";
 import { memberGuestCoursePage as Constants } from "@/constants/textConstants";
 import CourseListItem from "@/components/CourseListItem";
-import Course from "@/types/shared/Course";
+import Course from "@/types/shared/Course/Course";
 import CourseSectionTabs from "@/components/CourseSectionTabs";
 
 const CoursePage = () => {
@@ -85,7 +85,7 @@ const CoursePage = () => {
         // TODO: INCLUDE COURSE NAVIGATION
         console.log("Course " + id + " Selected");
         const courseSelected = courseListData.find(
-            (course) => course.id === id
+            (course) => course.id.toString() === id
         );
         router.push({
             pathname: "../../shared/course/courseDetails",
