@@ -14,7 +14,7 @@ import BackButton from "@/components/BackButton";
 import { Colors } from "@/constants/colors";
 import PaymentProgressBar from "@/components/PaymentProgressBar";
 import { router, useLocalSearchParams } from "expo-router";
-import Course from "@/types/shared/Course";
+import Course from "@/types/shared/Course/Course";
 import { paymentCardDetailsConstants as Constants } from "@/constants/textConstants";
 import PaymentInputField from "@/components/PaymentInputField";
 

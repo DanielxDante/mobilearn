@@ -14,7 +14,7 @@ import BackButton from "@/components/BackButton";
 import { Colors } from "@/constants/colors";
 import PaymentProgressBar from "@/components/PaymentProgressBar";
 import { router, useLocalSearchParams } from "expo-router";
-import Course from "@/types/shared/Course";
+import Course from "@/types/shared/Course/Course";
 import { paymentCompletedConstants as Constants } from "@/constants/textConstants";
 
 const PaymentCompleted = () => {
@@ -53,7 +53,7 @@ const PaymentCompleted = () => {
                     style={styles.continueButton}
                     onPress={() =>
                         router.push({
-                            pathname: "../../(member_guest)/(tabs)",
+                            pathname: "./courseContent",
                             params: {
                                 courseSelected: courseSelected,
                             },

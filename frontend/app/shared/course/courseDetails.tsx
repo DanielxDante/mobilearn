@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 
 import VideoPlayer from "@/components/VideoPlayer";
-import Course from "@/types/shared/Course";
+import Course from "@/types/shared/Course/Course";
 import { courseDetailsConstants as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
 import icons from "@/constants/icons";

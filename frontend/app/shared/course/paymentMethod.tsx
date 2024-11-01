@@ -15,7 +15,7 @@ import { Colors } from "@/constants/colors";
 import PaymentOptions from "@/components/PaymentOptions";
 import PaymentProgressBar from "@/components/PaymentProgressBar";
 import { router, useLocalSearchParams } from "expo-router";
-import Course from "@/types/shared/Course";
+import Course from "@/types/shared/Course/Course";
 import { paymentMethodConstants as Constants } from "@/constants/textConstants";
 
 const PaymentMethod = () => {

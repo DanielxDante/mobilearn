@@ -7,7 +7,7 @@ import {
     IAutocompleteDropdownRef,
 } from "react-native-autocomplete-dropdown";
 import { memberGuestSearchConstants as Constants } from "@/constants/textConstants";
-import Course from "@/types/shared/Course";
+import Course from "@/types/shared/Course/Course";
 
 // SEARCH CURRENTLY USED IN MEMBER_GUEST, MIGHT BE CHANGED IF MORE INFORMATION NEEDED
 
@@ -20,6 +20,10 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
     const [suggestionsList, setSuggestionsList] = useState<Course[]>([]);
     const [selectedItem, setSelectedItem] = useState<string | null>(null);
     const dropdownController = useRef<IAutocompleteDropdownRef | null>(null);
+    const transformedSuggestionsList = suggestionsList.map((course) => ({
+        id: course.id.toString(),
+        title: course.title,
+      }));
 
     const searchRef = useRef<any>(null);
 
@@ -70,10 +74,10 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
                 dropdownController.current = controller;
             }}
             direction="down"
-            dataSet={suggestionsList}
+            dataSet={transformedSuggestionsList}
             onChangeText={getSuggestions}
             onSelectItem={(item) => {
-                item && setSelectedItem(item.id);
+                item && setSelectedItem(item.id.toString());
             }}
             debounce={600}
             suggestionsListMaxHeight={150}

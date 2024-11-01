@@ -12,25 +12,17 @@ import React from "react";
 import { useFonts } from "expo-font";
 import { Colors } from "@/constants/colors";
 import { memberGuestSuggestionsSectionConstants as Constants } from "@/constants/textConstants";
-import Course from "@/types/shared/Course";
+import Course from "@/types/shared/Course/Course";
 
 interface ContinueWatchingProps {
     courseData: Course[];
-    onSelect: (id: string) => void;
+    onSelect: (id: number) => void;
 }
 
 const SuggestionsSection: React.FC<ContinueWatchingProps> = ({
     courseData,
     onSelect,
 }) => {
-    const [fontsLoaded, error] = useFonts({
-        "Inter-Regular": require("@/assets/fonts/Inter-Regular.ttf"),
-        "Inter-Bold": require("@/assets/fonts/Inter-Bold.ttf"),
-        "Inter-SemiBold": require("@/assets/fonts/Inter-SemiBold.ttf"),
-        "Inter-Medium": require("@/assets/fonts/Inter-Medium.ttf"),
-        "Inter-Light": require("@/assets/fonts/Inter-Light.ttf"),
-    });
-
     const first3Courses = courseData.slice(0, 3);
 
     const renderItem = ({ item }: { item: Course }) => (
@@ -42,7 +34,6 @@ const SuggestionsSection: React.FC<ContinueWatchingProps> = ({
                 <Image
                     source={item.image}
                     style={styles.courseImage}
-                    resizeMode="contain"
                 />
                 <Text style={styles.courseTitle} numberOfLines={2}>
                     {item.title}
@@ -71,7 +62,7 @@ const SuggestionsSection: React.FC<ContinueWatchingProps> = ({
                 <FlatList
                     data={first3Courses}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id.toString()}
                     horizontal
                     ListHeaderComponent={
                         <View style={styles.headerFooterSpacing} />
@@ -99,6 +90,10 @@ const styles = StyleSheet.create({
     },
     courseImage: {
         width: "100%",
+        height: height * 0.12,
+        resizeMode: "cover",
+        borderRadius: 5,
+        marginBottom: 4,
     },
     courseInfo: {
         marginTop: 1,
@@ -107,7 +102,7 @@ const styles = StyleSheet.create({
     courseTitle: {
         fontFamily: "Inter-Medium",
         color: Colors.defaultBlue,
-        fontSize: 15,
+        fontSize: 14,
         lineHeight: 20,
         minHeight: 43,
     },
