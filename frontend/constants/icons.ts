@@ -22,6 +22,7 @@ import lecture from "@/assets/images/courses/lecture.png";
 import clock from "@/assets/images/courses/clock.png";
 import certification from "@/assets/images/courses/certification.png";
 import dollar from "@/assets/images/icons/dollar.png";
+import tick from "@/assets/images/icons/tick.png"
 
 export default {
     home,
@@ -48,4 +49,5 @@ export default {
     clock,
     certification,
     dollar,
+    tick,
 };

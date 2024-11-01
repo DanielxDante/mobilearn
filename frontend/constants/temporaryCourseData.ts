@@ -191,19 +191,19 @@ export const courseListData: Course[] = [
             {
                 id: 5,
                 title: "Introduction to Product Design",
-                completionRate: 0,
+                completionRate: 0.25,
                 lectures: [
                     {
                         id: 6,
                         title: "What is Product Design?",
-                        completionRate: 0,
+                        completionRate: 0.5,
                         topics: [
                             {
                                 id: 11,
                                 title: "Understanding Product Design",
                                 contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
                                 description: "Gain insights into the fundamentals of product design and its importance in various industries. This topic covers the key components of product design, including user experience, functionality, and aesthetics, highlighting the role of a designer in creating effective solutions.",
-                                completionStatus: false
+                                completionStatus: true
                             },
                             {
                                 id: 12,
@@ -505,6 +505,153 @@ export const courseListData: Course[] = [
                                 contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
                                 completionStatus: false,
                                 description: "This topic focuses on how to apply your branding effectively on digital platforms. You'll learn about the challenges and strategies for maintaining brand consistency in online environments."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 13,
+                title: "Developing Brand Voice",
+                completionRate: 0,
+                lectures: [
+                    {
+                        id: 22,
+                        title: "Understanding Brand Voice",
+                        completionRate: 0,
+                        topics: [
+                            {
+                                id: 43,
+                                title: "Defining Your Brand Voice",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "In this topic, you'll learn how to define your brand voice and the elements that contribute to it. Understanding your brand's tone, style, and vocabulary is essential for effective communication."
+                            },
+                            {
+                                id: 44,
+                                title: "Implementing Brand Voice in Content",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "This topic covers strategies for implementing your brand voice across various content types. You'll discover how to adapt your voice for different platforms while maintaining consistency."
+                            }
+                        ]
+                    },
+                    {
+                        id: 23,
+                        title: "Storytelling and Branding",
+                        completionRate: 0,
+                        topics: [
+                            {
+                                id: 45,
+                                title: "The Power of Brand Storytelling",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "This topic explores the importance of storytelling in branding. You'll learn how to craft a compelling narrative that resonates with your audience and enhances brand connection."
+                            },
+                            {
+                                id: 46,
+                                title: "Creating Engaging Brand Stories",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "In this topic, you'll learn techniques for creating engaging brand stories. You'll discover how to use storytelling to communicate your brand's values and mission effectively."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 14,
+                title: "Digital Marketing Strategies",
+                completionRate: 0,
+                lectures: [
+                    {
+                        id: 24,
+                        title: "Overview of Digital Marketing",
+                        completionRate: 0,
+                        topics: [
+                            {
+                                id: 47,
+                                title: "Key Digital Marketing Channels",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "In this topic, you'll gain an understanding of the various digital marketing channels available. You'll learn how to choose the right channels for your brand's marketing strategy."
+                            },
+                            {
+                                id: 48,
+                                title: "Measuring Digital Marketing Success",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "This topic covers the metrics and tools used to measure the success of digital marketing campaigns. You'll learn how to analyze data to improve your marketing efforts."
+                            }
+                        ]
+                    },
+                    {
+                        id: 25,
+                        title: "Social Media Marketing",
+                        completionRate: 0,
+                        topics: [
+                            {
+                                id: 49,
+                                title: "Creating a Social Media Strategy",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "In this topic, you'll learn how to create an effective social media marketing strategy. You'll explore best practices for engaging your audience and building brand loyalty."
+                            },
+                            {
+                                id: 50,
+                                title: "Content Creation for Social Media",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "This topic focuses on content creation for social media platforms. You'll discover how to develop engaging content that aligns with your brand voice and resonates with your audience."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 15,
+                title: "Brand Evaluation and Growth",
+                completionRate: 0,
+                lectures: [
+                    {
+                        id: 26,
+                        title: "Evaluating Brand Performance",
+                        completionRate: 0,
+                        topics: [
+                            {
+                                id: 51,
+                                title: "Assessing Brand Health",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "In this topic, you'll learn how to assess the health of your brand through various evaluation metrics. Understanding brand performance is key to strategic decision-making."
+                            },
+                            {
+                                id: 52,
+                                title: "Customer Feedback and Brand Improvement",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "This topic covers the role of customer feedback in brand improvement. You'll discover methods for gathering and analyzing feedback to enhance your brand strategy."
+                            }
+                        ]
+                    },
+                    {
+                        id: 27,
+                        title: "Scaling Your Brand",
+                        completionRate: 0,
+                        topics: [
+                            {
+                                id: 53,
+                                title: "Strategies for Brand Growth",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "In this topic, you'll learn about different strategies for scaling your brand. From market expansion to product diversification, explore how to grow your brand effectively."
+                            },
+                            {
+                                id: 54,
+                                title: "Sustaining Brand Equity",
+                                contentUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                                completionStatus: false,
+                                description: "This topic discusses how to sustain brand equity over time. You'll learn about the importance of innovation and adaptability in maintaining a strong brand presence."
                             }
                         ]
                     }

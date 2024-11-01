@@ -333,3 +333,11 @@ export const paymentCompletedConstants = {
     congratulationSubtext: "Start Your Learning Today",
     continueButton: "CONTINUE",
 };
+
+export const courseContentConstants = {
+    chapter: "Chap",
+    pickerPlaceholder: "Select a chapter",
+    courseContents: "Course Contents",
+    lecture: "Lecture",
+    tick: require("@/assets/images/icons/tick.png")
+}
