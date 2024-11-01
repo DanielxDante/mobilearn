@@ -1,5 +1,7 @@
+import Chapter from "@/types/shared/Course/Chapter";
+
 export default interface Course {
-    id: string;
+    id: number;
     title: string;
     school: string;
     description: string;
@@ -9,4 +11,5 @@ export default interface Course {
     enrolledCount: number;
     program: string;
     enabled: true | false;
+    chapters: Chapter[];
 }
