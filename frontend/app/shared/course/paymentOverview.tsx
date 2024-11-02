@@ -15,7 +15,7 @@ import { Colors } from "@/constants/colors";
 import BackButton from "@/components/BackButton";
 import PaymentProgressBar from "@/components/PaymentProgressBar";
 import { router, useLocalSearchParams } from "expo-router";
-import Course from "@/types/shared/Course";
+import Course from "@/types/shared/Course/Course";
 import icons from "@/constants/icons";
 
 const PaymentOverview = () => {

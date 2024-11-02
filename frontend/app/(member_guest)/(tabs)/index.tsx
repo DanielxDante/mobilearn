@@ -53,7 +53,7 @@ const Home = () => {
         return () => backHandler.remove();
     }, [router, segments]);
 
-    const handleSelectCourse = (id: string) => {
+    const handleSelectCourse = (id: number) => {
         // TODO: INCLUDE COURSE NAVIGATION
         console.log("Course " + id + " Selected");
         const courseSelected = courseListData.find(
@@ -129,7 +129,7 @@ const Home = () => {
                         />
                     </View>
                     {/* Top Courses */}
-                    <View style={styles.topCoursesContainer}>
+                    <View>
                         <View style={styles.topCoursesHeader}>
                             <Text style={styles.topCoursesTitle}>
                                 {Constants.topCoursesSubHeader}
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 1,
+        marginBottom: 5,
         marginTop: 8,
     },
     suggestionsTitle: {
@@ -212,14 +212,11 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
         marginRight: 12,
     },
-    topCoursesContainer: {
-        marginTop: 10,
-    },
     topCoursesHeader: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 1,
+        marginBottom: 5,
     },
     topCoursesTitle: {
         fontSize: 18,

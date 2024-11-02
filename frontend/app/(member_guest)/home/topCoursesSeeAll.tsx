@@ -13,7 +13,7 @@ import { router, useLocalSearchParams } from "expo-router";
 
 import { Colors } from "@/constants/colors";
 import CourseListItem from "@/components/CourseListItem";
-import Course from "@/types/shared/Course";
+import Course from "@/types/shared/Course/Course";
 import { memberGuestTopCoursesSeeAll as Constants } from "@/constants/textConstants";
 
 const TopCoursesSeeAll = () => {
@@ -55,7 +55,7 @@ const TopCoursesSeeAll = () => {
             renderItem={({ item }) => (
               <CourseListItem item={item} onSelect={handleSelectCourse} />
             )}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id.toString()}
             ListHeaderComponent={<View style={styles.headerFooterSpacing} />}
             ListFooterComponent={<View style={styles.headerFooterSpacing} />}
           />
