@@ -7,20 +7,20 @@ import SignInButton from "@/components/Button";
 import InputField from "@/components/InputField";
 import mobilearnHat from "@/assets/images/MobilearnHat.png";
 import useAuthStore from "@/store/authStore";
-import { loginPageConstants as Constants } from "@/constants/textConstants";
+import { instructorLoginPageConstants as Constants } from "@/constants/textConstants";
 import { MEMBER_GUEST_HOME, ADMIN_HOME } from "@/constants/pages";
 import InputDropDownField from "@/components/InputDropDownField";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
-  const login = useAuthStore((state) => state.login);
+  const login = useAuthStore((state) => state.loginInstructor);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [domain, setDomain] = useState("");
+  const [domain, setDomain] = useState("instructor");
 
   const handleSignIn = async () => {
-    const role = domain.toLowerCase() as "member" | "instructor"
+    const role = domain.toLowerCase() as "instructor";
     try {
       const newRole = await login(email, password, role);
 
@@ -101,12 +101,12 @@ export default function LoginPage() {
           value={password}
           onChangeText={setPassword}
         />
-        <InputDropDownField
+        {/* <InputDropDownField
           inputTitle={Constants.fields[2].inputTitle}
           options={Constants.fields[2].options || []}
           value={domain}
           onChange={setDomain}
-        />
+        /> */}
         <SignInButton text="Sign In" onPress={handleSignIn} />
         <View
           style={{
