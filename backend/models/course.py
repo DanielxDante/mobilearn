@@ -1,40 +1,47 @@
+from sqlalchemy import Enum, Column, Integer, Numeric, String, DateTime
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.associationproxy import association_proxy
+
 from database import db
-from datetime import datetime
-from flask import jsonify
+from . import STATUS
+
+DIFFICULTY = ("beginner", "intermediate", "advanced")
 
 class Course(db.Model):
     __tablename__ = 'courses'
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(80), unique=True, nullable=False)
-    school = db.Column(db.String(80), unique=True, nullable=False)
-    description = db.Column(db.String(1000), nullable=True)
-    rating = db.Column(db.String(10), nullable=True, default=0.0)
-    completionRate = db.Column(db.Float, nullable=False, default=0.0)
-    image = db.Column(db.String(500), nullable=True)
-    enrolledCount = db.Column(db.Integer, nullable=False, default=0)
-    created_on = db.Column(db.DateTime, default=datetime.now, nullable=False)
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+    description = Column(String, nullable=True)
+    rating = Column(Numeric(2), nullable=True, default=0.00)
+    image_url = Column(String, nullable=True)
+    # currency = Column(String, nullable=True, default='USD')
+    price = Column(Numeric(2), nullable=True, default=0.00)
+    difficulty = Column(Enum(*DIFFICULTY), nullable=False, default='beginner')
+    created = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
+    updated = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
+    status = Column(Enum(STATUS), nullable=False, default=STATUS.ACTIVE)
+
+    # Many-to-many relationship with Skill
+    skill_associations = relationship("CourseSkill", back_populates="course")
+    skills = association_proxy('skill_associations', 'skill')
+    
+    # Many-to-many relationship with Program
+    program_associations = relationship("ProgramCourse", back_populates="course")
+    programs = association_proxy('program_associations', 'program')
+
+    # Many-to-many relationship with Chapter
+    chapter_associations = relationship(
+        "CourseChapter",
+        back_populates="course",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+    chapters = association_proxy('chapter_associations', 'chapter')
 
     @staticmethod
-    def add_course(title, school, description=None, image=None):
-        existing_courses = Course.query.all()
-        for course in existing_courses:
-            print(course.title, course.school)
-
-        new_course = Course(
-            title=title,
-            school=school,
-            description=description,
-            image=image
-        )
-        try:
-            db.session.add(new_course)
-            db.session.commit()
-            return jsonify({"message": "Course added successfully"}), 200
-        except Exception as e:
-            db.session.rollback()
-            print(f"Error occured: {e}")
-            return jsonify({"error": str(e)}), 400
-        
+    def add_course():
+        pass
 
     @staticmethod
     def get_courses():
@@ -45,12 +52,12 @@ class Course(db.Model):
         return Course.query.get(id)
     
     @staticmethod
-    def get_course_by_title(title):
-        return Course.query.filter_by(title=title).first()
+    def get_course_by_name(name):
+        return Course.query.filter_by(name=name).first()
     
     @staticmethod
     def get_courses_by_school(school):
         return Course.query.filter_by(school=school).all()
     
     def __repr__(self):
-        return f'<ID: {self.id}>, Course: {self.title}, School: {self.school}'
+        return f'<Name: {self.name}'

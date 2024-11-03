@@ -20,10 +20,6 @@ interface NotificationItemProps {
 const NotificationItem: React.FC<NotificationItemProps> = ({
     notification,
 }) => {
-    const [fontsLoaded, error] = useFonts({
-        "Plus-Jakarta-Sans": require("@/assets/fonts/PlusJakartaSans.ttf"),
-    });
-
     let icon;
     let iconBackground;
     let redBackgroundSize = { width: 50, height: 50 };

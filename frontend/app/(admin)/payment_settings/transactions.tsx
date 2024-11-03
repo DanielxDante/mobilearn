@@ -2,12 +2,12 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, StyleSheet, FlatList } from 'react-native';
 
-import { usePaymentStore } from '@/store/paymentStore';
+import { useAdminStore } from '@/store/adminStore';
 import BackButton from '@/components/BackButton';
 import HeaderText from "@/components/HeaderText";
 
 const PaymentTransactions = () => {
-    // const { PlatformTransactions } = usePaymentStore();
+    // const { PlatformTransactions } = useAdminStore();
 
     return (
         <SafeAreaView style={styles.container}>

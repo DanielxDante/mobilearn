@@ -4,9 +4,10 @@ import { View, Text, StyleSheet, Image } from "react-native";
 
 import BackButton from "@/components/BackButton";
 import images from "@/constants/images";
-import { VERSION } from "@/constants/routes";
 
 const SystemInfo = () => {
+    const appVersion = process.env.EXPO_PUBLIC_VERSION;
+
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
@@ -17,8 +18,13 @@ const SystemInfo = () => {
                 <Text style={styles.titleText}>
                     Mobilearn E-learning Platform
                 </Text>
-                <Text style={styles.versionText}>Version {VERSION}</Text>
-                <Image source={images.mobilearnHat} style={styles.logo} />
+                <Text style={styles.versionText}>
+                    Version {appVersion}
+                </Text>
+                <Image
+                    source={images.mobilearnHat}
+                    style={styles.logo}
+                />
                 <Text style={styles.footerText}>
                     ©2024 - 2025 Daniel Tay, Gerard Sin, Matthew Ashok
                 </Text>

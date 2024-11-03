@@ -14,8 +14,9 @@ import card from "@/assets/images/icons/card.png";
 import doc from "@/assets/images/icons/doc.png";
 import mic from "@/assets/images/icons/mic.png";
 import tele from "@/assets/images/icons/tele.png";
-import chevron from "@/assets/images/icons/chevron.png";
-import logout from "@/assets/images/icons/logout.png";
+import chevronRight from "@/assets/images/icons/chevronRight.png";
+import chevronUp from "@/assets/images/icons/chevronUp.png";
+import chevronDown from "@/assets/images/icons/chevronDown.png";
 import editProfilePicture from "@/assets/images/icons/editProfilePicture.png";
 import playVideo from "@/assets/images/icons/playVideo.png";
 import lecture from "@/assets/images/courses/lecture.png";
@@ -41,8 +42,9 @@ export default {
     doc,
     mic,
     tele,
-    chevron,
-    logout,
+    chevronRight,
+    chevronUp,
+    chevronDown,
     editProfilePicture,
     playVideo,
     lecture,

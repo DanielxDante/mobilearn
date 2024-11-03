@@ -6,7 +6,7 @@ from app import api
 from models.channel import Channel
 
 parser = api.parser()
-parser.add_argument('title', type=str, help='Title', location='json', required=True)
+parser.add_argument('name', type=str, help='Name', location='json', required=True)
 
 class ChannelEndpoint(Resource):
     @api.doc(
@@ -21,7 +21,7 @@ class ChannelEndpoint(Resource):
             Example request JSON:
             
             {
-                'title': channel.title,
+                'name': channel.name,
             }
             """
     )
@@ -29,11 +29,11 @@ class ChannelEndpoint(Resource):
     @api.expect(parser)
     def post(self):
         data = request.get_json()
-        title = data.get('title')
-        Channel.add_channel(title)
+        name = data.get('name')
+        Channel.add_channel(name)
 
         return Response(
-            json.dumps({'message': f'Channel ({title}) created'}),
+            json.dumps({'message': f'Channel ({name}) created'}),
             status=200, mimetype="application/json"
         )
 
@@ -41,7 +41,7 @@ class ChannelEndpoint(Resource):
         channels = Channel.get_channels()
         response_data = [{
             'id': channel.id,
-            'title': channel.title, 
+            'name': channel.name, 
             'invite_code': channel.invite_code,
             'created_on': channel.created_on,
             'num_user': channel.num_user

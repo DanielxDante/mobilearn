@@ -5,30 +5,35 @@ import {
     TouchableOpacity,
     StyleSheet,
     ViewStyle,
+    ImageSourcePropType
 } from "react-native";
-import { ImageSourcePropType } from "react-native";
 
 import icons from "@/constants/icons";
 import { Colors } from "@/constants/colors";
 
 interface IIconTextButton {
-    icon: ImageSourcePropType;
+    icon: ImageSourcePropType | null;
     text: string;
     onPress: () => void;
     style?: ViewStyle;
 }
 
 const IconTextButton = ({ icon, text, onPress, style }: IIconTextButton) => {
-    return (
-        <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
-            {/* Icon from props */}
-            <Image source={icon} style={styles.icon} />
+  return (
+    <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
+        {/* Icon from props */}
+        {icon && (
+          <Image
+            source={icon}
+            style={styles.icon}
+        />
+        )}
+        
+        {/* Text */}
+        <Text style={styles.text}>{text}</Text>
 
-            {/* Text */}
-            <Text style={styles.text}>{text}</Text>
-
-            {/* Forward Icon */}
-            <Image source={icons.chevron} style={styles.iconChevron} />
+        {/* Forward Icon */}
+        <Image source={icons.chevronRight} style={styles.iconChevron} />
         </TouchableOpacity>
     );
 };
@@ -44,8 +49,9 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: 20,
-        height: 17,
+        height: 20,
         width: 17,
+        resizeMode: "stretch"
     },
     iconChevron: {
         height: 15,
