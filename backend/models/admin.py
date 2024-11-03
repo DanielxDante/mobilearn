@@ -5,35 +5,25 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from flask_bcrypt import Bcrypt
 
 from database import Base
-from . import GENDER, STATUS, MEMBERSHIP
+from . import GENDERS, STATUSES
 
-class User(Base):
-    __tablename__ = 'users'
+MEMBERSHIPS = ("normal", "member", "core_member")
+
+class Admin(Base):
+    __tablename__ = 'admins'
 
     id = Column(Integer, primary_key=True) # consider using ULID if IDs are exposed on frontend
     email = Column(String, unique=True, nullable=False)
     name = Column(String, nullable=False) # full name
     password_hash = Column(String, nullable=False)
-    gender = Column(Enum(*GENDER, name="gender_enum"), nullable=False)
+    gender = Column(Enum(*GENDERS, name="gender_enum"), nullable=False)
     profile_picture_url = Column(String, nullable=True) # CDN link
-    membership = Column(Enum(*MEMBERSHIP, name="membership_enum"), nullable=False, default=MEMBERSHIP.NORMAL)
+    membership = Column(Enum(*MEMBERSHIPS, name="membership_enum"), nullable=False, default='normal')
     stripe_customer_id = Column(String, nullable=True)
     created = Column(DateTime(timezone=True), nullable=False, default=func.now())
     updated = Column(DateTime(timezone=True), nullable=False, default=func.now())
     latest_login = Column(DateTime(timezone=True), nullable=False, default=func.now())
-    status = Column(Enum(*STATUS, name="status_enum"), nullable=False, default=STATUS.ACTIVE)
-
-    # Many-to-many relationship with Group
-    # group_associations = relationship("UserGroup", back_populates="user", cascade="all, delete-orphan")
-    # groups = association_proxy('group_associations', 'group')
-
-    # One-to-many relationship with Message
-    # sent_messages = relationship("Message", foreign_keys="Message.sender_id", back_populates="sender")
-    # received_messages = relationship("Message", foreign_keys="Message.recipient_id", back_populates="recipient")
-
-    # Many-to=many relationship with Channel
-    # channel_associations = relationship("UserChannel", back_populates="user")
-    # channels = association_proxy('channel_associations', 'channel')
+    status = Column(Enum(*STATUSES, name="status_enum"), nullable=False, default='active')
 
     @hybrid_property
     def password(self):
@@ -64,15 +54,11 @@ class User(Base):
         return session.query(User).filter_by(membership=membership).all()
 
     @staticmethod
-    def add_user(session, name, password, email, gender, membership=MEMBERSHIP.NORMAL):
-        if User.get_user_by_email(session, email):
-            raise ValueError("The email is already in use.")
-        
+    def add_user(session, password, email, name, gender):
         user = User(
             email=email,
             name=name,
-            gender=gender,
-            membership=membership
+            gender=gender
         )
         user.password = password # separate from __init__ to use password.setter
         session.add(user)

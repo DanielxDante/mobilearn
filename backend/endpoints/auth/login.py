@@ -3,60 +3,159 @@ from flask import Response, request
 from flask_restx import Resource
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token
+from sqlalchemy import func
 
 from app import api
-from models.user import User, ROLES
+from database import session_scope, create_session
+from models.user import User, STATUS
+from models.instructor import Instructor
 
-parser = api.parser()
-parser.add_argument('email', type=str, help='Email', location='json', required=True)
-parser.add_argument('password', type=str, help='Password', location='json', required=True)
-parser.add_argument('role', type=str, help='Role', location='json', required=True, choices=ROLES)
+userLoginParser = api.parser()
+userLoginParser.add_argument('email', type=str, help='Email', location='json', required=True)
+userLoginParser.add_argument('password', type=str, help='Password', location='json', required=True)
 
-class LoginEndpoint(Resource):
+class UserLoginEndpoint(Resource):
     @api.doc(
         responses={
             200: 'Ok',
             400: 'Bad request',
-            401: 'Unauthorized',
             404: 'Resource not found',
             500: 'Internal Server Error'
         },
         description="""
-            Example request JSON:
+        Example request JSON:
 
-            {
-                "email": "foobar@gmail.com",
-                "password": "bar",
-                "role": "member"
-            }
-            """
+        {
+            "email": "foobar@gmail.com",
+            "password": "bar"
+        }
+        """
     )
-    @api.expect(parser)
+    @api.expect(userLoginParser)
     def post(self):
+        """ Logs in a user """
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
-        role = data.get('role')
+        
+        with session_scope() as session:
+            try:
+                user = User.get_user_by_email(session, email)
 
-        # TODO: simple backdoor for admin for now, to be further secured later on
-        if (email == "admin" and password == "admin"):
-            token = create_access_token(identity=email)
-            return Response(
-                json.dumps({'message': 'Login successful', 'username': 'admin', 'role': 'admin', 'token': f"Bearer {token}"}),
-                status=200, mimetype='application/json'
-            )
+                if user.status == STATUS.DISABLED:
+                    return Response(
+                        json.dumps({'message': 'User disabled'}),
+                        status=400, mimetype='application/json'
+                    )
+
+                if not Bcrypt().check_password_hash(user.password_hash, password):
+                    return Response(
+                        json.dumps({'message': 'Invalid credentials'}),
+                        status=400, mimetype='application/json'
+                    )
+
+                # update latest_login
+                user.latest_login = func.now()
+
+                token = create_access_token(identity=email)
+                name = user.name
+                gender = user.gender
+                profile_picture_url = user.profile_picture_url if user.profile_picture_url else ""
+                membership = user.membership
+                return Response(
+                    json.dumps({
+                        'message': 'Login successful',
+                        'name': name,
+                        'gender': gender,
+                        'profile_picture_url': profile_picture_url,
+                        'membership': membership,
+                        'token': f"Bearer {token}"}),
+                    status=200, mimetype='application/json'
+                )
+            except ValueError as ee:
+                return Response(
+                    json.dumps({'message': str(ee)}),
+                    status=400, mimetype='application/json'
+                )
+            except Exception as ee:
+                return Response(
+                    json.dumps({'message': str(ee)}),
+                    status=500, mimetype='application/json'
+                )
+
+instructorLoginParser = api.parser()
+instructorLoginParser.add_argument('email', type=str, help='Email', location='json', required=True)
+instructorLoginParser.add_argument('password', type=str, help='Password', location='json', required=True)
+
+class InstructorLoginEndpoint(Resource):
+    @api.doc(
+        responses={
+            200: 'Ok',
+            400: 'Bad request',
+            404: 'Resource not found',
+            500: 'Internal Server Error'
+        },
+        description="""
+        Example request JSON:
+
+        {
+            "email": "foobar@e.ntu.edu.sg",
+            "password": "bar"
+        }
+        """
+    )
+    @api.expect(instructorLoginParser)
+    def post(self):
+        """ Logs in an instructor """
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
         
-        user = User.query.filter_by(email=email, role=role).first()
-        
-        if user and Bcrypt().check_password_hash(user.password_hash, password):
-            token = create_access_token(identity=email)
-            username = user.username
-            return Response(
-                json.dumps({'message': 'Login successful', 'username': username, 'role': role, 'token': f"Bearer {token}"}),
-                status=200, mimetype='application/json'
-            )
-        else:
-            return Response(
-                json.dumps({'message': 'Invalid username or password'}),
-                status=401, mimetype='application/json'
-            )
+        with session_scope() as session:
+            try:
+                instructor = Instructor.get_instructor_by_email(session, email)
+
+                if instructor.status == STATUS.DISABLED:
+                    return Response(
+                        json.dumps({'message': 'Instructor disabled'}),
+                        status=400, mimetype='application/json'
+                    )
+
+                if not Bcrypt().check_password_hash(instructor.password_hash, password):
+                    return Response(
+                        json.dumps({'message': 'Invalid credentials'}),
+                        status=400, mimetype='application/json'
+                    )
+
+                # update latest_login
+                instructor.latest_login = func.now()
+
+                token = create_access_token(identity=email)
+                name = instructor.name
+                gender = instructor.gender
+                profile_picture_url = instructor.profile_picture_url if instructor.profile_picture_url else ""
+                phone_number = instructor.phone_number
+                company = instructor.company
+                position = instructor.position
+                return Response(
+                    json.dumps({
+                        'message': 'Login successful',
+                        'name': name,
+                        'gender': gender,
+                        'profile_picture_url': profile_picture_url,
+                        'phone_number': phone_number,
+                        'company': company,
+                        'position': position,
+                        'token': f"Bearer {token}"}),
+                    status=200, mimetype='application/json'
+                )
+            except ValueError as ee:
+                return Response(
+                    json.dumps({'message': str(ee)}),
+                    status=400, mimetype='application/json'
+                )
+            except Exception as ee:
+                return Response(
+                    json.dumps({'message': str(ee)}),
+                    status=500, mimetype='application/json'
+                )

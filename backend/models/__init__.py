@@ -1,9 +1,24 @@
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import event
+from enum import Enum
 
-from .user import User
+class GENDER(str, Enum):
+    MALE = 'male'
+    FEMALE = 'female'
 
-STATUSES = ('active', 'disabled')
+    def __str__(self):
+        return self.value
 
-class ModelBase(DeclarativeBase):
-    pass
+class STATUS(str, Enum):
+    NOT_APPROVED = 'not_approved'
+    ACTIVE = 'active'
+    DISABLED = 'disabled'
+
+    def __str__(self):
+        return self.value
+
+class MEMBERSHIP(str, Enum):
+    NORMAL = 'normal'
+    MEMBER = 'member'
+    CORE_MEMBER = 'core_member'
+
+    def __str__(self):
+        return self.value

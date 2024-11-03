@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from database import db
-from . import STATUSES
+from . import STATUS
 
 class Channel(db.Model):
     __tablename__ = 'channels'
@@ -14,7 +14,7 @@ class Channel(db.Model):
     invite_code = Column(String, nullable=False)
     created = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
     updated = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
-    status = Column(Enum(*STATUSES), nullable=False, default='active')
+    status = Column(Enum(STATUS), nullable=False, default=STATUS.ACTIVE)
 
     # Many-to-many relationship with User
     user_associations = relationship("UserChannel", back_populates="channel")
