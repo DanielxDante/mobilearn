@@ -13,17 +13,10 @@ import { router, useLocalSearchParams } from "expo-router";
 
 import { Colors } from "@/constants/colors";
 import CourseListItem from "@/components/CourseListItem";
-import Course from "@/types/shared/Course";
-import { memberGuestTopCoursesSeeAll as Constants } from "@/constants/textConstants";
+import Course from "@/types/shared/Course/Course";
+import { memberGuestSuggestionsSeeAll as Constants } from "@/constants/textConstants";
 
-const TopCoursesSeeAll = () => {
-  const [fontsLoaded, error] = useFonts({
-    "Inter-Regular": require("@/assets/fonts/Inter-Regular.ttf"),
-    "Inter-Bold": require("@/assets/fonts/Inter-Bold.ttf"),
-    "Inter-SemiBold": require("@/assets/fonts/Inter-SemiBold.ttf"),
-    "Inter-Medium": require("@/assets/fonts/Inter-Medium.ttf"),
-    "Inter-Light": require("@/assets/fonts/Inter-Light.ttf"),
-  });
+const SuggestionsSeeAll = () => {
 
   const { suggestions } = useLocalSearchParams();
   const parsedSuggestions: Course[] =
@@ -55,7 +48,7 @@ const TopCoursesSeeAll = () => {
             renderItem={({ item }) => (
               <CourseListItem item={item} onSelect={handleSelectCourse} />
             )}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id.toString()}
             ListHeaderComponent={<View style={styles.headerFooterSpacing} />}
             ListFooterComponent={<View style={styles.headerFooterSpacing} />}
           />
@@ -98,4 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TopCoursesSeeAll;
+export default SuggestionsSeeAll;

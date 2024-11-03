@@ -13,12 +13,10 @@ import { router, useSegments } from "expo-router";
 
 import AppBar from "@/components/AppBar";
 import Search from "@/components/Search";
-import ContinueWatching from "@/app/(member_guest)/continueWatching";
-import SuggestionsSection from "@/app/(member_guest)/suggestionsSection";
-import TopCourses from "@/app/(member_guest)/topCourses";
-import {
-    MEMBER_GUEST_NAMESPACE
-} from "@/constants/pages";
+import ContinueWatching from "@/app/(member_guest)/home/continueWatching";
+import SuggestionsSection from "@/app/(member_guest)/home/suggestionsSection";
+import TopCourses from "@/app/(member_guest)/home/topCourses";
+import { MEMBER_GUEST_TABS } from "@/constants/pages";
 import useAuthStore from "@/store/authStore";
 
 import {
@@ -42,9 +40,8 @@ const Home = () => {
             () => {
                 // Get the current route
                 const currentRoute = segments[segments.length - 1];
-                console.log(currentRoute);
                 // If we're on the member home page, go to hardware home
-                if (currentRoute === MEMBER_GUEST_NAMESPACE) {
+                if (currentRoute === MEMBER_GUEST_TABS) {
                     BackHandler.exitApp(); // Exit the app
                     return true;
                 }
@@ -53,18 +50,20 @@ const Home = () => {
             }
         );
 
-    return () => backHandler.remove();
-}, [router, segments]);
+        return () => backHandler.remove();
+    }, [router, segments]);
 
-    const handleSelectCourse = (id: string) => {
+    const handleSelectCourse = (id: number) => {
         // TODO: INCLUDE COURSE NAVIGATION
         console.log("Course " + id + " Selected");
-        const courseSelected = courseListData.find(course => course.id === id);
+        const courseSelected = courseListData.find(
+            (course) => course.id === id
+        );
         router.push({
-            pathname: "../shared/courseDetails",
+            pathname: "../../shared/course/courseDetails",
             params: {
                 courseSelected: JSON.stringify(courseSelected),
-            }
+            },
         });
     };
 
@@ -110,7 +109,8 @@ const Home = () => {
                             <TouchableOpacity
                                 onPress={() => {
                                     router.push({
-                                        pathname: "/(member_guest)/suggestionsSeeAll",
+                                        pathname:
+                                            "/(member_guest)/home/suggestionsSeeAll",
                                         params: {
                                             suggestions:
                                                 JSON.stringify(suggestionsData),
@@ -129,7 +129,7 @@ const Home = () => {
                         />
                     </View>
                     {/* Top Courses */}
-                    <View style={styles.topCoursesContainer}>
+                    <View>
                         <View style={styles.topCoursesHeader}>
                             <Text style={styles.topCoursesTitle}>
                                 {Constants.topCoursesSubHeader}
@@ -137,7 +137,8 @@ const Home = () => {
                             <TouchableOpacity
                                 onPress={() => {
                                     router.push({
-                                        pathname: "/(member_guest)/topCoursesSeeAll",
+                                        pathname:
+                                            "/(member_guest)/home/topCoursesSeeAll",
                                         params: {
                                             suggestions:
                                                 JSON.stringify(topCourseData),
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 1,
+        marginBottom: 5,
         marginTop: 8,
     },
     suggestionsTitle: {
@@ -211,14 +212,11 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
         marginRight: 12,
     },
-    topCoursesContainer: {
-        marginTop: 10,
-    },
     topCoursesHeader: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 1,
+        marginBottom: 5,
     },
     topCoursesTitle: {
         fontSize: 18,

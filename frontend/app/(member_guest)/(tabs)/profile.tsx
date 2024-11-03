@@ -13,6 +13,12 @@ import { router } from "expo-router";
 const Profile = () => {
     const { username, email, logout } = useAuthStore();
 
+    const handleLogout = async () => {
+        await logout();
+        router.push("/shared/signinupPage");
+        console.log("Member logout");
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
@@ -27,6 +33,12 @@ const Profile = () => {
                     <Image
                         source={require("@/assets/images/member_guest_images/temporaryImages/gerard.jpg")}
                         style={styles.profilePicture}
+                        onError={(error) =>
+                            console.error(
+                                "Error loading image: ",
+                                error.nativeEvent.error
+                            )
+                        }
                     />
                     <View style={styles.profileText}>
                         <Text style={styles.name} numberOfLines={1}>
@@ -55,7 +67,7 @@ const Profile = () => {
                     icon={icons.card}
                     text={Constants.paymentMethodTitle}
                     onPress={() => {
-                        router.push("/(member_guest)/paymentMethod")
+                        router.push("/(member_guest)/userPaymentMethod");
                     }}
                     style={styles.iconTextButton}
                 />
@@ -70,11 +82,7 @@ const Profile = () => {
                 <IconTextButton
                     icon={icons.logout}
                     text={Constants.logOutTitle}
-                    onPress={async () => {
-                        await logout();
-                        router.push("/shared/signinupPage");
-                        console.log("Member logout");
-                    }}
+                    onPress={handleLogout}
                     style={styles.iconTextButton}
                 />
             </View>

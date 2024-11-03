@@ -2,14 +2,13 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React from "react";
 import * as Progress from "react-native-progress";
 
-import { useFonts } from "expo-font";
 import { Colors } from "@/constants/colors";
 import { memberGuestContinueWatchingConstants as Constants } from "@/constants/textConstants";
-import Course from "@/types/shared/Course";
+import Course from "@/types/shared/Course/Course";
 
 interface ContinueWatchingProps {
     courseData: Course[];
-    onSelect: (id: string) => void;
+    onSelect: (id: number) => void;
 }
 
 const ContinueWatching: React.FC<ContinueWatchingProps> = ({
@@ -24,7 +23,6 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
                 <Image
                     source={item.image}
                     style={styles.courseImage}
-                    resizeMode="contain"
                 />
                 <View style={styles.courseInfo}>
                     <Text style={styles.courseTitle} numberOfLines={1}>
@@ -83,8 +81,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     courseImage: {
-        width: 80, // Adjusted to 20 * 4 (for consistency)
-        height: 80, // Adjusted to 20 * 4 (for consistency)
+        width: 80,
+        height: 60, 
+        resizeMode: "cover",
+        borderRadius: 5,
     },
     courseInfo: {
         paddingHorizontal: 12,

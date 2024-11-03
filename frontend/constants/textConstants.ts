@@ -1,4 +1,5 @@
 import PhoneNumberInputField from "@/components/PhoneNumberInputField";
+import icons from "@/constants/icons";
 
 export const carouselPageConstants = {
   slides: [
@@ -34,30 +35,6 @@ export const carouselPageConstants = {
   contButtonText: "CONTINUE",
 };
 
-export const SignInUpPageConstants = {
-  signUpPageTitle: "Unlock Your Learning Potential",
-  signUpPageSubtitle:
-    "Your Gateway To Personalized Courses, And Guidance For Success.",
-  signInButtonText: "SIGN IN",
-  signUpButtonText: "SIGN UP",
-  homepageButtonText: "HOMEPAGE",
-  adminButtonText: "ADMIN",
-};
-
-export const loginPageConstants = {
-  pageTitle: "SIGN IN",
-  pageSubTitle: "Sign In To Access Your Personalized Learning Journey",
-  fields: [
-    {
-      inputTitle: "Email",
-      placeHolder: "Email",
-    },
-    { inputTitle: "Password", placeHolder: "Password" },
-    { inputTitle: "Domain", options: ["Member", "Instructor"] },
-  ],
-  signInButtonText: "Sign In",
-};
-
 export const signUpSelectionConstants = {
   pageTitle: "I am a...",
   roles: [
@@ -71,6 +48,53 @@ export const signUpSelectionConstants = {
     },
   ],
   pageSubTitle: "Endless Opportunities. For Anyone.",
+};
+
+export const memberSignInUpPageConstants = {
+  signUpPageTitle: "Unlock Your Learning Potential",
+  signUpPageSubtitle:
+    "Your Gateway To Personalized Courses, And Guidance For Success.",
+  signInButtonText: "SIGN IN",
+  signUpButtonText: "SIGN UP",
+  homepageButtonText: "HOMEPAGE",
+  adminButtonText: "ADMIN",
+};
+
+export const instructorSignInUpPageConstants = {
+  signUpPageTitle: "Share your knowledge",
+  signUpPageSubtitle: "Your Gateway To Empower And Guide Others.",
+  signInButtonText: "SIGN IN",
+  signUpButtonText: "SIGN UP",
+  homepageButtonText: "HOMEPAGE",
+  adminButtonText: "ADMIN",
+};
+
+export const memberLoginPageConstants = {
+  pageTitle: "SIGN IN",
+  pageSubTitle: "Sign In To Access Your Personalized Learning Journey",
+  fields: [
+    {
+      inputTitle: "Email",
+      placeHolder: "Email",
+    },
+    { inputTitle: "Password", placeHolder: "Password" },
+    { inputTitle: "Domain", options: ["Member", "Instructor"] },
+  ],
+  signInButtonText: "Sign In",
+};
+
+export const instructorLoginPageConstants = {
+  pageTitle: "SIGN IN",
+  pageSubTitle: "Sign In To Begin Your Journey Of Empowering Others.",
+  fields: [
+    {
+      inputTitle: "Email",
+      placeHolder: "Email",
+    },
+    { inputTitle: "Password", placeHolder: "Password" },
+    { inputTitle: "Domain", options: ["Member", "Instructor"] },
+  ],
+  signInButtonText: "Sign In",
 };
 
 export const signUpPageConstants = {
@@ -169,6 +193,15 @@ export const registrationSuccessMember = {
   role: "Student",
   subTitle: "Welcome to A Lifelong Of Learning.",
   linkText: "Sign In",
+  image: require("../assets/images/Students.png"),
+};
+
+export const registrationSuccessInstructor = {
+  pageTitle: "MobiLearn",
+  blueSubTitle: "You have registered as a",
+  role: "Instructor",
+  subTitle: "Welcome to A Lifelong Of Cultivating Minds.",
+  linkText: "Sign In",
   image: require("../assets/images/Instructor.png"),
 };
 
@@ -262,7 +295,7 @@ export const memberGuestEditProfilePage = {
 export const memberGuestPaymentMethodPage = {
   appBarTitle: "Payment Method",
   title: "Select Payment Method",
-}
+};
 
 export const inputDropDownFieldConstants = {
   selectOption: "Please select an option",
@@ -283,4 +316,59 @@ export const courseDetailsConstants = {
   numLectures: "+ Lectures",
   skillsTitle: "Skills",
   enrollNowButton: "ENROLL NOW",
+};
+
+export const paymentProgressBarConstants = {
+  stepText: [1, 2, 3],
+  stepLabel: ["Overview", "Payment Method", "Completed"],
+};
+
+export const paymentOverviewConstants = {
+  title: "Overview",
+  courseNameSubtitle: "Course Name: ",
+  numLectures: "+ Lectures",
+  skillsTitle: "Skills",
+  totalPrice: "Total Price",
+  dollar: "$",
+  continueButton: "CONTINUE",
+  dollarIcon: icons.dollar,
+  currency: "$",
+};
+
+export const paymentMethodConstants = {
+  title: "Select Payment Method",
+  dollarIcon: icons.dollar,
+  totalPrice: "Total Price",
+  currency: "$",
+  continueButton: "CONTINUE",
+};
+
+export const paymentCardDetailsConstants = {
+  title: "Add Card Details",
+  cardNumberPlaceholder: "Card Number",
+  cvvNumberPlaceholder: "CVV Number",
+  expiryDatePlaceholder: "Expiry Date",
+  namePlaceholder: "Name on Card",
+  dollarIcon: icons.dollar,
+  totalPrice: "Total Price",
+  currency: "$",
+  continueButton: "CONTINUE",
+  disclaimer:
+    "We will store and use your card details for smooth and secure future purchases.",
+};
+
+export const paymentCompletedConstants = {
+  completePurchase: require("@/assets/images/member_guest_images/completePurchase.png"),
+  completePurchaseSlide: require("@/assets/images/member_guest_images/completePurchaseSlide.png"),
+  congratulations: "Congratulations!",
+  congratulationSubtext: "Start Your Learning Today",
+  continueButton: "CONTINUE",
+};
+
+export const courseContentConstants = {
+    chapter: "Chap",
+    pickerPlaceholder: "Select a chapter",
+    courseContents: "Course Contents",
+    lecture: "Lecture",
+    tick: require("@/assets/images/icons/tick.png")
 }
