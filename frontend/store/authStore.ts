@@ -3,7 +3,12 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
 
-import { AUTH_LOGIN_URL, AUTH_SIGNUP_URL } from "@/constants/routes";
+import {
+  AUTH_USER_LOGIN_URL,
+  AUTH_INSTRUCTOR_LOGIN_URL,
+  AUTH_INSTRUCTOR_SIGNUP_URL,
+  AUTH_USER_SIGNUP_URL,
+} from "@/constants/routes";
 
 export interface AuthState {
   username: string;
@@ -18,24 +23,19 @@ export interface AuthState {
     email: string,
     password: string,
     gender: string,
-    //role: "member" | "instructor"
-    role: "member"
+    membership: string // include membership
   ) => Promise<void>;
   signupInstructor: (
     username: string,
     email: string,
     password: string,
     gender: string,
-    role: "instructor",
+    phone_number: string,
     company: string,
     position: string
   ) => Promise<void>;
-  login: (email: string, password: string, role: "member") => Promise<string>;
-  loginInstructor: (
-    email: string,
-    password: string,
-    role: "instructor"
-  ) => Promise<string>;
+  login: (email: string, password: string) => Promise<string>;
+  loginInstructor: (email: string, password: string) => Promise<string>;
   logout: () => Promise<void>;
 }
 
@@ -49,11 +49,11 @@ const useAuthStore = create<AuthState>()(
       role: "guest",
       company: undefined,
       position: undefined,
-      signup: async (username, email, password, role, gender) => {
+      signup: async (username, email, password, gender, membership) => {
         console.log("Signing up...");
         const response = await axios.post(
-          AUTH_SIGNUP_URL,
-          { username, email, password, role, gender },
+          AUTH_USER_SIGNUP_URL,
+          { name: username, password, email, gender, membership }, // adapted to backend's API structure
           { headers: { "Content-Type": "application/json" } }
         );
 
@@ -61,27 +61,30 @@ const useAuthStore = create<AuthState>()(
         if (response.status === 200) {
           console.log(responseData.message);
         } else {
-          throw new Error("An unexpected error occurred");
+          console.error("Axios error: ");
+          throw new Error(
+            response?.data?.message || "An unexpected error occurred"
+          );
         }
       },
       signupInstructor: async (
         username,
         email,
         password,
-        role,
         gender,
+        phone_number,
         company,
         position
       ) => {
         console.log("Signing up instructor...");
         const response = await axios.post(
-          AUTH_SIGNUP_URL,
+          AUTH_INSTRUCTOR_SIGNUP_URL,
           {
-            username,
-            email,
+            name: username,
             password,
-            role,
+            email,
             gender,
+            phone_number,
             company,
             position,
           },
@@ -95,11 +98,11 @@ const useAuthStore = create<AuthState>()(
           throw new Error("An unexpected error occurred");
         }
       },
-      login: async (email, password, role) => {
+      login: async (email, password) => {
         console.log("Logging in...");
         const response = await axios.post(
-          AUTH_LOGIN_URL,
-          { email, password, role },
+          AUTH_USER_LOGIN_URL,
+          { email, password },
           { headers: { "Content-Type": "application/json" } }
         );
         const responseData = response.data;
@@ -116,11 +119,11 @@ const useAuthStore = create<AuthState>()(
           throw new Error("An unexpected error occurred");
         }
       },
-      loginInstructor: async (email, password, role) => {
+      loginInstructor: async (email, password) => {
         console.log("Logging in...");
         const response = await axios.post(
-          AUTH_LOGIN_URL,
-          { email, password, role },
+          AUTH_INSTRUCTOR_LOGIN_URL,
+          { email, password },
           { headers: { "Content-Type": "application/json" } }
         );
         const responseData = response.data;
