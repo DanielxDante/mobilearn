@@ -54,8 +54,8 @@ class Instructor(Base):
 
     @staticmethod
     def add_instructor(
-        session, name, password, email, gender,
-        phone_number, company, position
+        session, name, password, email,
+        phone_number, company, position, gender=GENDER.MALE
     ):
         instructor = Instructor(
             email=email,
