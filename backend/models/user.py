@@ -14,14 +14,14 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     name = Column(String, nullable=False) # full name
     password_hash = Column(String, nullable=False)
-    gender = Column(Enum(*GENDER, name="gender_enum"), nullable=False)
+    gender = Column(Enum(GENDER, name="gender_enum" ), nullable=False)
     profile_picture_url = Column(String, nullable=True) # CDN link
-    membership = Column(Enum(*MEMBERSHIP, name="membership_enum"), nullable=False, default=MEMBERSHIP.NORMAL)
+    membership = Column(Enum(MEMBERSHIP, name="membership_enum"), nullable=False, default=MEMBERSHIP.NORMAL)
     stripe_customer_id = Column(String, nullable=True)
     created = Column(DateTime(timezone=True), nullable=False, default=func.now())
     updated = Column(DateTime(timezone=True), nullable=False, default=func.now())
     latest_login = Column(DateTime(timezone=True), nullable=False, default=func.now())
-    status = Column(Enum(*STATUS, name="status_enum"), nullable=False, default=STATUS.ACTIVE)
+    status = Column(Enum(STATUS, name="status_enum"), nullable=False, default=STATUS.ACTIVE)
 
     # Many-to-many relationship with Group
     # group_associations = relationship("UserGroup", back_populates="user", cascade="all, delete-orphan")
@@ -64,10 +64,10 @@ class User(Base):
         return session.query(User).filter_by(membership=membership).all()
 
     @staticmethod
-    def add_user(session, name, password, email, gender, membership=MEMBERSHIP.NORMAL):
+    def add_user(session, name, password, email, gender=GENDER.MALE, membership=MEMBERSHIP.NORMAL):
         if User.get_user_by_email(session, email):
             raise ValueError("The email is already in use.")
-        
+
         user = User(
             email=email,
             name=name,
