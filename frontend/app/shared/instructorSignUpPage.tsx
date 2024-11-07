@@ -62,7 +62,7 @@ export default function signUpPage() {
         name,
         email,
         password,
-        gender,
+        gender.toLowerCase(),
         combinedPhoneNumber,
         company,
         position

@@ -8,7 +8,11 @@ import InputField from "@/components/InputField";
 import mobilearnHat from "@/assets/images/MobilearnHat.png";
 import useAuthStore from "@/store/authStore";
 import { registrationSuccessMember as Constants } from "@/constants/textConstants";
-import { MEMBER_GUEST_HOME, ADMIN_HOME } from "@/constants/pages";
+import {
+  MEMBER_GUEST_HOME,
+  ADMIN_HOME,
+  MEMBER_LOGIN_PAGE,
+} from "@/constants/pages";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
@@ -94,7 +98,7 @@ export default function LoginPage() {
           {Constants.subTitle}
         </Text>
         <Link
-          href="/shared/loginPage"
+          href={MEMBER_LOGIN_PAGE}
           style={{
             fontSize: 18,
             color: "#356FC5",

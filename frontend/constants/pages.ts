@@ -17,9 +17,9 @@ export const MEMBER_LOGIN_PAGE = "/shared/memberLoginPage" as Href<string>;
 export const MEMBER_SIGNUP_PAGE = "/shared/memberSignUpPage" as Href<string>;
 
 export const INSTRUCTOR_REGISTRATION_SUCCESS =
-  "/shared/regSuccessInstructorPage" as Href<string>;
+  "/shared/registrationSuccessInstructorPage" as Href<string>;
 export const MEMBER_REGISTRATION_SUCCESS =
-  "/shared/regSuccessMemberPage" as Href<string>;
+  "/shared/registrationSuccessMemberPage" as Href<string>;
 
 // MEMBER/GUEST PAGES
 export const MEMBER_GUEST_NAMESPACE = "(member_guest)";
