@@ -60,10 +60,10 @@ class Instructor(Base):
         instructor = Instructor(
             email=email,
             name=name,
-            gender=gender,
             phone_number=phone_number,
             company=company,
-            position=position
+            position=position,
+            gender=gender,
         )
         instructor.password = password # separate from __init__ to use password.setter
         session.add(instructor)
