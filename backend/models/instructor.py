@@ -14,7 +14,7 @@ class Instructor(Base):
     email = Column(String, unique=True, nullable=False)
     name = Column(String, nullable=False) # full name
     password_hash = Column(String, nullable=False)
-    gender = Column(Enum(*GENDER, name="gender_enum"), nullable=False)
+    gender = Column(Enum(GENDER, name="gender_enum"), nullable=False)
     profile_picture_url = Column(String, nullable=True) # CDN link
     phone_number = Column(String, nullable=False)
     company = Column(String, nullable=False)
@@ -22,7 +22,7 @@ class Instructor(Base):
     stripe_account_id = Column(String, nullable=True)
     created = Column(DateTime(timezone=True), nullable=False, default=func.now())
     updated = Column(DateTime(timezone=True), nullable=False, default=func.now())
-    status = Column(Enum(*STATUS, name="status_enum"), nullable=False, default=STATUS.NOT_APPROVED)
+    status = Column(Enum(STATUS, name="status_enum"), nullable=False, default=STATUS.NOT_APPROVED)
 
     @hybrid_property
     def password(self):
