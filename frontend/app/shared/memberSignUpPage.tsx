@@ -25,7 +25,7 @@ export default function signUpPage() {
 
   const handleRegistration = async () => {
     try {
-      await signup(name, email, password, gender, membership);
+      await signup(name, email, password, gender.toLowerCase(), membership);
       router.push(MEMBER_REGISTRATION_SUCCESS);
     } catch (error) {
       console.log(error);

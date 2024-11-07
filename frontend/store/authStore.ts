@@ -49,11 +49,12 @@ const useAuthStore = create<AuthState>()(
       role: "guest",
       company: undefined,
       position: undefined,
-      signup: async (username, email, password, gender, membership) => {
+      signup: async (name, email, password, gender, membership) => {
         console.log("Signing up...");
+        console.log(name, email, password, gender, membership);
         const response = await axios.post(
           AUTH_USER_SIGNUP_URL,
-          { name: username, password, email, gender, membership }, // adapted to backend's API structure
+          { name, password, email, gender, membership }, // adapted to backend's API structure
           { headers: { "Content-Type": "application/json" } }
         );
 
@@ -68,7 +69,7 @@ const useAuthStore = create<AuthState>()(
         }
       },
       signupInstructor: async (
-        username,
+        name,
         email,
         password,
         gender,
@@ -80,7 +81,7 @@ const useAuthStore = create<AuthState>()(
         const response = await axios.post(
           AUTH_INSTRUCTOR_SIGNUP_URL,
           {
-            name: username,
+            name,
             password,
             email,
             gender,
