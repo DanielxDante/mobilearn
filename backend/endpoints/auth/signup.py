@@ -113,10 +113,10 @@ class InstructorSignupEndpoint(Resource):
                     name,
                     password,
                     email,
-                    gender,
                     phone_number,
                     company,
-                    position
+                    position,
+                    gender
                 )
             except ValueError as ee:
                 return Response(
