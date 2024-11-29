@@ -62,15 +62,15 @@ export default function signUpPage() {
         name,
         email,
         password,
-        gender,
-        "instructor",
+        gender.toLowerCase(),
+        combinedPhoneNumber,
         company,
         position
       );
       router.push(INSTRUCTOR_REGISTRATION_SUCCESS);
     } catch (error) {
       console.log(error);
-      alert("An error occurred while logging in");
+      alert("An error occurred while signing up");
     }
   };
 

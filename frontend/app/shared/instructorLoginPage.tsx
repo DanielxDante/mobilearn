@@ -22,7 +22,7 @@ export default function LoginPage() {
   const handleSignIn = async () => {
     const role = domain.toLowerCase() as "instructor";
     try {
-      const newRole = await login(email, password, role);
+      const newRole = await login(email, password);
 
       if (newRole === "member") {
         router.push(MEMBER_GUEST_HOME);
