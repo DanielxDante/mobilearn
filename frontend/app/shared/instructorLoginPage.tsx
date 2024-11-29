@@ -8,7 +8,11 @@ import InputField from "@/components/InputField";
 import mobilearnHat from "@/assets/images/MobilearnHat.png";
 import useAuthStore from "@/store/authStore";
 import { instructorLoginPageConstants as Constants } from "@/constants/textConstants";
-import { MEMBER_GUEST_HOME, ADMIN_HOME } from "@/constants/pages";
+import {
+  MEMBER_GUEST_HOME,
+  ADMIN_HOME,
+  INSTRUCTOR_HOME,
+} from "@/constants/pages";
 import InputDropDownField from "@/components/InputDropDownField";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
@@ -21,6 +25,10 @@ export default function LoginPage() {
 
   const handleSignIn = async () => {
     const role = domain.toLowerCase() as "instructor";
+    //for testing the next pages
+    if (email === "instructor" && password === "instructor") {
+      router.push(INSTRUCTOR_HOME);
+    }
     try {
       const newRole = await login(email, password);
 

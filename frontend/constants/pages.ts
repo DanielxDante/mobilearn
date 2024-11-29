@@ -32,7 +32,9 @@ export const MEMBER_GUEST_PROFILE =
   `/${MEMBER_GUEST_TABS_NAMESPACE}/profile` as Href<string>;
 
 // INSTRUCTOR PAGES
-
+export const INSTRUCTOR_NAMESPACE = "(instructor)";
+export const INSTRUCTOR_HOME =
+  `/${INSTRUCTOR_NAMESPACE}/homePage` as Href<string>;
 // ADMIN PAGES
 export const ADMIN_NAMESPACE = "(admin)";
 export const ADMIN_HOME = `/${ADMIN_NAMESPACE}` as Href<string>;
