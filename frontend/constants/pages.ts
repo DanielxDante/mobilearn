@@ -7,15 +7,12 @@ export const ROLE_SELECTION_PAGE = "/shared/roleSelectionPage" as Href<string>;
 export const MEMBER_FLOW_PAGE = "/shared/memberSignInUpPage" as Href<string>;
 export const INSTRUCTOR_FLOW_PAGE =
   "/shared/instructorSignInUpPage" as Href<string>;
-
 export const INSTRUCTOR_LOGIN_PAGE =
   "/shared/instructorLoginPage" as Href<string>;
 export const INSTRUCTOR_SIGNUP_PAGE =
   "/shared/instructorSignUpPage" as Href<string>;
-
 export const MEMBER_LOGIN_PAGE = "/shared/memberLoginPage" as Href<string>;
 export const MEMBER_SIGNUP_PAGE = "/shared/memberSignUpPage" as Href<string>;
-
 export const INSTRUCTOR_REGISTRATION_SUCCESS =
   "/shared/registrationSuccessInstructorPage" as Href<string>;
 export const MEMBER_REGISTRATION_SUCCESS =
