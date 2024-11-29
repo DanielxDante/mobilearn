@@ -23,6 +23,7 @@ const CourseContent = () => {
 
     const handleChapterSelect = (chapterId: number) => {
         setSelectedChapterId(chapterId);
+        console.log("Chapter: " + chapterId);
     };
 
     const handleTopicSelect = (topicId: number) => {
@@ -99,16 +100,19 @@ const CourseContent = () => {
                     ) : (
                         <View style={styles.picker}>
                             <RNPickerSelect 
-                                onValueChange={(value) => handleChapterSelect(value)}
+                                onValueChange={(value) => {
+                                    handleChapterSelect(value)
+                                    console.log("RNPicker value: " + value)
+                                }}
                                 items={course.chapters.map((chapter) => ({
-                                    label: chapter.id.toString(),
-                                    value: chapter,
+                                    label: `Chapter ${chapter.id}`,
+                                    value: chapter.id,
                                 }))}
                                 placeholder={{label: Constants.pickerPlaceholder, value: null}}
                                 style={{placeholder: {
                                     color: "#A9A9A9",
                                 }}}
-                                value={course.chapters[0]}
+                                value={selectedChapterId}
                             />
                         </View>
                     )}
@@ -121,6 +125,7 @@ const CourseContent = () => {
                 ) : (
                     <Text>No lectures available</Text> // Fallback if no lectures
                 )}
+                <View style={styles.spaceBelow}></View>
             </ScrollView>
         </SafeAreaView>
   )
@@ -236,6 +241,9 @@ const styles = StyleSheet.create({
         height: 13,
         width: 13,
         marginBottom: 3,
+    },
+    spaceBelow: {
+        height: 10,
     }
 });
 
