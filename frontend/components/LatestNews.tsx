@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Colors } from "@/constants/colors";
 
 //Create api to fetch latest news
 const LatestNews = () => {
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
   newsTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#4A90E2",
+    color: Colors.defaultBlue,
   },
   seeAllText: {
     color: "#6C6C6C",

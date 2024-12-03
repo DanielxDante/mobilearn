@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/colors";
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
   statisticsTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#4A90E2",
+    color: Colors.defaultBlue,
   },
   dropdown: {
     fontSize: 14,
