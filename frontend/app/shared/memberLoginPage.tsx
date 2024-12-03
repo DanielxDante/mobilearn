@@ -1,38 +1,42 @@
 import React, { useState } from "react";
 import { Text, View, Image, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 
 import SignInButton from "@/components/Button";
 import InputField from "@/components/InputField";
 import mobilearnHat from "@/assets/images/MobilearnHat.png";
 import useAuthStore from "@/store/authStore";
 import { memberLoginPageConstants as Constants } from "@/constants/textConstants";
-import { MEMBER_GUEST_HOME, ADMIN_HOME } from "@/constants/pages";
+import {
+  MEMBER_GUEST_HOME,
+  ADMIN_HOME,
+  MEMBER_SIGNUP_PAGE,
+} from "@/constants/pages";
 import InputDropDownField from "@/components/InputDropDownField";
+import { Colors } from "@/constants/colors";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
-  const login = useAuthStore((state) => state.login);
+  const login = useAuthStore((state) => state.loginMember);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [domain, setDomain] = useState("member");
 
   const handleSignIn = async () => {
-    const role = domain.toLowerCase() as "member" | "instructor";
     try {
-      const newRole = await login(email, password);
+      const response = await login(email, password);
 
-      if (newRole === "member") {
+      if (response === "normal") {
         router.push(MEMBER_GUEST_HOME);
-      } else if (newRole === "admin") {
+      } else if (response === "User disabled") {
+        alert("Your account has been disabled. Please contact the admin.");
+      } else if (response === "Invalid credentials") {
+        alert("Please check your email and password and try again.");
+      } else if (response === "admin") {
         router.push(ADMIN_HOME);
       }
-      // TODO: Redirect to instructors home page once done
-      // else if (newRole === "instructor") {
-      //   router.push(INSTRUCTOR_HOME);
-      // }
     } catch (error) {
       console.log(error);
       alert("An error occurred while logging in");
@@ -101,12 +105,6 @@ export default function LoginPage() {
           value={password}
           onChangeText={setPassword}
         />
-        {/* <InputDropDownField
-          inputTitle={Constants.fields[2].inputTitle}
-          options={Constants.fields[2].options || []}
-          value={domain}
-          onChange={setDomain}
-        /> */}
         <SignInButton text="Sign In" onPress={handleSignIn} />
         <View
           style={{
@@ -116,9 +114,12 @@ export default function LoginPage() {
           }}
         >
           <Text>Don’t have an Account? </Text>
-          {/* <Link href="/signup" style={tailwind("text-blue-500")}>
-              Sign Up here
-            </Link> */}
+          <Link
+            style={{ color: Colors.darkerBlue }}
+            href={{ pathname: MEMBER_SIGNUP_PAGE }}
+          >
+            Sign Up here
+          </Link>
         </View>
       </View>
     </SafeAreaView>

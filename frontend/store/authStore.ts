@@ -14,11 +14,16 @@ export interface AuthState {
   username: string;
   email: string;
   token: string;
+  //name?: string;
   gender: string;
-  role: "guest" | "member" | "instructor" | "admin";
+  //role: "guest" | "member" | "instructor" | "admin";
+  profile_picture_url?: string;
+  membership?: string;
+  message?: string;
+  phone_number?: string;
   company?: string;
   position?: string;
-  signup: (
+  signupMember: (
     username: string,
     email: string,
     password: string,
@@ -34,7 +39,7 @@ export interface AuthState {
     company: string,
     position: string
   ) => Promise<void>;
-  login: (email: string, password: string) => Promise<string>;
+  loginMember: (email: string, password: string) => Promise<string>;
   loginInstructor: (email: string, password: string) => Promise<string>;
   logout: () => Promise<void>;
 }
@@ -49,7 +54,7 @@ const useAuthStore = create<AuthState>()(
       role: "guest",
       company: undefined,
       position: undefined,
-      signup: async (name, email, password, gender, membership) => {
+      signupMember: async (name, email, password, gender, membership) => {
         console.log("Signing up...");
         console.log(name, email, password, gender, membership);
         const response = await axios.post(
@@ -99,46 +104,75 @@ const useAuthStore = create<AuthState>()(
           throw new Error("An unexpected error occurred");
         }
       },
-      login: async (email, password) => {
+      loginMember: async (email, password) => {
         console.log("Logging in...");
-        const response = await axios.post(
-          AUTH_USER_LOGIN_URL,
-          { email, password },
-          { headers: { "Content-Type": "application/json" } }
-        );
-        const responseData = response.data;
-        if (response.status === 200) {
-          set({
-            username: responseData.username,
-            email: email,
-            token: responseData.token,
-            role: responseData.role,
-            gender: responseData.gender,
-          });
-          return responseData.role;
-        } else {
-          throw new Error("An unexpected error occurred");
+        try {
+          // Send the login request
+          const response = await axios.post(
+            AUTH_USER_LOGIN_URL,
+            { email, password },
+            { headers: { "Content-Type": "application/json" } }
+          );
+
+          const responseData = response.data;
+
+          // Handle success (status 200)
+          if (response.status === 200) {
+            set({
+              message: responseData.message,
+              username: responseData.name,
+              gender: responseData.gender,
+              profile_picture_url: responseData.profile_picture_url,
+              membership: responseData.membership,
+              token: responseData.token,
+            });
+            return responseData.membership;
+          }
+        } catch (error) {
+          // Handle specific 400 status
+          if (error.response && error.response.status === 400) {
+            return error.response.data.message; // Return the message for further handling
+          }
+
+          // Log and rethrow other errors for unexpected issues
+          console.error("Unexpected error during login:", error);
+          throw new Error("An unexpected error occurred while logging in.");
         }
       },
       loginInstructor: async (email, password) => {
         console.log("Logging in...");
-        const response = await axios.post(
-          AUTH_INSTRUCTOR_LOGIN_URL,
-          { email, password },
-          { headers: { "Content-Type": "application/json" } }
-        );
-        const responseData = response.data;
-        if (response.status === 200) {
-          set({
-            username: responseData.username,
-            email: email,
-            token: responseData.token,
-            role: responseData.role,
-            gender: responseData.gender,
-          });
-          return responseData.role;
-        } else {
-          throw new Error("An unexpected error occurred");
+        try {
+          // Send the login request
+          const response = await axios.post(
+            AUTH_INSTRUCTOR_LOGIN_URL,
+            { email, password },
+            { headers: { "Content-Type": "application/json" } }
+          );
+
+          const responseData = response.data;
+
+          // Handle success (status 200)
+          if (response.status === 200) {
+            set({
+              message: responseData.message,
+              username: responseData.name,
+              gender: responseData.gender,
+              profile_picture_url: responseData.profile_picture_url,
+              phone_number: responseData.phone_number,
+              company: responseData.company,
+              position: responseData.position,
+              token: responseData.token,
+            });
+            return responseData.message;
+          }
+        } catch (error) {
+          // Handle specific 400 status
+          if (error.response && error.response.status === 400) {
+            return error.response.data.message; // Return the message for further handling
+          }
+          // Log and rethrow other errors for unexpected issues
+          console.error("Unexpected error during login:", error);
+          throw new Error("An unexpected error occurred while logging in.");
         }
       },
       logout: async () => {
@@ -147,7 +181,7 @@ const useAuthStore = create<AuthState>()(
           username: "",
           email: "",
           token: "",
-          role: "guest",
+          membership: "guest",
           gender: "",
         });
       },
