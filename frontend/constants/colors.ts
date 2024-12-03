@@ -27,4 +27,6 @@ export const Colors = {
   lighterBlue: "#2F80ED",
   darkerBlue: "#0056D2",
   tabsIconGray: "#DEDEDE",
+  Gray: "#808080",
+  darkGray: "#181818",
 };

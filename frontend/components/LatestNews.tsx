@@ -1,27 +1,24 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Colors } from "@/constants/colors";
+import { instructorNewsConstants as textConstants } from "@/constants/textConstants";
 
 //Create api to fetch latest news
-const LatestNews = () => {
-  const news = [
-    {
-      title: "The Effects of Temperature on Enzyme Activity and Biology",
-      category: "Biology",
-    },
-    { title: "Advances in Quantum Computing", category: "Technology" },
-    {
-      title: "Global Warming and Its Impact on Agriculture",
-      category: "Environment",
-    },
-  ];
-
+const LatestNews = ({
+  news,
+}: {
+  news: {
+    title: string;
+    category: string;
+    text?: string;
+  }[];
+}) => {
   return (
     <View style={styles.latestNewsContainer}>
       <View style={styles.newsHeader}>
-        <Text style={styles.newsTitle}>Latest News</Text>
+        <Text style={styles.newsTitle}>{textConstants.pageTitle}</Text>
         <TouchableOpacity>
-          <Text style={styles.seeAllText}>See All</Text>
+          <Text style={styles.seeAllText}>{textConstants.seeAll}</Text>
         </TouchableOpacity>
       </View>
       {news.map((item, index) => (

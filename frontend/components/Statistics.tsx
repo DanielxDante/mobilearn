@@ -1,6 +1,7 @@
 import { Colors } from "@/constants/colors";
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { instructorStatisticsConstants as textConstants } from "@/constants/textConstants";
 
 //course data of user will be passed in
 //to create functions for sorting and processing data
@@ -17,9 +18,9 @@ const Statistics = ({
   return (
     <View style={styles.statisticsContainer}>
       <View style={styles.statisticsHeader}>
-        <Text style={styles.statisticsTitle}>Statistics</Text>
+        <Text style={styles.statisticsTitle}>{textConstants.pageTitle}</Text>
         <TouchableOpacity>
-          <Text style={styles.dropdown}>Month ▼</Text>
+          <Text style={styles.dropdown}>{textConstants.dropdown[0]}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.statisticsGrid}>

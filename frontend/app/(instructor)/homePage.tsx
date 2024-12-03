@@ -10,11 +10,6 @@ import {
 import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useSegments } from "expo-router";
-
-import AppBar from "@/components/AppBar";
-import Search from "@/components/Search";
-import ContinueWatching from "@/app/(member_guest)/home/continueWatching";
-import SuggestionsSection from "@/app/(member_guest)/home/suggestionsSection";
 import TopCourses from "@/app/(member_guest)/home/topCourses";
 import { MEMBER_GUEST_TABS } from "@/constants/pages";
 import useAuthStore from "@/store/authStore";
@@ -26,19 +21,35 @@ import {
   suggestionsData,
   topCourseData,
 } from "@/constants/temporaryCourseData";
-
-import { AutocompleteDropdownContextProvider } from "react-native-autocomplete-dropdown";
-import { useFonts } from "expo-font";
 import { Colors } from "@/constants/colors";
 import { memberGuestHomeConstants as Constants } from "@/constants/textConstants";
 import Statistics from "@/components/Statistics";
 import LatestNews from "@/components/LatestNews";
+import { instructorHomePageConstants as textConstants } from "@/constants/textConstants";
 
 const statsData = [
   { label: "Your Course", value: "23", description: "Lesson" },
   { label: "Your Audience", value: "10,458", change: "-23.47%" },
   { label: "Avg. Watch Time", value: "35 min", change: "+23.47%" },
   { label: "Reviews", value: "20,254", change: "+23.47%" },
+];
+
+const newsData = [
+  {
+    title: "The Effects of Temperature on Enzyme Activity and Biology",
+    category: "Biology",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  },
+  {
+    title: "Advances in Quantum Computing",
+    category: "Technology",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  },
+  {
+    title: "Global Warming and Its Impact on Agriculture",
+    category: "Environment",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  },
 ];
 
 const Home = () => {
@@ -76,23 +87,23 @@ const Home = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.appBarContainer}>
+        {/* App bar for Home and notifications*/}
+        <Text style={styles.homePageHeader}>{textConstants.pageTitle}</Text>
+        {/* Notification bell icon */}
+        <TouchableOpacity
+          style={styles.notificationButton}
+          onPress={() => {
+            router.push("/shared/notification");
+          }}
+        >
+          <Image
+            source={Constants.notifBellButton}
+            style={styles.notificationIcon}
+          />
+        </TouchableOpacity>
+      </View>
       <ScrollView>
-        <View style={styles.appBarContainer}>
-          {/* App bar for Home and notifications*/}
-          <Text style={styles.homePageHeader}>Home</Text>
-          {/* Notification bell icon */}
-          <TouchableOpacity
-            style={styles.notificationButton}
-            onPress={() => {
-              router.push("/shared/notification");
-            }}
-          >
-            <Image
-              source={Constants.notifBellButton}
-              style={styles.notificationIcon}
-            />
-          </TouchableOpacity>
-        </View>
         {/* Statistics */}
         <Statistics stats={statsData} />
         {/* Top Courses */}
@@ -120,7 +131,7 @@ const Home = () => {
           />
         </View>
         {/* News */}
-        <LatestNews />
+        <LatestNews news={newsData} />
       </ScrollView>
     </SafeAreaView>
   );
