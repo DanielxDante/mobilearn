@@ -3,6 +3,7 @@ import { Href } from "expo-router";
 export const BASE_HOME = "/(app)";
 
 // SHARED PAGES
+export const CAROUSEL_PAGE = "/shared/carouselPage" as Href<string>;
 export const ROLE_SELECTION_PAGE = "/shared/roleSelectionPage" as Href<string>;
 export const MEMBER_FLOW_PAGE = "/shared/memberSignInUpPage" as Href<string>;
 export const INSTRUCTOR_FLOW_PAGE =
@@ -23,7 +24,7 @@ export const MEMBER_GUEST_NAMESPACE = "(member_guest)";
 export const MEMBER_GUEST_TABS = "(tabs)";
 export const MEMBER_GUEST_TABS_NAMESPACE = `${MEMBER_GUEST_NAMESPACE}/${MEMBER_GUEST_TABS}`;
 export const MEMBER_GUEST_HOME =
-  `/${MEMBER_GUEST_TABS_NAMESPACE}/index` as Href<string>;
+  `/${MEMBER_GUEST_TABS_NAMESPACE}` as Href<string>;
 export const MEMBER_GUEST_COURSEPAGE =
   `/${MEMBER_GUEST_TABS_NAMESPACE}/coursePage` as Href<string>;
 export const MEMBER_GUEST_CHAT =
@@ -32,7 +33,9 @@ export const MEMBER_GUEST_PROFILE =
   `/${MEMBER_GUEST_TABS_NAMESPACE}/profile` as Href<string>;
 
 // INSTRUCTOR PAGES
-
+export const INSTRUCTOR_NAMESPACE = "(instructor)";
+export const INSTRUCTOR_HOME =
+  `/${INSTRUCTOR_NAMESPACE}/homePage` as Href<string>;
 // ADMIN PAGES
 export const ADMIN_NAMESPACE = "(admin)";
 export const ADMIN_HOME = `/${ADMIN_NAMESPACE}` as Href<string>;

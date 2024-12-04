@@ -366,9 +366,57 @@ export const paymentCompletedConstants = {
 };
 
 export const courseContentConstants = {
-    chapter: "Chap",
-    pickerPlaceholder: "Select a chapter",
-    courseContents: "Course Contents",
-    lecture: "Lecture",
-    tick: require("@/assets/images/icons/tick.png")
-}
+  chapter: "Chap",
+  pickerPlaceholder: "Select a chapter",
+  courseContents: "Course Contents",
+  lecture: "Lecture",
+  tick: require("@/assets/images/icons/tick.png"),
+};
+
+export const instructorHomePageConstants = {
+  pageTitle: "Home",
+};
+
+export const instructorStatisticsConstants = {
+  pageTitle: "Statistics",
+  dropdown: ["Week", "Month", "Year"],
+};
+
+export const instructorNewsConstants = {
+  pageTitle: "Latest News",
+  seeAll: "See All",
+};
+
+export const instructorCoursePageConstants = {
+  appBarTitle: "My Courses",
+  createCourseText: "Create Course",
+  searchBarPlaceholder: "Search for a course",
+};
+
+export const instructorCourseListItemsConstants = {
+  viewCourse: "View Course",
+};
+
+export const instructorCreateCoursePageConstants = {
+  pageTitle: "Create Course",
+  courseTitle: "Course Title",
+  courseInfo: "Course Information",
+  field: "Field of Study",
+  field_options: ["Engineering", "Mathematics", "Physics", "Biology"],
+  field_placeholder: "Select a field",
+  chapters: "Manage Chapters",
+  chapter_placeholder: "Chapter",
+  chapterPageTitle: "Edit Chapter",
+  chapter: "Chapter",
+  chapterInfo: "Chapter Information",
+  lessons: "Manage Lessons",
+  lesson_options: [
+    "1 Lesson",
+    "2 Lessons",
+    "3 Lessons",
+    "4 Lessons",
+    "5 Lessons",
+  ],
+  lesson_placeholder: "Lesson",
+  placeholder: "Lorem ipsum",
+};

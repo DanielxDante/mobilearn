@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { Text, View, Image, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 
 import SignInButton from "@/components/Button";
 import InputField from "@/components/InputField";
 import mobilearnHat from "@/assets/images/MobilearnHat.png";
 import useAuthStore from "@/store/authStore";
 import { instructorLoginPageConstants as Constants } from "@/constants/textConstants";
-import { MEMBER_GUEST_HOME, ADMIN_HOME } from "@/constants/pages";
+import { INSTRUCTOR_SIGNUP_PAGE, INSTRUCTOR_HOME } from "@/constants/pages";
 import InputDropDownField from "@/components/InputDropDownField";
+import { Colors } from "@/constants/colors";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
@@ -17,24 +18,22 @@ export default function LoginPage() {
   const login = useAuthStore((state) => state.loginInstructor);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [domain, setDomain] = useState("instructor");
 
   const handleSignIn = async () => {
-    const role = domain.toLowerCase() as "instructor";
     try {
-      const newRole = await login(email, password);
+      const message = await login(email, password);
 
-      if (newRole === "member") {
-        router.push(MEMBER_GUEST_HOME);
-      } else if (newRole === "admin") {
-        router.push(ADMIN_HOME);
+      if (message === "Login successful") {
+        router.push(INSTRUCTOR_HOME);
+      } else if (message === "Instructor disabled") {
+        alert("Your account has been disabled. Please contact the admin.");
+      } else if (message === "Invalid credentials") {
+        alert("Please check your email and password and try again.");
+      } else if (message.includes("approv")) {
+        alert("Your account is pending approval.");
       }
-      // TODO: Redirect to instructors home page once done
-      // else if (newRole === "instructor") {
-      //   router.push(INSTRUCTOR_HOME);
-      // }
     } catch (error) {
-      console.log(error);
+      console.error("An unexpected error occurred:", error);
       alert("An error occurred while logging in");
     }
   };
@@ -101,12 +100,6 @@ export default function LoginPage() {
           value={password}
           onChangeText={setPassword}
         />
-        {/* <InputDropDownField
-          inputTitle={Constants.fields[2].inputTitle}
-          options={Constants.fields[2].options || []}
-          value={domain}
-          onChange={setDomain}
-        /> */}
         <SignInButton text="Sign In" onPress={handleSignIn} />
         <View
           style={{
@@ -116,9 +109,12 @@ export default function LoginPage() {
           }}
         >
           <Text>Don’t have an Account? </Text>
-          {/* <Link href="/signup" style={tailwind("text-blue-500")}>
-              Sign Up here
-            </Link> */}
+          <Link
+            style={{ color: Colors.darkerBlue }}
+            href={{ pathname: INSTRUCTOR_SIGNUP_PAGE }}
+          >
+            Sign Up here
+          </Link>
         </View>
       </View>
     </SafeAreaView>
