@@ -1,15 +1,10 @@
 import os
+from datetime import timedelta
 from flask import Flask, request
 from dotenv import load_dotenv
 from flask_restx import Api, Namespace
 from flask_cors import CORS
-from flask_jwt_extended import (
-    JWTManager,
-    set_access_cookies,
-    create_access_token,
-    get_jwt,
-    get_jwt_identity
-)
+from flask_jwt_extended import JWTManager
 
 from database import init_db, check_db, create_tables
 
@@ -39,8 +34,8 @@ POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 POSTGRES_PORT = os.getenv('POSTGRES_PORT')
 
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
-app.config['JWT_REFRESH_TOKEN_EXPIRES'] = 86400
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=5)
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:{POSTGRES_PORT}/{POSTGRES_DB}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -50,6 +45,7 @@ def setup_environment():
     """ Setup flask app environment """
     with app.app_context():
         from models import (
+            token,
             user,
             instructor,
             # admin
@@ -63,6 +59,7 @@ def setup_environment():
 def init_auth_endpoints():
     from endpoints.auth.signup import UserSignupEndpoint, InstructorSignupEndpoint
     from endpoints.auth.login import UserLoginEndpoint, InstructorLoginEndpoint
+    from endpoints.auth.logout import RefreshTokenEndpoint, LogoutEndpoint
 
     user_signup_path = f"/{VERSION}/user/signup"
     ns_auth.add_resource(UserSignupEndpoint, user_signup_path)
@@ -76,6 +73,9 @@ def init_auth_endpoints():
     instructor_login_path = f"/{VERSION}/instructor/login"
     ns_auth.add_resource(InstructorLoginEndpoint, instructor_login_path)
 
+    refresh_token_path = f"/{VERSION}/refresh"
+    ns_auth.add_resource(RefreshTokenEndpoint, refresh_token_path)
+
 def init_account_endpoints():
     pass
 
@@ -86,10 +86,13 @@ def init_course_endpoints():
     ns_course.add_resource(CourseEndpoint, course_path)
 
 def init_channel_endpoints():
-    from endpoints.channel.channel import ChannelEndpoint
+    from endpoints.channel.channel import ChannelEndpoint, GetAllChannelEndpoint
 
     channel_path = f"/{VERSION}/addChannel"
     ns_channel.add_resource(ChannelEndpoint, channel_path)
+
+    get_channel_path = f"/{VERSION}/getChannels"
+    ns_channel.add_resource(GetAllChannelEndpoint, get_channel_path)
 
 
 def init_recommender_endpoints():
@@ -124,19 +127,6 @@ def init():
 def handle_preflight():
     if request.method == "OPTIONS":
         return "", 200
-    
-# @app.after_request
-# def refresh_expiring_jwts(response):
-#     try:
-#         exp_timestamp = get_jwt()["exp"]
-#         now = datetime.now(timezone.utc)
-#         target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
-#         if target_timestamp > exp_timestamp:
-#             access_token = create_access_token(identity=get_jwt_identity())
-#             set_access_cookies(response, access_token)
-#         return response
-#     except (RuntimeError, KeyError):
-#         return response
 
 if __name__ == '__main__':
     init().run(host="0.0.0.0", port=8080, debug=True)
