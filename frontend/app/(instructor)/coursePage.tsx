@@ -16,7 +16,7 @@ import { courseListData as allCourses } from "@/constants/temporaryCourseData";
 import { Colors } from "@/constants/colors";
 import { instructorCoursePageConstants as textConstants } from "@/constants/textConstants";
 import CourseListItem from "@/components/InstructorCourseListItem";
-import SearchBar from "@/components/searchBar";
+import SearchBar from "../../components/SearchBar";
 const CoursePage = () => {
   const [filteredCourses, setFilteredCourses] = useState(allCourses);
 
@@ -26,7 +26,7 @@ const CoursePage = () => {
       (course) => course.id.toString() === id
     );
     router.push({
-      pathname: "../../shared/course/courseDetails",
+      pathname: "../../shared/course/courseContent",
       params: {
         courseSelected: JSON.stringify(courseSelected),
       },
