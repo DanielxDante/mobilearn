@@ -14,7 +14,7 @@ import { MEMBER_REGISTRATION_SUCCESS } from "@/constants/pages";
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function signUpPage() {
-  const signup = useAuthStore((state) => state.signup);
+  const signup = useAuthStore((state) => state.signupMember);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
