@@ -1,135 +1,163 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import React, { useEffect, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context';
-import RNPickerSelect from 'react-native-picker-select';
-import VideoPlayer from '@/components/VideoPlayer';
-import { useLocalSearchParams } from 'expo-router';
-import Course from '@/types/shared/Course/Course';
-import { Colors } from '@/constants/colors';
+import {
+    View,
+    Text,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    Image,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import RNPickerSelect from "react-native-picker-select";
+import VideoPlayer from "@/components/VideoPlayer";
+import { useLocalSearchParams } from "expo-router";
+import Course from "@/types/shared/Course/Course";
+import { Colors } from "@/constants/colors";
 import { courseContentConstants as Constants } from "@/constants/textConstants";
-import Lecture from "@/types/shared/Course/Lecture";
-import Chapter from '@/types/shared/Course/Chapter';
-import Topic from '@/types/shared/Course/Topic';
+import Chapter from "@/types/shared/Course/Chapter";
+import Lesson from "@/types/shared/Course/Lesson";
 
 const CourseContent = () => {
-
     const { courseSelected } = useLocalSearchParams();
     const course: Course =
         typeof courseSelected === "string" ? JSON.parse(courseSelected) : [];
-    const [videoUrl, setVideoUrl] = useState(course.chapters[0].lectures[0].topics[0].contentUrl);
+    const [videoUrl, setVideoUrl] = useState(
+        course.chapters[0].lessons[0].contentUrl
+    );
 
-    const [selectedChapterId, setSelectedChapterId] = useState<number>(course.chapters[0]?.id);
-    const selectedChapter = course.chapters.find(chapter => chapter.id === selectedChapterId);
+    const [selectedChapterId, setSelectedChapterId] = useState<number>(
+        course.chapters[0]?.id
+    );
+    const selectedChapter = course.chapters.find(
+        (chapter) => chapter.id === selectedChapterId
+    );
 
     const handleChapterSelect = (chapterId: number) => {
         setSelectedChapterId(chapterId);
         console.log("Chapter: " + chapterId);
     };
 
-    const handleTopicSelect = (topicId: number) => {
-        console.log("Topic id: " + topicId);
-    }
+    const handleLessonSelect = (lessonId: number) => {
+        console.log("Lesson id: " + lessonId);
+    };
 
-    const renderLectureItem = (lecture: Lecture) => (
-        <View style={styles.lectureItemContainer}>
-            {/* Lecture title */}
-            <Text style={styles.lectureTitle} numberOfLines={1}>{Constants.lecture} {lecture.id}: {lecture.title}</Text>
-            <View style={styles.topicsContainer}>
-            {/* Render Topic Item */}
-            {lecture.topics.length > 0 ? (
-                    lecture.topics.map((topic: Topic) => (
-                        <View key={topic.id}>{
-                                <View>
-                                    <TouchableOpacity style={styles.topicContainer} onPress={() => handleTopicSelect(topic.id)}>
-                                        <View style={styles.topicContainerDescription}>
-                                            <Text style={styles.topicTitle}>{topic.title}</Text>
-                                            <Text style={styles.topicDescription} numberOfLines={2}>{topic.description}</Text>
-                                            <View style={styles.topicBar}></View>
-                                        </View>
-                                        {
-                                            topic.completionStatus ? 
-                                            (
-                                                <View style={styles.topicContainerTickDone}>
-                                                    <Image source={Constants.tick} style={styles.tickImage}/>
-                                                </View>
-                                            ) : (
-                                                <View style={styles.topicContainerTick}></View>
-                                            )
-                                        }
-                                    </TouchableOpacity>
-                            </View>
-                        }</View>
-                    ))
-                ) : (
-                    <Text>No topics available</Text> // Fallback if no lectures
-                )}
+    const renderLectureItem = (lesson: Lesson) => (
+        <View style={styles.lessonItemContainer}>
+            {/* Lessone title */}
+            <Text style={styles.lessonTitle} numberOfLines={1}>
+                {Constants.lesson} {lesson.id}: {lesson.title}
+            </Text>
+            <View style={styles.lessonContainer}>
+                <TouchableOpacity
+                    style={styles.topicContainer}
+                    onPress={() => handleLessonSelect(lesson.id)}
+                >
+                    <View style={styles.lessonContainerDescription}>
+                        <Text
+                            style={styles.lessonDescription}
+                            numberOfLines={3}
+                        >
+                            {lesson.description}
+                        </Text>
+                        <View style={styles.lessonBar}></View>
+                    </View>
+                    {lesson.completionStatus ? (
+                        <View style={styles.lessonContainerTickDone}>
+                            <Image
+                                source={Constants.tick}
+                                style={styles.tickImage}
+                            />
+                        </View>
+                    ) : (
+                        <View style={styles.lessonContainerTick}></View>
+                    )}
+                </TouchableOpacity>
             </View>
         </View>
-    )
+    );
 
     // console.log(course.chapters.find(chapter => chapter.id==selectedChapterId))
 
     return (
         <SafeAreaView style={styles.container}>
-            <VideoPlayer uri={videoUrl}/>
+            <VideoPlayer uri={videoUrl} />
             <ScrollView>
                 {/* Course title and subtitle */}
-                <Text style={styles.title}>
-                    {course.title}
-                </Text>
-                <Text style={styles.school}>
-                    {course.school}
-                </Text>
+                <Text style={styles.title}>{course.title}</Text>
+                <Text style={styles.school}>{course.school}</Text>
                 {/* Chapter buttons */}
                 <View style={styles.chapterButtonContainer}>
-                {course.chapters.length <= 4 ? (
+                    {course.chapters.length <= 4 ? (
                         // Render up to 4 chapter buttons if there are 4 or fewer chapters
                         course.chapters.map((chapter) => (
                             <TouchableOpacity
                                 key={chapter.id}
-                                style={[styles.chapterButton, {
-                                    backgroundColor: selectedChapterId === chapter.id ? Colors.defaultBlue : '#E0E0E0',
-                                }]}
+                                style={[
+                                    styles.chapterButton,
+                                    {
+                                        backgroundColor:
+                                            selectedChapterId === chapter.id
+                                                ? Colors.defaultBlue
+                                                : "#E0E0E0",
+                                    },
+                                ]}
                                 onPress={() => handleChapterSelect(chapter.id)}
                             >
-                                <Text style={[styles.chapterButtonText, { color: selectedChapterId === chapter.id ? '#FFF' : '#000' }]}>
+                                <Text
+                                    style={[
+                                        styles.chapterButtonText,
+                                        {
+                                            color:
+                                                selectedChapterId === chapter.id
+                                                    ? "#FFF"
+                                                    : "#000",
+                                        },
+                                    ]}
+                                >
                                     {Constants.chapter} {chapter.id}
                                 </Text>
                             </TouchableOpacity>
                         ))
                     ) : (
                         <View style={styles.picker}>
-                            <RNPickerSelect 
+                            <RNPickerSelect
                                 onValueChange={(value) => {
-                                    handleChapterSelect(value)
-                                    console.log("RNPicker value: " + value)
+                                    handleChapterSelect(value);
+                                    console.log("RNPicker value: " + value);
                                 }}
                                 items={course.chapters.map((chapter) => ({
                                     label: `Chapter ${chapter.id}`,
                                     value: chapter.id,
                                 }))}
-                                placeholder={{label: Constants.pickerPlaceholder, value: null}}
-                                style={{placeholder: {
-                                    color: "#A9A9A9",
-                                }}}
+                                placeholder={{
+                                    label: Constants.pickerPlaceholder,
+                                    value: null,
+                                }}
+                                style={{
+                                    placeholder: {
+                                        color: "#A9A9A9",
+                                    },
+                                }}
                                 value={selectedChapterId}
                             />
                         </View>
                     )}
                 </View>
-                <Text style={styles.courseContentsTitle}>{Constants.courseContents}</Text>
-                {selectedChapter && selectedChapter.lectures.length > 0 ? (
-                    selectedChapter.lectures.map((lecture: Lecture) => (
-                        <View key={lecture.id}>{renderLectureItem(lecture)}</View>
+                <Text style={styles.courseContentsTitle}>
+                    {Constants.courseContents}
+                </Text>
+                {selectedChapter && selectedChapter.lessons.length > 0 ? (
+                    selectedChapter.lessons.map((lesson: Lesson) => (
+                        <View key={lesson.id}>{renderLectureItem(lesson)}</View>
                     ))
                 ) : (
-                    <Text>No lectures available</Text> // Fallback if no lectures
+                    <Text>No lessons available</Text> // Fallback if no lectures
                 )}
                 <View style={styles.spaceBelow}></View>
             </ScrollView>
         </SafeAreaView>
-  )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -179,31 +207,31 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         alignSelf: "center",
     },
-    lectureItemContainer: {
+    lessonItemContainer: {
         marginVertical: 10,
     },
-    lectureTitle: {
+    lessonTitle: {
         fontFamily: "Inter-Regular",
         color: Colors.defaultBlue,
         fontSize: 18,
         marginBottom: 10,
         marginHorizontal: 15,
     },
-    topicsContainer: {
-        backgroundColor: '#356FC520',
+    lessonContainer: {
+        backgroundColor: "#356FC520",
         paddingLeft: 25,
         paddingRight: 15,
-        paddingVertical: 5,
+        paddingVertical: 8,
     },
     topicContainer: {
         paddingBottom: 2,
         flexDirection: "row",
-        alignItems: "center"
+        alignItems: "center",
     },
-    topicContainerDescription: {
+    lessonContainerDescription: {
         flex: 1,
     },
-    topicContainerTick: {
+    lessonContainerTick: {
         height: 26,
         width: 26,
         borderRadius: 13,
@@ -211,7 +239,7 @@ const styles = StyleSheet.create({
         borderColor: Colors.defaultBlue,
         marginHorizontal: 5,
     },
-    topicContainerTickDone: {
+    lessonContainerTickDone: {
         height: 26,
         width: 26,
         borderRadius: 13,
@@ -222,18 +250,13 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    topicTitle: {
-        fontFamily: "Inter-SemiBold",
-        fontSize: 16,
-        color: Colors.defaultBlue,
-    },
-    topicDescription: {
+    lessonDescription: {
         fontFamily: "Inter-Regular",
         fontSize: 12,
         color: "#6C6C6C",
-        marginBottom: 6,
+        marginBottom: 8,
     },
-    topicBar: {
+    lessonBar: {
         borderTopWidth: 1,
         borderColor: Colors.defaultBlue,
     },
@@ -244,7 +267,7 @@ const styles = StyleSheet.create({
     },
     spaceBelow: {
         height: 10,
-    }
+    },
 });
 
 export default CourseContent;

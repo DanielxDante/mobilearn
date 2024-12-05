@@ -1,7 +1,7 @@
-export default interface Topic {
+export default interface Lesson {
     id: number;
     title: string;
     contentUrl: string;
-    description: string; 
+    description: string;
     completionStatus: boolean;
 }
