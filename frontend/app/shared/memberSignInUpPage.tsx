@@ -75,6 +75,22 @@ const SignUpPage = () => {
                     }}
                 ></Button>
             </View>
+            {/* Temporary button to redirect to homepage */}
+            <View
+                style={{
+                    flexDirection: "row",
+                    marginTop: 16,
+                }}
+            >
+                <Button
+                    text={Constants.homepageButtonText}
+                    isBlue={true}
+                    onPress={() => {
+                        router.push("/(member_guest)/(tabs)");
+                        console.log("Homepage pressed");
+                    }}
+                ></Button>
+            </View>
         </View>
     );
 };
