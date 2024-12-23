@@ -28,7 +28,6 @@ import {
 } from "@/constants/temporaryCourseData";
 
 import { AutocompleteDropdownContextProvider } from "react-native-autocomplete-dropdown";
-import { useFonts } from "expo-font";
 import { Colors } from "@/constants/colors";
 import { memberGuestHomeConstants as Constants } from "@/constants/textConstants";
 
@@ -202,14 +201,15 @@ const styles = StyleSheet.create({
     },
     suggestionsTitle: {
         fontSize: 18,
-        fontWeight: "bold",
+        fontFamily: "Inter-Bold",
         color: Colors.defaultBlue,
         marginHorizontal: 20,
     },
     seeAllText: {
         color: "#6C6C6C",
-        fontSize: 12,
+        fontSize: 11,
         textDecorationLine: "underline",
+        fontFamily: "Inter-Regular",
         marginRight: 12,
     },
     topCoursesHeader: {
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     },
     topCoursesTitle: {
         fontSize: 18,
-        fontWeight: "bold",
+        fontFamily: "Inter-Bold",
         color: Colors.defaultBlue, // Adjust to your theme color
         marginHorizontal: 20,
     },
