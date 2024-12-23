@@ -58,12 +58,21 @@ const Home = () => {
         const courseSelected = courseListData.find(
             (course) => course.id === id
         );
-        router.push({
-            pathname: "../../shared/course/courseDetails",
-            params: {
-                courseSelected: JSON.stringify(courseSelected),
-            },
-        });
+        if (courseSelected?.paid == false) {
+            router.push({
+                pathname: "../../shared/course/courseDetails",
+                params: {
+                    courseSelected: JSON.stringify(courseSelected),
+                },
+            });
+        } else {
+            router.push({
+                pathname: "../shared/course/courseContent",
+                params: {
+                    courseSelected: JSON.stringify(courseSelected),
+                },
+            });
+        }
     };
 
     return (
