@@ -40,8 +40,6 @@ const MemberGuestLayout = () => {
                     tabBarStyle: {
                         backgroundColor: Colors.defaultBlue,
                         borderTopColor: "transparent",
-                    },
-                    tabBarItemStyle: {
                         height: 60,
                     },
                 }}
