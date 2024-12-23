@@ -421,3 +421,10 @@ export const instructorCreateCoursePageConstants = {
     lesson_placeholder: "Lesson",
     placeholder: "Lorem ipsum",
 };
+
+export const memberChannelSignUpPage = {
+    pageTitle: "Channel Registration",
+    dropDownTitle: "Select a channel",
+    inviteCodeTitle: "Or enter an invite code",
+    inviteCodePlaceholder: "Enter invite code",
+};

@@ -104,62 +104,6 @@ const MemberGuestLayout = () => {
                         ),
                     }}
                 />
-                {/* <Tabs.Screen
-                    name="continueWatching"
-                    options={{
-                        title: "Continue Watching",
-                        headerShown: false,
-                        href: null,
-                    }}
-                />
-                <Tabs.Screen
-                    name="suggestionsSection"
-                    options={{
-                        title: "Suggestions Section",
-                        headerShown: false,
-                        href: null,
-                    }}
-                />
-                <Tabs.Screen
-                    name="suggestionsSeeAll"
-                    options={{
-                        title: "Suggestions See All",
-                        headerShown: false,
-                        href: null,
-                    }}
-                />
-                <Tabs.Screen
-                    name="topCourses"
-                    options={{
-                        title: "Top Courses",
-                        headerShown: false,
-                        href: null,
-                    }}
-                />
-                <Tabs.Screen
-                    name="topCoursesSeeAll"
-                    options={{
-                        title: "Top Courses See All",
-                        headerShown: false,
-                        href: null,
-                    }}
-                />
-                <Tabs.Screen
-                    name="editProfile"
-                    options={{
-                        title: "Edit Profile",
-                        headerShown: false,
-                        href: null,
-                    }}
-                />
-                <Tabs.Screen
-                    name="paymentMethod"
-                    options={{
-                        title: "Payment Method",
-                        headerShown: false,
-                        href: null,
-                    }}
-                /> */}
             </Tabs>
             <StatusBar backgroundColor="#161622" style="light" />
         </>

@@ -75,6 +75,36 @@ const SignUpPage = () => {
                     }}
                 ></Button>
             </View>
+            {/* Temporary button to redirect to channel registration */}
+            <View
+                style={{
+                    flexDirection: "row",
+                    marginTop: 16,
+                }}
+            >
+                <Button
+                    text="Channel Registation"
+                    isBlue={true}
+                    onPress={() => {
+                        router.push("/shared/memberChannelSignUpPage");
+                    }}
+                ></Button>
+            </View>
+            {/* Temporary button to redirect to homepage */}
+            <View
+                style={{
+                    flexDirection: "row",
+                    marginTop: 16,
+                }}
+            >
+                <Button
+                    text={Constants.homepageButtonText}
+                    isBlue={true}
+                    onPress={() => {
+                        router.push("/(member_guest)/(tabs)");
+                    }}
+                ></Button>
+            </View>
         </View>
     );
 };

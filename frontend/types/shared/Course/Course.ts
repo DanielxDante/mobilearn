@@ -6,6 +6,7 @@ export default interface Course {
     school: string;
     description: string;
     rating: string;
+    paid: boolean;
     completionRate: number;
     image: any;
     enrolledCount: number;
