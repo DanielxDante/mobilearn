@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 export default function Index() {
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
+    console.log("Index page");
 
     useEffect(() => {
         setTimeout(() => {
