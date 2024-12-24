@@ -21,6 +21,7 @@ export const courseListData: Course[] = [
         description:
             "This comprehensive program covers the fundamentals of user interface and user experience design, equipping you with the skills to create intuitive, user-centered digital products. Learn key principles of design, wireframing, prototyping, and usability testing through hands-on projects and expert guidance. Ideal for beginners and aspiring designers, this course will help you transform ideas into impactful user experiences. Join us to elevate your design skills and build a portfolio that stands out!",
         rating: "4.9",
+        paid: true,
         completionRate: 0.79,
         image: temporaryImages.course1,
         enrolledCount: 3479,
@@ -104,6 +105,7 @@ export const courseListData: Course[] = [
         description:
             "Discover design principles like color theory, typography, and composition through hands-on projects. This course is designed to build a solid foundation in graphic design, encouraging creativity and technical skills. You will engage in practical assignments that reinforce your understanding of how to effectively communicate ideas visually.",
         rating: "4.7",
+        paid: true,
         completionRate: 0.35,
         image: temporaryImages.course2,
         enrolledCount: 1457,
@@ -169,6 +171,7 @@ export const courseListData: Course[] = [
         description:
             "Explore the intersection of creativity and technology in product design. Learn how to develop innovative solutions and create products that meet both user needs and market demands. This course emphasizes hands-on learning and real-world applications, preparing you to tackle complex design challenges in dynamic environments.",
         rating: "4.9",
+        paid: true,
         completionRate: 0.78,
         image: temporaryImages.course3,
         enrolledCount: 623,
@@ -284,6 +287,7 @@ export const courseListData: Course[] = [
         description:
             "Master the art of typography and learn effective layout design to create visually engaging content. This course covers essential principles of design, typography hierarchies, and grid systems, enabling you to design compelling and organized visual communication.",
         rating: "4.7",
+        paid: false,
         completionRate: 0,
         image: temporaryImages.course4,
         enrolledCount: 512,
@@ -392,6 +396,7 @@ export const courseListData: Course[] = [
         description:
             "Learn the principles of branding and identity design to create memorable and impactful brands. This course covers logo creation, brand strategy, and building a cohesive visual identity.",
         rating: "4.8",
+        paid: false,
         completionRate: 0,
         image: temporaryImages.course5,
         enrolledCount: 748,
@@ -622,6 +627,7 @@ export const courseListData: Course[] = [
         description:
             "Dive into the world of game design and development. This course teaches the fundamentals of game mechanics, storytelling, and coding, empowering you to build immersive and engaging games.",
         rating: "4.6",
+        paid: true,
         completionRate: 1,
         image: temporaryImages.course6,
         enrolledCount: 892,
@@ -723,6 +729,7 @@ export const courseListData: Course[] = [
         description:
             "Learn the core principles of web design, including layout, color theory, typography, and user experience. This course covers the essential skills needed to build visually appealing and user-friendly websites.",
         rating: "4.7",
+        paid: true,
         completionRate: 1,
         image: temporaryImages.course7,
         enrolledCount: 1054,

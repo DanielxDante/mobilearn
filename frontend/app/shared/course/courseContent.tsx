@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import RNPickerSelect from "react-native-picker-select";
+import { router } from "expo-router";
 import VideoPlayer from "@/components/VideoPlayer";
 import { useLocalSearchParams } from "expo-router";
 import Course from "@/types/shared/Course/Course";
@@ -39,6 +40,16 @@ const CourseContent = () => {
 
     const handleLessonSelect = (lessonId: number) => {
         console.log("Lesson id: " + lessonId);
+        const lessonSelected = course.chapters
+            .map((chapter) => chapter.lessons)
+            .flat()
+            .find((lesson) => lesson.id === lessonId);
+        router.push({
+            pathname: "./lessonContent",
+            params: {
+                lessonSelected: JSON.stringify(lessonSelected),
+            },
+        });
     };
 
     const renderLectureItem = (lesson: Lesson) => (
@@ -87,8 +98,8 @@ const CourseContent = () => {
                 <Text style={styles.school}>{course.school}</Text>
                 {/* Chapter buttons */}
                 <View style={styles.chapterButtonContainer}>
-                    {course.chapters.length <= 4 ? (
-                        // Render up to 4 chapter buttons if there are 4 or fewer chapters
+                    {course.chapters.length <= 3 ? (
+                        // Render up to 4 chapter buttons if there are 3 or fewer chapters
                         course.chapters.map((chapter) => (
                             <TouchableOpacity
                                 key={chapter.id}
