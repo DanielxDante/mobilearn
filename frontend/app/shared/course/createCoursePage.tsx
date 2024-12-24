@@ -37,7 +37,7 @@ export default function createCoursePage() {
   const [chapters, setChapters] = useState(
     course?.chapters || [
       {
-        id: Number(`${Date.now()}-${Math.random()}`),
+        id: `${Date.now()}-${Math.random()}`, // unique id
         title: "",
         info: "",
         lessons: [""],
@@ -45,7 +45,7 @@ export default function createCoursePage() {
     ]
   );
   const [internalPage, setInternalPage] = useState(1);
-  const [selectedChapterId, setSelectedChapterId] = useState<number | null>(
+  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
     null
   );
 
@@ -65,10 +65,10 @@ export default function createCoursePage() {
   }, [course]);
 
   const selectedChapter = chapters.find(
-    (chapter: Chapter) => chapter.id === selectedChapterId
+    (chapter: Chapter) => chapter.id.toString() === selectedChapterId
   );
 
-  const handleChapterTap = (id: number) => {
+  const handleChapterTap = (id: string) => {
     setSelectedChapterId(id);
     setInternalPage(2);
   };
@@ -77,7 +77,7 @@ export default function createCoursePage() {
     setChapters((prev: Chapter[]) => [
       ...prev,
       {
-        id: Number(`${Date.now()}-${Math.random()}`),
+        id: `${Date.now()}-${Math.random()}`, // unique id
         title: "",
         info: "",
         lessons: [{ title: "", description: "" }],
@@ -85,10 +85,8 @@ export default function createCoursePage() {
     ]);
   };
 
-  const removeChapter = (id: number) => {
-    setChapters((prev: Chapter[]) =>
-      prev.filter((chapter) => chapter.id !== id)
-    );
+  const removeChapter = (id: string) => {
+    setChapters((prev) => prev.filter((chapter) => chapter.id !== id));
   };
 
   const updateLesson = (
@@ -100,7 +98,7 @@ export default function createCoursePage() {
 
     setChapters((prev: Chapter[]) =>
       prev.map((chapter) =>
-        chapter.id === selectedChapterId
+        chapter.id.toString() === selectedChapterId
           ? {
               ...chapter,
               lessons: chapter.lessons.map((lesson, index) =>
@@ -118,7 +116,7 @@ export default function createCoursePage() {
 
     setChapters((prev: Chapter[]) =>
       prev.map((chapter) =>
-        chapter.id === selectedChapterId
+        chapter.id.toString() === selectedChapterId
           ? {
               ...chapter,
               lessons: Array(newLessonCount)
@@ -185,7 +183,8 @@ export default function createCoursePage() {
             <Text style={styles.sectionHeader}>{textConstants.chapters}</Text>
           </View>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            {chapters.map((chapter: Chapter, index: number) => (
+            {/* Chapter List */}
+            {chapters.map((chapter, index) => (
               <View key={chapter.id} style={styles.chapterBar}>
                 <TouchableOpacity onPress={() => handleChapterTap(chapter.id)}>
                   <Text style={styles.chapterText}>
@@ -197,6 +196,7 @@ export default function createCoursePage() {
                 </TouchableOpacity>
               </View>
             ))}
+
             <TouchableOpacity onPress={addChapter} style={styles.addChapterBar}>
               <Text style={styles.addChapterText}>Add Chapter</Text>
               <Text style={styles.addButtonText}>+</Text>
@@ -248,7 +248,7 @@ export default function createCoursePage() {
             onChange={handleNumberOfLessonsChange}
           />
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            {selectedChapter.lessons.map((lesson: Lesson, index: number) => (
+            {selectedChapter.lessons.map((lesson, index) => (
               <View key={index}>
                 <Text style={styles.lessonHeader}>{`Lesson ${index + 1}`}</Text>
                 <InputField
