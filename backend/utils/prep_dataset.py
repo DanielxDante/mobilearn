@@ -266,11 +266,11 @@ def scrape_course_picture():
 
         # Enter the username
         username_field = driver.find_element(By.XPATH, "//input[@data-e2e='login-email-input']")
-        username_field.send_keys("DTAY019@e.ntu.edu.sg") # Replace with your email
+        username_field.send_keys("*****") # Replace with your email
 
         # Enter the password
         password_field = driver.find_element(By.XPATH, "//input[@data-e2e='login-password-input']")
-        password_field.send_keys("Vanguard170600*") # Replace with your password
+        password_field.send_keys("*******") # Replace with your password
 
         # Click the login button
         submit_button = driver.find_element(By.XPATH, "//button[@data-e2e='login-form-submit-button']")
