@@ -98,7 +98,7 @@ export default function LoginPage() {
           {Constants.subTitle}
         </Text>
         <Link
-          href={MEMBER_LOGIN_PAGE}
+          href={MEMBER_GUEST_HOME}
           style={{
             fontSize: 18,
             color: "#356FC5",

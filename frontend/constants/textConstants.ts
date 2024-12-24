@@ -192,7 +192,7 @@ export const registrationSuccessMember = {
   blueSubTitle: "You have registered as a",
   role: "Student",
   subTitle: "Welcome to A Lifelong Of Learning.",
-  linkText: "Sign In",
+  linkText: "Begin Learning",
   image: require("../assets/images/Students.png"),
 };
 

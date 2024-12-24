@@ -138,14 +138,18 @@ const useAuthStore = create<AuthState>()(
           // Handle success (status 200)
           if (response.status === 200) {
             set({
-              message: responseData.message,
+              //message: responseData.message,
               username: responseData.name,
               gender: responseData.gender,
               profile_picture_url: responseData.profile_picture_url,
               membership: responseData.membership,
-              token: responseData.token,
+              status: responseData.status,
+              access_token: responseData.access_token,
+              refresh_token: responseData.refresh_token,
             });
             return responseData.membership;
+          } else {
+            return responseData.message;
           }
         } catch (error: unknown) {
           // Handle specific 400 status
