@@ -89,7 +89,7 @@ const AdminHome = () => {
                     isBlue={true}
                     onPress={async () => {
                         await logout();
-                        router.push("/shared/signinupPage");
+                        router.push("/shared/instructorSignInUpPage");
                         console.log("Admin logout");
                     }}
                 />

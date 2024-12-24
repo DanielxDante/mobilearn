@@ -24,6 +24,7 @@ import clock from "@/assets/images/courses/clock.png";
 import certification from "@/assets/images/courses/certification.png";
 import dollar from "@/assets/images/icons/dollar.png";
 import tick from "@/assets/images/icons/tick.png"
+import logout from "@/assets/images/icons/logout.png";
 
 export default {
     home,
@@ -52,4 +53,5 @@ export default {
     certification,
     dollar,
     tick,
+    logout
 };
