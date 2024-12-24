@@ -1,3 +1,5 @@
+# TO BE DEPRECRATED - DO NOT USE
+
 from sqlalchemy import Enum, Column, Integer, String, DateTime, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy

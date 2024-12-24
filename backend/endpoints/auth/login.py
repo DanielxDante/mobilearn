@@ -2,7 +2,10 @@ import json
 from flask import Response, request
 from flask_restx import Resource
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token
+)
 from sqlalchemy import func
 
 from app import api
@@ -42,36 +45,42 @@ class UserLoginEndpoint(Resource):
             try:
                 user = User.get_user_by_email(session, email)
 
+                if not user or not Bcrypt().check_password_hash(user.password_hash, password):
+                    return Response(
+                        json.dumps({'message': 'Invalid credentials'}),
+                        status=400, mimetype='application/json'
+                    )
+
                 if user.status == STATUS.DISABLED:
                     return Response(
                         json.dumps({'message': 'User disabled'}),
                         status=400, mimetype='application/json'
                     )
 
-                if not Bcrypt().check_password_hash(user.password_hash, password):
-                    return Response(
-                        json.dumps({'message': 'Invalid credentials'}),
-                        status=400, mimetype='application/json'
-                    )
-
                 # update latest_login
                 user.latest_login = func.now()
 
-                token = create_access_token(identity=email)
+                access_token = create_access_token(identity=email)
+                refresh_token = create_refresh_token(identity=email)
                 name = user.name
                 gender = user.gender
                 profile_picture_url = user.profile_picture_url if user.profile_picture_url else ""
                 membership = user.membership
-                return Response(
+                status = user.status
+                response = Response(
                     json.dumps({
-                        'message': 'Login successful',
                         'name': name,
                         'gender': gender,
                         'profile_picture_url': profile_picture_url,
                         'membership': membership,
-                        'token': f"Bearer {token}"}),
+                        'status': status,
+                        'access_token': f"Bearer {access_token}",
+                        'refresh_token': f"Bearer {refresh_token}"
+                    }),
                     status=200, mimetype='application/json'
                 )
+
+                return response
             except ValueError as ee:
                 return Response(
                     json.dumps({'message': str(ee)}),
@@ -130,25 +139,31 @@ class InstructorLoginEndpoint(Resource):
                 # update latest_login
                 instructor.latest_login = func.now()
 
-                token = create_access_token(identity=email)
+                access_token = create_access_token(identity=email)
+                refresh_token = create_refresh_token(identity=email)
                 name = instructor.name
                 gender = instructor.gender
                 profile_picture_url = instructor.profile_picture_url if instructor.profile_picture_url else ""
                 phone_number = instructor.phone_number
                 company = instructor.company
                 position = instructor.position
-                return Response(
+                status = instructor.status
+                response =  Response(
                     json.dumps({
-                        'message': 'Login successful',
                         'name': name,
                         'gender': gender,
                         'profile_picture_url': profile_picture_url,
                         'phone_number': phone_number,
                         'company': company,
                         'position': position,
-                        'token': f"Bearer {token}"}),
+                        'status': status,
+                        'access_token': f"Bearer {access_token}",
+                        'refresh_token': f"Bearer {refresh_token}"
+                    }),
                     status=200, mimetype='application/json'
                 )
+                
+                return response
             except ValueError as ee:
                 return Response(
                     json.dumps({'message': str(ee)}),

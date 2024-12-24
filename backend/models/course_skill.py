@@ -8,7 +8,7 @@ class CourseSkill(db.Model):
 
     course_id = Column(Integer, ForeignKey('courses.id'), primary_key=True)
     skill_id = Column(Integer, ForeignKey('skills.id'), primary_key=True)
-    created = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
+    created = Column(DateTime(timezone=True), server_default=db.func.now(tz="UTC"), nullable=False)
     
     course = relationship("Course", back_populates="skill_associations")
     skill = relationship("Skill", back_populates="course_associations")

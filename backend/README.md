@@ -22,7 +22,13 @@ POSTGRES_DB=postgres
 POSTGRES_USER=mobilearn
 POSTGRES_PASSWORD=postgres
 POSTGRES_PORT=5432
-JWT_SECRET_KEY=******
+JWT_SECRET_KEY=*********
+AWS_ACCESS_KEY_ID=*********
+AWS_SECRET_ACCESS_KEY=***************
+AWS_REGION=**-******-*
+S3_BUCKET=***********
+CLOUDFRONT_DOMAIN=************.cloudfront.net
+ADMIN_API_KEY=*******************************
 ```
 
 4. Run dockerised PostgreSQL cli instance
@@ -40,3 +46,10 @@ docker compose up -d
 ```bash
 python app.py
 ```
+
+6. After your coding sesh, shut down the docker PostgreSQL instance by running:
+
+```bash
+docker compose down --volumes
+```
+

@@ -8,7 +8,7 @@ class CourseChapter(db.Model):
 
     course_id = Column(Integer, ForeignKey('courses.id'), primary_key=True)
     chapter_id = Column(Integer, ForeignKey('chapters.id'), primary_key=True)
-    created = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
+    created = Column(DateTime(timezone=True), server_default=db.func.now(tz="UTC"), nullable=False)
     
     course = relationship("Course", back_populates="chapter_associations")
     chapter = relationship("chapter", back_populates="course_associations")
