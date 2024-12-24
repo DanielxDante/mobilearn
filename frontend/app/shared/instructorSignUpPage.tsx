@@ -13,6 +13,8 @@ import { INSTRUCTOR_REGISTRATION_SUCCESS } from "@/constants/pages";
 import icons from "@/constants/icons"; //here is a backbutton icon here
 import LargeButton from "@/components/LargeButton";
 import PhoneNumberInputField from "@/components/PhoneNumberInputField";
+import { COMMUNITIES_GET_ALL } from "@/constants/routes";
+import axios from "axios";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
@@ -25,10 +27,10 @@ export default function signUpPage() {
   const [password, setPassword] = useState("");
   const [conPassword, setConPassword] = useState("");
   const [combinedPhoneNumber, setCombinedPhoneNumber] = useState("");
-  const [company, setCompany] = useState("");
+  const [company, setCompany] = useState("Mobilearn Network");
   const [position, setPosition] = useState("");
-
   const [internalPage, setInternalPage] = useState(1); // 1 for first page, 2 for second page
+  const [communities, setCommunities] = useState([]);
 
   const handleAreaCodeChange = (areaCode: string) => {
     // Extract only the numeric part from the selected area code (e.g., "+1" from "+1 USA")
@@ -49,12 +51,26 @@ export default function signUpPage() {
   };
 
   const handleNextPage = () => {
+    getCommunities();
     setInternalPage(2);
   };
 
   const handleBack = () => {
     setInternalPage(1);
   };
+
+  async function getCommunities() {
+    try {
+      const response = await axios.get(COMMUNITIES_GET_ALL);
+      const communityNames = response.data.communities.map(
+        (community: { name: string }) => community.name
+      );
+      setCommunities(communityNames);
+      //console.log(communities);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const handleRegistration = async () => {
     try {
@@ -164,11 +180,11 @@ export default function signUpPage() {
       {/* Internal Second Page */}
       {internalPage === 2 && (
         <View style={{ width: "100%" }}>
-          <InputField
+          <InputDropDownField
             inputTitle={Constants.fields[4].inputTitle}
-            placeholder={Constants.fields[4].placeHolder ?? ""}
+            options={communities}
             value={company}
-            onChangeText={setCompany}
+            onChange={setCompany}
           />
           <InputField
             inputTitle={Constants.fields[5].inputTitle}
