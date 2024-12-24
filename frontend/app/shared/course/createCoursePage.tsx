@@ -64,9 +64,12 @@ export default function createCoursePage() {
     }
   }, [course]);
 
-  const selectedChapter = chapters.find(
-    (chapter: Chapter) => chapter.id.toString() === selectedChapterId
-  );
+  const selectedChapter = selectedChapterId
+    ? chapters.find(
+        (chapter: Chapter) =>
+          chapter.id.toString() === selectedChapterId.toString()
+      )
+    : null;
 
   const handleChapterTap = (id: string) => {
     setSelectedChapterId(id);
