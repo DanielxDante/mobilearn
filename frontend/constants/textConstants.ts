@@ -205,6 +205,15 @@ export const registrationSuccessInstructor = {
   image: require("../assets/images/Instructor.png"),
 };
 
+export const waitingPageInstructor = {
+  pageTitle: "MobiLearn",
+  blueSubTitle: "Your account is",
+  status: "Pending Approval",
+  subTitle: "An administrator will review your account shortly.",
+  linkText: "Sign In",
+  image: require("../assets/images/Instructor.png"),
+};
+
 export const notificationsConstants = {
   pageTitle: "Notification",
 };

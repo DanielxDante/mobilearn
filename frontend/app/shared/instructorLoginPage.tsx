@@ -8,12 +8,15 @@ import InputField from "@/components/InputField";
 import mobilearnHat from "@/assets/images/MobilearnHat.png";
 import useAuthStore from "@/store/authStore";
 import { instructorLoginPageConstants as Constants } from "@/constants/textConstants";
-import { INSTRUCTOR_SIGNUP_PAGE, INSTRUCTOR_HOME } from "@/constants/pages";
+import {
+  INSTRUCTOR_SIGNUP_PAGE,
+  INSTRUCTOR_HOME,
+  INSTRUCTOR_WAITING_PAGE,
+} from "@/constants/pages";
 import InputDropDownField from "@/components/InputDropDownField";
 import { Colors } from "@/constants/colors";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
-
 export default function LoginPage() {
   const login = useAuthStore((state) => state.loginInstructor);
   const [email, setEmail] = useState("");
@@ -21,16 +24,16 @@ export default function LoginPage() {
 
   const handleSignIn = async () => {
     try {
-      const message = await login(email, password);
+      const response = await login(email, password);
 
-      if (message === "Login successful") {
+      if (response === "active") {
         router.push(INSTRUCTOR_HOME);
-      } else if (message === "Instructor disabled") {
+      } else if (response === "not_approved") {
+        router.push(INSTRUCTOR_WAITING_PAGE);
+      } else if (response === "disabled") {
         alert("Your account has been disabled. Please contact the admin.");
-      } else if (message === "Invalid credentials") {
+      } else if (response === "Invalid credentials") {
         alert("Please check your email and password and try again.");
-      } else if (message.includes("approv")) {
-        alert("Your account is pending approval.");
       }
     } catch (error) {
       console.error("An unexpected error occurred:", error);
