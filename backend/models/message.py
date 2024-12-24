@@ -1,56 +1,69 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, Boolean, DateTime
+from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
-from database import db
+from database import Base
+from models.user import User
+from models.user_chat import UserChat
 
-class Message(db.Model):
+class Message(Base):
     __tablename__ = 'messages'
 
     id = Column(Integer, primary_key=True)
-    content = Column(Text, nullable=False)
+    chat_id = Column(Integer, ForeignKey('chats.id'), nullable=False)
     sender_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    recipient_id = Column(Integer, ForeignKey('users.id'))
-    group_id = Column(Integer, ForeignKey('groups.id'))
-    is_group_message = Column(Boolean, nullable=False, default=False)
-    created = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
-    updated = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
+    content = Column(Text, nullable=False)
+    timestamp = Column(DateTime, default=func.now(), nullable=False)
     
-    # Many-to-one relationship with User and Group
-    sender = relationship("User", foreign_keys=[sender_id], back_populates="sent_messages")
-    recipient = relationship("User", foreign_keys=[recipient_id], back_populates="received_messages")
-    group = relationship("Group", back_populates="messages")
+    # Many-to-one relationship with User and Chat
+    sender = relationship("User", back_populates="sent_messages")
+    chat = relationship("Chat", back_populates="messages")
+
+    @staticmethod
+    def get_messages(session):
+        return session.query(Message).all()
+    
+    @staticmethod
+    def get_messages_by_chat_id(session, chat_id):
+        return session.query(Message).filter_by(chat_id=chat_id).all()
+    
+    @staticmethod
+    def get_messages_by_sender_id(session, sender_id):
+        return session.query(Message).filter_by(sender_id=sender_id).all()
+    
+    @staticmethod
+    def get_messages_by_chat_id_and_sender_id(session, chat_id, sender_id):
+        return session.query(Message).filter_by(chat_id=chat_id, sender_id=sender_id).all()
+    
+    @staticmethod
+    def add_message(session, chat_id, sender_email, content):
+        sender = User.get_user_by_email(session, sender_email)
+        if not sender:
+            raise ValueError(f'User with email {sender_email} not found')
+        
+        sender_chat = session.query(UserChat).filter_by(user_id=sender.id, chat_id=chat_id).first()
+        if not sender_chat:
+            raise ValueError(f'User {sender_email} is not a member of chat {chat_id}')
+
+        new_message = Message(
+            chat_id=chat_id,
+            sender_id=sender.id,
+            content=content
+        )
+        session.add(new_message)
+        session.flush()
+
+    @staticmethod
+    def edit_message(session, message_id, content):
+        message = session.query(Message).filter_by(id=message_id).first()
+        message.content = content
+        session.flush()
+
+    @staticmethod
+    def delete_message(session, message_id):
+        message = session.query(Message).filter_by(id=message_id).first()
+        session.delete(message)
+        session.flush()
 
     def __repr__(self):
         return f'<User: {self.user_id}, Group: {self.group_id}>'
-    
-# group_message = Message(
-#     content="Hello group!",
-#     sender_id=user1.id,
-#     group_id=group1.id,
-#     is_group_message=True
-# )
-
-# # Direct message
-# direct_message = Message(
-#     content="Hey, how are you?",
-#     sender_id=user1.id,
-#     recipient_id=user2.id,
-#     is_group_message=False
-# )
-
-# session.add(group_message)
-# session.add(direct_message)
-# session.commit()
-
-# # Querying messages
-# # For a group
-# group_messages = session.query(Message).filter(
-#     Message.group_id == group1.id
-# ).order_by(Message.created_on).all()
-
-# # For a direct conversation between two users
-# direct_messages = session.query(Message).filter(
-#     ((Message.sender_id == user1.id) & (Message.recipient_id == user2.id)) |
-#     ((Message.sender_id == user2.id) & (Message.recipient_id == user1.id))
-# ).order_by(Message.created_on).all()

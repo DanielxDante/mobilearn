@@ -45,15 +45,15 @@ class UserLoginEndpoint(Resource):
             try:
                 user = User.get_user_by_email(session, email)
 
-                if user.status == STATUS.DISABLED:
+                if not user or not Bcrypt().check_password_hash(user.password_hash, password):
                     return Response(
-                        json.dumps({'message': 'User disabled'}),
+                        json.dumps({'message': 'Invalid credentials'}),
                         status=400, mimetype='application/json'
                     )
 
-                if not Bcrypt().check_password_hash(user.password_hash, password):
+                if user.status == STATUS.DISABLED:
                     return Response(
-                        json.dumps({'message': 'Invalid credentials'}),
+                        json.dumps({'message': 'User disabled'}),
                         status=400, mimetype='application/json'
                     )
 
@@ -66,15 +66,17 @@ class UserLoginEndpoint(Resource):
                 gender = user.gender
                 profile_picture_url = user.profile_picture_url if user.profile_picture_url else ""
                 membership = user.membership
+                status = user.status
                 response = Response(
                     json.dumps({
-                        'message': 'Login successful',
                         'name': name,
                         'gender': gender,
                         'profile_picture_url': profile_picture_url,
                         'membership': membership,
+                        'status': status,
                         'access_token': f"Bearer {access_token}",
-                        'refresh_token': refresh_token}),
+                        'refresh_token': f"Bearer {refresh_token}"
+                    }),
                     status=200, mimetype='application/json'
                 )
 
@@ -145,17 +147,19 @@ class InstructorLoginEndpoint(Resource):
                 phone_number = instructor.phone_number
                 company = instructor.company
                 position = instructor.position
+                status = instructor.status
                 response =  Response(
                     json.dumps({
-                        'message': 'Login successful',
                         'name': name,
                         'gender': gender,
                         'profile_picture_url': profile_picture_url,
                         'phone_number': phone_number,
                         'company': company,
                         'position': position,
+                        'status': status,
                         'access_token': f"Bearer {access_token}",
-                        'refresh_token': refresh_token}),
+                        'refresh_token': f"Bearer {refresh_token}"
+                    }),
                     status=200, mimetype='application/json'
                 )
                 

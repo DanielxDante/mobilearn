@@ -10,8 +10,8 @@ class Chapter(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     order = Column(Integer, nullable=False, default=0)
-    created = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
-    updated = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
+    created = Column(DateTime(timezone=True), server_default=db.func.now(tz="UTC"), nullable=False)
+    updated = Column(DateTime(timezone=True), server_default=db.func.now(tz="UTC"), nullable=False)
 
     # Many-to-many relationship with Course
     course_associations = relationship("CourseChapter", back_populates="chapter")

@@ -1,18 +1,20 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, func
 
-from database import db
+from database import Base
 
-class TokenBlocklist(db.Model):
+class TokenBlocklist(Base):
     __tablename__ = 'tokens'
     
     id = Column(Integer, primary_key=True)
     jti = Column(String, nullable=False, index=True)
-    created_at = Column(DateTime, nullable=False)
+    token_type = Column(String, nullable=False) # 'access' or 'refresh'
+    created_at = Column(DateTime, nullable=False, default=func.now())
 
     @staticmethod
-    def add_token(session, jti):
-        token = TokenBlocklist(jti=jti)
+    def add_token(session, jti, token_type):
+        token = TokenBlocklist(jti=jti, token_type=token_type)
         session.add(token)
+        session.flush()
 
     def __repr__(self):
         return f'<Token: {self.jti}>'

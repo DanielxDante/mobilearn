@@ -1,17 +1,14 @@
-from sqlalchemy import Column, Integer, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, ForeignKey, DateTime, func
 
-from database import db
+from database import Base
 
-class UserChannel(db.Model):
+class UserChannel(Base):
+    # Association table between User and Channel
     __tablename__ = 'user_channels'
 
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
     channel_id = Column(Integer, ForeignKey('channels.id'), primary_key=True)
-    created = Column(DateTime, server_default=db.func.now(tz="UTC"), nullable=False)
-    
-    user = relationship("User", back_populates="channel_associations")
-    channel = relationship("Channel", back_populates="user_associations")
-    
+    joined = Column(DateTime, default=func.now(), nullable=False)
+
     def __repr__(self):
         return f'<User: {self.user_id}, Channel: {self.channel_id}>'
