@@ -31,6 +31,7 @@ ns_auth = Namespace(name='auth', description='Authentication operations')
 ns_account = Namespace(name='account', description='Account operations')
 ns_recommender = Namespace(name='recommender', description='Recommender system operations')
 ns_channel = Namespace(name='channel', description='Channel operations')
+ns_community = Namespace(name='community', description='Community operations')
 ns_course = Namespace(name='course', description='Course operations')
 ns_admin = Namespace(name='admin', description='Admin operations')
 ns_internal = Namespace(name='internal', description='Internal operations')
@@ -183,6 +184,12 @@ def init_channel_endpoints():
     invite_user_to_channel_path = f"/{VERSION}/channel/inviteUser"
     ns_channel.add_resource(InviteUserToChannelEndpoint, invite_user_to_channel_path)
 
+def init_community_endpoints():
+    from endpoints.community.community import GetCommunitiesEndpoint
+
+    get_communities_path = f"/{VERSION}/community/getCommunities"
+    ns_community.add_resource(GetCommunitiesEndpoint, get_communities_path)
+
 def init_course_endpoints():
     from endpoints.course.course import CourseEndpoint
 
@@ -242,6 +249,9 @@ def init():
 
     init_channel_endpoints()
     api.add_namespace(ns_channel)
+
+    init_community_endpoints()
+    api.add_namespace(ns_community)
 
     init_recommender_endpoints()
     api.add_namespace(ns_recommender)
