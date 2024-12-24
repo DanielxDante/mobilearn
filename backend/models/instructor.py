@@ -30,6 +30,9 @@ class Instructor(Base):
     # Many-to-many relationship with Course
     courses = relationship("Course", secondary="offers", back_populates="instructors")
 
+    # Many-to-many relationship with Community
+    communities = relationship("Community", secondary="community_instructors", back_populates="instructors")
+
     @hybrid_property
     def password(self):
         raise AttributeError("Password is not a readable")

@@ -6,6 +6,7 @@ from enums.status import STATUS
 from enums.community import COMMUNITY
 from models.channel import Channel
 from models.community_course import CommunityCourse
+from models.community_instructor import CommunityInstructor
 
 class Community(Base):
     __tablename__ = 'communities'
@@ -27,6 +28,9 @@ class Community(Base):
 
     # Many-to-many relationship with Channel
     channels = relationship("Channel", secondary="channel_communities", back_populates="communities")
+
+    # Many-to-many relationship with Instructor
+    instructors = relationship("Instructor", secondary="community_instructors", back_populates="communities")
 
     # Many-to-many relationship with Course
     courses = relationship("Course", secondary="community_courses", back_populates="communities")
