@@ -6,7 +6,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 
-COURSERA_DATASET_PATH = './data/coursera_cleaned.csv'
+COMMUNITY_DATASET_PATH = './data/communities.csv'
+INSTRUCTOR_DATASET_PATH = './data/instructors.csv'
+COURSES_DATASET_PATH = './data/coursera_cleaned.csv'
 
 db = SQLAlchemy()
 Base = declarative_base()
@@ -51,7 +53,8 @@ def session_scope():
 def load_initial_data():
     """ Load initial data into database """
     load_channel()
-    # load_communities()
+    load_communities()
+    # load_instructors()
     # load_courses()
 
 def load_channel():
@@ -68,20 +71,43 @@ def load_channel():
 
 def load_communities():
     """ Load initial communities """
-    from models.community import Community
+    from models.channel import Channel
+    from models.community import Community, COMMUNITY
 
     with session_scope() as session:
-        Community.add_community(
+        public_channel = Channel.get_channel_by_invite_code(session, 'mobilearn')
+        
+        # Add default community for stray instructors
+        new_community = Community.add_community(
             session,
-            community_type='PUBLIC',
-            name='Public',
-            description='MobiLearn public community for all users',
-            website_url='https://mobilearn.com'
+            community_type=COMMUNITY.ORGANIZATION,
+            name='MobiLearn Network',
+            description='MobiLearn community welcomes all instructors to join us!',
+            website_url='https://personal.ntu.edu.sg/zhangj/',
+            community_logo_url='https://d20shsb24t3qaz.cloudfront.net/icon.png'
         )
+        Community.attach_channel(session, public_channel.id, new_community.id)
+
+        # Add communities in Kaggle Coursera dataset
+        with open(COMMUNITY_DATASET_PATH, newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                new_community = Community.add_community(
+                    session,
+                    community_type=row['Type'],
+                    name=row['Name'],
+                    description=row['Description'],
+                    website_url=row['Website Url'],
+                    community_logo_url=row['Logo Url']
+                )
+                Community.attach_channel(session, public_channel.id, new_community.id)
+
+def load_instructors():
+    pass
 
 def load_courses():
     """ Load Kaggle Coursera dataset into public channel """
-    with open(COURSERA_DATASET_PATH, newline='', encoding='utf-8') as csvfile:
+    with open(COURSES_DATASET_PATH, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         with session_scope() as session:
             for row in reader:

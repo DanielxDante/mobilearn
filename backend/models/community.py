@@ -58,6 +58,7 @@ class Community(Base):
         name,
         description,
         website_url,
+        community_logo_url='',
         status=STATUS.ACTIVE
     ):
         if Community.get_community_by_name(session, name):
@@ -68,6 +69,7 @@ class Community(Base):
             name=name,
             description=description,
             website_url=website_url,
+            community_logo_url=community_logo_url,
             status=status
         )
         session.add(new_community)

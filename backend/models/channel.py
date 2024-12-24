@@ -40,7 +40,7 @@ class Channel(Base):
         return session.query(Channel).filter_by(invite_code=invite_code, status=STATUS.ACTIVE).first()
 
     @staticmethod
-    def add_channel(session, name, description, invite_code, status=STATUS.ACTIVE):
+    def add_channel(session, name, description, invite_code, channel_picture_url='', status=STATUS.ACTIVE):
         if Channel.get_channel_by_invite_code(session, invite_code):
             raise ValueError("The channel invite code is already in use")
 
@@ -48,6 +48,7 @@ class Channel(Base):
             name=name,
             description=description,
             invite_code=invite_code,
+            channel_picture_url=channel_picture_url,
             status=status
         )
         session.add(new_channel)
