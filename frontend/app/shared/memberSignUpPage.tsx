@@ -17,8 +17,8 @@ import {
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function signUpPage() {
-  const signup = useAuthStore((state) => state.signupMember);
-  const login = useAuthStore((state) => state.loginMember);
+  const signup = useAuthStore((state) => state.signupUser);
+  const login = useAuthStore((state) => state.loginUser);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

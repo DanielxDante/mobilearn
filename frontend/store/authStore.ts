@@ -1,37 +1,37 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios, { AxiosResponse, AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
+import { jwtDecode } from "jwt-decode";
 
 import {
   AUTH_USER_LOGIN_URL,
   AUTH_INSTRUCTOR_LOGIN_URL,
   AUTH_INSTRUCTOR_SIGNUP_URL,
   AUTH_USER_SIGNUP_URL,
+  AUTH_REFRESH_TOKEN_URL,
+  AUTH_LOGOUT_URL
 } from "@/constants/routes";
 
 export interface AuthState {
   username: string;
   email: string;
-  token: string;
-  //name?: string;
   gender: string;
-  //role: "guest" | "member" | "instructor" | "admin";
   profile_picture_url?: string;
   membership?: string;
   message?: string;
   phone_number?: string;
   company?: string;
   position?: string;
-  status?: string;
+  status: string;
   access_token?: string;
   refresh_token?: string;
-  signupMember: (
+  signupUser: (
     username: string,
     email: string,
     password: string,
     gender: string,
-    membership: string // include membership
+    membership: string
   ) => Promise<void>;
   signupInstructor: (
     username: string,
@@ -42,29 +42,32 @@ export interface AuthState {
     company: string,
     position: string
   ) => Promise<void>;
-  loginMember: (email: string, password: string) => Promise<string>;
+  loginUser: (email: string, password: string) => Promise<string>;
   loginInstructor: (email: string, password: string) => Promise<string>;
+  refreshAccessToken: () => Promise<string>;
+  setupAxiosInterceptors: () => void;
   logout: () => Promise<void>;
 }
 
 const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       username: "",
       email: "",
-      token: "",
       gender: "",
-      role: "guest",
-      company: undefined,
+      profile_picture_url: "",
+      membership: "",
+      phone_number: "",
+      company: "",
       position: undefined,
-
-      signupMember: async (name, email, password, gender, membership) => {
+      status: "",
+      signupUser: async (name, email, password, gender, membership) => {
         console.log("Signing up...");
         console.log(name, email, password, gender, membership);
         try {
           const response = await axios.post(
             AUTH_USER_SIGNUP_URL,
-            { name, password, email, gender, membership }, // adapted to backend's API structure
+            { name, password, email, gender, membership },
             { headers: { "Content-Type": "application/json" } }
           );
           console.log("response is: " + JSON.stringify(response.data, null, 2));
@@ -123,10 +126,9 @@ const useAuthStore = create<AuthState>()(
           throw new Error("An unexpected error occurred");
         }
       },
-      loginMember: async (email, password) => {
+      loginUser: async (email, password) => {
         console.log("Logging in...");
         try {
-          // Send the login request
           const response = await axios.post(
             AUTH_USER_LOGIN_URL,
             { email, password },
@@ -135,7 +137,6 @@ const useAuthStore = create<AuthState>()(
 
           const responseData = response.data;
 
-          // Handle success (status 200)
           if (response.status === 200) {
             set({
               //message: responseData.message,
@@ -147,19 +148,20 @@ const useAuthStore = create<AuthState>()(
               access_token: responseData.access_token,
               refresh_token: responseData.refresh_token,
             });
+            
+            get().setupAxiosInterceptors();
+
             return responseData.membership;
           } else {
             return responseData.message;
           }
         } catch (error: unknown) {
-          // Handle specific 400 status
           if (error instanceof AxiosError) {
             if (error.response && error.response.status === 400) {
-              return error.response.data.message; // Return the message for further handling
+              return error.response.data.message;
             }
           }
 
-          // Log and rethrow other errors for unexpected issues
           console.error("Unexpected error during login:", error);
           throw new Error("An unexpected error occurred while logging in.");
         }
@@ -167,7 +169,6 @@ const useAuthStore = create<AuthState>()(
       loginInstructor: async (email, password) => {
         console.log("Logging in...");
         try {
-          // Send the login request
           const response = await axios.post(
             AUTH_INSTRUCTOR_LOGIN_URL,
             { email, password },
@@ -176,7 +177,6 @@ const useAuthStore = create<AuthState>()(
 
           const responseData = response.data;
 
-          // Handle success (status 200)
           if (response.status === 200) {
             set({
               message: responseData.message,
@@ -190,6 +190,8 @@ const useAuthStore = create<AuthState>()(
               access_token: responseData.access_token,
               refresh_token: responseData.refresh_token,
             });
+
+            get().setupAxiosInterceptors();
             if (responseData.status) {
               return responseData.status;
             } else {
@@ -199,23 +201,125 @@ const useAuthStore = create<AuthState>()(
         } catch (error: unknown) {
           if (error instanceof AxiosError) {
             if (error.response && error.response.status === 400) {
-              return error.response.data.message; // Return the message for further handling
+              return error.response.data.message;
             }
           }
-          // Log and rethrow other errors for unexpected issues
           console.error("Unexpected error during login:", error);
           throw new Error("An unexpected error occurred while logging in.");
         }
       },
+      refreshAccessToken: async () => {
+        console.log("Refreshing access token...");
+        try {
+          const response = await axios.post(
+            AUTH_REFRESH_TOKEN_URL,
+            { headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `${get().refresh_token}`
+            } }
+          );
+
+          const responseData = response.data;
+
+          if (response.status === 200) {
+            set({
+              access_token: responseData.access_token,
+            });
+
+            return responseData.access_token;
+          } else {
+            throw new Error("An unexpected error occurred");
+          }
+        } catch (error) {
+          console.error("Error refreshing access token:", error);
+          get().logout();
+          throw new Error("An unexpected error occurred while refreshing the access token.");
+        }
+      },
+      setupAxiosInterceptors: () => {
+        axios.interceptors.request.use(
+          async (config) => {
+            const access_token = get().access_token;
+            if (!access_token) return config;
+
+            const decoded_access_token = jwtDecode(access_token);
+            const current_time = Date.now() / 1000;
+
+            if (
+              decoded_access_token.exp && 
+              decoded_access_token.exp - current_time < 30
+            ) {
+              const new_access_token = await get().refreshAccessToken();
+              config.headers.Authorization = new_access_token;
+            } else {
+              config.headers.Authorization = access_token;
+            }
+            
+            return config;
+          }
+        );
+
+        axios.interceptors.response.use(
+          (response) => {
+            return response;
+          },
+          async (error) => {
+            const originalRequest = error.config;
+            if (error.response?.status === 401 && !originalRequest._retry) {
+              originalRequest._retry = true;
+              try {
+                await get().refreshAccessToken();
+                return axios(originalRequest);
+              } catch (error) {
+                console.error("Error refreshing access token:", error);
+                get().logout();
+                throw new Error("An unexpected error occurred while refreshing the access token.");
+              }
+            }
+            console.error("Error refreshing access token:", error);
+            get().logout();
+            throw new Error("An unexpected error occurred while refreshing the access token.");
+          }
+        );
+      },
       logout: async () => {
         console.log("Logging out...");
-        set({
-          username: "",
-          email: "",
-          token: "",
-          membership: "guest",
-          gender: "",
-        });
+
+        try {
+            const response = await axios.delete(
+            AUTH_LOGOUT_URL,
+            {
+              headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `${get().access_token}`
+              },
+              data: {
+                refresh_token: get().refresh_token
+              }
+            }
+            );
+
+          if (response.status === 200) {
+            set({
+              username: "",
+              email: "",
+              gender: "",
+              profile_picture_url: "",
+              membership: "",
+              phone_number: "",
+              company: "",
+              position: "",
+              status: "",
+              access_token: "",
+              refresh_token: "",
+            });
+          } else {
+            throw new Error("An unexpected error occurred");
+          }
+        } catch (error) {
+          console.error("Error logging out:", error);
+          throw new Error("An unexpected error occurred while logging out.");
+        }
       },
     }),
     {

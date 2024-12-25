@@ -14,13 +14,16 @@ const AUTH_LOGIN_USER = "/user/login";
 const AUTH_LOGIN_INSTRUCTOR = "/instructor/login";
 const AUTH_SIGNUP_USER = "/user/signup";
 const AUTH_SIGNUP_INSTRUCTOR = "/instructor/signup";
+const AUTH_REFRESH_TOKEN = "/refresh";
+const AUTH_LOGOUT = "/logout";
 
 // EXPORTS
 export const AUTH_USER_LOGIN_URL = `${AUTH_BASE_URL}${AUTH_LOGIN_USER}`;
 export const AUTH_INSTRUCTOR_LOGIN_URL = `${AUTH_BASE_URL}${AUTH_LOGIN_INSTRUCTOR}`;
-
 export const AUTH_USER_SIGNUP_URL = `${AUTH_BASE_URL}${AUTH_SIGNUP_USER}`;
 export const AUTH_INSTRUCTOR_SIGNUP_URL = `${AUTH_BASE_URL}${AUTH_SIGNUP_INSTRUCTOR}`;
+export const AUTH_REFRESH_TOKEN_URL = `${AUTH_BASE_URL}${AUTH_REFRESH_TOKEN}`;
+export const AUTH_LOGOUT_URL = `${AUTH_BASE_URL}${AUTH_LOGOUT}`;
 
 // COMMUNITIES
 const COMMUNITIES_NAMESPACE = "/community";
