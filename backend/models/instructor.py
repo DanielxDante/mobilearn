@@ -19,7 +19,7 @@ class Instructor(Base):
     gender = Column(Enum(GENDER, name="gender_enum"), nullable=False)
     profile_picture_url = Column(String, nullable=True)
     phone_number = Column(String, nullable=False)
-    company = Column(String, nullable=False)
+    company = Column(String, nullable=False) # TODO: check if in community list
     position = Column(String, nullable=False)
     stripe_account_id = Column(String, nullable=True)
     created = Column(DateTime(timezone=True), nullable=False, default=func.now())

@@ -19,7 +19,7 @@ import { Colors } from "@/constants/colors";
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
-  const login = useAuthStore((state) => state.loginMember);
+  const login = useAuthStore((state) => state.loginUser);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [domain, setDomain] = useState("member");
