@@ -26,7 +26,7 @@ const CoursePage = () => {
       (course) => course.id.toString() === id
     );
     router.push({
-      pathname: "../../shared/course/courseContent",
+      pathname: "../../shared/course/instructorCourseContent",
       params: {
         courseSelected: JSON.stringify(courseSelected),
       },

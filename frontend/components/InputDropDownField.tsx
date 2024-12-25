@@ -7,6 +7,7 @@ import {
   StyleSheet,
   FlatList,
   Dimensions,
+  ScrollView,
 } from "react-native";
 
 const { width } = Dimensions.get("window"); // Get the screen width
@@ -49,11 +50,10 @@ const InputDropDownField: React.FC<InputDropDownFieldProps> = ({
 
       {isDropdownOpen && (
         <View style={styles.dropdownContainer}>
-          <FlatList
-            data={options}
-            keyExtractor={(item) => item}
-            renderItem={({ item }) => (
+          <ScrollView nestedScrollEnabled style={styles.scrollView}>
+            {options.map((item) => (
               <TouchableOpacity
+                key={item}
                 style={[
                   styles.dropdownItem,
                   value === item && styles.selectedItem,
@@ -68,12 +68,10 @@ const InputDropDownField: React.FC<InputDropDownFieldProps> = ({
                 >
                   {item}
                 </Text>
-                {value === item && (
-                  <Text style={styles.checkmark}>✓</Text> // Add checkmark for selected item
-                )}
+                {value === item && <Text style={styles.checkmark}>✓</Text>}
               </TouchableOpacity>
-            )}
-          />
+            ))}
+          </ScrollView>
         </View>
       )}
     </View>
@@ -116,6 +114,10 @@ const styles = StyleSheet.create({
     width: "100%", // Keep it full width of the input field
     elevation: 5,
     zIndex: 10, // Ensure it hovers above other content
+    maxHeight: 200, // Limit the height of the dropdown
+  },
+  scrollView: {
+    maxHeight: 200, // Restrict the maximum height of the ScrollView
   },
   dropdownItem: {
     paddingVertical: 12,
