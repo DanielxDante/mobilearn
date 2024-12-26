@@ -194,11 +194,20 @@ def init_community_endpoints():
     ns_community.add_resource(GetCommunityInstructorsEndpoint, get_community_instructors_path)
 
 def init_course_endpoints():
-    # from endpoints.course.course import CourseEndpoint
+    from endpoints.course.course import (
+        GetUserCoursesEndpoint,
+        GetInstructorCoursesEndpoint,
+        CreateCourseEndpoint
+    )
 
-    # course_path = f"/{VERSION}/addCourse"
-    # ns_course.add_resource(CourseEndpoint, course_path)
-    pass
+    get_user_courses_path = f"/{VERSION}/course/getUserCourses"
+    ns_course.add_resource(GetUserCoursesEndpoint, get_user_courses_path)
+
+    get_instructor_courses_path = f"/{VERSION}/course/getInstructorCourses"
+    ns_course.add_resource(GetInstructorCoursesEndpoint, get_instructor_courses_path)
+
+    create_course_path = f"/{VERSION}/course/create"
+    ns_course.add_resource(CreateCourseEndpoint, create_course_path)
 
 def init_recommender_endpoints():
     pass

@@ -16,7 +16,7 @@ class CourseBuilder:
             'description': None,
             'course_type': course_type,
             'duration': None,
-            'rating': Numeric('0.0'),
+            'rating': 0.00,
             'image_url': None,
             'currency': 'USD',
             'price': None,
@@ -46,7 +46,6 @@ class CourseBuilder:
         builder = cls(COURSE.PROFESSIONAL)
         builder._specific_attrs = {
             'department': None,
-            'skill': None
         }
         return builder
 
@@ -79,7 +78,7 @@ class CourseBuilder:
     def duration(self, duration: float) -> 'CourseBuilder':
         if duration < 0:
             raise ValueError("Duration cannot be negative")
-        self._course['duration'] = Numeric(str(duration))
+        self._course['duration'] = float(str(duration))
         return self
 
     def image_url(self, url: str) -> 'CourseBuilder':
@@ -89,7 +88,7 @@ class CourseBuilder:
     def price(self, price: float, currency: str = 'USD') -> 'CourseBuilder':
         if price < 0:
             raise ValueError("Price cannot be negative")
-        self._course['price'] = Numeric(str(price))
+        self._course['price'] = float(str(price))
         self._course['currency'] = currency
         return self
 
@@ -135,12 +134,6 @@ class CourseBuilder:
         if self._course['course_type'] != COURSE.PROFESSIONAL:
             raise ValueError("department is only valid for professional courses")
         self._specific_attrs['department'] = department
-        return self
-
-    def skill(self, skill: str) -> 'CourseBuilder':
-        if self._course['course_type'] != COURSE.PROFESSIONAL:
-            raise ValueError("skill is only valid for professional courses")
-        self._specific_attrs['skill'] = skill
         return self
     
     # SpecializationCourse methods
@@ -188,11 +181,11 @@ class Course(Base):
 
     # common fields
     duration = Column(Numeric(5, 1), nullable=True) # weeks
-    rating = Column(Numeric(2, 1), nullable=True, default=0.0, check_constraint='rating >= 0.0 AND rating <= 5.0') # 0 means unrated, users can rate from 0 to 5
+    rating = Column(Numeric(2, 2), nullable=True, default=0.00) # 0 means unrated, users can rate from 0 to 5
     image_url = Column(String, nullable=True)
     currency = Column(String, nullable=True, default='USD') # ISO 4217, default in USD
     price = Column(Numeric(10, 2), nullable=True, default=0.00) # 0 means free
-    difficulty = Column(Enum(DIFFICULTY), nullable=False)
+    difficulty = Column(Enum(DIFFICULTY), nullable=True)
     skills = Column(String, nullable=True)
     created = Column(DateTime(timezone=True), default=func.now(), nullable=False)
     updated = Column(DateTime(timezone=True), default=func.now(), nullable=False)
@@ -275,7 +268,7 @@ class Course(Base):
                 builder.price(kwargs['price'], kwargs.get('currency', 'USD'))
             if 'difficulty' in kwargs:
                 builder.difficulty(kwargs['difficulty'])
-            if 'skills' in kwargs: # make sure none of the skills have commas
+            if 'skills' in kwargs: # delimited by commas
                 builder.skills(kwargs['skills'])
             if 'status' in kwargs:
                 builder.status(kwargs['status'])
@@ -292,8 +285,6 @@ class Course(Base):
             elif course_type == COURSE.PROFESSIONAL: 
                 if 'department' in kwargs:
                     builder.department(kwargs['department'])
-                if 'skill' in kwargs:
-                    builder.skill(kwargs['skill'])
             elif course_type == COURSE.SPECIALIZATION:
                 if 'subject' in kwargs:
                     builder.subject(kwargs['subject'])
@@ -304,8 +295,6 @@ class Course(Base):
             course = builder.build()
 
             community = Community.get_community_by_id(session, community_id)
-            if not community:
-                raise ValueError("Community not found")
             community.courses.append(course)
             
             session.flush()

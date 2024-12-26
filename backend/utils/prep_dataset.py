@@ -311,6 +311,6 @@ def scrape_course_picture():
 if __name__ == '__main__':
     # shorten_dataset()
     # extract_communities()
-    extract_instructors()
-    # optimise_dataset()
+    # extract_instructors()
+    optimise_dataset()
     # scrape_course_picture()

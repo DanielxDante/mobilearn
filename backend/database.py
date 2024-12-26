@@ -55,7 +55,7 @@ def load_initial_data():
     load_channel()
     load_communities()
     load_instructors()
-    # load_courses()
+    load_courses()
 
 def load_channel():
     """ Create a default public channel """
@@ -111,6 +111,7 @@ def load_instructors():
     from services.community_services import CommunityService
 
     with session_scope() as session:
+        # Add instructors in Kaggle Coursera dataset
         with open(INSTRUCTOR_DATASET_PATH, newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
@@ -129,21 +130,38 @@ def load_instructors():
                 CommunityService.attach_instructor(session, community.id, instructor.email)
 
 def load_courses():
-    """ Load Kaggle Coursera dataset into public channel """
-    from models.course import Course, STATUS as COURSE_STATUS
+    """ Load initial courses """
+    from models.course import Course, STATUS as COURSE_STATUS, COURSE
     from models.instructor import Instructor
     from models.community import Community
-    from services.community_services import CommunityService
 
-    with open(COURSES_DATASET_PATH, newline='', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile)
-        with session_scope() as session:
+    with session_scope() as session:
+        # Add courses in Kaggle Coursera dataset
+        with open(COURSES_DATASET_PATH, newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
             for row in reader:
-                # course = Course(
-                #     course_id=row['course_id'],
-                #     course_name=row['course_name'],
-                #     university=row['university'],
-                #     # Add other fields as necessary
-                # )
-                # session.add(course)
-                pass
+                instructor_names = row['Instructor'].split(',')
+
+                community = row['Offered By']
+                community = Community.get_community_by_name(session, community)
+
+                course = Course.add_course(
+                    session,
+                    community_id=community.id,
+                    name=row['Course Title'],
+                    description=row['What you will learn'],
+                    course_type=COURSE.SPECIALIZATION,
+                    duration=float(row['Duration']),
+                    image_url=row['Course Picture Url'],
+                    price=float(row['Price']),
+                    difficulty=row['Level'].replace('level', '').strip().lower(),
+                    skills=row['Skill gain'].split(','),
+                    subject=row['Keyword'],
+                    status=COURSE_STATUS.ACTIVE
+                )
+                
+                for instructor_name in instructor_names:
+                    instructor_email = instructor_name.strip().replace('.', '').replace('(', '').replace(')', '').replace(' ', '_').lower() + "@edu.com"
+                    instructor = Instructor.get_instructor_by_email(session, instructor_email)
+                    instructor.courses.append(course)
+

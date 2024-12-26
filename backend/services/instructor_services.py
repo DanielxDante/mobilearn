@@ -1,6 +1,7 @@
 from models.instructor import Instructor
 from models.course import Course, STATUS as COURSE_STATUS
 from models.offer import Offer
+from models.community import Community
 
 class InstructorServiceError(Exception):
     pass
@@ -26,21 +27,27 @@ class InstructorService:
         
         return courses
     
-    @staticmethod
-    def create_course(session, instructor_id, title, description, price, discount):
-        """ Create a new course """
-        instructor = Instructor.get_instructor_by_id(session, instructor_id)
-        if not instructor:
-            raise ValueError("Instructor not found")
+    # @staticmethod
+    # def create_course(session, instructor_id, title, description, price, discount):
+    #     """ Create a new course """
+    #     instructor = Instructor.get_instructor_by_id(session, instructor_id)
+    #     if not instructor:
+    #         raise ValueError("Instructor not found")
         
-        course = Course(
-            title=title,
-            description=description,
-            price=price,
-            discount=discount,
-            instructor_id=instructor_id
-        )
-        session.add(course)
-        session.flush()
+    #     community = instructor.company
+    #     if not Community.get_community_by_name(session, community):
+    #         raise ValueError("The community is not found")
         
-        return course.id
+
+        
+    #     course = Course(
+    #         title=title,
+    #         description=description,
+    #         price=price,
+    #         discount=discount,
+    #         instructor_id=instructor_id
+    #     )
+    #     session.add(course)
+    #     session.flush()
+        
+    #     return course.id
