@@ -282,7 +282,7 @@ const useAuthStore = create<AuthState>()(
                     const response = await axios.post(AUTH_REFRESH_TOKEN_URL, {
                         headers: {
                             "Content-Type": "application/json",
-                            Authorization: get().refresh_token,
+                            Authorization: `${get().refresh_token}`,
                         },
                     });
 
@@ -307,28 +307,8 @@ const useAuthStore = create<AuthState>()(
             },
             setupAxiosInterceptors: () => {
                 axios.interceptors.request.use(async (config) => {
-                    if (config.url === AUTH_REFRESH_TOKEN_URL) {
-                        config.headers.Authorization = get().refresh_token;
-                        return config;
-                    }
-
                     const access_token = get().access_token;
                     if (!access_token) return config;
-            return responseData.access_token;
-          } else {
-            throw new Error("An unexpected error occurred");
-          }
-        } catch (error) {
-          console.error("Error refreshing access token:", error);
-          get().logout();
-          throw new Error("An unexpected error occurred while refreshing the access token.");
-        }
-      },
-      setupAxiosInterceptors: () => {
-        axios.interceptors.request.use(
-          async (config) => {
-            const access_token = get().access_token;
-            if (!access_token) return config;
 
                     const decoded_access_token = jwtDecode(access_token);
                     const current_time = Date.now() / 1000;
@@ -339,7 +319,6 @@ const useAuthStore = create<AuthState>()(
                     ) {
                         const new_access_token =
                             await get().refreshAccessToken();
-                            
                         config.headers.Authorization = new_access_token;
                     } else {
                         config.headers.Authorization = access_token;
@@ -373,51 +352,27 @@ const useAuthStore = create<AuthState>()(
                                 );
                             }
                         }
-                        throw error;
+                        console.error("Error refreshing access token:", error);
+                        get().logout();
+                        throw new Error(
+                            "An unexpected error occurred while refreshing the access token."
+                        );
                     }
                 );
             },
             logout: async () => {
                 console.log("Logging out...");
-        axios.interceptors.response.use(
-          (response) => {
-            return response;
-          },
-          async (error) => {
-            const originalRequest = error.config;
-            if (error.response?.status === 401 && !originalRequest._retry) {
-              originalRequest._retry = true;
-              try {
-                await get().refreshAccessToken();
-                return axios(originalRequest);
-              } catch (error) {
-                console.error("Error refreshing access token:", error);
-                get().logout();
-                throw new Error("An unexpected error occurred while refreshing the access token.");
-              }
-            }
-            console.error("Error refreshing access token:", error);
-            get().logout();
-            throw new Error("An unexpected error occurred while refreshing the access token.");
-          }
-        );
-      },
-      logout: async () => {
-        console.log("Logging out...");
 
-        try {
-            const response = await axios.delete(
-            AUTH_LOGOUT_URL,
-            {
-              headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `${get().access_token}`
-              },
-              data: {
-                refresh_token: get().refresh_token
-              }
-            }
-            );
+                try {
+                    const response = await axios.delete(AUTH_LOGOUT_URL, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `${get().access_token}`,
+                        },
+                        data: {
+                            refresh_token: get().refresh_token,
+                        },
+                    });
 
                     if (response.status === 200) {
                         set({
@@ -433,7 +388,6 @@ const useAuthStore = create<AuthState>()(
                             access_token: "",
                             refresh_token: "",
                         });
-                        router.push("/shared/carouselPage");
                     } else {
                         throw new Error("An unexpected error occurred");
                     }
