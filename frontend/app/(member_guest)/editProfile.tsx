@@ -25,6 +25,8 @@ const EditProfile = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
+    const editGender = useAuthStore((state) => state.editGenderUser);
+
     // useEffect(() = {
     //     setNewUsername(username);
     //     setNewEmail(email);
@@ -38,6 +40,18 @@ const EditProfile = () => {
         //         setEmail(newEmail);
         //     }
         //     console.log("Profile updated: ", {newUsername, newEmail, password})
+    };
+
+    const handleEditGender = async () => {
+        console.log(newGender);
+        try {
+            const response = await editGender(newGender);
+            if (typeof response == "string") {
+                setNewGender(response);
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -68,7 +82,7 @@ const EditProfile = () => {
                         </TouchableOpacity>
                         {/* Edit fields */}
                         <View style={styles.editFields}>
-                            <InputField
+                            {/* <InputField
                                 inputTitle={Constants.fields[0].inputTitle}
                                 placeholder={username}
                                 value={newUsername}
@@ -79,14 +93,14 @@ const EditProfile = () => {
                                 placeholder={email}
                                 value={newEmail}
                                 onChangeText={setNewEmail}
-                            />
+                            /> */}
                             <InputField
                                 inputTitle={Constants.fields[2].inputTitle}
                                 placeholder={gender}
                                 value={newGender}
                                 onChangeText={setNewGender}
                             />
-                            <InputField
+                            {/* <InputField
                                 inputTitle={Constants.fields[3].inputTitle}
                                 placeholder={
                                     Constants.fields[3].placeholder ?? "******"
@@ -101,13 +115,13 @@ const EditProfile = () => {
                                 }
                                 value={confirmPassword}
                                 onChangeText={setConfirmPassword}
-                            />
+                            /> */}
                         </View>
                     </View>
                     {/* Save button container */}
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
-                            onPress={handleSave}
+                            onPress={handleEditGender}
                             style={styles.saveButton}
                         >
                             <Text style={styles.buttonText}>
