@@ -6,8 +6,8 @@ class CommunityInstructor(Base):
     # Association table between Community and Instructor
     __tablename__ = 'community_instructors'
 
-    community_id = Column(Integer, ForeignKey('communities.id'), primary_key=True)
-    instructor_id = Column(Integer, ForeignKey('instructors.id'), primary_key=True)
+    community_id = Column(Integer, ForeignKey('communities.id', ondelete='CASCADE'), primary_key=True)
+    instructor_id = Column(Integer, ForeignKey('instructors.id', ondelete='CASCADE'), primary_key=True)
     joined = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     
     def __repr__(self):

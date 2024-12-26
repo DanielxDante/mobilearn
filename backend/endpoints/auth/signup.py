@@ -6,6 +6,8 @@ from app import api
 from database import session_scope, create_session
 from models.user import User, GENDER, MEMBERSHIP
 from models.instructor import Instructor
+from models.community import Community
+from services.community_services import CommunityService
 
 userSignupParser = api.parser()
 userSignupParser.add_argument('name', type=str, help='Full Name', location='json', required=True)
@@ -89,7 +91,7 @@ class InstructorSignupEndpoint(Resource):
             "email": "foobar@e.ntu.edu.sg",
             "gender": "male",
             "phone_number": "12345678",
-            "company": "NTU",
+            "company": "MobiLearn Network",
             "position": "Lecturer"
         }
         """
@@ -108,7 +110,9 @@ class InstructorSignupEndpoint(Resource):
 
         with session_scope() as session:
             try:
-                Instructor.add_instructor(
+                community = Community.get_community_by_name(session, company)
+                
+                instructor = Instructor.add_instructor(
                     session,
                     name,
                     password,
@@ -118,6 +122,7 @@ class InstructorSignupEndpoint(Resource):
                     position,
                     gender
                 )
+                CommunityService.attach_instructor(session, community.id, instructor.id)
             except ValueError as ee:
                 return Response(
                     json.dumps({'message': str(ee)}),

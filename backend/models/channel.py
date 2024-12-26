@@ -115,59 +115,5 @@ class Channel(Base):
         session.delete(channel)
         session.flush()
 
-    @staticmethod
-    def get_user_channels(session, user_email):
-        user = User.get_user_by_email(session, user_email)
-        if not user:
-            raise ValueError("User not found")
-        
-        channels = (
-            session.query(Channel)
-            .join(UserChannel)
-            .filter(
-                UserChannel.user_id == user.id,
-                Channel.status == STATUS.ACTIVE
-            )
-            .order_by(Channel.created.desc())
-            .all()
-        )
-
-        return channels
-
-    @staticmethod
-    def invite_user(session, invite_code, user_email):
-        channel = Channel.get_channel_by_invite_code(session, invite_code)
-        if not channel:
-            raise ValueError("Channel not found")
-        
-        user = User.get_user_by_email(session, user_email)
-        if not user:
-            raise ValueError("User not found")
-        
-        if session.query(UserChannel).filter_by(user_id=user.id, channel_id=channel.id).first():
-            raise ValueError("User is already in the channel")
-        
-        user.channels.append(channel)
-        session.flush()
-
-        return channel.id
-    
-    @staticmethod
-    def remove_user(session, id, user_email):
-        channel = Channel.get_channel_by_id(session, id)
-        if not channel:
-            raise ValueError("Channel not found")
-        
-        user = User.get_user_by_email(session, user_email)
-        if not user:
-            raise ValueError("User not found")
-        
-        user_channel = session.query(UserChannel).filter_by(user_id=user.id, channel_id=channel.id).first()
-        if not user_channel:
-            raise ValueError("User is not in the channel")
-        
-        user.channels.remove(user_channel)
-        session.flush()
-
     def __repr__(self):
         return f'<ID: {self.id}>, Channel: {self.name}, Invite_code: {self.invite_code}'

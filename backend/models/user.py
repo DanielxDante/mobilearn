@@ -175,6 +175,15 @@ class User(Base):
             session.flush()
         else:
             raise ValueError("User with the email does not exist.")
+    
+    @staticmethod
+    def delete_user(session, email):
+        user = User.get_user_by_email(session, email)
+        if user:
+            session.delete(user)
+            session.flush()
+        else:
+            raise ValueError("User with the email does not exist.")
 
     def __repr__(self):
         return f'<User {self.email}>'

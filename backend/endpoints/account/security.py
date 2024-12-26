@@ -332,7 +332,10 @@ class ChangeInstructorCompanyEndpoint(Resource):
     @api.expect(change_instructor_company_parser)
     @jwt_required()
     def post(self):
-        """ Change instructor company """
+        """ 
+        Change instructor company
+        NOTE: This changes the status of the instructor to NOT_APPROVED 
+        """
         data = request.get_json()
         new_company = data.get('new_company')
 

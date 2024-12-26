@@ -185,16 +185,20 @@ def init_channel_endpoints():
     ns_channel.add_resource(InviteUserToChannelEndpoint, invite_user_to_channel_path)
 
 def init_community_endpoints():
-    from endpoints.community.community import GetCommunitiesEndpoint
+    from endpoints.community.community import GetCommunitiesEndpoint, GetCommunityInstructorsEndpoint
 
     get_communities_path = f"/{VERSION}/community/getCommunities"
     ns_community.add_resource(GetCommunitiesEndpoint, get_communities_path)
 
-def init_course_endpoints():
-    from endpoints.course.course import CourseEndpoint
+    get_community_instructors_path = f"/{VERSION}/community/getInstructors/<string:community_id>"
+    ns_community.add_resource(GetCommunityInstructorsEndpoint, get_community_instructors_path)
 
-    course_path = f"/{VERSION}/addCourse"
-    ns_course.add_resource(CourseEndpoint, course_path)
+def init_course_endpoints():
+    # from endpoints.course.course import CourseEndpoint
+
+    # course_path = f"/{VERSION}/addCourse"
+    # ns_course.add_resource(CourseEndpoint, course_path)
+    pass
 
 def init_recommender_endpoints():
     pass

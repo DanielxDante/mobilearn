@@ -8,6 +8,7 @@ from database import Base
 from enums.gender import GENDER
 from enums.status import STATUS
 from models.offer import Offer
+from models.community import Community
 
 class Instructor(Base):
     __tablename__ = 'instructors'
@@ -19,7 +20,7 @@ class Instructor(Base):
     gender = Column(Enum(GENDER, name="gender_enum"), nullable=False)
     profile_picture_url = Column(String, nullable=True)
     phone_number = Column(String, nullable=False)
-    company = Column(String, nullable=False) # TODO: check if in community list
+    company = Column(String, nullable=False)
     position = Column(String, nullable=False)
     stripe_account_id = Column(String, nullable=True)
     created = Column(DateTime(timezone=True), nullable=False, default=func.now())
@@ -89,6 +90,10 @@ class Instructor(Base):
     ):
         if Instructor.admin_get_instructor_by_email(session, email):
             raise ValueError("The email is already in use.")
+        
+        # soft coupling with Community
+        if not Community.get_community_by_name(session, company):
+            raise ValueError("The community is not found.")
 
         instructor = Instructor(
             email=email,
@@ -102,6 +107,8 @@ class Instructor(Base):
         instructor.password = password # separate from __init__ to use password.setter
         session.add(instructor)
         session.flush()
+
+        return instructor
 
     @staticmethod
     def change_name(session, email, new_name):
@@ -150,10 +157,14 @@ class Instructor(Base):
     def change_company(session, email, new_company):
         """ 
         Change the company of the instructor.
-        Disapprove the instructor and initiate the approval process again.
+        Can deattach instructor from previous company.
+        Initiate the approval process with new company.
         """
         instructor = Instructor.get_instructor_by_email(session, email)
         if instructor:
+            old_company = instructor.company
+
+
             instructor.company = new_company
             instructor.updated = func.now()
             instructor.status = STATUS.NOT_APPROVED
@@ -206,6 +217,15 @@ class Instructor(Base):
         if instructor:
             instructor.status = new_status
             instructor.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Instructor with the email does not exist.")
+    
+    @staticmethod
+    def delete_instructor(session, email):
+        instructor = Instructor.get_instructor_by_email(session, email)
+        if instructor:
+            session.delete(instructor)
             session.flush()
         else:
             raise ValueError("Instructor with the email does not exist.")

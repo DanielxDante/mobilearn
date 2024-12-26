@@ -5,7 +5,6 @@ from database import Base
 from enums.status import STATUS
 from enums.community import COMMUNITY
 from models.channel import Channel
-from models.community_course import CommunityCourse
 from models.community_instructor import CommunityInstructor
 
 class Community(Base):
@@ -32,8 +31,8 @@ class Community(Base):
     # Many-to-many relationship with Instructor
     instructors = relationship("Instructor", secondary="community_instructors", back_populates="communities")
 
-    # Many-to-many relationship with Course
-    courses = relationship("Course", secondary="community_courses", back_populates="communities")
+    # Many-to-one relationship with Course
+    courses = relationship("Course", back_populates="communities", cascade="all, delete-orphan")
 
     @staticmethod
     def get_communities(session):
@@ -145,51 +144,6 @@ class Community(Base):
             raise ValueError("Community not found")
 
         session.delete(community)
-        session.flush()
-    
-    @staticmethod
-    def get_channel_communities(session, channel_id):
-        channel = Channel.get_channel_by_id(session, channel_id)
-        if not channel:
-            raise ValueError("Channel not found")
-        
-        communities = (
-            session.query(Community)
-            .join(ChannelCommunity)
-            .filter(
-                ChannelCommunity.channel_id == channel_id,
-                Community.status == STATUS.ACTIVE
-            )
-            .order_by(Community.created.desc())
-            .all()
-        )
-
-        return communities
-    
-    @staticmethod
-    def attach_channel(session, channel_id, community_id):
-        channel = Channel.get_channel_by_id(session, channel_id)
-        if not channel:
-            raise ValueError("Channel not found")
-        
-        community = Community.get_community_by_id(session, community_id)
-        if not community:
-            raise ValueError("Community not found")
-        
-        channel.communities.append(community)
-        session.flush()
-    
-    @staticmethod
-    def detach_channel(session, channel_id, community_id):
-        channel = Channel.get_channel_by_id(session, channel_id)
-        if not channel:
-            raise ValueError("Channel not found")
-        
-        community = Community.get_community_by_id(session, community_id)
-        if not community:
-            raise ValueError("Community not found")
-        
-        channel.communities.remove(community)
         session.flush()
 
     def __repr__(self):
