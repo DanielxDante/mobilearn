@@ -1,13 +1,15 @@
 import csv
 import random
 
+# For scraping course picture
 # pip ininstall selenium 
 # pip ininstall webdriver-manager
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
+
+# from selenium import webdriver
+# from selenium.webdriver.chrome.service import Service
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.chrome.options import Options
+# from webdriver_manager.chrome import ChromeDriverManager
 
 not_included_fieldnames = [
     'Rating',
@@ -165,7 +167,7 @@ def extract_instructors():
                 instructor,
                 instructor.replace('.', '').replace('(', '').replace(')', '').replace(' ', '_').lower() + "@edu.com",
                 instructor.replace('.', '').replace('(', '').replace(')', '').replace(' ', '_'),
-                random.choice(["Male", "Female"]),
+                random.choice(["male", "female"]),
                 '+65' + str(random.choice([8, 9])) + ''.join([str(random.randint(0, 9)) for _ in range(7)]),
                 random.choice(community_names),
                 "Professor"
@@ -309,6 +311,6 @@ def scrape_course_picture():
 if __name__ == '__main__':
     # shorten_dataset()
     # extract_communities()
-    # extract_instructors()
+    extract_instructors()
     # optimise_dataset()
-    scrape_course_picture()
+    # scrape_course_picture()

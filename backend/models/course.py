@@ -181,6 +181,7 @@ class Course(Base):
     __tablename__ = 'courses'
 
     id = Column(Integer, primary_key=True)
+    community_id = Column(Integer, ForeignKey('communities.id'), nullable=True)
     name = Column(String, unique=True, nullable=False)
     description = Column(String, nullable=False)
     course_type = Column(Enum(COURSE), nullable=False)
@@ -205,8 +206,8 @@ class Course(Base):
     # Many-to-many relationship with Instructor
     instructors = relationship("Instructor", secondary="offers", back_populates="courses")
 
-    # Many-to-many relationship with Community
-    communities = relationship("Community", secondary="community_courses", back_populates="courses")
+    # Many-to-one relationship with Community
+    communities = relationship("Community", back_populates="courses")
 
     # Many-to-many relationship with Chapter
     # chapter_associations = relationship(
@@ -250,6 +251,7 @@ class Course(Base):
     @staticmethod
     def add_course(
         session,
+        community_id,
         name,
         description,
         course_type,
@@ -300,8 +302,12 @@ class Course(Base):
                     builder.platform(kwargs['platform'])
             
             course = builder.build()
+
+            community = Community.get_community_by_id(session, community_id)
+            if not community:
+                raise ValueError("Community not found")
+            community.courses.append(course)
             
-            session.add(course)
             session.flush()
             
             return course

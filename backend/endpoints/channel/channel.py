@@ -1,5 +1,4 @@
 import json
-from botocore.exceptions import ClientError
 from flask import Response, request
 from flask_restx import Resource
 from flask_jwt_extended import (
@@ -9,7 +8,8 @@ from flask_jwt_extended import (
 
 from app import api
 from database import session_scope, create_session
-from models.channel import Channel
+from services.user_services import UserService
+from services.channel_services import ChannelService
 
 class GetUserChannelsEndpoint(Resource):
     @api.doc(
@@ -35,7 +35,7 @@ class GetUserChannelsEndpoint(Resource):
         session = create_session()
 
         try:
-            channels = Channel.get_user_channels(session, current_email)
+            channels = UserService.get_user_channels(session, current_email)
             channels_info = [{
                 'id': channel.id,
                 'name': channel.name,
@@ -91,7 +91,7 @@ class InviteUserToChannelEndpoint(Resource):
 
         with session_scope() as session:
             try:
-                channel_id = Channel.invite_user(session, invite_code, current_email)
+                channel_id = ChannelService.invite_user(session, invite_code, current_email)
             except ValueError as ee:
                 return Response(
                     json.dumps({'message': str(ee)}),

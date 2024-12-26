@@ -54,7 +54,7 @@ def load_initial_data():
     """ Load initial data into database """
     load_channel()
     load_communities()
-    # load_instructors()
+    load_instructors()
     # load_courses()
 
 def load_channel():
@@ -66,13 +66,15 @@ def load_channel():
             session,
             name='Public',
             description='MobiLearn public channel for all users',
-            invite_code='mobilearn' 
+            invite_code='mobilearn',
+            channel_picture_url='https://d20shsb24t3qaz.cloudfront.net/icon.png'
         )
 
 def load_communities():
     """ Load initial communities """
     from models.channel import Channel
     from models.community import Community, COMMUNITY
+    from services.channel_services import ChannelService
 
     with session_scope() as session:
         public_channel = Channel.get_channel_by_invite_code(session, 'mobilearn')
@@ -86,7 +88,7 @@ def load_communities():
             website_url='https://personal.ntu.edu.sg/zhangj/',
             community_logo_url='https://d20shsb24t3qaz.cloudfront.net/icon.png'
         )
-        Community.attach_channel(session, public_channel.id, new_community.id)
+        ChannelService.attach_community(session, public_channel.id, new_community.id)
 
         # Add communities in Kaggle Coursera dataset
         with open(COMMUNITY_DATASET_PATH, newline='', encoding='utf-8') as csvfile:
@@ -100,13 +102,39 @@ def load_communities():
                     website_url=row['Website Url'],
                     community_logo_url=row['Logo Url']
                 )
-                Community.attach_channel(session, public_channel.id, new_community.id)
+                ChannelService.attach_community(session, public_channel.id, new_community.id)
 
 def load_instructors():
-    pass
+    """ Load initial instructors """
+    from models.instructor import Instructor, STATUS as INSTRUCTOR_STATUS
+    from models.community import Community
+    from services.community_services import CommunityService
+
+    with session_scope() as session:
+        with open(INSTRUCTOR_DATASET_PATH, newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                instructor = Instructor.add_instructor(
+                    session,
+                    name=row['Name'],
+                    password=row['Password'],
+                    email=row['Email'],
+                    phone_number=row['Phone Number'],
+                    company=row['Company'],
+                    position=row['Position'],
+                    gender=row['Gender'],
+                    status=INSTRUCTOR_STATUS.ACTIVE
+                )
+                community = Community.get_community_by_name(session, row['Company'])
+                CommunityService.attach_instructor(session, community.id, instructor.email)
 
 def load_courses():
     """ Load Kaggle Coursera dataset into public channel """
+    from models.course import Course, STATUS as COURSE_STATUS
+    from models.instructor import Instructor
+    from models.community import Community
+    from services.community_services import CommunityService
+
     with open(COURSES_DATASET_PATH, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         with session_scope() as session:
