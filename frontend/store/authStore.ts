@@ -3,7 +3,6 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosError } from "axios";
 import { jwtDecode } from "jwt-decode";
-import { router } from "expo-router";
 
 import {
     AUTH_USER_LOGIN_URL,
@@ -282,7 +281,7 @@ const useAuthStore = create<AuthState>()(
                     const response = await axios.post(AUTH_REFRESH_TOKEN_URL, {
                         headers: {
                             "Content-Type": "application/json",
-                            Authorization: `${get().refresh_token}`,
+                            Authorization: get().refresh_token,
                         },
                     });
 
@@ -307,6 +306,11 @@ const useAuthStore = create<AuthState>()(
             },
             setupAxiosInterceptors: () => {
                 axios.interceptors.request.use(async (config) => {
+                    if (config.url === AUTH_REFRESH_TOKEN_URL) {
+                        config.headers.Authorization = get().refresh_token;
+                        return config;
+                    }
+
                     const access_token = get().access_token;
                     if (!access_token) return config;
 
@@ -352,11 +356,7 @@ const useAuthStore = create<AuthState>()(
                                 );
                             }
                         }
-                        console.error("Error refreshing access token:", error);
-                        get().logout();
-                        throw new Error(
-                            "An unexpected error occurred while refreshing the access token."
-                        );
+                        throw error;
                     }
                 );
             },
