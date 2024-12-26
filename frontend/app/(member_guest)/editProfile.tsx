@@ -97,7 +97,7 @@ const EditProfile = () => {
                             <InputField
                                 inputTitle={Constants.fields[2].inputTitle}
                                 placeholder={gender}
-                                value={newGender}
+                                value={newGender.toLowerCase()}
                                 onChangeText={setNewGender}
                             />
                             {/* <InputField

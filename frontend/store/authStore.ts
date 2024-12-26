@@ -69,7 +69,7 @@ export interface AuthState {
     setupAxiosInterceptors: () => void;
     logout: () => Promise<void>;
     // Account operations
-    editGenderInstructor: (new_gender: string) => Promise<string>;
+    editGenderInstructor: (new_gender: string) => Promise<void>;
     // editNameInstructor: (new_name: string) => Promise<string>;
     // editPhoneNumberInstructor: (new_phone_number: string) => Promise<string>;
     // editPositionInstructor: (new_position: string) => Promise<string>;
@@ -88,20 +88,17 @@ export interface AuthState {
     //     old_password: string,
     //     new_password: string
     // ) => Promise<string>;
-    editGenderUser: (new_gender: string) => Promise<string>;
-    // editNameUser: (new_name: string) => Promise<string>;
-    // editProfilePictureUser: (file: File) => Promise<string>;
-    // getGenderUser: () => Promise<string>;
-    // getNameUser: () => Promise<string>;
-    // getProfilePictureUser: () => Promise<string>;
-    // editEmailUser: (
-    //     new_email: string,
-    //     refresh_token: string
-    // ) => Promise<string>;
-    // editPasswordUser: (
-    //     old_password: string,
-    //     new_password: string
-    // ) => Promise<string>;
+    editGenderUser: (new_gender: string) => Promise<void>;
+    editNameUser: (new_name: string) => Promise<void>;
+    editProfilePictureUser: (file: File) => Promise<string>;
+    getGenderUser: () => Promise<string>;
+    getNameUser: () => Promise<string>;
+    getProfilePictureUser: () => Promise<string>;
+    editEmailUser: (new_email: string) => Promise<void>;
+    editPasswordUser: (
+        old_password: string,
+        new_password: string
+    ) => Promise<void>;
 }
 
 const useAuthStore = create<AuthState>()(
@@ -399,7 +396,7 @@ const useAuthStore = create<AuthState>()(
                 }
             },
             editGenderInstructor: async (new_gender) => {
-                // console.log("Edit Instructor gender");
+                console.log("(Store) Edit Instructor gender");
                 const response = await axios.post(
                     ACCOUNT_INSTRUCTOR_EDIT_GENDER_URL,
                     { new_gender },
@@ -411,11 +408,10 @@ const useAuthStore = create<AuthState>()(
                     set({
                         gender: responseData.gender,
                     });
-                    return responseData.gender;
                 }
             },
             editGenderUser: async (new_gender) => {
-                // console.log("Edit User gender");
+                console.log("(Store) Edit User gender");
                 const response = await axios.post(
                     ACCOUNT_USER_EDIT_GENDER_URL,
                     { new_gender },
@@ -427,7 +423,105 @@ const useAuthStore = create<AuthState>()(
                     set({
                         gender: responseData.gender,
                     });
+                }
+            },
+            editNameUser: async (new_name) => {
+                console.log("(Store) Edit User name");
+                const response = await axios.post(
+                    ACCOUNT_USER_EDIT_NAME_URL,
+                    { new_name },
+                    { headers: { "Content-Type": "application/json" } }
+                );
+                const responseData = response.data;
+                if (response.status === 200) {
+                    console.log(responseData.message);
+                    set({
+                        username: responseData.name,
+                    });
+                }
+            },
+            editProfilePictureUser: async (file) => {
+                console.log("(Store) Edit User profile picture");
+                const response = await axios.post(
+                    ACCOUNT_USER_EDIT_PROFILEPICTURE_URL,
+                    { file },
+                    { headers: { "Content-Type": "application/json" } }
+                );
+                const responseData = response.data;
+                if (response.status === 200) {
+                    set({
+                        profile_picture_url: responseData.profile_picture_url,
+                    });
+                    return responseData.profile_picture_url;
+                }
+            },
+            getGenderUser: async () => {
+                console.log("(Store) Get User gender");
+                const response = await axios.get(ACCOUNT_USER_GET_GENDER_URL, {
+                    headers: { "Content-Type": "application/json" },
+                });
+                const responseData = response.data;
+                if (response.status === 200) {
+                    set({
+                        gender: responseData.gender,
+                    });
                     return responseData.gender;
+                }
+            },
+            getNameUser: async () => {
+                console.log("(Store) Get User name");
+                const response = await axios.get(ACCOUNT_USER_GET_NAME_URL, {
+                    headers: { "Content-Type": "application/json" },
+                });
+                const responseData = response.data;
+                if (response.status === 200) {
+                    set({
+                        username: responseData.name,
+                    });
+                    return responseData.name;
+                }
+            },
+            getProfilePictureUser: async () => {
+                console.log("(Store) Get User profile picture");
+                const response = await axios.get(
+                    ACCOUNT_USER_GET_PROFILEPICTURE_URL,
+                    {
+                        headers: { "Content-Type": "application/json" },
+                    }
+                );
+                const responseData = response.data;
+                if (response.status === 200) {
+                    set({
+                        profile_picture_url: responseData.profile_picture_url,
+                    });
+                    return responseData.profile_picture_url;
+                }
+            },
+            editEmailUser: async (new_email) => {
+                console.log("(Store) Edit User email");
+                const response = await axios.post(
+                    ACCOUNT_USER_EDIT_EMAIL_URL,
+                    { new_email, refresh_token: get().refresh_token },
+                    { headers: { "Content-Type": "application/json" } }
+                );
+                const responseData = response.data;
+                if (response.status === 200) {
+                    set({
+                        access_token: responseData.access_token,
+                        refresh_token: responseData.refresh_token,
+                    });
+                }
+            },
+            editPasswordUser: async (old_password, new_password) => {
+                console.log("(Store) Edit User password");
+                const response = await axios.post(
+                    ACCOUNT_USER_EDIT_PASSWORD_URL,
+                    { old_password: old_password, new_password: new_password },
+                    { headers: { "Content-Type": "application/json" } }
+                );
+                const responseData = response.data;
+                if (response.status === 200) {
+                    console.log(responseData.message);
                 }
             },
         }),
