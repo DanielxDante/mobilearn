@@ -194,7 +194,6 @@ const useAuthStore = create<AuthState>()(
                     );
 
                     const responseData = response.data;
-
                     if (response.status === 200) {
                         set({
                             //message: responseData.message,
@@ -206,6 +205,7 @@ const useAuthStore = create<AuthState>()(
                             status: responseData.status,
                             access_token: responseData.access_token,
                             refresh_token: responseData.refresh_token,
+                            email: email,
                         });
 
                         get().setupAxiosInterceptors();
@@ -419,14 +419,16 @@ const useAuthStore = create<AuthState>()(
                 );
                 const responseData = response.data;
                 if (response.status === 200) {
-                    console.log(responseData.message);
+                    console.log(
+                        "Edit Gender API: " + JSON.stringify(responseData)
+                    );
                     set({
-                        gender: responseData.gender,
+                        gender: new_gender,
                     });
                 }
             },
             editNameUser: async (new_name) => {
-                console.log("(Store) Edit User name");
+                console.log("(Store) Edit User name: " + new_name);
                 const response = await axios.post(
                     ACCOUNT_USER_EDIT_NAME_URL,
                     { new_name },
@@ -436,7 +438,7 @@ const useAuthStore = create<AuthState>()(
                 if (response.status === 200) {
                     console.log(responseData.message);
                     set({
-                        username: responseData.name,
+                        username: new_name,
                     });
                     return "Name has been changed";
                 } else {
@@ -512,6 +514,7 @@ const useAuthStore = create<AuthState>()(
                     set({
                         access_token: responseData.access_token,
                         refresh_token: responseData.refresh_token,
+                        email: new_email,
                     });
                 }
             },

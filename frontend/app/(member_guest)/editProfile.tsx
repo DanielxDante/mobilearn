@@ -16,7 +16,15 @@ import { Colors } from "@/constants/colors";
 import EditProfileFields from "@/components/EditProfileFields";
 
 const EditProfile = () => {
-    const { username, email, gender, profile_picture_url } = useAuthStore();
+    const authStore = useAuthStore((state) => state);
+    console.log(authStore);
+    const username = useAuthStore((state) => state.username);
+    const email = useAuthStore((state) => state.email);
+    const gender = useAuthStore((state) => state.gender);
+    const profile_picture_url = useAuthStore(
+        (state) => state.profile_picture_url
+    );
+
     const editGender = useAuthStore((state) => state.editGenderUser);
     const editProfilePicture = useAuthStore(
         (state) => state.editProfilePictureUser
@@ -25,25 +33,14 @@ const EditProfile = () => {
     const editEmail = useAuthStore((state) => state.editEmailUser);
     const editPassword = useAuthStore((state) => state.editPasswordUser);
 
-    // const [newUsername, setNewUsername] = useState(username);
-    // const [newEmail, setNewEmail] = useState(email);
-    // const [newGender, setNewGender] = useState(gender);
-    // const [newPicture, setNewPicture] = useState(profile_picture_url);
+    const [newUsername, setNewUsername] = useState(username);
+    const [newEmail, setNewEmail] = useState(email);
+    const [newGender, setNewGender] = useState(gender);
+    const [newPicture, setNewPicture] = useState(profile_picture_url);
 
     const profile_picture = profile_picture_url
         ? { uri: profile_picture_url }
         : Constants.default_profile_picture;
-
-    const [modalVisible, setModalVisible] = useState<boolean>(false);
-
-    const handleModal = () => {
-        console.log("Modal visibility: " + !modalVisible);
-        if (modalVisible === false) {
-            setModalVisible(true);
-        } else {
-            setModalVisible(false);
-        }
-    };
 
     const handleEditName = async (newName: string) => {
         if (newName.length == 0) {
@@ -52,13 +49,40 @@ const EditProfile = () => {
             try {
                 const response = await editName(newName);
                 alert(response);
+                setNewUsername(newName);
             } catch (error) {
                 console.log(error);
                 alert("Username has not been changed");
             }
         }
     };
-
+    const handleEditEmail = async (newEmail: string) => {
+        if (newEmail.length == 0) {
+            alert("Email is empty");
+        } else {
+            try {
+                const response = await editEmail(newEmail);
+                setNewEmail(newEmail);
+            } catch (error) {
+                console.log(error);
+                alert("Email has not been changed");
+            }
+        }
+    };
+    const handleEditGender = async (newGender: string) => {
+        if (newGender.length == 0) {
+            alert("Gender is empty");
+        } else {
+            try {
+                const response = await editGender(newGender);
+                setNewGender(newGender);
+            } catch (error) {
+                console.log(error);
+                alert("Gender has not been changed");
+            }
+        }
+    };
+    console.log("Page load email: " + email);
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
@@ -98,14 +122,40 @@ const EditProfile = () => {
                                     Constants.fields.find((field) => field.name)
                                         ?.name?.inputTitle ?? "Your username"
                                 }
-                                value={username}
+                                initialValue={newUsername}
                                 modalDetails={
                                     Constants.fields.find((field) => field.name)
                                         ?.name?.modalDetails ?? "Error"
                                 }
-                                handleModal={handleModal}
-                                isPopUpVisible={modalVisible}
                                 onSave={handleEditName}
+                            />
+                            <EditProfileFields
+                                title={
+                                    Constants.fields.find(
+                                        (field) => field.email
+                                    )?.email?.inputTitle ?? "Your email"
+                                }
+                                initialValue={newEmail}
+                                modalDetails={
+                                    Constants.fields.find(
+                                        (field) => field.email
+                                    )?.email?.modalDetails ?? "Error"
+                                }
+                                onSave={handleEditEmail}
+                            />
+                            <EditProfileFields
+                                title={
+                                    Constants.fields.find(
+                                        (field) => field.gender
+                                    )?.gender?.inputTitle ?? "Your gender"
+                                }
+                                initialValue={newGender}
+                                modalDetails={
+                                    Constants.fields.find(
+                                        (field) => field.gender
+                                    )?.gender?.modalDetails ?? "Error"
+                                }
+                                onSave={handleEditGender}
                             />
                         </View>
                     </View>

@@ -303,7 +303,9 @@ export const memberGuestEditProfilePage = {
         {
             gender: {
                 inputTitle: "Gender",
-                options: ["Male", "Female"],
+                modalDetails: [
+                    { inputTitle: "Gender", options: ["Male", "Female"] },
+                ],
             },
         },
         {
@@ -322,6 +324,10 @@ export const memberGuestEditProfilePage = {
 export const memberGuestEditProfileFields = {
     edit: "Edit",
     notAdded: "Not added",
+};
+
+export const memberGuestEditProfilePopUp = {
+    save: "SAVE",
 };
 
 export const memberGuestPaymentMethodPage = {
