@@ -134,6 +134,7 @@ def load_courses():
     from models.course import Course, STATUS as COURSE_STATUS, COURSE
     from models.instructor import Instructor
     from models.community import Community
+    from services.instructor_services import InstructorService
 
     with session_scope() as session:
         # Add courses in Kaggle Coursera dataset
@@ -163,5 +164,5 @@ def load_courses():
                 for instructor_name in instructor_names:
                     instructor_email = instructor_name.strip().replace('.', '').replace('(', '').replace(')', '').replace(' ', '_').lower() + "@edu.com"
                     instructor = Instructor.get_instructor_by_email(session, instructor_email)
-                    instructor.courses.append(course)
+                    InstructorService.attach_course(session, instructor.id, course.id)
 

@@ -6,8 +6,8 @@ class UserChannel(Base):
     # Association table between User and Channel
     __tablename__ = 'user_channels'
 
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    channel_id = Column(Integer, ForeignKey('channels.id'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
+    channel_id = Column(Integer, ForeignKey('channels.id', ondelete='CASCADE'), primary_key=True)
     joined = Column(DateTime, default=func.now(), nullable=False)
 
     def __repr__(self):

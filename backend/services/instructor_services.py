@@ -27,27 +27,22 @@ class InstructorService:
         
         return courses
     
-    # @staticmethod
-    # def create_course(session, instructor_id, title, description, price, discount):
-    #     """ Create a new course """
-    #     instructor = Instructor.get_instructor_by_id(session, instructor_id)
-    #     if not instructor:
-    #         raise ValueError("Instructor not found")
+    @staticmethod
+    def attach_course(session, instructor_id, course_id):
+        """ Attach a course to an instructor """
+        instructor = Instructor.get_instructor_by_id(session, instructor_id)
+        if not instructor:
+            raise ValueError("Instructor not found")
         
-    #     community = instructor.company
-    #     if not Community.get_community_by_name(session, community):
-    #         raise ValueError("The community is not found")
+        course = Course.get_course_by_id(session, course_id)
+        if not course:
+            raise ValueError("Course not found")
         
+        if session.query(Offer).filter_by(instructor_id=instructor.id, course_id=course.id).first():
+            raise ValueError("Course is already attached to the instructor")
+        
+        instructor.courses.append(course)
+        session.flush()
 
+        return instructor.id
         
-    #     course = Course(
-    #         title=title,
-    #         description=description,
-    #         price=price,
-    #         discount=discount,
-    #         instructor_id=instructor_id
-    #     )
-    #     session.add(course)
-    #     session.flush()
-        
-    #     return course.id

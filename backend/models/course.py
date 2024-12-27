@@ -1,4 +1,4 @@
-from sqlalchemy import Enum, Column, Integer, Numeric, String, DateTime, ForeignKey, func
+from sqlalchemy import Enum, Column, Integer, Numeric, String, DateTime, ForeignKey, event, func
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -6,6 +6,7 @@ from enums.status import STATUS
 from enums.difficulty import DIFFICULTY
 from enums.course import COURSE
 from models.community import Community
+from models.review import Review
 
 class CourseBuilder:
     """ Unified builder for creating Course instances with factory method """
@@ -202,6 +203,10 @@ class Course(Base):
     # Many-to-one relationship with Community
     communities = relationship("Community", back_populates="courses")
 
+    # Many-to-many relationship with User
+    user_reviews = relationship("User", secondary="reviews", back_populates="course_reviews")
+    user_enrollments = relationship("User", secondary="enrollments", back_populates="course_enrollments")
+
     # Many-to-many relationship with Chapter
     # chapter_associations = relationship(
     #     "CourseChapter",
@@ -326,6 +331,18 @@ class Course(Base):
     
     def __repr__(self):
         return f'<Name: {self.name}'
+    
+@event.listens_for(Review, 'after_insert')
+@event.listens_for(Review, 'after_update')
+@event.listens_for(Review, 'after_delete')
+def update_course_rating(mapper, connection, target):
+    course = target.course
+    course.rating = (
+        connection.scalar(
+            connection.query(func.avg(Review.rating))
+            .filter_by(course_id=course.id)
+        ) or 0.00
+    )
 
 class AcademicCourse(Course):
     # for academic progressions with a broader and theoretical focus
