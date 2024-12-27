@@ -13,6 +13,7 @@ import {
 import React, { useState } from "react";
 import { Colors } from "@/constants/colors";
 import { memberGuestEditProfilePopUp as Constants } from "@/constants/textConstants";
+import { Picker } from "@react-native-picker/picker";
 
 interface FieldItemProps {
     inputTitle: string;
@@ -44,18 +45,35 @@ const FieldItem: React.FC<FieldItemProps> = ({
 interface FieldItemOptionsProps {
     inputTitle: string;
     options: string[];
+    defaultValue: string;
     onChange: (newValue: string) => void;
 }
 
 const FieldItemOptions: React.FC<FieldItemOptionsProps> = ({
     inputTitle,
     options,
+    defaultValue,
     onChange,
 }) => {
+    const [selectedValue, setSelectedValue] = useState(defaultValue);
     return (
         <View style={styles.content}>
             <Text style={styles.inputHeader}>{inputTitle}</Text>
-            <Text>Hi!</Text>
+            <Picker
+                selectedValue={selectedValue}
+                onValueChange={(itemValue) => {
+                    setSelectedValue(itemValue);
+                    onChange(itemValue);
+                }}
+            >
+                {options.map((option, index) => (
+                    <Picker.Item
+                        label={option}
+                        value={option.toLowerCase()}
+                        key={index}
+                    />
+                ))}
+            </Picker>
         </View>
     );
 };
@@ -110,6 +128,7 @@ const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
                                                 key={index}
                                                 inputTitle={detail.inputTitle}
                                                 options={detail.options || []}
+                                                defaultValue={initialValue}
                                                 onChange={(newValue) => {
                                                     if (newValue) {
                                                         setValue(newValue);

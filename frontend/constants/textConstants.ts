@@ -304,7 +304,7 @@ export const memberGuestEditProfilePage = {
             gender: {
                 inputTitle: "Gender",
                 modalDetails: [
-                    { inputTitle: "Gender", options: ["male", "female"] },
+                    { inputTitle: "Gender", options: ["Male", "Female"] },
                 ],
             },
         },

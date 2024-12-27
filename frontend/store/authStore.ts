@@ -419,9 +419,11 @@ const useAuthStore = create<AuthState>()(
                 );
                 const responseData = response.data;
                 if (response.status === 200) {
-                    console.log(responseData.message);
+                    console.log(
+                        "Edit Gender API: " + JSON.stringify(responseData)
+                    );
                     set({
-                        gender: responseData.gender,
+                        gender: new_gender,
                     });
                 }
             },

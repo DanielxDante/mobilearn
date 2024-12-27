@@ -17,6 +17,7 @@ import EditProfileFields from "@/components/EditProfileFields";
 
 const EditProfile = () => {
     const authStore = useAuthStore((state) => state);
+    console.log(authStore);
     const username = useAuthStore((state) => state.username);
     const email = useAuthStore((state) => state.email);
     const gender = useAuthStore((state) => state.gender);
