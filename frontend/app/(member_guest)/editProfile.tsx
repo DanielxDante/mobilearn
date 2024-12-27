@@ -25,6 +25,11 @@ const EditProfile = () => {
     const editEmail = useAuthStore((state) => state.editEmailUser);
     const editPassword = useAuthStore((state) => state.editPasswordUser);
 
+    const [newUsername, setNewUsername] = useState(username);
+    const [newEmail, setNewEmail] = useState(email);
+    const [newGender, setNewGender] = useState(gender);
+    const [newPicture, setNewPicture] = useState(profile_picture_url);
+
     const profile_picture = profile_picture_url
         ? { uri: profile_picture_url }
         : Constants.default_profile_picture;
@@ -37,6 +42,20 @@ const EditProfile = () => {
             setModalVisible(true);
         } else {
             setModalVisible(false);
+        }
+    };
+
+    const handleEditName = async () => {
+        if (newUsername.length == 0) {
+            alert("Username is empty");
+        } else {
+            try {
+                const response = await editName(newUsername);
+                alert(response);
+            } catch (error) {
+                console.log(error);
+                alert("Username has not been changed");
+            }
         }
     };
 
@@ -77,10 +96,10 @@ const EditProfile = () => {
                             <EditProfileFields
                                 title={Constants.fields[0].inputTitle}
                                 value={username}
-                                fields={Constants.fields[0].fieldDetails}
+                                modalDetails={Constants.fields[0].modalDetails}
                                 handleModal={handleModal}
                                 isPopUpVisible={modalVisible}
-                                onSave={editName}
+                                onSave={handleEditName}
                             />
                         </View>
                     </View>

@@ -10,28 +10,58 @@ import {
     TextInput,
 } from "react-native";
 import React, { useState } from "react";
+import { Colors } from "@/constants/colors";
 
 interface EditProfileFieldPopUpProps {
     title: string;
     initialValue: string;
-    fields: string[];
+    modalDetails: {
+        inputTitle: string;
+        placeholder: string;
+    }[];
     onSave: (newValue: string) => void;
     handleModal: () => void;
 }
 
+interface FieldItemProps {
+    inputTitle: string;
+    placeholder: string;
+    value: string;
+    onChange: (newValue: string) => void;
+}
+
+const FieldItem: React.FC<FieldItemProps> = ({
+    inputTitle,
+    placeholder,
+    value,
+    onChange,
+}) => {
+    return (
+        <View style={styles.content}>
+            <Text style={styles.inputHeader}>{inputTitle}</Text>
+            <TextInput
+                onChangeText={onChange}
+                value={value}
+                placeholder={placeholder}
+                placeholderTextColor="#AEAEAE"
+                style={styles.textInput}
+            />
+        </View>
+    );
+};
 const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
     title,
     initialValue,
-    fields,
+    modalDetails,
     onSave,
     handleModal,
 }) => {
     const [value, setValue] = useState(initialValue);
-
     const handleSave = () => {
         onSave(value);
         handleModal();
     };
+    console.log(modalDetails);
     return (
         <Modal
             animationType="fade"
@@ -42,25 +72,26 @@ const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
             <Pressable style={styles.modalBackground} onPressOut={handleModal}>
                 <TouchableWithoutFeedback>
                     <View style={styles.modalContainer}>
-                        {/* Title */}
-                        <View style={styles.titleView}>
-                            {/* <Pressable onPress={handleModal}>
-                                <Image
-                                    source={require("@/assets/images/icons/cross.png")}
-                                    style={styles.closeButton}
+                        <View>
+                            {/* Title */}
+                            <View style={styles.titleView}>
+                                {/* <Pressable onPress={handleModal}>
+                                    <Image
+                                        source={require("@/assets/images/icons/cross.png")}
+                                        style={styles.closeButton}
+                                    />
+                                </Pressable> */}
+                                <Text style={styles.title}>{title}</Text>
+                            </View>
+                            {modalDetails.map((detail, index) => (
+                                <FieldItem
+                                    key={index}
+                                    inputTitle={detail.inputTitle}
+                                    placeholder={detail.placeholder}
+                                    value={value}
+                                    onChange={(newValue) => setValue(newValue)}
                                 />
-                            </Pressable> */}
-                            <Text style={styles.title}>{title}</Text>
-                        </View>
-                        <View style={styles.content}>
-                            <Text style={styles.inputHeader}>{fields[0]}</Text>
-                            <TextInput
-                                onChangeText={setValue}
-                                value={value}
-                                placeholder={fields[1]}
-                                placeholderTextColor="#AEAEAE"
-                                style={styles.textInput}
-                            />
+                            ))}
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
@@ -108,10 +139,12 @@ const styles = StyleSheet.create({
     },
     inputHeader: {
         paddingVertical: 5,
+        color: Colors.defaultBlue,
     },
     textInput: {
         borderWidth: 1,
         borderRadius: 5,
+        borderColor: Colors.defaultBlue,
     },
 });
 

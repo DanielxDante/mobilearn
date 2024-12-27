@@ -283,10 +283,18 @@ export const memberGuestEditProfilePage = {
     fields: [
         {
             inputTitle: "Your username",
-            fieldDetails: ["Username", "Please enter"],
+            modalDetails: [
+                {
+                    inputTitle: "Username",
+                    placeholder: "Please enter username",
+                },
+            ],
         },
         {
             inputTitle: "Email",
+            modalDetails: [
+                { inputTitle: "Email", placeholder: "Please enter email" },
+            ],
         },
         {
             inputTitle: "Gender",
@@ -294,7 +302,7 @@ export const memberGuestEditProfilePage = {
         },
         {
             inputTitle: "Password",
-            placeholder: "******",
+            modalDetails: [{ inputTitle: "Password", placeholder: "******" }],
         },
     ],
     saveChanges: "Save",

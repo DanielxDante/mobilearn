@@ -8,7 +8,7 @@ import EditProfileFieldPopUp from "./EditProfileFieldPopUp";
 interface EditProfileFieldsProps {
     title: string;
     value: string;
-    fields: any;
+    modalDetails: any;
     handleModal: () => void;
     isPopUpVisible: boolean;
     onSave: (newValue: string) => void;
@@ -17,7 +17,7 @@ interface EditProfileFieldsProps {
 const EditProfileFields: React.FC<EditProfileFieldsProps> = ({
     title,
     value,
-    fields,
+    modalDetails,
     handleModal,
     isPopUpVisible,
     onSave,
@@ -37,7 +37,7 @@ const EditProfileFields: React.FC<EditProfileFieldsProps> = ({
                 <EditProfileFieldPopUp
                     title={title}
                     initialValue={value}
-                    fields={fields}
+                    modalDetails={modalDetails}
                     onSave={onSave}
                     handleModal={handleModal}
                 />

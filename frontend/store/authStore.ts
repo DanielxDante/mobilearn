@@ -89,7 +89,7 @@ export interface AuthState {
     //     new_password: string
     // ) => Promise<string>;
     editGenderUser: (new_gender: string) => Promise<void>;
-    editNameUser: (new_name: string) => Promise<void>;
+    editNameUser: (new_name: string) => Promise<string>;
     editProfilePictureUser: (file: File) => Promise<string>;
     getGenderUser: () => Promise<string>;
     getNameUser: () => Promise<string>;
@@ -438,6 +438,9 @@ const useAuthStore = create<AuthState>()(
                     set({
                         username: responseData.name,
                     });
+                    return "Name has been changed";
+                } else {
+                    return response.data;
                 }
             },
             editProfilePictureUser: async (file) => {
