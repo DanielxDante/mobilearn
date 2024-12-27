@@ -282,7 +282,8 @@ export const memberGuestEditProfilePage = {
     editProfilePicture: require("@/assets/images/icons/editProfilePicture.png"),
     fields: [
         {
-            inputTitle: "Username",
+            inputTitle: "Your username",
+            fieldDetails: ["Username", "Please enter"],
         },
         {
             inputTitle: "Email",
@@ -295,12 +296,14 @@ export const memberGuestEditProfilePage = {
             inputTitle: "Password",
             placeholder: "******",
         },
-        {
-            inputTitle: "Confirm Password",
-            placeholder: "******",
-        },
     ],
     saveChanges: "Save",
+    default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+};
+
+export const memberGuestEditProfileFields = {
+    edit: "Edit",
+    notAdded: "Not added",
 };
 
 export const memberGuestPaymentMethodPage = {

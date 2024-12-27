@@ -13,44 +13,30 @@ import useAuthStore from "@/store/authStore";
 import BackButton from "@/components/BackButton";
 import { memberGuestEditProfilePage as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
-import InputField from "@/components/InputField";
+import EditProfileFields from "@/components/EditProfileFields";
 
 const EditProfile = () => {
-    const { username, email, gender } = useAuthStore();
-
-    const [newProfilePicture, setNewProfilePicture] = useState("");
-    const [newUsername, setNewUsername] = useState("");
-    const [newEmail, setNewEmail] = useState("");
-    const [newGender, setNewGender] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-
+    const { username, email, gender, profile_picture_url } = useAuthStore();
     const editGender = useAuthStore((state) => state.editGenderUser);
+    const editProfilePicture = useAuthStore(
+        (state) => state.editProfilePictureUser
+    );
+    const editName = useAuthStore((state) => state.editNameUser);
+    const editEmail = useAuthStore((state) => state.editEmailUser);
+    const editPassword = useAuthStore((state) => state.editPasswordUser);
 
-    // useEffect(() = {
-    //     setNewUsername(username);
-    //     setNewEmail(email);
-    // }, [username, email]);
+    const profile_picture = profile_picture_url
+        ? { uri: profile_picture_url }
+        : Constants.default_profile_picture;
 
-    const handleSave = () => {
-        //     if (newUsername !== username) {
-        //         setUsername(newUsername);
-        //     }
-        //     if (newEmail !== email) {
-        //         setEmail(newEmail);
-        //     }
-        //     console.log("Profile updated: ", {newUsername, newEmail, password})
-    };
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-    const handleEditGender = async () => {
-        console.log(newGender);
-        try {
-            const response = await editGender(newGender);
-            if (typeof response == "string") {
-                setNewGender(response);
-            }
-        } catch (error) {
-            console.log(error);
+    const handleModal = () => {
+        console.log(modalVisible);
+        if (modalVisible === false) {
+            setModalVisible(true);
+        } else {
+            setModalVisible(false);
         }
     };
 
@@ -70,8 +56,14 @@ const EditProfile = () => {
                             style={styles.profilePictureContainer}
                         >
                             <Image
-                                source={require("@/assets/images/member_guest_images/temporaryImages/gerard.jpg")}
+                                source={profile_picture}
                                 style={styles.profilePicture}
+                                onError={(error) =>
+                                    console.error(
+                                        "Error loading image: ",
+                                        error.nativeEvent.error
+                                    )
+                                }
                             />
                             <View style={styles.editProfilePicture}>
                                 <Image
@@ -82,52 +74,15 @@ const EditProfile = () => {
                         </TouchableOpacity>
                         {/* Edit fields */}
                         <View style={styles.editFields}>
-                            {/* <InputField
-                                inputTitle={Constants.fields[0].inputTitle}
-                                placeholder={username}
-                                value={newUsername}
-                                onChangeText={setNewUsername}
+                            <EditProfileFields
+                                title={Constants.fields[0].inputTitle}
+                                value={username}
+                                fields={Constants.fields[0].fieldDetails}
+                                handleModal={handleModal}
+                                isPopUpVisible={modalVisible}
+                                onSave={editName}
                             />
-                            <InputField
-                                inputTitle={Constants.fields[1].inputTitle}
-                                placeholder={email}
-                                value={newEmail}
-                                onChangeText={setNewEmail}
-                            /> */}
-                            <InputField
-                                inputTitle={Constants.fields[2].inputTitle}
-                                placeholder={gender}
-                                value={newGender.toLowerCase()}
-                                onChangeText={setNewGender}
-                            />
-                            {/* <InputField
-                                inputTitle={Constants.fields[3].inputTitle}
-                                placeholder={
-                                    Constants.fields[3].placeholder ?? "******"
-                                }
-                                value={password}
-                                onChangeText={setPassword}
-                            />
-                            <InputField
-                                inputTitle={Constants.fields[4].inputTitle}
-                                placeholder={
-                                    Constants.fields[4].placeholder ?? "******"
-                                }
-                                value={confirmPassword}
-                                onChangeText={setConfirmPassword}
-                            /> */}
                         </View>
-                    </View>
-                    {/* Save button container */}
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                            onPress={handleEditGender}
-                            style={styles.saveButton}
-                        >
-                            <Text style={styles.buttonText}>
-                                {Constants.saveChanges}
-                            </Text>
-                        </TouchableOpacity>
                     </View>
                 </View>
             </ScrollView>
@@ -194,22 +149,6 @@ const styles = StyleSheet.create({
     editFields: {
         width: "100%",
         marginTop: 30,
-        paddingHorizontal: 20,
-    },
-    buttonContainer: {
-        alignItems: "center",
-    },
-    saveButton: {
-        backgroundColor: Colors.defaultBlue,
-        paddingVertical: 10,
-        paddingHorizontal: 30,
-        borderRadius: 5,
-        alignItems: "center",
-        marginVertical: 20,
-    },
-    buttonText: {
-        color: "#FFFFFF",
-        fontFamily: "Inter-Regular",
     },
 });
 
