@@ -12,17 +12,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { Colors } from "@/constants/colors";
-
-interface EditProfileFieldPopUpProps {
-    title: string;
-    initialValue: string;
-    modalDetails: {
-        inputTitle: string;
-        placeholder: string;
-    }[];
-    onSave: (newValue: string) => void;
-    handleModal: () => void;
-}
+import { memberGuestEditProfilePopUp as Constants } from "@/constants/textConstants";
 
 interface FieldItemProps {
     inputTitle: string;
@@ -50,6 +40,38 @@ const FieldItem: React.FC<FieldItemProps> = ({
         </View>
     );
 };
+
+interface FieldItemOptionsProps {
+    inputTitle: string;
+    options: string[];
+    onChange: (newValue: string) => void;
+}
+
+const FieldItemOptions: React.FC<FieldItemOptionsProps> = ({
+    inputTitle,
+    options,
+    onChange,
+}) => {
+    return (
+        <View style={styles.content}>
+            <Text style={styles.inputHeader}>{inputTitle}</Text>
+            <Text>Hi!</Text>
+        </View>
+    );
+};
+
+interface EditProfileFieldPopUpProps {
+    title: string;
+    initialValue: string;
+    modalDetails: {
+        inputTitle: string;
+        placeholder?: string;
+        options?: string[];
+    }[];
+    onSave: (newValue: string) => void;
+    handleModal: () => void;
+}
+
 const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
     title,
     initialValue,
@@ -58,10 +80,7 @@ const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
     handleModal,
 }) => {
     const [value, setValue] = useState(initialValue);
-    const handleSave = () => {
-        onSave(value);
-        handleModal();
-    };
+    console.log("modalDetails: " + JSON.stringify(modalDetails));
     return (
         <Modal
             animationType="fade"
@@ -83,19 +102,50 @@ const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
                                 </Pressable> */}
                                 <Text style={styles.title}>{title}</Text>
                             </View>
-                            {modalDetails.map((detail, index) => (
-                                <FieldItem
-                                    key={index}
-                                    inputTitle={detail.inputTitle}
-                                    placeholder={detail.placeholder}
-                                    value={value}
-                                    onChange={(newValue) => setValue(newValue)}
-                                />
-                            ))}
+                            <View style={styles.fieldItems}>
+                                {modalDetails.map((detail, index) => (
+                                    <View key={index}>
+                                        {detail.options ? (
+                                            <FieldItemOptions
+                                                key={index}
+                                                inputTitle={detail.inputTitle}
+                                                options={detail.options || []}
+                                                onChange={(newValue) => {
+                                                    if (newValue) {
+                                                        setValue(newValue);
+                                                    } else {
+                                                        console.log(
+                                                            "Invalid value selected"
+                                                        );
+                                                    }
+                                                }}
+                                            />
+                                        ) : (
+                                            <FieldItem
+                                                key={index}
+                                                inputTitle={detail.inputTitle}
+                                                placeholder={
+                                                    detail.placeholder ||
+                                                    "Please enter"
+                                                }
+                                                value={value}
+                                                onChange={(newValue) =>
+                                                    setValue(newValue)
+                                                }
+                                            />
+                                        )}
+                                    </View>
+                                ))}
+                            </View>
                         </View>
-                        <View>
-                            <TouchableOpacity onPress={() => onSave(value)}>
-                                <Text>Save</Text>
+                        <View style={styles.saveContainer}>
+                            <TouchableOpacity
+                                onPress={() => onSave(value)}
+                                style={styles.saveButton}
+                            >
+                                <Text style={styles.saveText}>
+                                    {Constants.save}
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -113,10 +163,11 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(0, 0, 0, 0.6)",
     },
     modalContainer: {
-        minHeight: "30%",
+        minHeight: "28%",
         width: "100%",
         backgroundColor: "white",
         borderRadius: 10,
+        justifyContent: "space-between",
     },
     titleView: {
         height: 50,
@@ -131,6 +182,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         paddingVertical: 8,
     },
+    fieldItems: {
+        paddingTop: 5,
+    },
     closeButton: {
         height: 26,
         width: 26,
@@ -141,6 +195,7 @@ const styles = StyleSheet.create({
     content: {
         paddingHorizontal: 15,
         paddingVertical: 3,
+        borderWidth: 1,
     },
     inputHeader: {
         paddingVertical: 5,
@@ -150,6 +205,22 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         borderColor: Colors.defaultBlue,
+    },
+    saveContainer: {
+        paddingHorizontal: 15,
+        paddingVertical: 20,
+        alignItems: "center",
+    },
+    saveButton: {
+        backgroundColor: Colors.defaultBlue,
+        borderRadius: 7,
+        paddingVertical: 11,
+        paddingHorizontal: 25,
+    },
+    saveText: {
+        fontFamily: "Inter-Regular",
+        fontSize: 14,
+        color: "white",
     },
 });
 

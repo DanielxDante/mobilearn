@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 
 import { memberGuestEditProfileFields as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
@@ -7,39 +7,44 @@ import EditProfileFieldPopUp from "./EditProfileFieldPopUp";
 
 interface EditProfileFieldsProps {
     title: string;
-    value: string;
+    initialValue: string;
     modalDetails: any;
-    handleModal: () => void;
-    isPopUpVisible: boolean;
     onSave: (newValue: string) => void;
 }
 
 const EditProfileFields: React.FC<EditProfileFieldsProps> = ({
     title,
-    value,
+    initialValue,
     modalDetails,
-    handleModal,
-    isPopUpVisible,
     onSave,
 }) => {
+    const [value, setValue] = useState(initialValue);
+    const [localModalVisible, setLocalModalVisible] = useState(false);
+    const onSave2 = async (updatedField: string) => {
+        setValue(updatedField);
+        onSave(updatedField);
+    };
+
+    const handleLocalModal = () => {
+        setLocalModalVisible(!localModalVisible);
+    };
     return (
         <View style={styles.container}>
-            <View style={styles.line}></View>
             <View style={styles.titleRow}>
                 <Text style={styles.title}>{title}</Text>
-                <TouchableOpacity onPress={handleModal}>
+                <TouchableOpacity onPress={handleLocalModal}>
                     <Text style={styles.edit}>{Constants.edit}</Text>
                 </TouchableOpacity>
             </View>
             <Text style={styles.value}>{value || Constants.notAdded}</Text>
             <View style={styles.line}></View>
-            {isPopUpVisible && (
+            {localModalVisible && (
                 <EditProfileFieldPopUp
                     title={title}
                     initialValue={value}
                     modalDetails={modalDetails}
-                    onSave={onSave}
-                    handleModal={handleModal}
+                    onSave={onSave2}
+                    handleModal={handleLocalModal}
                 />
             )}
         </View>
