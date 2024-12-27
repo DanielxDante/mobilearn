@@ -25,10 +25,10 @@ const EditProfile = () => {
     const editEmail = useAuthStore((state) => state.editEmailUser);
     const editPassword = useAuthStore((state) => state.editPasswordUser);
 
-    const [newUsername, setNewUsername] = useState(username);
-    const [newEmail, setNewEmail] = useState(email);
-    const [newGender, setNewGender] = useState(gender);
-    const [newPicture, setNewPicture] = useState(profile_picture_url);
+    // const [newUsername, setNewUsername] = useState(username);
+    // const [newEmail, setNewEmail] = useState(email);
+    // const [newGender, setNewGender] = useState(gender);
+    // const [newPicture, setNewPicture] = useState(profile_picture_url);
 
     const profile_picture = profile_picture_url
         ? { uri: profile_picture_url }
@@ -37,7 +37,7 @@ const EditProfile = () => {
     const [modalVisible, setModalVisible] = useState<boolean>(false);
 
     const handleModal = () => {
-        console.log(modalVisible);
+        console.log("Modal visibility: " + !modalVisible);
         if (modalVisible === false) {
             setModalVisible(true);
         } else {
@@ -45,12 +45,12 @@ const EditProfile = () => {
         }
     };
 
-    const handleEditName = async () => {
-        if (newUsername.length == 0) {
+    const handleEditName = async (newName: string) => {
+        if (newName.length == 0) {
             alert("Username is empty");
         } else {
             try {
-                const response = await editName(newUsername);
+                const response = await editName(newName);
                 alert(response);
             } catch (error) {
                 console.log(error);
@@ -94,9 +94,15 @@ const EditProfile = () => {
                         {/* Edit fields */}
                         <View style={styles.editFields}>
                             <EditProfileFields
-                                title={Constants.fields[0].inputTitle}
+                                title={
+                                    Constants.fields.find((field) => field.name)
+                                        ?.name?.inputTitle ?? "Your username"
+                                }
                                 value={username}
-                                modalDetails={Constants.fields[0].modalDetails}
+                                modalDetails={
+                                    Constants.fields.find((field) => field.name)
+                                        ?.name?.modalDetails ?? "Error"
+                                }
                                 handleModal={handleModal}
                                 isPopUpVisible={modalVisible}
                                 onSave={handleEditName}

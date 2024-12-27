@@ -8,6 +8,7 @@ import {
     TouchableWithoutFeedback,
     Pressable,
     TextInput,
+    Button,
 } from "react-native";
 import React, { useState } from "react";
 import { Colors } from "@/constants/colors";
@@ -61,7 +62,6 @@ const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
         onSave(value);
         handleModal();
     };
-    console.log(modalDetails);
     return (
         <Modal
             animationType="fade"
@@ -70,7 +70,7 @@ const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
             onRequestClose={handleModal}
         >
             <Pressable style={styles.modalBackground} onPressOut={handleModal}>
-                <TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => {}}>
                     <View style={styles.modalContainer}>
                         <View>
                             {/* Title */}
@@ -92,6 +92,11 @@ const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
                                     onChange={(newValue) => setValue(newValue)}
                                 />
                             ))}
+                        </View>
+                        <View>
+                            <TouchableOpacity onPress={() => onSave(value)}>
+                                <Text>Save</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </TouchableWithoutFeedback>

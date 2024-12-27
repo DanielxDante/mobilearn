@@ -282,27 +282,37 @@ export const memberGuestEditProfilePage = {
     editProfilePicture: require("@/assets/images/icons/editProfilePicture.png"),
     fields: [
         {
-            inputTitle: "Your username",
-            modalDetails: [
-                {
-                    inputTitle: "Username",
-                    placeholder: "Please enter username",
-                },
-            ],
+            name: {
+                inputTitle: "Your username",
+                modalDetails: [
+                    {
+                        inputTitle: "Username",
+                        placeholder: "Please enter username",
+                    },
+                ],
+            },
         },
         {
-            inputTitle: "Email",
-            modalDetails: [
-                { inputTitle: "Email", placeholder: "Please enter email" },
-            ],
+            email: {
+                inputTitle: "Email",
+                modalDetails: [
+                    { inputTitle: "Email", placeholder: "Please enter email" },
+                ],
+            },
         },
         {
-            inputTitle: "Gender",
-            options: ["Male", "Female"],
+            gender: {
+                inputTitle: "Gender",
+                options: ["Male", "Female"],
+            },
         },
         {
-            inputTitle: "Password",
-            modalDetails: [{ inputTitle: "Password", placeholder: "******" }],
+            password: {
+                inputTitle: "Password",
+                modalDetails: [
+                    { inputTitle: "Password", placeholder: "******" },
+                ],
+            },
         },
     ],
     saveChanges: "Save",

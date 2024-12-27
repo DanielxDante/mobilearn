@@ -12,7 +12,12 @@ import { router } from "expo-router";
 import { CAROUSEL_PAGE } from "@/constants/pages";
 
 const Profile = () => {
-    const { username, email, profile_picture_url, logout } = useAuthStore();
+    const username = useAuthStore((state) => state.username);
+    const email = useAuthStore((state) => state.email);
+    const profile_picture_url = useAuthStore(
+        (state) => state.profile_picture_url
+    );
+    const logout = useAuthStore((state) => state.logout);
 
     const profile_picture = profile_picture_url
         ? { uri: profile_picture_url }
