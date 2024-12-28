@@ -111,7 +111,7 @@ class InstructorSignupEndpoint(Resource):
         with session_scope() as session:
             try:
                 community = Community.get_community_by_name(session, company)
-                
+
                 instructor = Instructor.add_instructor(
                     session,
                     name,

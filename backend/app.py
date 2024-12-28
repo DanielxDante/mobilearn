@@ -195,11 +195,20 @@ def init_community_endpoints():
 
 def init_course_endpoints():
     from endpoints.course.course import (
+        GetCourseEndpoint,
         GetUserCoursesEndpoint,
         GetInstructorCoursesEndpoint,
         CreateCourseEndpoint
     )
     from endpoints.course.review import GetUserCourseReviewEndpoint, SaveReviewEndpoint
+    from endpoints.course.enroll import (
+        GetUserEnrolledCoursesEndpoint,
+        EnrollUserEndpoint,
+        WithdrawUserEndpoint
+    )
+
+    get_course_path = f"/{VERSION}/course/getCourse/<string:course_id>"
+    ns_course.add_resource(GetCourseEndpoint, get_course_path)
 
     get_user_courses_path = f"/{VERSION}/course/getUserCourses"
     ns_course.add_resource(GetUserCoursesEndpoint, get_user_courses_path)
@@ -216,6 +225,15 @@ def init_course_endpoints():
     save_course_review_path = f"/{VERSION}/course/saveReview"
     ns_course.add_resource(SaveReviewEndpoint, save_course_review_path)
 
+    get_user_enrolled_courses_path = f"/{VERSION}/course/getEnrolledCourses"
+    ns_course.add_resource(GetUserEnrolledCoursesEndpoint, get_user_enrolled_courses_path)
+
+    enroll_user_path = f"/{VERSION}/course/enroll"
+    ns_course.add_resource(EnrollUserEndpoint, enroll_user_path)
+
+    withdraw_user_path = f"/{VERSION}/course/withdraw"
+    ns_course.add_resource(WithdrawUserEndpoint, withdraw_user_path)
+
 def init_analytics_endpoints():
     pass
 
@@ -228,6 +246,7 @@ def init_admin_endpoints():
     from endpoints.admin.membership import ChangeUserMembershipEndpoint
     from endpoints.admin.channel import CreateChannelEndpoint
     from endpoints.admin.community import CreateCommunityEndpoint, AttachCommunityToChannelEndpoint
+    from endpoints.admin.course import EnrollUserEndpoint
 
     change_user_status_path = f"/{VERSION}/user/editStatus"
     ns_admin.add_resource(ChangeUserStatusEndpoint, change_user_status_path)
@@ -249,6 +268,9 @@ def init_admin_endpoints():
 
     attach_community_to_channel_path = f"/{VERSION}/community/attach"
     ns_admin.add_resource(AttachCommunityToChannelEndpoint, attach_community_to_channel_path)
+
+    enroll_user_path = f"/{VERSION}/course/enroll"
+    ns_admin.add_resource(EnrollUserEndpoint, enroll_user_path)
 
 def init_internal_endpoints():
     pass

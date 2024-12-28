@@ -16,6 +16,39 @@ from models.community import Community
 from services.course_services import CourseService
 from utils.s3 import s3_client, allowed_file, bucket_name, cloudfront_domain
 
+class GetCourseEndpoint(Resource):
+    @api.doc(
+        responses={
+            200: 'Ok',
+            401: 'Unauthorized',
+            404: 'Resource not found',
+            500: 'Internal Server Error'
+        },
+        params={
+            'Authorization': {
+                'in': 'header',
+                'description': 'Bearer token',
+                'required': True
+            }
+        },
+    )
+    @jwt_required()
+    def get(self, course_id):
+        """ Get course info """
+        session = create_session()
+
+        try:
+            course = Course.get_course_by_id(session, course_id)
+            return Response(
+                json.dumps({'course': course.to_dict()}),
+                status=200, mimetype='application/json'
+            )
+        except ValueError as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        
 class GetUserCoursesEndpoint(Resource):
     @api.doc(
         responses={
@@ -34,7 +67,7 @@ class GetUserCoursesEndpoint(Resource):
     )
     @jwt_required()
     def get(self):
-        """ Get courses the user can get access to """
+        """ Get all courses the user can get access to """
         current_email = get_jwt_identity()
 
         session = create_session()
@@ -147,6 +180,7 @@ class CreateCourseEndpoint(Resource):
     @api.expect(create_course_parser)
     @jwt_required()
     def post(self):
+        """ Create a course """
         data = request.form
         name = data.get('name')
         description = data.get('description')
@@ -247,3 +281,7 @@ class CreateCourseEndpoint(Resource):
             json.dumps({'message': f'Course ({name}) created'}),
             status=200, mimetype="application/json"
         )
+
+# edit_course_parser = api.parser()
+
+# class EditCourseEndpoint(Resource):

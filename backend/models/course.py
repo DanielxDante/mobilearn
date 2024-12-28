@@ -1,5 +1,17 @@
-from sqlalchemy import Enum, Column, Integer, Numeric, String, DateTime, ForeignKey, event, func
+from sqlalchemy import (
+    Enum,
+    Column,
+    Integer,
+    Numeric,
+    String,
+    DateTime,
+    ForeignKey,
+    event,
+    func,
+    select
+)
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from database import Base
 from enums.status import STATUS
@@ -182,7 +194,7 @@ class Course(Base):
 
     # common fields
     duration = Column(Numeric(5, 1), nullable=True) # weeks
-    rating = Column(Numeric(2, 2), nullable=True, default=0.00) # 0 means unrated, users can rate from 0 to 5
+    rating = Column(Numeric(4, 2), nullable=True, default=0.00) # 0 means unrated, users can rate from 0.00 to 5.00
     image_url = Column(String, nullable=True)
     currency = Column(String, nullable=True, default='USD') # ISO 4217, default in USD
     price = Column(Numeric(10, 2), nullable=True, default=0.00) # 0 means free
@@ -336,13 +348,21 @@ class Course(Base):
 @event.listens_for(Review, 'after_update')
 @event.listens_for(Review, 'after_delete')
 def update_course_rating(mapper, connection, target):
-    course = target.course
-    course.rating = (
-        connection.scalar(
-            connection.query(func.avg(Review.rating))
-            .filter_by(course_id=course.id)
-        ) or 0.00
+    course_id = target.course_id
+    stmt = (
+        select(func.avg(Review.rating))
+        .where(Review.course_id == course_id)
     )
+    avg_rating = connection.execute(stmt).scalar()
+    if avg_rating:
+        avg_rating = round(avg_rating, 2)
+    
+    connection.execute(
+        Course.__table__.update()
+        .where(Course.id == course_id)
+        .values(rating=avg_rating)
+    )
+    
 
 class AcademicCourse(Course):
     # for academic progressions with a broader and theoretical focus
@@ -358,6 +378,29 @@ class AcademicCourse(Course):
         'polymorphic_identity': COURSE.ACADEMIC
     }
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'community_id': self.community_id,
+            'name': self.name,
+            'description': self.description,
+            'course_type': self.course_type,
+            'duration': float(self.duration),
+            'rating': float(self.rating),
+            'image_url': self.image_url,
+            'currency': self.currency,
+            'price': float(self.price),
+            'difficulty': self.difficulty,
+            'skills': self.skills.split(', ') if self.skills else [],
+            'school_name': self.school_name,
+            'program_type': self.program_type,
+            'field': self.field,
+            'major': self.major,
+            'created': self.created.isoformat() if self.created else None,
+            'updated': self.updated.isoformat() if self.updated else None,
+            'status': self.status
+        }
+
 class ProfessionalCourse(Course):
     # earn career credentials from industry leaders that demostrate expertise
     __tablename__ = 'professional_courses'
@@ -370,6 +413,26 @@ class ProfessionalCourse(Course):
         'polymorphic_identity': COURSE.PROFESSIONAL
     }
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'community_id': self.community_id,
+            'name': self.name,
+            'description': self.description,
+            'course_type': self.course_type,
+            'duration': float(self.duration),
+            'rating': float(self.rating),
+            'image_url': self.image_url,
+            'currency': self.currency,
+            'price': float(self.price),
+            'difficulty': self.difficulty,
+            'skills': self.skills.split(', ') if self.skills else [],
+            'department': self.department,
+            'created': self.created.isoformat() if self.created else None,
+            'updated': self.updated.isoformat() if self.updated else None,
+            'status': self.status
+        }
+
 class SpecializationCourse(Course):
     # get in-depth knowledge of a subject
     __tablename__ = 'specialization_courses'
@@ -381,6 +444,26 @@ class SpecializationCourse(Course):
         'polymorphic_identity': COURSE.SPECIALIZATION
     }
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'community_id': self.community_id,
+            'name': self.name,
+            'description': self.description,
+            'course_type': self.course_type,
+            'duration': float(self.duration),
+            'rating': float(self.rating),
+            'image_url': self.image_url,
+            'currency': self.currency,
+            'price': float(self.price),
+            'difficulty': self.difficulty,
+            'skills': self.skills.split(', ') if self.skills else [],
+            'subject': self.subject,
+            'created': self.created.isoformat() if self.created else None,
+            'updated': self.updated.isoformat() if self.updated else None,
+            'status': self.status
+        }
+
 class ProjectCourse(Course):
     # learn a new tool or skill in an interactive, hands-on environment
     __tablename__ = 'project_courses'
@@ -391,3 +474,23 @@ class ProjectCourse(Course):
     __mapper_args__ = {
         'polymorphic_identity': COURSE.PROJECT
     }
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'community_id': self.community_id,
+            'name': self.name,
+            'description': self.description,
+            'course_type': self.course_type,
+            'duration': float(self.duration),
+            'rating': float(self.rating),
+            'image_url': self.image_url,
+            'currency': self.currency,
+            'price': float(self.price),
+            'difficulty': self.difficulty,
+            'skills': self.skills.split(', ') if self.skills else [],
+            'platform': self.platform,
+            'created': self.created.isoformat() if self.created else None,
+            'updated': self.updated.isoformat() if self.updated else None,
+            'status': self.status
+        }

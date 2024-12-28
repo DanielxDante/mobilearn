@@ -45,7 +45,7 @@ class GetUserCourseReviewEndpoint(Resource):
                 )
             return Response(
                 json.dumps({
-                    'rating': review.rating,
+                    'rating': float(review.rating),
                     'review_text': review.review_text
                 }),
                 status=200, mimetype='application/json'

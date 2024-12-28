@@ -1,6 +1,6 @@
 from models.user import User
 from models.channel import Channel, STATUS as CHANNEL_STATUS
-from models.course import Course
+from models.course import Course, STATUS as COURSE_STATUS
 from models.user_channel import UserChannel
 from models.enrollment import Enrollment
 from models.review import Review
@@ -36,7 +36,18 @@ class UserService:
         if not user:
             raise ValueError("User not found")
         
-        return user.course_enrollments
+        courses = (
+            session.query(Course)
+            .join(Enrollment)
+            .filter(
+                Enrollment.user_id == user.id,
+                Course.status == COURSE_STATUS.ACTIVE
+            )
+            .order_by(Course.created.desc())
+            .all()
+        )
+        
+        return courses
     
     @staticmethod
     def enroll_user(session, user_email, course_id):
@@ -59,7 +70,7 @@ class UserService:
         session.add(enrollment)
         session.flush()
         
-        return enrollment.id
+        return enrollment
     
     @staticmethod
     def withdraw_user(session, user_email, course_id):
@@ -80,6 +91,11 @@ class UserService:
         
         if not enrollment:
             raise ValueError("User is not enrolled in the course")
+        
+        try:
+            UserService.delete_review(session, user_email, course_id)
+        except ValueError:
+            pass
         
         session.delete(enrollment)
         session.flush()
@@ -132,7 +148,7 @@ class UserService:
         session.add(review)
         session.flush()
         
-        return review.id
+        return review
     
     @staticmethod
     def edit_review(
@@ -144,16 +160,45 @@ class UserService:
     ):
         """ Edit a review """
         user = User.get_user_by_email(session, user_email)
+        if not user:
+            raise ValueError("User not found")
+
         course = Course.get_course_by_id(session, course_id)
+        if not course:
+            raise ValueError("Course not found")
         
         review = (
             session.query(Review)
             .filter_by(user_id=user.id, course_id=course.id)
             .first()
         )
+        if not review:
+            raise ValueError("Review not found")
         
         review.rating = new_rating
         review.review_text = new_review_text
         session.flush()
         
-        return review.id
+        return review
+    
+    @staticmethod
+    def delete_review(session, user_email, course_id):
+        """ Delete a review """
+        user = User.get_user_by_email(session, user_email)
+        if not user:
+            raise ValueError("User not found")
+        
+        course = Course.get_course_by_id(session, course_id)
+        if not course:
+            raise ValueError("Course not found")
+        
+        review = (
+            session.query(Review)
+            .filter_by(user_id=user.id, course_id=course.id)
+            .first()
+        )
+        if not review:
+            raise ValueError("Review not found")
+        
+        session.delete(review)
+        session.flush()
