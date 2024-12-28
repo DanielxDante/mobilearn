@@ -20,18 +20,23 @@ const EditProfileFields: React.FC<EditProfileFieldsProps> = ({
 }) => {
     const [value, setValue] = useState(initialValue);
     const [localModalVisible, setLocalModalVisible] = useState(false);
+    // INTERMEDIATE METHOD TO RENDER ON FRONTEND
     const onSave2 = async (updatedField: string | any, optionalArg?: any) => {
         setValue(updatedField);
         if (onSave.length === 2) {
-            onSave(updatedField, optionalArg); //For password
+            // USED FOR PASSWORD FIELDS WITH 2 PARAMETERS
+            onSave(updatedField, optionalArg);
         } else {
+            // USED FOR NAME, EMAIL, GENDER FIELDS WITH ONLY 1 PARAMETER
             onSave(updatedField);
         }
     };
 
+    // METHOD TO TOGGLE MODAL VISIBILITY
     const handleLocalModal = () => {
         setLocalModalVisible(!localModalVisible);
     };
+
     return (
         <View style={styles.container}>
             <View style={styles.titleRow}>
