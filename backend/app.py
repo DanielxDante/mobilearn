@@ -29,10 +29,10 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # api paths under namespaces automatically have name prepended 
 ns_auth = Namespace(name='auth', description='Authentication operations')
 ns_account = Namespace(name='account', description='Account operations')
-ns_recommender = Namespace(name='recommender', description='Recommender system operations')
 ns_channel = Namespace(name='channel', description='Channel operations')
 ns_community = Namespace(name='community', description='Community operations')
 ns_course = Namespace(name='course', description='Course operations')
+ns_analytics = Namespace(name='analytics', description='Analytics operations')
 ns_admin = Namespace(name='admin', description='Admin operations')
 ns_internal = Namespace(name='internal', description='Internal operations')
 
@@ -194,13 +194,47 @@ def init_community_endpoints():
     ns_community.add_resource(GetCommunityInstructorsEndpoint, get_community_instructors_path)
 
 def init_course_endpoints():
-    # from endpoints.course.course import CourseEndpoint
+    from endpoints.course.course import (
+        GetCourseEndpoint,
+        GetUserCoursesEndpoint,
+        GetInstructorCoursesEndpoint,
+        CreateCourseEndpoint
+    )
+    from endpoints.course.review import GetUserCourseReviewEndpoint, SaveReviewEndpoint
+    from endpoints.course.enroll import (
+        GetUserEnrolledCoursesEndpoint,
+        EnrollUserEndpoint,
+        WithdrawUserEndpoint
+    )
 
-    # course_path = f"/{VERSION}/addCourse"
-    # ns_course.add_resource(CourseEndpoint, course_path)
-    pass
+    get_course_path = f"/{VERSION}/course/getCourse/<string:course_id>"
+    ns_course.add_resource(GetCourseEndpoint, get_course_path)
 
-def init_recommender_endpoints():
+    get_user_courses_path = f"/{VERSION}/course/getUserCourses"
+    ns_course.add_resource(GetUserCoursesEndpoint, get_user_courses_path)
+
+    get_instructor_courses_path = f"/{VERSION}/course/getInstructorCourses"
+    ns_course.add_resource(GetInstructorCoursesEndpoint, get_instructor_courses_path)
+
+    create_course_path = f"/{VERSION}/course/create"
+    ns_course.add_resource(CreateCourseEndpoint, create_course_path)
+
+    get_user_course_review_path = f"/{VERSION}/course/getUserReview/<string:course_id>"
+    ns_course.add_resource(GetUserCourseReviewEndpoint, get_user_course_review_path)
+
+    save_course_review_path = f"/{VERSION}/course/saveReview"
+    ns_course.add_resource(SaveReviewEndpoint, save_course_review_path)
+
+    get_user_enrolled_courses_path = f"/{VERSION}/course/getEnrolledCourses"
+    ns_course.add_resource(GetUserEnrolledCoursesEndpoint, get_user_enrolled_courses_path)
+
+    enroll_user_path = f"/{VERSION}/course/enroll"
+    ns_course.add_resource(EnrollUserEndpoint, enroll_user_path)
+
+    withdraw_user_path = f"/{VERSION}/course/withdraw"
+    ns_course.add_resource(WithdrawUserEndpoint, withdraw_user_path)
+
+def init_analytics_endpoints():
     pass
 
 def init_admin_endpoints():
@@ -212,6 +246,7 @@ def init_admin_endpoints():
     from endpoints.admin.membership import ChangeUserMembershipEndpoint
     from endpoints.admin.channel import CreateChannelEndpoint
     from endpoints.admin.community import CreateCommunityEndpoint, AttachCommunityToChannelEndpoint
+    from endpoints.admin.course import EnrollUserEndpoint
 
     change_user_status_path = f"/{VERSION}/user/editStatus"
     ns_admin.add_resource(ChangeUserStatusEndpoint, change_user_status_path)
@@ -234,6 +269,9 @@ def init_admin_endpoints():
     attach_community_to_channel_path = f"/{VERSION}/community/attach"
     ns_admin.add_resource(AttachCommunityToChannelEndpoint, attach_community_to_channel_path)
 
+    enroll_user_path = f"/{VERSION}/course/enroll"
+    ns_admin.add_resource(EnrollUserEndpoint, enroll_user_path)
+
 def init_internal_endpoints():
     pass
 
@@ -248,17 +286,17 @@ def init():
     init_account_endpoints()
     api.add_namespace(ns_account)
 
-    init_course_endpoints()
-    api.add_namespace(ns_course)
-
     init_channel_endpoints()
     api.add_namespace(ns_channel)
 
     init_community_endpoints()
     api.add_namespace(ns_community)
 
-    init_recommender_endpoints()
-    api.add_namespace(ns_recommender)
+    init_course_endpoints()
+    api.add_namespace(ns_course)
+
+    init_analytics_endpoints()
+    api.add_namespace(ns_analytics)
 
     init_admin_endpoints()
     api.add_namespace(ns_admin)

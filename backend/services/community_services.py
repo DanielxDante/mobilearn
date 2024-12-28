@@ -27,32 +27,32 @@ class CommunityService:
         return instructors
 
     @staticmethod
-    def attach_instructor(session, community_id, instructor_email):
+    def attach_instructor(session, community_id, instructor_id):
         """ Attach an instructor to a community """
         community = Community.get_community_by_id(session, community_id)
         if not community:
             raise ValueError("Community not found")
-        
-        instructor = Instructor.get_instructor_by_email(session, instructor_email)
+
+        instructor = Instructor.get_instructor_by_id(session, instructor_id)
         if not instructor:
             raise ValueError("Instructor not found")
-        
+
         if session.query(CommunityInstructor).filter_by(instructor_id=instructor.id, community_id=community.id).first():
             raise ValueError("Instructor is already attached to the community")
-        
+
         community.instructors.append(instructor)
         session.flush()
 
         return community.id
     
     @staticmethod
-    def detach_instructor(session, community_id, instructor_email):
+    def detach_instructor(session, community_id, instructor_id):
         """ Detach an instructor from a community """
         community = Community.get_community_by_id(session, community_id)
         if not community:
             raise ValueError("Community not found")
         
-        instructor = Instructor.get_instructor_by_email(session, instructor_email)
+        instructor = Instructor.get_instructor_by_id(session, instructor_id)
         if not instructor:
             raise ValueError("Instructor not found")
         

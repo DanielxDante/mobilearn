@@ -8,6 +8,8 @@ from enums.gender import GENDER
 from enums.status import STATUS
 from enums.membership import MEMBERSHIP
 from models.user_channel import UserChannel
+from models.review import Review
+from models.enrollment import Enrollment
 
 class User(Base):
     __tablename__ = 'users'
@@ -33,6 +35,10 @@ class User(Base):
 
     # Many-to=many relationship with Channel
     channels = relationship("Channel", secondary="user_channels", back_populates="users")
+
+    # Many-to-many relationship with Course
+    course_reviews = relationship("Course", secondary="reviews", back_populates="user_reviews")
+    course_enrollments = relationship("Course", secondary="enrollments", back_populates="user_enrollments")
 
     @hybrid_property
     def password(self):

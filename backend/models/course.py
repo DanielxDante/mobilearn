@@ -1,11 +1,24 @@
-from sqlalchemy import Enum, Column, Integer, Numeric, String, DateTime, ForeignKey, func
+from sqlalchemy import (
+    Enum,
+    Column,
+    Integer,
+    Numeric,
+    String,
+    DateTime,
+    ForeignKey,
+    event,
+    func,
+    select
+)
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from database import Base
 from enums.status import STATUS
 from enums.difficulty import DIFFICULTY
 from enums.course import COURSE
 from models.community import Community
+from models.review import Review
 
 class CourseBuilder:
     """ Unified builder for creating Course instances with factory method """
@@ -16,7 +29,7 @@ class CourseBuilder:
             'description': None,
             'course_type': course_type,
             'duration': None,
-            'rating': Numeric('0.0'),
+            'rating': 0.00,
             'image_url': None,
             'currency': 'USD',
             'price': None,
@@ -46,7 +59,6 @@ class CourseBuilder:
         builder = cls(COURSE.PROFESSIONAL)
         builder._specific_attrs = {
             'department': None,
-            'skill': None
         }
         return builder
 
@@ -79,7 +91,7 @@ class CourseBuilder:
     def duration(self, duration: float) -> 'CourseBuilder':
         if duration < 0:
             raise ValueError("Duration cannot be negative")
-        self._course['duration'] = Numeric(str(duration))
+        self._course['duration'] = float(str(duration))
         return self
 
     def image_url(self, url: str) -> 'CourseBuilder':
@@ -89,7 +101,7 @@ class CourseBuilder:
     def price(self, price: float, currency: str = 'USD') -> 'CourseBuilder':
         if price < 0:
             raise ValueError("Price cannot be negative")
-        self._course['price'] = Numeric(str(price))
+        self._course['price'] = float(str(price))
         self._course['currency'] = currency
         return self
 
@@ -135,12 +147,6 @@ class CourseBuilder:
         if self._course['course_type'] != COURSE.PROFESSIONAL:
             raise ValueError("department is only valid for professional courses")
         self._specific_attrs['department'] = department
-        return self
-
-    def skill(self, skill: str) -> 'CourseBuilder':
-        if self._course['course_type'] != COURSE.PROFESSIONAL:
-            raise ValueError("skill is only valid for professional courses")
-        self._specific_attrs['skill'] = skill
         return self
     
     # SpecializationCourse methods
@@ -188,11 +194,11 @@ class Course(Base):
 
     # common fields
     duration = Column(Numeric(5, 1), nullable=True) # weeks
-    rating = Column(Numeric(2, 1), nullable=True, default=0.0, check_constraint='rating >= 0.0 AND rating <= 5.0') # 0 means unrated, users can rate from 0 to 5
+    rating = Column(Numeric(4, 2), nullable=True, default=0.00) # 0 means unrated, users can rate from 0.00 to 5.00
     image_url = Column(String, nullable=True)
     currency = Column(String, nullable=True, default='USD') # ISO 4217, default in USD
     price = Column(Numeric(10, 2), nullable=True, default=0.00) # 0 means free
-    difficulty = Column(Enum(DIFFICULTY), nullable=False)
+    difficulty = Column(Enum(DIFFICULTY), nullable=True)
     skills = Column(String, nullable=True)
     created = Column(DateTime(timezone=True), default=func.now(), nullable=False)
     updated = Column(DateTime(timezone=True), default=func.now(), nullable=False)
@@ -208,6 +214,10 @@ class Course(Base):
 
     # Many-to-one relationship with Community
     communities = relationship("Community", back_populates="courses")
+
+    # Many-to-many relationship with User
+    user_reviews = relationship("User", secondary="reviews", back_populates="course_reviews")
+    user_enrollments = relationship("User", secondary="enrollments", back_populates="course_enrollments")
 
     # Many-to-many relationship with Chapter
     # chapter_associations = relationship(
@@ -275,7 +285,7 @@ class Course(Base):
                 builder.price(kwargs['price'], kwargs.get('currency', 'USD'))
             if 'difficulty' in kwargs:
                 builder.difficulty(kwargs['difficulty'])
-            if 'skills' in kwargs: # make sure none of the skills have commas
+            if 'skills' in kwargs: # delimited by commas
                 builder.skills(kwargs['skills'])
             if 'status' in kwargs:
                 builder.status(kwargs['status'])
@@ -292,8 +302,6 @@ class Course(Base):
             elif course_type == COURSE.PROFESSIONAL: 
                 if 'department' in kwargs:
                     builder.department(kwargs['department'])
-                if 'skill' in kwargs:
-                    builder.skill(kwargs['skill'])
             elif course_type == COURSE.SPECIALIZATION:
                 if 'subject' in kwargs:
                     builder.subject(kwargs['subject'])
@@ -304,8 +312,6 @@ class Course(Base):
             course = builder.build()
 
             community = Community.get_community_by_id(session, community_id)
-            if not community:
-                raise ValueError("Community not found")
             community.courses.append(course)
             
             session.flush()
@@ -337,6 +343,26 @@ class Course(Base):
     
     def __repr__(self):
         return f'<Name: {self.name}'
+    
+@event.listens_for(Review, 'after_insert')
+@event.listens_for(Review, 'after_update')
+@event.listens_for(Review, 'after_delete')
+def update_course_rating(mapper, connection, target):
+    course_id = target.course_id
+    stmt = (
+        select(func.avg(Review.rating))
+        .where(Review.course_id == course_id)
+    )
+    avg_rating = connection.execute(stmt).scalar()
+    if avg_rating:
+        avg_rating = round(avg_rating, 2)
+    
+    connection.execute(
+        Course.__table__.update()
+        .where(Course.id == course_id)
+        .values(rating=avg_rating)
+    )
+    
 
 class AcademicCourse(Course):
     # for academic progressions with a broader and theoretical focus
@@ -352,6 +378,29 @@ class AcademicCourse(Course):
         'polymorphic_identity': COURSE.ACADEMIC
     }
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'community_id': self.community_id,
+            'name': self.name,
+            'description': self.description,
+            'course_type': self.course_type,
+            'duration': float(self.duration),
+            'rating': float(self.rating),
+            'image_url': self.image_url,
+            'currency': self.currency,
+            'price': float(self.price),
+            'difficulty': self.difficulty,
+            'skills': self.skills.split(', ') if self.skills else [],
+            'school_name': self.school_name,
+            'program_type': self.program_type,
+            'field': self.field,
+            'major': self.major,
+            'created': self.created.isoformat() if self.created else None,
+            'updated': self.updated.isoformat() if self.updated else None,
+            'status': self.status
+        }
+
 class ProfessionalCourse(Course):
     # earn career credentials from industry leaders that demostrate expertise
     __tablename__ = 'professional_courses'
@@ -364,6 +413,26 @@ class ProfessionalCourse(Course):
         'polymorphic_identity': COURSE.PROFESSIONAL
     }
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'community_id': self.community_id,
+            'name': self.name,
+            'description': self.description,
+            'course_type': self.course_type,
+            'duration': float(self.duration),
+            'rating': float(self.rating),
+            'image_url': self.image_url,
+            'currency': self.currency,
+            'price': float(self.price),
+            'difficulty': self.difficulty,
+            'skills': self.skills.split(', ') if self.skills else [],
+            'department': self.department,
+            'created': self.created.isoformat() if self.created else None,
+            'updated': self.updated.isoformat() if self.updated else None,
+            'status': self.status
+        }
+
 class SpecializationCourse(Course):
     # get in-depth knowledge of a subject
     __tablename__ = 'specialization_courses'
@@ -375,6 +444,26 @@ class SpecializationCourse(Course):
         'polymorphic_identity': COURSE.SPECIALIZATION
     }
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'community_id': self.community_id,
+            'name': self.name,
+            'description': self.description,
+            'course_type': self.course_type,
+            'duration': float(self.duration),
+            'rating': float(self.rating),
+            'image_url': self.image_url,
+            'currency': self.currency,
+            'price': float(self.price),
+            'difficulty': self.difficulty,
+            'skills': self.skills.split(', ') if self.skills else [],
+            'subject': self.subject,
+            'created': self.created.isoformat() if self.created else None,
+            'updated': self.updated.isoformat() if self.updated else None,
+            'status': self.status
+        }
+
 class ProjectCourse(Course):
     # learn a new tool or skill in an interactive, hands-on environment
     __tablename__ = 'project_courses'
@@ -385,3 +474,23 @@ class ProjectCourse(Course):
     __mapper_args__ = {
         'polymorphic_identity': COURSE.PROJECT
     }
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'community_id': self.community_id,
+            'name': self.name,
+            'description': self.description,
+            'course_type': self.course_type,
+            'duration': float(self.duration),
+            'rating': float(self.rating),
+            'image_url': self.image_url,
+            'currency': self.currency,
+            'price': float(self.price),
+            'difficulty': self.difficulty,
+            'skills': self.skills.split(', ') if self.skills else [],
+            'platform': self.platform,
+            'created': self.created.isoformat() if self.created else None,
+            'updated': self.updated.isoformat() if self.updated else None,
+            'status': self.status
+        }

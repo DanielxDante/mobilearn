@@ -41,7 +41,7 @@ const EditProfile = () => {
     const [newPictureUrl, setNewPictureUrl] = useState(profile_picture_url);
 
     const profile_picture = newPictureUrl
-        ? { uri: newPictureUrl }
+        ? { uri: newPictureUrl, cache: "reload" }
         : Constants.default_profile_picture;
 
     const handleEditName = async (newName: string | undefined) => {
@@ -128,25 +128,33 @@ const EditProfile = () => {
             if (result.canceled) {
                 console.log("Image selection cancelled");
                 return;
+            } 
+
+            if (result.assets[0]) {
+                const uri = result.assets[0].uri;
+
+                // const file = await convertUriToBlob(uri);
+                const filename = uri.split('/').pop();
+                const match = /\.(\w+)$/.exec(filename || '');
+                const type = match ? `image/${match[1]}` : 'image/jpeg';
+
+                // if (file === null) {
+                //     console.error("No file selected to upload.");
+                //     return;
+                // }
+
+                const formData = new FormData();
+                formData.append("file", {
+                    uri,
+                    name: filename ?? "profile.jpg",
+                    type
+                } as any);
+
+
+                const response = await editProfilePicture(formData);
+                setNewPictureUrl(response);
             } else {
-                if (result.assets[0] != undefined) {
-                    // console.log(
-                    //     "Calling convertUriToBlob with URI: ",
-                    //     result.assets[0].uri
-                    // );
-                    const uri = result.assets[0].uri;
-                    const file = await convertUriToBlob(uri);
-                    if (file === null) {
-                        console.error("No file selected to upload.");
-                        return;
-                    }
-                    const formData = new FormData();
-                    formData.append("file", file.data);
-                    const response = await editProfilePicture(formData);
-                    setNewPictureUrl(response);
-                } else {
-                    alert("File is undefined!");
-                }
+                alert("File is undefined!");
             }
         } catch (error) {
             console.error("Error in handleEditProfilePicture:", error);

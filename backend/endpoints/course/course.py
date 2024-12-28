@@ -1,6 +1,8 @@
+import os
 import json
+from botocore.exceptions import ClientError
 from flask import Response, request
-from flask_restx import Resource
+from flask_restx import Resource, fields
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity
@@ -8,9 +10,45 @@ from flask_jwt_extended import (
 
 from app import api
 from database import session_scope, create_session
-from models.course import Course
+from models.course import Course, COURSE
+from models.instructor import Instructor
+from models.community import Community
 from services.course_services import CourseService
+from utils.s3 import s3_client, allowed_file, bucket_name, cloudfront_domain
 
+class GetCourseEndpoint(Resource):
+    @api.doc(
+        responses={
+            200: 'Ok',
+            401: 'Unauthorized',
+            404: 'Resource not found',
+            500: 'Internal Server Error'
+        },
+        params={
+            'Authorization': {
+                'in': 'header',
+                'description': 'Bearer token',
+                'required': True
+            }
+        },
+    )
+    @jwt_required()
+    def get(self, course_id):
+        """ Get course info """
+        session = create_session()
+
+        try:
+            course = Course.get_course_by_id(session, course_id)
+            return Response(
+                json.dumps({'course': course.to_dict()}),
+                status=200, mimetype='application/json'
+            )
+        except ValueError as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        
 class GetUserCoursesEndpoint(Resource):
     @api.doc(
         responses={
@@ -29,7 +67,7 @@ class GetUserCoursesEndpoint(Resource):
     )
     @jwt_required()
     def get(self):
-        """ Get courses the user can get access to """
+        """ Get all courses the user can get access to """
         current_email = get_jwt_identity()
 
         session = create_session()
@@ -93,11 +131,22 @@ class GetInstructorCoursesEndpoint(Resource):
             status=200, mimetype='application/json'
         )
 
-parser = api.parser()
-parser.add_argument('name', type=str, help='name', location='json', required=True)
-parser.add_argument('school', type=str, help='School', location='json', required=True)
-parser.add_argument('description', type=str, help='Description', location='json')
-parser.add_argument('image', type=str, help='Image', location='json')
+create_course_parser = api.parser()
+create_course_parser.add_argument('name', type=str, help='Name', location='form', required=True)
+create_course_parser.add_argument('school', type=str, help='School', location='form', required=True)
+create_course_parser.add_argument('description', type=str, help='Description', location='form', required=True)
+create_course_parser.add_argument('course_type', type=str, help='Course Type', location='form', required=True)
+create_course_parser.add_argument('duration', type=str, help='Duration', location='form', required=True)
+create_course_parser.add_argument('price', type=float, help='Price', location='form', required=True)
+create_course_parser.add_argument('difficulty', type=str, help='Difficulty', location='form', required=True)
+create_course_parser.add_argument('skills', type=str, action='split', help='Skills', location='form', required=True)
+create_course_parser.add_argument('school_name', type=str, help='School Name', location='form', required=False)
+create_course_parser.add_argument('program_type', type=str, help='Program Type', location='form', required=False)
+create_course_parser.add_argument('field', type=str, help='Field', location='form', required=False)
+create_course_parser.add_argument('major', type=str, help='Major', location='form', required=False)
+create_course_parser.add_argument('department', type=str, help='Department', location='form', required=False)
+create_course_parser.add_argument('subject', type=str, help='Subject', location='form', required=False)
+create_course_parser.add_argument('platform', type=str, help='Platform', location='form', required=False)
 
 class CreateCourseEndpoint(Resource):
     @api.doc(
@@ -108,29 +157,131 @@ class CreateCourseEndpoint(Resource):
             404: 'Resource not found',
             500: 'Internal Server Error'
         },
-        description="""
-            Example request JSON:
-            
-            {
-                'name': course.name, 
-                'school': course.school,      
-                'description': course.description,
-                'image': course.image,
+        params={
+            'Authorization': {
+                'in': 'header',
+                'description': 'Bearer token',
+                'required': True
+            },
+            'file': {
+                'in': 'formData',
+                'type': 'file',
+                'description': 'The file to upload',
+                'required': False
             }
-            """
+        },
+        description="""
+            Fill in school_name, program_type, field, and major for academic courses.
+            Fill in department for professional courses.
+            Fill in subject for specialization courses.
+            Fill in platform for project courses.
+        """
     )
-
-    @api.expect(parser)
+    @api.expect(create_course_parser)
+    @jwt_required()
     def post(self):
-        data = request.get_json()
+        """ Create a course """
+        data = request.form
         name = data.get('name')
-        school = data.get('school')
         description = data.get('description')
-        image = data.get('image')
+        course_type = data.get('course_type')
+        # other_instructors = data.get('other_instructors', None) # TODO: to clarify
 
-        Course.add_course(name, school, description, image)
+        optional_course_data = {
+            'duration': data.get('duration'),
+            'price': data.get('price'),
+            'difficulty': data.get('difficulty'),
+            'skills': data.get('skills'),
+            'school_name': data.get('school_name', None),
+            'program_type': data.get('program_type', None),
+            'field': data.get('field', None),
+            'major': data.get('major', None),
+            'department': data.get('department', None),
+            'subject': data.get('subject', None),
+            'platform': data.get('platform', None)
+        }
+
+        if 'file' not in request.files:
+            return Response(
+                json.dumps({'message': "No file part"}),
+                status=400, mimetype='application/json'
+            )
+        
+        file = request.files['file']
+        
+        if file.filename == '':
+            return Response(
+                json.dumps({'message': "No selected file"}),
+                status=400, mimetype='application/json'
+            )
+        
+        if not allowed_file(file.filename):
+            return Response(
+                json.dumps({'message': "Invalid file type"}),
+                status=400, mimetype='application/json'
+            )
+
+        instructor_email = get_jwt_identity()
+
+        with session_scope() as session:
+            instructor = Instructor.get_instructor_by_email(session, instructor_email)
+            if not instructor:
+                return Response(
+                    json.dumps({"error": "Instructor not found"}),
+                    status=404, mimetype='application/json'
+                )
+            
+            community_name = instructor.company
+            community = Community.get_community_by_name(session, community_name)
+            if not community:
+                return Response(
+                    json.dumps({"error": "The community is not found"}),
+                    status=404, mimetype='application/json'
+                )
+
+            optional_course_data = {k: v for k, v in optional_course_data.items() if v is not None}
+
+            course = Course.add_course(
+                session,
+                community_id=community.id,
+                name=name,
+                description=description,
+                course_type=course_type,
+                **optional_course_data
+            )
+
+            file_extension = os.path.splitext(file.filename)[1]
+            unique_filename = f"course_{str(course.id)}{file_extension}"
+
+            try:
+                base_filename = os.path.splitext(unique_filename)[0]
+                response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=base_filename)
+                if 'Contents' in response:
+                    for obj in response['Contents']:
+                        s3_client.delete_object(Bucket=bucket_name, Key=obj['Key'])
+            except ClientError as e:
+                if e.response['Error']['Code'] != '404':
+                    raise
+
+            s3_client.upload_fileobj(
+                file,
+                bucket_name,
+                unique_filename,
+                ExtraArgs={
+                    'ContentType': file.content_type
+                }
+            )
+
+            image_url = f"https://{cloudfront_domain}/{unique_filename}"
+            course.image = image_url
+
+            instructor.courses.append(course)
 
         return Response(
             json.dumps({'message': f'Course ({name}) created'}),
             status=200, mimetype="application/json"
         )
+
+# edit_course_parser = api.parser()
+
+# class EditCourseEndpoint(Resource):
