@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 
 import useAuthStore from "@/store/authStore";
 import BackButton from "@/components/BackButton";
@@ -17,7 +19,7 @@ import EditProfileFields from "@/components/EditProfileFields";
 
 const EditProfile = () => {
     const authStore = useAuthStore((state) => state);
-    console.log(authStore);
+    // console.log(authStore);
     const username = useAuthStore((state) => state.username);
     const email = useAuthStore((state) => state.email);
     const gender = useAuthStore((state) => state.gender);
@@ -36,13 +38,17 @@ const EditProfile = () => {
     const [newUsername, setNewUsername] = useState(username);
     const [newEmail, setNewEmail] = useState(email);
     const [newGender, setNewGender] = useState(gender);
-    const [newPicture, setNewPicture] = useState(profile_picture_url);
+    const [newPictureUrl, setNewPictureUrl] = useState(profile_picture_url);
 
-    const profile_picture = profile_picture_url
-        ? { uri: profile_picture_url }
+    const profile_picture = newPictureUrl
+        ? { uri: newPictureUrl }
         : Constants.default_profile_picture;
 
-    const handleEditName = async (newName: string) => {
+    const handleEditName = async (newName: string | undefined) => {
+        if (newName === undefined) {
+            alert("Username is undefined");
+            return;
+        }
         if (newName.length == 0) {
             alert("Username is empty");
         } else {
@@ -56,7 +62,11 @@ const EditProfile = () => {
             }
         }
     };
-    const handleEditEmail = async (newEmail: string) => {
+    const handleEditEmail = async (newEmail: string | undefined) => {
+        if (newEmail === undefined) {
+            alert("Username is undefined");
+            return;
+        }
         if (newEmail.length == 0) {
             alert("Email is empty");
         } else {
@@ -69,7 +79,11 @@ const EditProfile = () => {
             }
         }
     };
-    const handleEditGender = async (newGender: string) => {
+    const handleEditGender = async (newGender: string | undefined) => {
+        if (newGender === undefined) {
+            alert("Gender is undefined");
+            return;
+        }
         if (newGender.length == 0) {
             alert("Gender is empty");
         } else {
@@ -82,7 +96,127 @@ const EditProfile = () => {
             }
         }
     };
-    console.log("Page load email: " + email);
+    const handleEditPassword = async (
+        oldPassword: string | undefined,
+        newPassword: string | undefined
+    ) => {
+        if (oldPassword === undefined || newPassword === undefined) {
+            alert("Passwords are undefined");
+            return;
+        }
+        if (newPassword.length == 0) {
+            alert("Password is empty");
+        } else {
+            try {
+                const response = await editPassword(oldPassword, newPassword);
+            } catch (error) {
+                console.log(error);
+                alert("Password has not been changed");
+            }
+        }
+    };
+    const handleEditProfilePicture = async () => {
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ["images"],
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 1,
+            });
+            console.log("ImagePicker result: ", result);
+
+            if (result.canceled) {
+                console.log("Image selection cancelled");
+                return;
+            } else {
+                if (result.assets[0] != undefined) {
+                    // console.log(
+                    //     "Calling convertUriToBlob with URI: ",
+                    //     result.assets[0].uri
+                    // );
+                    const uri = result.assets[0].uri;
+                    const file = await convertUriToBlob(uri);
+                    if (file === null) {
+                        console.error("No file selected to upload.");
+                        return;
+                    }
+                    const formData = new FormData();
+                    formData.append("file", file.data);
+                    const response = await editProfilePicture(formData);
+                    setNewPictureUrl(response);
+                } else {
+                    alert("File is undefined!");
+                }
+            }
+        } catch (error) {
+            console.error("Error in handleEditProfilePicture:", error);
+        }
+    };
+
+    const convertUriToBlob = async (uri: any) => {
+        try {
+            console.log("convertUriToBlob called with URI: ", uri);
+
+            // Extract file extension from URI and construct mime type
+            const fileExtension = uri.split(".").pop();
+            const mimeType = `image/${fileExtension}`;
+
+            // console.log("File extension: ", fileExtension);
+            // console.log("Mime type: ", mimeType);
+
+            // Read the file content as a Base64 string
+            const base64String = await FileSystem.readAsStringAsync(uri, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+            if (!base64String) {
+                console.error(
+                    "Failed to read the file as Base64. The Base64 string is empty."
+                );
+                return null;
+            }
+
+            // Create a Uint8Array from the Base64 string
+            const binaryData = new Uint8Array(
+                atob(base64String)
+                    .split("")
+                    .map((char) => char.charCodeAt(0))
+            );
+            // Create file name with extension
+            const fileName = `file.${fileExtension}`;
+            return {
+                uri,
+                name: fileName,
+                type: mimeType,
+                data: base64String, // This is the base64 string to send to your backend
+            };
+        } catch (error) {
+            console.error("Error in convertUriToBlob:", error);
+            return null;
+        }
+    };
+    const checkPermissions = async () => {
+        try {
+            const { status } =
+                await ImagePicker.getMediaLibraryPermissionsAsync();
+            if (status !== "granted") {
+                // If permission is not granted, request it
+                console.log("Requesting permission");
+                await requestPermission();
+            } else {
+                console.log("Permissions already granted");
+            }
+        } catch (error) {
+            console.error("Error checking permissions:", error);
+        }
+    };
+    const requestPermission = async () => {
+        const { status } =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+            alert("Sorry, we need camera roll permissions to make this work!");
+        }
+    };
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
@@ -97,6 +231,10 @@ const EditProfile = () => {
                         {/* Profile picture */}
                         <TouchableOpacity
                             style={styles.profilePictureContainer}
+                            onPress={() => {
+                                handleEditProfilePicture();
+                                checkPermissions();
+                            }}
                         >
                             <Image
                                 source={profile_picture}
@@ -156,6 +294,19 @@ const EditProfile = () => {
                                     )?.gender?.modalDetails ?? "Error"
                                 }
                                 onSave={handleEditGender}
+                            />
+                            <EditProfileFields
+                                title={
+                                    Constants.fields.find(
+                                        (field) => field.password
+                                    )?.password?.inputTitle ?? "Your password"
+                                }
+                                modalDetails={
+                                    Constants.fields.find(
+                                        (field) => field.password
+                                    )?.password?.modalDetails ?? "Error"
+                                }
+                                onSave={handleEditPassword}
                             />
                         </View>
                     </View>

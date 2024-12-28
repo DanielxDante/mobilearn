@@ -312,7 +312,8 @@ export const memberGuestEditProfilePage = {
             password: {
                 inputTitle: "Password",
                 modalDetails: [
-                    { inputTitle: "Password", placeholder: "******" },
+                    { inputTitle: "Old Password", placeholder: "******" },
+                    { inputTitle: "New Password", placeholder: "******" },
                 ],
             },
         },
@@ -324,6 +325,7 @@ export const memberGuestEditProfilePage = {
 export const memberGuestEditProfileFields = {
     edit: "Edit",
     notAdded: "Not added",
+    maskedPassword: "******",
 };
 
 export const memberGuestEditProfilePopUp = {

@@ -18,7 +18,7 @@ import { Picker } from "@react-native-picker/picker";
 interface FieldItemProps {
     inputTitle: string;
     placeholder: string;
-    value: string;
+    value?: string;
     onChange: (newValue: string) => void;
 }
 
@@ -45,7 +45,7 @@ const FieldItem: React.FC<FieldItemProps> = ({
 interface FieldItemOptionsProps {
     inputTitle: string;
     options: string[];
-    defaultValue: string;
+    defaultValue?: string;
     onChange: (newValue: string) => void;
 }
 
@@ -80,13 +80,13 @@ const FieldItemOptions: React.FC<FieldItemOptionsProps> = ({
 
 interface EditProfileFieldPopUpProps {
     title: string;
-    initialValue: string;
+    initialValue?: string;
     modalDetails: {
         inputTitle: string;
         placeholder?: string;
         options?: string[];
     }[];
-    onSave: (newValue: string) => void;
+    onSave: (newValue: string | undefined, newValue2?: any) => void;
     handleModal: () => void;
 }
 
@@ -98,7 +98,7 @@ const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
     handleModal,
 }) => {
     const [value, setValue] = useState(initialValue);
-    console.log("modalDetails: " + JSON.stringify(modalDetails));
+    const [value2, setValue2] = useState("");
     return (
         <Modal
             animationType="fade"
@@ -112,12 +112,6 @@ const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
                         <View>
                             {/* Title */}
                             <View style={styles.titleView}>
-                                {/* <Pressable onPress={handleModal}>
-                                    <Image
-                                        source={require("@/assets/images/icons/cross.png")}
-                                        style={styles.closeButton}
-                                    />
-                                </Pressable> */}
                                 <Text style={styles.title}>{title}</Text>
                             </View>
                             <View style={styles.fieldItems}>
@@ -147,10 +141,16 @@ const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
                                                     detail.placeholder ||
                                                     "Please enter"
                                                 }
-                                                value={value}
-                                                onChange={(newValue) =>
-                                                    setValue(newValue)
+                                                value={
+                                                    index === 0 ? value : value2
                                                 }
+                                                onChange={(newValue) => {
+                                                    if (index === 0) {
+                                                        setValue(newValue);
+                                                    } else {
+                                                        setValue2(newValue);
+                                                    }
+                                                }}
                                             />
                                         )}
                                     </View>
@@ -159,7 +159,13 @@ const EditProfileFieldPopUp: React.FC<EditProfileFieldPopUpProps> = ({
                         </View>
                         <View style={styles.saveContainer}>
                             <TouchableOpacity
-                                onPress={() => onSave(value)}
+                                onPress={() => {
+                                    if (value2 === "") {
+                                        onSave(value);
+                                    } else {
+                                        onSave(value, value2);
+                                    }
+                                }}
                                 style={styles.saveButton}
                             >
                                 <Text style={styles.saveText}>
@@ -214,7 +220,6 @@ const styles = StyleSheet.create({
     content: {
         paddingHorizontal: 15,
         paddingVertical: 3,
-        borderWidth: 1,
     },
     inputHeader: {
         paddingVertical: 5,

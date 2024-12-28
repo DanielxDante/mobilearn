@@ -7,9 +7,9 @@ import EditProfileFieldPopUp from "./EditProfileFieldPopUp";
 
 interface EditProfileFieldsProps {
     title: string;
-    initialValue: string;
+    initialValue?: string;
     modalDetails: any;
-    onSave: (newValue: string) => void;
+    onSave: (newValue: string | undefined, newValue2?: any) => void;
 }
 
 const EditProfileFields: React.FC<EditProfileFieldsProps> = ({
@@ -20,9 +20,13 @@ const EditProfileFields: React.FC<EditProfileFieldsProps> = ({
 }) => {
     const [value, setValue] = useState(initialValue);
     const [localModalVisible, setLocalModalVisible] = useState(false);
-    const onSave2 = async (updatedField: string) => {
+    const onSave2 = async (updatedField: string | any, optionalArg?: any) => {
         setValue(updatedField);
-        onSave(updatedField);
+        if (onSave.length === 2) {
+            onSave(updatedField, optionalArg); //For password
+        } else {
+            onSave(updatedField);
+        }
     };
 
     const handleLocalModal = () => {
@@ -36,7 +40,12 @@ const EditProfileFields: React.FC<EditProfileFieldsProps> = ({
                     <Text style={styles.edit}>{Constants.edit}</Text>
                 </TouchableOpacity>
             </View>
-            <Text style={styles.value}>{value || Constants.notAdded}</Text>
+            <Text style={styles.value}>
+                {/* Have to revisit if we change language */}
+                {title === "Password"
+                    ? Constants.maskedPassword
+                    : value || Constants.notAdded}
+            </Text>
             <View style={styles.line}></View>
             {localModalVisible && (
                 <EditProfileFieldPopUp
