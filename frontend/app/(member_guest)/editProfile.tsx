@@ -128,28 +128,21 @@ const EditProfile = () => {
             if (result.canceled) {
                 console.log("Image selection cancelled");
                 return;
-            } 
+            }
 
             if (result.assets[0]) {
                 const uri = result.assets[0].uri;
 
-                // const file = await convertUriToBlob(uri);
-                const filename = uri.split('/').pop();
-                const match = /\.(\w+)$/.exec(filename || '');
-                const type = match ? `image/${match[1]}` : 'image/jpeg';
-
-                // if (file === null) {
-                //     console.error("No file selected to upload.");
-                //     return;
-                // }
+                const filename = uri.split("/").pop();
+                const match = /\.(\w+)$/.exec(filename || "");
+                const type = match ? `image/${match[1]}` : "image/jpeg";
 
                 const formData = new FormData();
                 formData.append("file", {
                     uri,
                     name: filename ?? "profile.jpg",
-                    type
+                    type,
                 } as any);
-
 
                 const response = await editProfilePicture(formData);
                 setNewPictureUrl(response);
@@ -160,50 +153,8 @@ const EditProfile = () => {
             console.error("Error in handleEditProfilePicture:", error);
         }
     };
-
-    const convertUriToBlob = async (uri: any) => {
-        try {
-            console.log("convertUriToBlob called with URI: ", uri);
-
-            // Extract file extension from URI and construct mime type
-            const fileExtension = uri.split(".").pop();
-            const mimeType = `image/${fileExtension}`;
-
-            // console.log("File extension: ", fileExtension);
-            // console.log("Mime type: ", mimeType);
-
-            // Read the file content as a Base64 string
-            const base64String = await FileSystem.readAsStringAsync(uri, {
-                encoding: FileSystem.EncodingType.Base64,
-            });
-
-            if (!base64String) {
-                console.error(
-                    "Failed to read the file as Base64. The Base64 string is empty."
-                );
-                return null;
-            }
-
-            // Create a Uint8Array from the Base64 string
-            const binaryData = new Uint8Array(
-                atob(base64String)
-                    .split("")
-                    .map((char) => char.charCodeAt(0))
-            );
-            // Create file name with extension
-            const fileName = `file.${fileExtension}`;
-            return {
-                uri,
-                name: fileName,
-                type: mimeType,
-                data: base64String, // This is the base64 string to send to your backend
-            };
-        } catch (error) {
-            console.error("Error in convertUriToBlob:", error);
-            return null;
-        }
-    };
     const checkPermissions = async () => {
+        // Method to check if user has permissions to select image from gallery
         try {
             const { status } =
                 await ImagePicker.getMediaLibraryPermissionsAsync();
@@ -263,6 +214,7 @@ const EditProfile = () => {
                         </TouchableOpacity>
                         {/* Edit fields */}
                         <View style={styles.editFields}>
+                            {/* FYI: To reuse this component, ensure modalDetails structure is consistent */}
                             <EditProfileFields
                                 title={
                                     Constants.fields.find((field) => field.name)
