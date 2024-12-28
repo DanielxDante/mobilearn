@@ -90,7 +90,7 @@ export interface AuthState {
     // ) => Promise<string>;
     editGenderUser: (new_gender: string) => Promise<void>;
     editNameUser: (new_name: string) => Promise<string>;
-    editProfilePictureUser: (file: File) => Promise<string>;
+    editProfilePictureUser: (file: any) => Promise<string>;
     getGenderUser: () => Promise<string>;
     getNameUser: () => Promise<string>;
     getProfilePictureUser: () => Promise<string>;
@@ -445,19 +445,27 @@ const useAuthStore = create<AuthState>()(
                     return response.data;
                 }
             },
-            editProfilePictureUser: async (file) => {
+            editProfilePictureUser: async (file: any) => {
                 console.log("(Store) Edit User profile picture");
-                const response = await axios.post(
-                    ACCOUNT_USER_EDIT_PROFILEPICTURE_URL,
-                    { file },
-                    { headers: { "Content-Type": "application/json" } }
-                );
-                const responseData = response.data;
-                if (response.status === 200) {
-                    set({
-                        profile_picture_url: responseData.profile_picture_url,
-                    });
-                    return responseData.profile_picture_url;
+                const formData = new FormData();
+                formData.append("file", file.data, file.name);
+                try {
+                    const response = await axios.post(
+                        ACCOUNT_USER_EDIT_PROFILEPICTURE_URL,
+                        formData,
+                        { headers: { "Content-Type": "multipart/form-data" } }
+                    );
+                    const responseData = response.data;
+                    console.log(response);
+                    if (response.status === 200) {
+                        set({
+                            profile_picture_url:
+                                responseData.profile_picture_url,
+                        });
+                        return responseData.profile_picture_url;
+                    }
+                } catch (error) {
+                    console.log("Error uploading profile picture: " + error);
                 }
             },
             getGenderUser: async () => {
