@@ -297,7 +297,8 @@ class ChangeUserProfilePictureEndpoint(Resource):
                     bucket_name,
                     unique_filename,
                     ExtraArgs={
-                        'ContentType': file.content_type
+                        'ContentType': file.content_type,
+                        'CacheControl': 'max-age=1'
                     }
                 )
 

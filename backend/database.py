@@ -127,7 +127,7 @@ def load_instructors():
                     status=INSTRUCTOR_STATUS.ACTIVE
                 )
                 community = Community.get_community_by_name(session, row['Company'])
-                CommunityService.attach_instructor(session, community.id, instructor.email)
+                CommunityService.attach_instructor(session, community.id, instructor.id)
 
 def load_courses():
     """ Load initial courses """

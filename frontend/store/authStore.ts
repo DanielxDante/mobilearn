@@ -90,7 +90,7 @@ export interface AuthState {
     // ) => Promise<string>;
     editGenderUser: (new_gender: string) => Promise<void>;
     editNameUser: (new_name: string) => Promise<string>;
-    editProfilePictureUser: (file: any) => Promise<string>;
+    editProfilePictureUser: (fileData: any) => Promise<string>;
     getGenderUser: () => Promise<string>;
     getNameUser: () => Promise<string>;
     getProfilePictureUser: () => Promise<string>;
@@ -445,10 +445,8 @@ const useAuthStore = create<AuthState>()(
                     return response.data;
                 }
             },
-            editProfilePictureUser: async (file: any) => {
+            editProfilePictureUser: async (formData) => {
                 console.log("(Store) Edit User profile picture");
-                const formData = new FormData();
-                formData.append("file", file.data, file.name);
                 try {
                     const response = await axios.post(
                         ACCOUNT_USER_EDIT_PROFILEPICTURE_URL,
@@ -456,16 +454,20 @@ const useAuthStore = create<AuthState>()(
                         { headers: { "Content-Type": "multipart/form-data" } }
                     );
                     const responseData = response.data;
-                    console.log(response);
+
                     if (response.status === 200) {
+                        const new_profile_picture_url = responseData.profile_picture_url + "?time=" + new Date().getTime();
                         set({
-                            profile_picture_url:
-                                responseData.profile_picture_url,
+                            profile_picture_url: new_profile_picture_url,
                         });
-                        return responseData.profile_picture_url;
+
+                        return new_profile_picture_url;
+                    } else {
+                        throw new Error("Failed to update profile picture");
                     }
                 } catch (error) {
                     console.log("Error uploading profile picture: " + error);
+                    throw new Error("Error uploading profile picture");
                 }
             },
             getGenderUser: async () => {

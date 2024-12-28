@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 
 import { memberGuestProfilePage as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
@@ -17,10 +17,11 @@ const Profile = () => {
     const profile_picture_url = useAuthStore(
         (state) => state.profile_picture_url
     );
+    
     const logout = useAuthStore((state) => state.logout);
 
     const profile_picture = profile_picture_url
-        ? { uri: profile_picture_url }
+        ? { uri: profile_picture_url, cache: "reload" }
         : Constants.default_profile_picture;
 
     const handleLogout = async () => {
