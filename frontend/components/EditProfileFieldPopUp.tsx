@@ -21,7 +21,7 @@ interface FieldItemProps {
     value?: string;
     onChange: (newValue: string) => void;
 }
-
+// FYI: FieldItem IS USED FOR MODAL POP-UPS WITH TEXT INPUTS (e.g. NAME, EMAIL, PASSWORD, ETC.)
 const FieldItem: React.FC<FieldItemProps> = ({
     inputTitle,
     placeholder,
@@ -49,6 +49,7 @@ interface FieldItemOptionsProps {
     onChange: (newValue: string) => void;
 }
 
+// FYI: FieldItemOptions IS USED FOR MODAL POP-UPS WITH PICKER (e.g. GENDER)
 const FieldItemOptions: React.FC<FieldItemOptionsProps> = ({
     inputTitle,
     options,
