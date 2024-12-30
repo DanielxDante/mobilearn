@@ -1,11 +1,11 @@
 {
     "expo": {
-        "name": "Mobilearn",
+        "name": "mobilearn",
         "slug": "frontend",
         "version": "1.0.0",
         "orientation": "portrait",
         "icon": "./assets/images/adaptive-icon.png",
-        "scheme": "myapp",
+        "scheme": "mobilearn",
         "userInterfaceStyle": "automatic",
         "splash": {
             "image": "./assets/images/splash.png",
@@ -40,6 +40,13 @@
                 "expo-image-picker",
                 {
                     "photosPermission": "The app accesses your photos to let you share them with your friends."
+                }
+            ],
+            [
+                "@stripe/stripe-react-native",
+                {
+                    "merchantIdentifier": "merchant.com.musketeers.mobilearn",
+                    "publishableKey": "pk_test_51QbZOORsdPYDCPrIN6smC8oy8w7CRKybObJqIFUcWLXaLrB1gVHa8rUPWIx75xEtFJ1ZTjjQ7T2QIMr2AWe0jUss00AGvllmKe"
                 }
             ]
         ],

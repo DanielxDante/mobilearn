@@ -1,18 +1,18 @@
 import React from "react";
 import { Stack } from "expo-router";
-import { Platform, View, Text } from "react-native";
+import ExpoStripeProvider from "@/components/StripeProvider";
 
 import { FontLoader } from "@/hooks/fontLoader";
 
 const RootLayout = () => {
   return (
-    <>
       <FontLoader>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-        </Stack>
+        <ExpoStripeProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+          </Stack>
+        </ExpoStripeProvider>
       </FontLoader>
-    </>
   );
 };
 

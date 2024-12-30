@@ -1,17 +1,14 @@
-from sqlalchemy import Column, Integer, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, DateTime, ForeignKey, func
 
-from database import db
+from database import Base
 
-class CourseChapter(db.Model):
+class CourseChapter(Base):
+    # Association table between Course and Chapter
     __tablename__ = 'course_chapters'
 
-    course_id = Column(Integer, ForeignKey('courses.id'), primary_key=True)
-    chapter_id = Column(Integer, ForeignKey('chapters.id'), primary_key=True)
-    created = Column(DateTime(timezone=True), server_default=db.func.now(tz="UTC"), nullable=False)
-    
-    course = relationship("Course", back_populates="chapter_associations")
-    chapter = relationship("chapter", back_populates="course_associations")
-    
+    course_id = Column(Integer, ForeignKey('courses.id', ondelete='CASCADE'), primary_key=True)
+    chapter_id = Column(Integer, ForeignKey('chapters.id', ondelete='CASCADE'), primary_key=True)
+    attached = Column(DateTime(timezone=True), default=func.now(), nullable=False)
+
     def __repr__(self):
-        return f'<Course: {self.course_id}, Chapter: {self.chapter_id}>'
+        return f'<(CourseChapter) Course: {self.course_id}, Chapter: {self.chapter_id}>'

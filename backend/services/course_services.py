@@ -8,7 +8,7 @@ class CourseServiceError(Exception):
 class CourseService:
     @staticmethod
     def get_course_instructors(session, course_id):
-        """ Get instructors attached to a course """
+        """ Get instructors that are offering the course """
         course = Course.get_course_by_id(session, course_id)
         if not course:
             raise ValueError("Course not found")

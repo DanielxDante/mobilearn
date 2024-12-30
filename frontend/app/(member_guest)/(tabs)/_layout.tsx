@@ -15,15 +15,15 @@ const TabIcon = ({ icon, color, name, focused }: ITabIcon) => {
                 alignItems: "center",
                 backgroundColor: focused ? Colors.tabsIconGray : "transparent",
                 borderRadius: 4,
-                paddingVertical: focused ? 4 : 0,
-                paddingHorizontal: focused ? 8 : 0,
+                paddingVertical: focused ? 6 : 0,
+                paddingHorizontal: focused ? 10 : 0,
             }}
         >
             <Image
                 source={icon}
                 resizeMode="contain"
                 tintColor={color}
-                style={{ width: 16, height: 16 }} // Increase the width and height to make the icon bigger
+                style={{ width: 16, height: 16 }}
             />
         </View>
     );
@@ -41,6 +41,10 @@ const MemberGuestLayout = () => {
                         backgroundColor: Colors.defaultBlue,
                         borderTopColor: "transparent",
                         height: 60,
+                    },
+                    tabBarIconStyle: {
+                        margin: 0,
+                        height: '100%',
                     },
                 }}
             >
