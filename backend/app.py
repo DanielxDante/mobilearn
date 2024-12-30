@@ -33,6 +33,7 @@ ns_channel = Namespace(name='channel', description='Channel operations')
 ns_community = Namespace(name='community', description='Community operations')
 ns_course = Namespace(name='course', description='Course operations')
 ns_analytics = Namespace(name='analytics', description='Analytics operations')
+ns_payment = Namespace(name='payment', description='Payment operations')
 ns_admin = Namespace(name='admin', description='Admin operations')
 ns_internal = Namespace(name='internal', description='Internal operations')
 
@@ -53,7 +54,7 @@ init_db(app)
 def setup_environment():
     """ Setup flask app environment """
     with app.app_context():
-        # do not import association tables here
+        # do not import association tables
         from models import token
         from models import user
         from models import instructor
@@ -62,6 +63,7 @@ def setup_environment():
         from models import channel
         from models import community
         from models import course
+        from models import chapter
 
         create_tables()
         check_db()
@@ -237,6 +239,12 @@ def init_course_endpoints():
 def init_analytics_endpoints():
     pass
 
+def init_payment_endpoints():
+    from endpoints.payment.stripe import FetchPaymentSheetEndpoint
+
+    fetch_payment_sheet_path = f"/{VERSION}/stripe/fetchPaymentSheet"
+    ns_payment.add_resource(FetchPaymentSheetEndpoint, fetch_payment_sheet_path)
+
 def init_admin_endpoints():
     from endpoints.admin.status import (
         ChangeUserStatusEndpoint,
@@ -297,6 +305,9 @@ def init():
 
     init_analytics_endpoints()
     api.add_namespace(ns_analytics)
+
+    init_payment_endpoints()
+    api.add_namespace(ns_payment)
 
     init_admin_endpoints()
     api.add_namespace(ns_admin)

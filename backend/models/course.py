@@ -11,7 +11,6 @@ from sqlalchemy import (
     select
 )
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.hybrid import hybrid_property
 
 from database import Base
 from enums.status import STATUS
@@ -19,6 +18,7 @@ from enums.difficulty import DIFFICULTY
 from enums.course import COURSE
 from models.community import Community
 from models.review import Review
+from models.course_chapter import CourseChapter
 
 class CourseBuilder:
     """ Unified builder for creating Course instances with factory method """
@@ -31,7 +31,7 @@ class CourseBuilder:
             'duration': None,
             'rating': 0.00,
             'image_url': None,
-            'currency': 'USD',
+            'currency': 'SGD',
             'price': None,
             'difficulty': None,
             'skills': None,
@@ -98,7 +98,7 @@ class CourseBuilder:
         self._course['image_url'] = url
         return self
 
-    def price(self, price: float, currency: str = 'USD') -> 'CourseBuilder':
+    def price(self, price: float, currency: str = 'SGD') -> 'CourseBuilder':
         if price < 0:
             raise ValueError("Price cannot be negative")
         self._course['price'] = float(str(price))
@@ -196,7 +196,7 @@ class Course(Base):
     duration = Column(Numeric(5, 1), nullable=True) # weeks
     rating = Column(Numeric(4, 2), nullable=True, default=0.00) # 0 means unrated, users can rate from 0.00 to 5.00
     image_url = Column(String, nullable=True)
-    currency = Column(String, nullable=True, default='USD') # ISO 4217, default in USD
+    currency = Column(String, nullable=True, default='SGD') # ISO 4217, default in SGD
     price = Column(Numeric(10, 2), nullable=True, default=0.00) # 0 means free
     difficulty = Column(Enum(DIFFICULTY), nullable=True)
     skills = Column(String, nullable=True)
@@ -220,13 +220,7 @@ class Course(Base):
     user_enrollments = relationship("User", secondary="enrollments", back_populates="course_enrollments")
 
     # Many-to-many relationship with Chapter
-    # chapter_associations = relationship(
-    #     "CourseChapter",
-    #     back_populates="course",
-    #     cascade="all, delete-orphan",
-    #     passive_deletes=True
-    # )
-    # chapters = association_proxy('chapter_associations', 'chapter')
+    chapters = relationship("Chapter", secondary="course_chapters", back_populates="courses")
 
     @staticmethod
     def get_courses(session):
@@ -282,7 +276,7 @@ class Course(Base):
             if 'image_url' in kwargs:
                 builder.image_url(kwargs['image_url'])
             if 'price' in kwargs:
-                builder.price(kwargs['price'], kwargs.get('currency', 'USD'))
+                builder.price(kwargs['price'], kwargs.get('currency', 'SGD'))
             if 'difficulty' in kwargs:
                 builder.difficulty(kwargs['difficulty'])
             if 'skills' in kwargs: # delimited by commas

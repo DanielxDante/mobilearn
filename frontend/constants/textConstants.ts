@@ -273,7 +273,7 @@ export const memberGuestProfilePage = {
     editIcon: require("@/assets/images/icons/edit.png"),
     paymentMethodTitle: "Payment Method",
     donateTitle: "Donate",
-    logOutTitle: "Log out",
+    logOutTitle: "Logout",
     default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
 };
 
@@ -467,4 +467,12 @@ export const memberChannelSignUpPage = {
     dropDownTitle: "Select a channel",
     inviteCodeTitle: "Or enter an invite code",
     inviteCodePlaceholder: "Enter invite code",
+};
+
+export const memberDonatePage = {
+    appBarTitle: "Support Us",
+    donateText1: "Your donations help us provide valuable content to learners worldwide.",
+    donateText2: "Thank you for your support!",
+    donateButtonText: "Donate",
+    merchantDisplayName: "MobiLearn, Inc."
 };

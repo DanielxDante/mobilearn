@@ -50,7 +50,8 @@
     "react-native-svg": "^15.7.1",
     "react-native-web": "~0.19.13",
     "react-native-webview": "^13.12.5",
-    "zustand": "^5.0.0-rc.2"
+    "zustand": "^5.0.0-rc.2",
+    "@stripe/stripe-react-native": "0.38.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

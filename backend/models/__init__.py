@@ -6,3 +6,4 @@ from .message import Message
 from .channel import Channel
 from .community import Community
 from .course import Course
+from .chapter import Chapter

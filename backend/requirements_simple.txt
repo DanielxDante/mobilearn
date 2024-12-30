@@ -10,3 +10,4 @@ psycopg2==2.9.9
 # Mac users may need to install psycopg2-binary instead of psycopg2
 boto3==1.35.82
 flask-socketio==5.4.1
+stripe==11.4.1

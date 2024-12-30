@@ -66,7 +66,7 @@ const Profile = () => {
                 <TouchableOpacity
                     style={styles.editIconButton}
                     onPress={() => {
-                        router.push("/(member_guest)/editProfile");
+                        router.push("/(member_guest)/profile/editProfile");
                     }}
                 >
                     <Image
@@ -77,6 +77,7 @@ const Profile = () => {
             </View>
             {/* Options Area */}
             <View style={styles.optionsContainer}>
+                {/* TODO: replace payment method with changing language */}
                 <IconTextButton
                     icon={icons.card}
                     text={Constants.paymentMethodTitle}
@@ -85,11 +86,12 @@ const Profile = () => {
                     }}
                     style={styles.iconTextButton}
                 />
+                {/* TODO: add help center and privacy notice here */}
                 <IconTextButton
                     icon={icons.tele}
                     text={Constants.donateTitle}
                     onPress={() => {
-                        console.log("Donate method button pressed");
+                        router.push("/(member_guest)/profile/donate");
                     }}
                     style={styles.iconTextButton}
                 />

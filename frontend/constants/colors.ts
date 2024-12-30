@@ -29,4 +29,5 @@ export const Colors = {
   tabsIconGray: "#DEDEDE",
   Gray: "#808080",
   darkGray: "#181818",
+  warningRed: "#FF0000",
 };
