@@ -101,6 +101,9 @@ const EditProfile = () => {
     }
     if (newEmail.length == 0) {
       alert("Email is empty");
+    }
+    if (newEmail === email) {
+      alert("Email was not changed.");
     } else {
       try {
         const response = await editEmail(newEmail);
