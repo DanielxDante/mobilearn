@@ -1,22 +1,24 @@
-from sqlalchemy import Column, Integer, String, DateTime, func
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, func
 from sqlalchemy.orm import relationship
 
 from database import Base
+from models.chapter_lesson import ChapterLesson
 
 class Chapter(Base):
     __tablename__ = 'chapters'
 
     id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)
     title = Column(String, nullable=False)
     order = Column(Integer, nullable=False) # starts from 1
     created = Column(DateTime(timezone=True), default=func.now(), nullable=False)
     updated = Column(DateTime(timezone=True), default=func.now(), nullable=False)
 
-    # Many-to-many relationship with Course
-    courses = relationship("Course", secondary="course_chapters", back_populates="chapters")
+    # Many-to-one relationship with Course
+    course = relationship("Course", back_populates="chapters")
 
-    # One-to-many relationship with Lesson
-    # lessons = relationship("Lesson", back_populates="chapter")
+    # Many-to-many relationship with Lesson
+    lessons = relationship("Lesson", secondary="chapter_lessons", back_populates="chapters")
 
     @staticmethod
     def get_chapters(session):

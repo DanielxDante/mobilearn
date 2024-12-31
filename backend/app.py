@@ -64,6 +64,7 @@ def setup_environment():
         from models import community
         from models import course
         from models import chapter
+        from models import lesson
 
         create_tables()
         check_db()
