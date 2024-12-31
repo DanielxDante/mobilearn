@@ -4,7 +4,7 @@ import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ITabIcon } from "@/types/shared/layout";
 import { Colors } from "@/constants/colors";
-import icons from "../../constants/icons";
+import icons from "../../../constants/icons";
 
 const TabIcon = ({ icon, color, name, focused }: ITabIcon) => {
   return (
