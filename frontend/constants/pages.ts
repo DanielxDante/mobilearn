@@ -21,6 +21,8 @@ export const INSTRUCTOR_WAITING_PAGE =
 export const MEMBER_REGISTRATION_SUCCESS =
   "/shared/registrationSuccessMemberPage" as Href<string>;
 export const DONATION_PAGE = "/shared/profile/donate" as Href<string>;
+export const MEMBER_CHANNEL_REGISTRATION =
+  `/shared/memberChannelSignUpPage` as Href<string>;
 
 // MEMBER/GUEST PAGES
 export const MEMBER_GUEST_NAMESPACE = "(member_guest)";
