@@ -16,7 +16,7 @@ import { courseListData as allCourses } from "@/constants/temporaryCourseData";
 import { Colors } from "@/constants/colors";
 import { instructorCoursePageConstants as textConstants } from "@/constants/textConstants";
 import CourseListItem from "@/components/InstructorCourseListItem";
-import SearchBar from "../../components/SearchBar";
+import SearchBar from "../../../components/SearchBar";
 const CoursePage = () => {
   const [filteredCourses, setFilteredCourses] = useState(allCourses);
 
