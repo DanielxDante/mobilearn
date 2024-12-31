@@ -9,7 +9,7 @@ import { useFonts } from "expo-font";
 import IconTextButton from "@/components/IconTextButton";
 import icons from "@/constants/icons";
 import { router } from "expo-router";
-import { CAROUSEL_PAGE } from "@/constants/pages";
+import { CAROUSEL_PAGE, DONATION_PAGE } from "@/constants/pages";
 
 const Profile = () => {
   const username = useAuthStore((state) => state.username);
@@ -79,14 +79,14 @@ const Profile = () => {
                     style={styles.iconTextButton}
                 /> */}
         {/* TODO: add help center and privacy notice here */}
-        {/* <IconTextButton
-                    icon={icons.tele}
-                    text={Constants.donateTitle}
-                    onPress={() => {
-                        router.push("/(member_guest)/profile/donate");
-                    }}
-                    style={styles.iconTextButton}
-                /> */}
+        <IconTextButton
+          icon={icons.tele}
+          text={Constants.donateTitle}
+          onPress={() => {
+            router.push(DONATION_PAGE);
+          }}
+          style={styles.iconTextButton}
+        />
         <IconTextButton
           icon={icons.logout}
           text={Constants.logOutTitle}
