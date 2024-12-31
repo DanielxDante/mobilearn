@@ -32,7 +32,7 @@ class Community(Base):
     instructors = relationship("Instructor", secondary="community_instructors", back_populates="communities")
 
     # Many-to-one relationship with Course
-    courses = relationship("Course", back_populates="communities", cascade="all, delete-orphan")
+    courses = relationship("Course", back_populates="community", cascade="all, delete-orphan")
 
     @staticmethod
     def get_communities(session):

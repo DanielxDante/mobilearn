@@ -93,6 +93,11 @@ class InviteUserToChannelEndpoint(Resource):
             try:
                 channel_id = ChannelService.invite_user(session, invite_code, current_email)
             except ValueError as ee:
+                if str(ee) == "Channel not found":
+                    return Response(
+                        json.dumps({'message': "Invite code is invalid"}),
+                        status=201, mimetype='application/json'
+                    )
                 return Response(
                     json.dumps({'message': str(ee)}),
                     status=400, mimetype='application/json'

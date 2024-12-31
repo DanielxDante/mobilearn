@@ -10,6 +10,7 @@ from sqlalchemy import (
     func,
     select
 )
+from typing import List
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -18,7 +19,6 @@ from enums.difficulty import DIFFICULTY
 from enums.course import COURSE
 from models.community import Community
 from models.review import Review
-from models.course_chapter import CourseChapter
 
 class CourseBuilder:
     """ Unified builder for creating Course instances with factory method """
@@ -37,7 +37,7 @@ class CourseBuilder:
             'skills': None,
             'created': func.now(),
             'updated': func.now(),
-            'status': STATUS.ACTIVE
+            'status': STATUS.NOT_APPROVED
         }
         self._specific_attrs = {}
 
@@ -213,14 +213,15 @@ class Course(Base):
     instructors = relationship("Instructor", secondary="offers", back_populates="courses")
 
     # Many-to-one relationship with Community
-    communities = relationship("Community", back_populates="courses")
+    community = relationship("Community", back_populates="courses")
 
     # Many-to-many relationship with User
     user_reviews = relationship("User", secondary="reviews", back_populates="course_reviews")
     user_enrollments = relationship("User", secondary="enrollments", back_populates="course_enrollments")
+    user_favourites = relationship("User", secondary="favourites", back_populates="course_favourites")
 
-    # Many-to-many relationship with Chapter
-    chapters = relationship("Chapter", secondary="course_chapters", back_populates="courses")
+    # Many-to-one relationship with Chapter
+    chapters = relationship("Chapter", back_populates="course", cascade="all, delete-orphan")
 
     @staticmethod
     def get_courses(session):
@@ -238,6 +239,10 @@ class Course(Base):
             .filter(Course.status.in_([STATUS.ACTIVE, STATUS.NOT_APPROVED]))
             .first()
         )
+    
+    @staticmethod
+    def admin_get_course_by_id(session, id):
+        return session.query(Course).filter_by(id=id).first()
     
     @staticmethod
     def get_course_by_name(session, name):
@@ -335,6 +340,82 @@ class Course(Base):
         else:
             raise ValueError("Course not found")
     
+    @staticmethod
+    def change_duration(session, id, new_duration):
+        course = Course.get_course_by_id(session, id)
+        if course:
+            course.duration = new_duration
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+    
+    @staticmethod
+    def change_image_url(session, id, new_image_url):
+        course = Course.get_course_by_id(session, id)
+        if course:
+            course.image_url = new_image_url
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+    
+    @staticmethod
+    def change_price(session, id, new_price, new_currency='SGD'):
+        course = Course.get_course_by_id(session, id)
+        if course:
+            course.price = new_price
+            course.currency = new_currency
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+    
+    @staticmethod
+    def change_difficulty(session, id, new_difficulty):
+        if new_difficulty not in DIFFICULTY.values():
+            raise ValueError("Invalid difficulty value")
+        
+        course = Course.get_course_by_id(session, id)
+        if course:
+            course.difficulty = new_difficulty
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+    
+    @staticmethod
+    def change_skills(session, id, new_skills: List[str]):
+        course = Course.get_course_by_id(session, id)
+        if course:
+            course.skills = ', '.join(new_skills)
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+    
+    @staticmethod
+    def change_status(session, id, new_status):
+        if new_status not in STATUS.values():
+            raise ValueError("Invalid status value")
+        
+        course = Course.admin_get_course_by_id(session, id)
+        if course:
+            course.status = new_status
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+    
+    @staticmethod
+    def delete_course(session, id):
+        course = Course.get_course_by_id(session, id)
+        if course:
+            session.delete(course)
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+    
     def __repr__(self):
         return f'<Name: {self.name}'
     
@@ -357,7 +438,6 @@ def update_course_rating(mapper, connection, target):
         .values(rating=avg_rating)
     )
     
-
 class AcademicCourse(Course):
     # for academic progressions with a broader and theoretical focus
     __tablename__ = 'academic_courses'
@@ -371,6 +451,46 @@ class AcademicCourse(Course):
     __mapper_args__ = {
         'polymorphic_identity': COURSE.ACADEMIC
     }
+
+    @staticmethod
+    def change_school_name(session, id, new_school_name):
+        course = AcademicCourse.get_course_by_id(session, id)
+        if course:
+            course.school_name = new_school_name
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+    
+    @staticmethod
+    def change_program_type(session, id, new_program_type):
+        course = AcademicCourse.get_course_by_id(session, id)
+        if course:
+            course.program_type = new_program_type
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+    
+    @staticmethod
+    def change_field(session, id, new_field):
+        course = AcademicCourse.get_course_by_id(session, id)
+        if course:
+            course.field = new_field
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+    
+    @staticmethod
+    def change_major(session, id, new_major):
+        course = AcademicCourse.get_course_by_id(session, id)
+        if course:
+            course.major = new_major
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
 
     def to_dict(self):
         return {
@@ -407,6 +527,26 @@ class ProfessionalCourse(Course):
         'polymorphic_identity': COURSE.PROFESSIONAL
     }
 
+    @staticmethod
+    def change_department(session, id, new_department):
+        course = ProfessionalCourse.get_course_by_id(session, id)
+        if course:
+            course.department = new_department
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+    
+    @staticmethod
+    def change_skill(session, id, new_skill):
+        course = ProfessionalCourse.get_course_by_id(session, id)
+        if course:
+            course.skill = new_skill
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -438,6 +578,16 @@ class SpecializationCourse(Course):
         'polymorphic_identity': COURSE.SPECIALIZATION
     }
 
+    @staticmethod
+    def change_subject(session, id, new_subject):
+        course = SpecializationCourse.get_course_by_id(session, id)
+        if course:
+            course.subject = new_subject
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -468,6 +618,16 @@ class ProjectCourse(Course):
     __mapper_args__ = {
         'polymorphic_identity': COURSE.PROJECT
     }
+
+    @staticmethod
+    def change_platform(session, id, new_platform):
+        course = ProjectCourse.get_course_by_id(session, id)
+        if course:
+            course.platform = new_platform
+            course.updated = func.now()
+            session.flush()
+        else:
+            raise ValueError("Course not found")
 
     def to_dict(self):
         return {

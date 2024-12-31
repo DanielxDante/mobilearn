@@ -133,7 +133,6 @@ class GetInstructorCoursesEndpoint(Resource):
 
 create_course_parser = api.parser()
 create_course_parser.add_argument('name', type=str, help='Name', location='form', required=True)
-create_course_parser.add_argument('school', type=str, help='School', location='form', required=True)
 create_course_parser.add_argument('description', type=str, help='Description', location='form', required=True)
 create_course_parser.add_argument('course_type', type=str, help='Course Type', location='form', required=True)
 create_course_parser.add_argument('duration', type=str, help='Duration', location='form', required=True)
