@@ -31,8 +31,6 @@ const PaymentCompleted = () => {
                 <BackButton />
             </View>
             <ScrollView>
-                {/* Progress Bar */}
-                <PaymentProgressBar active={3} />
                 {/* Page body */}
                 <Image
                     source={Constants.completePurchase}
