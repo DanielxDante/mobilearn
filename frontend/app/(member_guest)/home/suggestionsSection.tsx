@@ -31,10 +31,7 @@ const SuggestionsSection: React.FC<ContinueWatchingProps> = ({
             onPress={() => onSelect(item.id)}
         >
             <View style={styles.courseInfo}>
-                <Image
-                    source={item.image}
-                    style={styles.courseImage}
-                />
+                <Image source={item.image} style={styles.courseImage} />
                 <Text style={styles.courseTitle} numberOfLines={2}>
                     {item.title}
                 </Text>
@@ -80,7 +77,7 @@ const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
     courseContainer: {
-        marginHorizontal: 6,
+        marginHorizontal: 12,
         marginBottom: 20,
         width: width * 0.35,
         height: height * 0.23,
@@ -129,7 +126,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     headerFooterSpacing: {
-        width: 12,
+        width: 15,
     },
 });
 
