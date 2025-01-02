@@ -23,19 +23,45 @@ class GetUserEnrolledCoursesEndpoint(Resource):
                 'in': 'header',
                 'description': 'Bearer token',
                 'required': True
+            },
+            'page': {
+                'in': 'query',
+                'description': 'Page number',
+                'required': False
+            },
+            'per_page': {
+                'in': 'query',
+                'description': 'Number of courses per page',
+                'required': False
             }
         },
     )
     @jwt_required()
-    def get(self):
+    def get(self, channel_id):
         """ Get courses the user is enrolled in """
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 5))
+
         current_email = get_jwt_identity()
 
         session = create_session()
 
         try:
-            courses = UserService.get_user_enrolled_courses(session, current_email)
-            course_ids = [course.id for course in courses]
+            courses = UserService.get_user_enrolled_courses(
+                session,
+                user_email=current_email,
+                channel_id=channel_id,
+                page=page,
+                per_page=per_page
+            )
+            course_ids = [{
+                'id': course.id,
+                'course_name': course.name,
+                'rating': str(course.rating),
+                'course_image': course.image_url,
+                'community_name': course.community.name,
+                # 'progress': str(course.progress) # TODO: Add progress
+            } for course in courses]
         except ValueError as ee:
             return Response(
                 json.dumps({"error": str(ee)}),

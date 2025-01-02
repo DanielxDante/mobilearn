@@ -199,7 +199,7 @@ def init_community_endpoints():
 def init_course_endpoints():
     from endpoints.course.course import (
         GetCourseEndpoint,
-        GetUserCoursesEndpoint,
+        SearchCoursesEndpoint,
         GetInstructorCoursesEndpoint,
         CreateCourseEndpoint
     )
@@ -213,8 +213,8 @@ def init_course_endpoints():
     get_course_path = f"/{VERSION}/course/getCourse/<string:course_id>"
     ns_course.add_resource(GetCourseEndpoint, get_course_path)
 
-    get_user_courses_path = f"/{VERSION}/course/getUserCourses"
-    ns_course.add_resource(GetUserCoursesEndpoint, get_user_courses_path)
+    search_courses_path = f"/{VERSION}/course/search/<string:channel_id>"
+    ns_course.add_resource(SearchCoursesEndpoint, search_courses_path)
 
     get_instructor_courses_path = f"/{VERSION}/course/getInstructorCourses"
     ns_course.add_resource(GetInstructorCoursesEndpoint, get_instructor_courses_path)
@@ -228,7 +228,7 @@ def init_course_endpoints():
     save_course_review_path = f"/{VERSION}/course/saveReview"
     ns_course.add_resource(SaveReviewEndpoint, save_course_review_path)
 
-    get_user_enrolled_courses_path = f"/{VERSION}/course/getEnrolledCourses"
+    get_user_enrolled_courses_path = f"/{VERSION}/course/getEnrolledCourses/<string:channel_id>"
     ns_course.add_resource(GetUserEnrolledCoursesEndpoint, get_user_enrolled_courses_path)
 
     enroll_user_path = f"/{VERSION}/course/enroll"
