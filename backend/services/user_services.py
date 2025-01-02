@@ -30,11 +30,17 @@ class UserService:
         return channels
     
     @staticmethod
-    def get_user_enrolled_courses(session, user_email):
+    def get_user_enrolled_courses(session, user_email, channel_id, page, per_page):
         """ Get all courses that a user is enrolled in """
         user = User.get_user_by_email(session, user_email)
         if not user:
             raise ValueError("User not found")
+        
+        channel = Channel.get_channel_by_id(session, channel_id)
+        if not channel:
+            raise ValueError("Channel not found")
+        
+        offset = (page - 1) * per_page
         
         courses = (
             session.query(Course)
@@ -43,11 +49,17 @@ class UserService:
                 Enrollment.user_id == user.id,
                 Course.status == COURSE_STATUS.ACTIVE
             )
-            .order_by(Course.created.desc())
+        )
+
+        paginated_courses = (
+            courses
+            .order_by(Enrollment.enrolled.desc())
+            .offset(offset)
+            .limit(per_page)
             .all()
         )
         
-        return courses
+        return paginated_courses
     
     @staticmethod
     def enroll_user(session, user_email, course_id):

@@ -49,7 +49,7 @@ class GetCourseEndpoint(Resource):
                 status=500, mimetype='application/json'
             )
         
-class GetUserCoursesEndpoint(Resource):
+class SearchCoursesEndpoint(Resource):
     @api.doc(
         responses={
             200: 'Ok',
@@ -62,23 +62,51 @@ class GetUserCoursesEndpoint(Resource):
                 'in': 'header',
                 'description': 'Bearer token',
                 'required': True
+            },
+            'search_term': {
+                'in': 'query',
+                'description': 'Search term for courses',
+                'required': False
+            },
+            'page': {
+                'in': 'query',
+                'description': 'Page number',
+                'required': False
+            },
+            'per_page': {
+                'in': 'query',
+                'description': 'Number of courses per page',
+                'required': False
             }
         },
     )
     @jwt_required()
-    def get(self):
-        """ Get all courses the user can get access to """
+    def get(self, channel_id):
+        """ Get all courses in a channel """
+        search_term = request.args.get('search_term', '')
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 5))
+
         current_email = get_jwt_identity()
 
         session = create_session()
 
         try:
-            courses = CourseService.get_user_courses(session, current_email)
+            courses = CourseService.get_channel_courses(
+                session,
+                channel_id=channel_id,
+                search_term=search_term,
+                page=page,
+                per_page=per_page
+            )
             courses_info = [{
                 'id': course.id,
-                'name': course.name,
-                'description': course.description,
-                'image': course.image
+                'course_name': course.name,
+                'rating': str(course.rating),
+                'skills': course.skills,
+                'course_image': course.image_url,
+                'community_name': course.community.name,
+                'community_logo': course.community.community_logo_url,
             } for course in courses]
         except ValueError as ee:
             return Response(
@@ -89,6 +117,8 @@ class GetUserCoursesEndpoint(Resource):
             json.dumps({'courses': courses_info}),
             status=200, mimetype='application/json'
         )
+
+# class GetTopEnrolledCourses(Resource): 
     
 class GetInstructorCoursesEndpoint(Resource):
     @api.doc(
