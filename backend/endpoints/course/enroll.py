@@ -9,6 +9,7 @@ from flask_jwt_extended import (
 from app import api
 from database import session_scope, create_session
 from services.user_services import UserService
+from services.instructor_services import InstructorService
 
 class GetUserEnrolledCoursesEndpoint(Resource):
     @api.doc(
@@ -60,7 +61,7 @@ class GetUserEnrolledCoursesEndpoint(Resource):
                 'rating': str(course.rating),
                 'course_image': course.image_url,
                 'community_name': course.community.name,
-                # 'progress': str(course.progress) # TODO: Add progress in differentiate between in progress and completed courses
+                # 'progress': str(course.progress) # TODO: Add progress to differentiate between in progress and completed courses
             } for course in courses]
         except ValueError as ee:
             return Response(
@@ -72,7 +73,7 @@ class GetUserEnrolledCoursesEndpoint(Resource):
             status=200, mimetype='application/json'
         )
 
-class GetTopEnrolledCoursesEndpoint(Resource):
+class GetUserTopEnrolledCoursesEndpoint(Resource):
     @api.doc(
         responses={
             200: 'Ok',
@@ -100,7 +101,7 @@ class GetTopEnrolledCoursesEndpoint(Resource):
     )
     @jwt_required()
     def get(self, channel_id):
-        """ Get top enrolled courses """
+        """ Get top enrolled courses for users """
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 5))
 
@@ -228,4 +229,63 @@ class WithdrawUserEndpoint(Resource):
                     json.dumps({"error": str(ee)}),
                     status=400, mimetype='application/json'
                 )
-           
+
+class GetInstructorTopEnrolledCoursesEndpoint(Resource):
+    @api.doc(
+        responses={
+            200: 'Ok',
+            401: 'Unauthorized',
+            404: 'Resource not found',
+            500: 'Internal Server Error'
+        },
+        params={
+            'Authorization': {
+                'in': 'header',
+                'description': 'Bearer token',
+                'required': True
+            },
+            'page': {
+                'in': 'query',
+                'description': 'Page number',
+                'required': False
+            },
+            'per_page': {
+                'in': 'query',
+                'description': 'Number of courses per page',
+                'required': False
+            }
+        },
+    )
+    @jwt_required()
+    def get(self):
+        """ Get top enrolled courses for instructors """
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 5))
+
+        current_email = get_jwt_identity()
+
+        session = create_session()
+
+        try:
+            courses = InstructorService.get_top_enrolled_courses(
+                session,
+                instructor_email=current_email,
+                page=page,
+                per_page=per_page
+            )
+            course_info = [{
+                'id': course.id,
+                'course_name': course.name,
+                'rating': str(course.rating),
+                'course_image': course.image_url,
+                'community_name': course.community.name,
+            } for course in courses]
+        except ValueError as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=404, mimetype='application/json'
+            )
+        return Response(
+            json.dumps({'courses': course_info}),
+            status=200, mimetype='application/json'
+        )         

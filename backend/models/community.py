@@ -86,7 +86,6 @@ class Community(Base):
             raise ValueError("Community not found")
 
         community.community_type = new_community_type
-        # TODO: deattach all courses from the community
         session.flush()
 
     @staticmethod

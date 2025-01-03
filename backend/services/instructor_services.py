@@ -1,6 +1,9 @@
+from sqlalchemy import func, not_
+
 from models.instructor import Instructor
 from models.course import Course, STATUS as COURSE_STATUS
 from models.offer import Offer
+from models.enrollment import Enrollment
 
 class InstructorServiceError(Exception):
     pass
@@ -25,6 +28,58 @@ class InstructorService:
         )
         
         return courses
+    
+    @staticmethod
+    def get_top_enrolled_courses(session, instructor_email, page, per_page):
+        """ Get top enrolled courses for instructors """
+        instructor = Instructor.get_instructor_by_email(session, instructor_email)
+        if not instructor:
+            raise ValueError("Instructor not found")
+
+        offset = (page - 1) * per_page
+        
+        courses = (
+            session.query(Course)
+            .join(Enrollment)
+            .filter(
+                Course.status == COURSE_STATUS.ACTIVE
+            )
+        )
+
+        paginated_courses = (
+            courses
+            .group_by(Course.id)
+            .order_by(func.count(Enrollment.user_id).desc())
+            .offset(offset)
+            .limit(per_page)
+            .all()
+        )
+
+        # Fallback to top rated courses if there are not enough enrollment data
+        if len(paginated_courses) < 5:
+            instructor_courses = (
+                session.query(Course)
+                .join(Offer)
+                .filter(
+                    Offer.instructor_id == instructor.id,
+                    Course.status != COURSE_STATUS.DISABLED
+                )
+            )
+
+            fallback_courses = (
+                session.query(Course)
+                .filter(
+                    not_(Course.id.in_([course.id for course in instructor_courses])),
+                    Course.status == COURSE_STATUS.ACTIVE,
+                )
+                .order_by(Course.rating.desc())
+                .offset(offset)
+                .limit(per_page)
+                .all()
+            )
+            paginated_courses = fallback_courses
+        
+        return paginated_courses
     
     @staticmethod
     def attach_course(session, instructor_id, course_id):

@@ -124,3 +124,6 @@ class CourseService:
         )
         
         return paginated_courses
+
+    # @staticmethod
+    # def attach_instructor

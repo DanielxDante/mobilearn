@@ -2,7 +2,7 @@ import os
 import json
 from botocore.exceptions import ClientError
 from flask import Response, request
-from flask_restx import Resource, fields
+from flask_restx import Resource
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity
@@ -220,15 +220,21 @@ class GetInstructorCoursesEndpoint(Resource):
                 json.dumps({
                     'active_courses': [{
                         'id': course.id,
-                        'name': course.name,
+                        'course_name': course.name,
+                        'community_name': course.community.name,
+                        'rating': str(course.rating),
                         'description': course.description,
-                        'image': course.image_url
+                        'image': course.image_url,
+                        'enrollment_count': len(course.user_enrollments),
                     } for course in courses if course.status == COURSE_STATUS.ACTIVE],
                     'not_approved_courses': [{
                         'id': course.id,
-                        'name': course.name,
+                        'course_name': course.name,
+                        'community_name': course.community.name,
+                        'rating': str(course.rating),
                         'description': course.description,
-                        'image': course.image_url
+                        'image': course.image_url,
+                        'enrollment_count': len(course.user_enrollments),
                     } for course in courses if course.status == COURSE_STATUS.NOT_APPROVED],
                 }),
                 status=200, mimetype='application/json'
@@ -282,6 +288,26 @@ class CreateCourseEndpoint(Resource):
             Fill in department for professional courses.
             Fill in subject for specialization courses.
             Fill in platform for project courses.
+            CreateCourseRequest {
+                title: string;
+                description: string;
+                price: number;
+                duration: number; // in weeks
+                difficulty: string; // beginner, intermediate, advanced
+                skills: string[];
+                image?: File;
+                chapters: {
+                    title: string;
+                    order: number;
+                    lessons: {
+                    title: string;
+                    course_type: 'text' | 'video' | 'homework';
+                    order: number;
+                    content?: string;  // For rich text
+                    file?: File;       // For file uploads
+                    }[];
+                }[];
+                }
         """
     )
     @api.expect(create_course_parser)
@@ -292,7 +318,6 @@ class CreateCourseEndpoint(Resource):
         name = data.get('name')
         description = data.get('description')
         course_type = data.get('course_type')
-        # other_instructors = data.get('other_instructors', None) # TODO: to clarify
 
         optional_course_data = {
             'duration': data.get('duration'),
@@ -393,4 +418,4 @@ class CreateCourseEndpoint(Resource):
 
 # class EditCourseEndpoint(Resource):
 
-# class CompleteLessonEndpoint(Resource):
+
