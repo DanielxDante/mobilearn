@@ -10,14 +10,15 @@ from flask_jwt_extended import (
 
 from app import api
 from database import session_scope, create_session
-from models.course import Course, COURSE
+from models.course import Course, STATUS as COURSE_STATUS
+from models.enrollment import Enrollment
 from models.instructor import Instructor
 from models.community import Community
 from services.course_services import CourseService
 from services.instructor_services import InstructorService
 from utils.s3 import s3_client, allowed_file, bucket_name, cloudfront_domain
 
-class GetCourseEndpoint(Resource):
+class GetUnenrolledCourseEndpoint(Resource):
     @api.doc(
         responses={
             200: 'Ok',
@@ -35,14 +36,27 @@ class GetCourseEndpoint(Resource):
     )
     @jwt_required()
     def get(self, course_id):
-        """ Get course info """
-        # TODO: include chapters and lessons?
+        """ Get course info for enrollment """
+        current_email = get_jwt_identity()
+
         session = create_session()
 
         try:
             course = Course.get_course_by_id(session, course_id)
             return Response(
-                json.dumps({'course': course.to_dict()}),
+                json.dumps({
+                    'course_id': course.id,
+                    'community_id': course.community_id,
+                    'course_image': course.image_url,
+                    'course_name': course.name,
+                    'community_name': course.community.name,
+                    'enrollment_count': len(course.user_enrollments),
+                    'price': str(course.price),
+                    'description': course.description,
+                    'lesson_count': str(sum(len(chapter.lessons) for chapter in course.chapters)),
+                    'duration': str(course.duration),
+                    'skills': course.skills,
+                }),
                 status=200, mimetype='application/json'
             )
         except ValueError as ee:
@@ -50,7 +64,64 @@ class GetCourseEndpoint(Resource):
                 json.dumps({"error": str(ee)}),
                 status=500, mimetype='application/json'
             )
-        
+
+class GetEnrolledCourseEndpoint(Resource):
+    @api.doc(
+        responses={
+            200: 'Ok',
+            401: 'Unauthorized',
+            404: 'Resource not found',
+            500: 'Internal Server Error'
+        },
+        params={
+            'Authorization': {
+                'in': 'header',
+                'description': 'Bearer token',
+                'required': True
+            }
+        },
+    )
+    @jwt_required()
+    def get(self, course_id):
+        """ Get course info for enrolled users/instructors that created the course """
+        current_email = get_jwt_identity()
+
+        session = create_session()
+
+        try:
+            course = Course.get_course_by_id(session, course_id)
+            return Response(
+                json.dumps({
+                    'course_id': course.id,
+                    'community_id': course.community_id,
+                    'course_image': course.image_url,
+                    'course_name': course.name,
+                    'community_name': course.community.name,
+                    'description': course.description,
+                    'instructors': [{
+                        'instructor_id': instructor.id,
+                        'instructor_name': instructor.name,
+                        'instructor_profile_picture': instructor.profile_picture_url,
+                        'instructor_position': instructor.position,
+                    } for instructor in course.instructors],
+                    'chapters': sorted([{
+                        'chapter_id': chapter.id,
+                        'chapter_title': chapter.title,
+                        'order': chapter.order,
+                        'lessons': [{
+                            'lesson_id': lesson.id,
+                            'lesson_name': lesson.name,
+                        } for lesson in chapter.lessons]
+                    } for chapter in course.chapters], key=lambda x: x['chapter_id']),
+                }),
+                status=200, mimetype='application/json'
+            )
+        except ValueError as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+
 class SearchCoursesEndpoint(Resource):
     @api.doc(
         responses={
@@ -139,28 +210,34 @@ class GetInstructorCoursesEndpoint(Resource):
     @jwt_required()
     def get(self):
         """ Get courses the instructor is teaching """
-        # TODO: include status to know non-approved courses as well
         current_email = get_jwt_identity()
 
         session = create_session()
 
         try:
             courses = InstructorService.get_instructor_courses(session, current_email)
-            courses_info = [{
-                'id': course.id,
-                'name': course.name,
-                'description': course.description,
-                'image': course.image_url
-            } for course in courses] 
+            return Response(
+                json.dumps({
+                    'active_courses': [{
+                        'id': course.id,
+                        'name': course.name,
+                        'description': course.description,
+                        'image': course.image_url
+                    } for course in courses if course.status == COURSE_STATUS.ACTIVE],
+                    'not_approved_courses': [{
+                        'id': course.id,
+                        'name': course.name,
+                        'description': course.description,
+                        'image': course.image_url
+                    } for course in courses if course.status == COURSE_STATUS.NOT_APPROVED],
+                }),
+                status=200, mimetype='application/json'
+            )
         except ValueError as ee:
             return Response(
                 json.dumps({"error": str(ee)}),
                 status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'courses': courses_info}),
-            status=200, mimetype='application/json'
-        )
 
 create_course_parser = api.parser()
 create_course_parser.add_argument('name', type=str, help='Name', location='form', required=True)

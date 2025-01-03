@@ -188,7 +188,11 @@ def init_channel_endpoints():
     ns_channel.add_resource(InviteUserToChannelEndpoint, invite_user_to_channel_path)
 
 def init_community_endpoints():
-    from endpoints.community.community import GetCommunitiesEndpoint, GetCommunityInstructorsEndpoint
+    from endpoints.community.community import (
+        GetCommunitiesEndpoint,
+        GetCommunityInstructorsEndpoint,
+        GetInstructorDetailsEndpoint
+    )
 
     get_communities_path = f"/{VERSION}/community/getCommunities"
     ns_community.add_resource(GetCommunitiesEndpoint, get_communities_path)
@@ -196,9 +200,13 @@ def init_community_endpoints():
     get_community_instructors_path = f"/{VERSION}/community/getInstructors/<string:community_id>"
     ns_community.add_resource(GetCommunityInstructorsEndpoint, get_community_instructors_path)
 
+    get_instructor_details_path = f"/{VERSION}/community/getInstructorDetails/<string:instructor_id>"
+    ns_community.add_resource(GetInstructorDetailsEndpoint, get_instructor_details_path)
+
 def init_course_endpoints():
     from endpoints.course.course import (
-        GetCourseEndpoint,
+        GetUnenrolledCourseEndpoint,
+        GetEnrolledCourseEndpoint,
         SearchCoursesEndpoint,
         GetInstructorCoursesEndpoint,
         CreateCourseEndpoint
@@ -217,8 +225,11 @@ def init_course_endpoints():
     )
     from endpoints.course.recommender import GetRecommendedCoursesEndpoint
 
-    get_course_path = f"/{VERSION}/getCourse/<string:course_id>"
-    ns_course.add_resource(GetCourseEndpoint, get_course_path)
+    get_unenrolled_course_path = f"/{VERSION}/getUnenrolledCourse/<string:course_id>"
+    ns_course.add_resource(GetUnenrolledCourseEndpoint, get_unenrolled_course_path)
+
+    get_enrolled_course_path = f"/{VERSION}/getEnrolledCourse/<string:course_id>"
+    ns_course.add_resource(GetEnrolledCourseEndpoint, get_enrolled_course_path)
 
     search_courses_path = f"/{VERSION}/search/<string:channel_id>"
     ns_course.add_resource(SearchCoursesEndpoint, search_courses_path)
