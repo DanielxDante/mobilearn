@@ -1,4 +1,9 @@
-from models.course import Course
+from sqlalchemy import or_
+
+from models.course import Course, STATUS as COURSE_STATUS
+from models.channel import Channel
+from models.community import Community
+from models.channel_community import ChannelCommunity
 from models.instructor import Instructor, STATUS as INSTRUCTOR_STATUS
 from models.offer import Offer
 
@@ -6,6 +11,48 @@ class CourseServiceError(Exception):
     pass
 
 class CourseService:
+    @staticmethod
+    def get_channel_courses(session, channel_id, search_term, page, per_page):
+        """ Get courses that are in the channel """
+        channel = Channel.get_channel_by_id(session, channel_id)
+        if not channel:
+            raise ValueError("Channel not found")
+
+        offset = (page - 1) * per_page
+
+        courses = (
+            session.query(Course)
+            .join(Community)
+            .join(ChannelCommunity)
+            .join(Channel)
+            .join(Offer)
+            .join(Instructor)
+            .filter(
+                Channel.id == channel_id,
+                Course.status == COURSE_STATUS.ACTIVE
+            )
+            .distinct()
+        )
+
+        if (search_term):
+            search_filters = [
+                Course.name.ilike(f'%{search_term}%'),
+                Community.name.ilike(f'%{search_term}%'),
+                Instructor.name.ilike(f'%{search_term}%'),
+            ]
+
+            courses = courses.filter(or_(*search_filters))
+        
+        paginated_courses = (
+            courses
+            .order_by(Course.created.desc())
+            .offset(offset)
+            .limit(per_page)
+            .all()
+        )
+        
+        return paginated_courses
+
     @staticmethod
     def get_course_instructors(session, course_id):
         """ Get instructors that are offering the course """

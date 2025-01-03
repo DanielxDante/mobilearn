@@ -149,7 +149,7 @@ def load_courses():
                 course = Course.add_course(
                     session,
                     community_id=community.id,
-                    name=row['Course Title'],
+                    name=row['Course Title'].strip(),
                     description=row['What you will learn'],
                     course_type=COURSE.SPECIALIZATION,
                     duration=float(row['Duration']),
