@@ -8,6 +8,7 @@ class ChapterLesson(Base):
 
     chapter_id = Column(Integer, ForeignKey('chapters.id', ondelete='CASCADE'), primary_key=True)
     lesson_id = Column(Integer, ForeignKey('lessons.id', ondelete='CASCADE'), primary_key=True)
+    order = Column(Integer, nullable=False) # starts from 1
     attached = Column(DateTime(timezone=True), default=func.now(), nullable=False)
 
     def __repr__(self):

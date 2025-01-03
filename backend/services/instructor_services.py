@@ -19,7 +19,7 @@ class InstructorService:
             .join(Offer)
             .filter(
                 Offer.instructor_id == instructor_id,
-                Course.status == COURSE_STATUS.ACTIVE
+                Course.status != COURSE_STATUS.DISABLED
             )
             .order_by(Course.created.desc())
             .all()

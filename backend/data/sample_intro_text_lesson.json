@@ -1,0 +1,46 @@
+{
+    "title": "Welcome to Your E-Learning Course",
+    "author": "Course Team",
+    "content": [
+        {
+            "type": "heading",
+            "level": 1,
+            "text": "Welcome to the Course!"
+        },
+        {
+            "type": "paragraph",
+            "text": "We are excited to have you join us for this e-learning journey. This course is designed to provide you with the knowledge and skills you need to succeed."
+        },
+        {
+            "type": "heading",
+            "level": 2,
+            "text": "Course Overview"
+        },
+        {
+            "type": "paragraph",
+            "text": "In this course, you will find a variety of lessons, quizzes, and interactive activities to help you learn. Our goal is to make your learning experience engaging and effective."
+        },
+        {
+            "type": "list",
+            "ordered": false,
+            "items": [
+                "Interactive lessons",
+                "Quizzes to test your knowledge",
+                "Support from instructors"
+            ]
+        },
+        {
+            "type": "heading",
+            "level": 2,
+            "text": "Getting Started"
+        },
+        {
+            "type": "paragraph",
+            "text": "To get started, simply navigate to the first lesson and begin your learning journey. If you have any questions, feel free to reach out to our support team."
+        },
+        {
+            "type": "paragraph",
+            "text": "We wish you the best of luck and hope you enjoy the course!"
+        }
+    ]
+}
