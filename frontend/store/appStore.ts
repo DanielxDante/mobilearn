@@ -5,10 +5,12 @@ import axios, { AxiosError } from "axios";
 
 import {
     PAYMENT_STRIPE_FETCH_PAYMENT_SHEET_URL,
-    CHANNEL_USER_GET_CHANNELS,
-    CHANNEL_USER_INVITE,
+    CHANNEL_USER_GET_CHANNELS_URL,
+    CHANNEL_USER_INVITE_URL,
+    COURSE_SEARCH_URL,
 } from "@/constants/routes";
 import Channel from "@/types/shared/Channel";
+import Course from "@/types/shared/Course/Course";
 
 export interface AppState {
     channels: Channel[];
@@ -25,6 +27,12 @@ export interface AppState {
     getUserChannels: () => Promise<void>;
     inviteUser: (inviteCode: string) => Promise<any>;
     setChannelId: (channel_id: number) => Promise<void>;
+    searchCourse: (
+        channel_id: number,
+        search_term?: string,
+        page?: string,
+        per_page?: string
+    ) => Promise<any[]>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -73,7 +81,7 @@ export const useAppStore = create<AppState>()(
                 console.log("Retrieving User channels");
                 try {
                     const response = await axios.get(
-                        CHANNEL_USER_GET_CHANNELS,
+                        CHANNEL_USER_GET_CHANNELS_URL,
                         {
                             headers: { "Content-Type": "application/json" },
                         }
@@ -90,10 +98,9 @@ export const useAppStore = create<AppState>()(
                 }
             },
             inviteUser: async (inviteCode) => {
-                // console.log("Signing up for new user");
                 try {
                     const response = await axios.post(
-                        CHANNEL_USER_INVITE,
+                        CHANNEL_USER_INVITE_URL,
                         { invite_code: inviteCode },
                         { headers: { "Content-Type": "application/json" } }
                     );
@@ -117,6 +124,36 @@ export const useAppStore = create<AppState>()(
             setChannelId: async (channel_id) => {
                 console.log("(Store) setChannelId: " + channel_id);
                 set({ channel_id: channel_id });
+            },
+            searchCourse: async (
+                channel_id: number,
+                search_term?: string,
+                page?: string,
+                per_page?: string
+            ) => {
+                try {
+                    const requestData: any = { search_term };
+                    if (page) {
+                        requestData.page = page;
+                    }
+                    if (per_page) {
+                        requestData.per_page = per_page;
+                    }
+                    const response = await axios.get(
+                        `${COURSE_SEARCH_URL}/${channel_id.toString()}`,
+                        {
+                            params: { search_term, page, per_page },
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+
+                    const responseData = response.data;
+                    if (response.status === 200) {
+                        return responseData.courses;
+                    }
+                } catch (error: any) {
+                    console.error(error.message);
+                }
             },
         }),
         {

@@ -57,7 +57,9 @@ export default function OnboardingCarousel() {
                 return false;
             }
         );
-    });
+        return () => backHandler.remove();
+    }, [segments]);
+
     const renderItem = ({ item }: any) => (
         <View style={{ width, alignItems: "center", justifyContent: "center" }}>
             <Image

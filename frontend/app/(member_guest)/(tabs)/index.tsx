@@ -17,11 +17,9 @@ import ContinueWatching from "@/app/(member_guest)/home/continueWatching";
 import SuggestionsSection from "@/app/(member_guest)/home/suggestionsSection";
 import TopCourses from "@/app/(member_guest)/home/topCourses";
 import { MEMBER_GUEST_TABS } from "@/constants/pages";
-import useAuthStore from "@/store/authStore";
 import useAppStore from "@/store/appStore";
 
 import {
-    channelData,
     courseListData,
     continueWatchingData,
     suggestionsData,
@@ -107,7 +105,7 @@ const Home = () => {
                 <ScrollView>
                     {/* Search bar */}
                     <View style={styles.searchContainer}>
-                        <Search courseListData={courseListData} />
+                        <Search handleSelectCourse={handleSelectCourse} />
                     </View>
                     {/* Continue Watching */}
                     <View style={styles.continueWatchingContainer}>

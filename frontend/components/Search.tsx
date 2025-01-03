@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useCallback } from "react";
+import debounce from "lodash/debounce";
 
 import {
     AutocompleteDropdown,
@@ -7,45 +8,63 @@ import {
     IAutocompleteDropdownRef,
 } from "react-native-autocomplete-dropdown";
 import { memberGuestSearchConstants as Constants } from "@/constants/textConstants";
-import Course from "@/types/shared/Course/Course";
+import useAppStore from "@/store/appStore";
 
 // SEARCH CURRENTLY USED IN MEMBER_GUEST, MIGHT BE CHANGED IF MORE INFORMATION NEEDED
 
-interface SearchBarProps {
-    courseListData: Course[];
+interface SearchProps {
+    handleSelectCourse: (id: number) => void;
 }
 
-const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
-    const [loading, setLoading] = useState(false);
-    const [suggestionsList, setSuggestionsList] = useState<Course[]>([]);
-    const [selectedItem, setSelectedItem] = useState<string | null>(null);
-    const dropdownController = useRef<IAutocompleteDropdownRef | null>(null);
-    const transformedSuggestionsList = suggestionsList.map((course) => ({
-        id: course.id.toString(),
-        title: course.title,
-      }));
+const Search: React.FC<SearchProps> = ({ handleSelectCourse }) => {
+    const searchCourse = useAppStore((state) => state.searchCourse);
+    const channel_id = useAppStore((state) => state.channel_id);
+    const [query, setQuery] = useState("");
+    const [data, setData] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const searchRef = useRef<any>(null);
+    const debouncedSearch = useCallback(
+        debounce(async (text: string) => {
+            if (text.trim().length === 0) {
+                return;
+            }
+            setIsLoading(true);
 
-    const getSuggestions = useCallback(async (query: string) => {
-        const filtertoken = query.toLowerCase();
-        if (typeof query !== "string" || query.length < 2) {
-            setSuggestionsList([]);
-            return;
-        }
-        setLoading(true);
-        const suggestions = courseListData.filter((item) =>
-            item.title.toLowerCase().includes(filtertoken)
-        );
-        setSuggestionsList(suggestions);
-        setLoading(false);
-    }, []);
+            if (typeof channel_id === "number") {
+                const searchResults = await searchCourse(channel_id, text);
+                if (Array.isArray(searchResults)) {
+                    setData(
+                        searchResults.map(
+                            (course: {
+                                id: number;
+                                course_name: string;
+                                community_name: string;
+                            }) => ({
+                                id: course.id.toString(),
+                                title: course.course_name,
+                            })
+                        )
+                    );
+                } else {
+                    setData([]);
+                }
+
+                setIsLoading(false);
+            } else {
+                console.log("channel_id is undefined");
+            }
+        }, 500),
+        [channel_id]
+    );
+
+    const handleSearch = (text: string) => {
+        setQuery(text);
+        debouncedSearch(text);
+    };
 
     const onClearPress = useCallback(() => {
-        setSuggestionsList([]);
+        setData([]);
     }, []);
-
-    const onOpenSuggestionsList = useCallback(() => {}, []);
 
     const renderItem = (item: AutocompleteDropdownItem) => (
         <View
@@ -69,21 +88,18 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
 
     return (
         <AutocompleteDropdown
-            ref={searchRef}
-            controller={(controller: IAutocompleteDropdownRef | null) => {
-                dropdownController.current = controller;
-            }}
             direction="down"
-            dataSet={transformedSuggestionsList}
-            onChangeText={getSuggestions}
+            dataSet={data}
+            onChangeText={handleSearch}
             onSelectItem={(item) => {
-                item && setSelectedItem(item.id.toString());
+                if (item) {
+                    handleSelectCourse(parseInt(item.id));
+                }
             }}
-            debounce={600}
-            suggestionsListMaxHeight={150}
+            debounce={50}
+            suggestionsListMaxHeight={250}
             onClear={onClearPress}
-            onOpenSuggestionsList={onOpenSuggestionsList}
-            loading={loading}
+            loading={isLoading}
             useFilter={false}
             textInputProps={{
                 placeholder: Constants.inputPlaceholder,
@@ -105,12 +121,10 @@ const Search: React.FC<SearchBarProps> = ({ courseListData }) => {
                 borderRadius: 25,
                 borderWidth: 1,
                 borderColor: "#B1B1B1",
-                height: 40,
+                height: 50,
             }}
             suggestionsListContainerStyle={{
                 backgroundColor: "#FFFFFF",
-                borderRadius: 15,
-                borderWidth: 1,
                 borderColor: "#B1B1B1",
                 shadowColor: "#000",
                 shadowRadius: 3,
