@@ -20,7 +20,6 @@ const memberChannelSignUpPage = () => {
 
     useEffect(() => {
         getUserChannels();
-        console.log("Called");
     }, []);
 
     const handleJoinChannel = async (
@@ -29,19 +28,19 @@ const memberChannelSignUpPage = () => {
     ) => {
         if (channelId) {
             setChannelIdStore(channelId);
-            console.log(
-                "Redirecting to homepage with channel_id: " + channelId
-            );
+            // console.log(
+            //     "Redirecting to homepage with channel_id: " + channelId
+            // );
             router.push("/(member_guest)/(tabs)");
         } else if (inviteCode) {
             // Redirect to homepage with new inviteCode
-            console.log("Invite code: " + inviteCode);
+            // console.log("Invite code: " + inviteCode);
             try {
                 const response = await inviteUser(inviteCode);
                 if (typeof response === "number") {
-                    console.log(
-                        "Redirecting to homepage with channel_id: " + response
-                    );
+                    // console.log(
+                    //     "Redirecting to homepage with channel_id: " + response
+                    // );
                     setInviteCode("");
                     router.push("/(member_guest)/(tabs)");
                 } else if (response === "Channel already joined") {

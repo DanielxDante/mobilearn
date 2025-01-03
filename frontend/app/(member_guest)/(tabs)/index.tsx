@@ -18,6 +18,7 @@ import SuggestionsSection from "@/app/(member_guest)/home/suggestionsSection";
 import TopCourses from "@/app/(member_guest)/home/topCourses";
 import { MEMBER_GUEST_TABS } from "@/constants/pages";
 import useAuthStore from "@/store/authStore";
+import useAppStore from "@/store/appStore";
 
 import {
     channelData,
@@ -32,6 +33,9 @@ import { Colors } from "@/constants/colors";
 import { memberGuestHomeConstants as Constants } from "@/constants/textConstants";
 
 const Home = () => {
+    const channels = useAppStore((state) => state.channels);
+    const channel_id = useAppStore((state) => state.channel_id);
+
     const segments = useSegments();
     useEffect(() => {
         const backHandler = BackHandler.addEventListener(
@@ -52,9 +56,13 @@ const Home = () => {
         return () => backHandler.remove();
     }, [router, segments]);
 
+    const handleSelectChannel = () => {
+        console.log("handleSelectChannel called");
+    };
+
     const handleSelectCourse = (id: number) => {
         // TODO: INCLUDE COURSE NAVIGATION
-        console.log("Course " + id + " Selected");
+        // console.log("Course " + id + " Selected");
         const courseSelected = courseListData.find(
             (course) => course.id === id
         );
@@ -81,7 +89,7 @@ const Home = () => {
                 <View style={styles.header}>
                     {/* App bar for channel selection and dropdown */}
                     <View style={styles.appBarContainer}>
-                        <AppBar options={channelData} />
+                        <AppBar />
                     </View>
                     {/* Notification bell icon */}
                     <TouchableOpacity

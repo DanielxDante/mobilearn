@@ -29,7 +29,7 @@ export interface AppState {
 
 export const useAppStore = create<AppState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             channels: [],
             fetchPaymentSheet: async (amount, currency) => {
                 console.log("Fetching donation payment sheet...");
@@ -57,7 +57,6 @@ export const useAppStore = create<AppState>()(
             },
             logout: async () => {
                 console.log("Logging out appStore");
-
                 try {
                     set({
                         channels: [],
@@ -80,6 +79,7 @@ export const useAppStore = create<AppState>()(
                         }
                     );
                     const responseData = response.data;
+                    // console.log(JSON.stringify(responseData));
                     if (response.status === 200) {
                         set({
                             channels: responseData.channels,
@@ -90,7 +90,7 @@ export const useAppStore = create<AppState>()(
                 }
             },
             inviteUser: async (inviteCode) => {
-                console.log("Signing up for new user");
+                // console.log("Signing up for new user");
                 try {
                     const response = await axios.post(
                         CHANNEL_USER_INVITE,
@@ -103,6 +103,7 @@ export const useAppStore = create<AppState>()(
                         set({
                             channel_id: responseData.channel_id,
                         });
+                        get().getUserChannels;
                         return responseData.channel_id;
                     }
                 } catch (error: any) {
@@ -114,6 +115,7 @@ export const useAppStore = create<AppState>()(
                 }
             },
             setChannelId: async (channel_id) => {
+                console.log("(Store) setChannelId: " + channel_id);
                 set({ channel_id: channel_id });
             },
         }),
