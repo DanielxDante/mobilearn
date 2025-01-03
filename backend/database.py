@@ -18,6 +18,10 @@ db = SQLAlchemy()
 Base = declarative_base()
 
 def init_db(app):
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_size': 15,
+        'max_overflow': 15
+    }
     db.init_app(app)
 
 def check_db():

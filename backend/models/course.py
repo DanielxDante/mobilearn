@@ -110,7 +110,7 @@ class CourseBuilder:
         return self
 
     def skills(self, skills: list) -> 'CourseBuilder':
-        self._course['skills'] = ', '.join(skills)
+        self._course['skills'] = ','.join(skills)
         return self
 
     def status(self, status: STATUS) -> 'CourseBuilder':

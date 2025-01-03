@@ -1,6 +1,7 @@
 import os
 import json
 from botocore.exceptions import ClientError
+from werkzeug.datastructures import FileStorage
 from flask import Response, request
 from flask_restx import Resource
 from flask_jwt_extended import (
@@ -14,9 +15,12 @@ from models.course import Course, STATUS as COURSE_STATUS
 from models.enrollment import Enrollment
 from models.instructor import Instructor
 from models.community import Community
+from models.chapter import Chapter
+from models.lesson import Lesson, LESSON
 from services.course_services import CourseService
+from services.chapter_services import ChapterService
 from services.instructor_services import InstructorService
-from utils.s3 import s3_client, allowed_file, bucket_name, cloudfront_domain
+from utils.s3 import s3_client, allowed_file, bucket_name, cloudfront_domain, upload_file
 
 class GetUnenrolledCourseEndpoint(Resource):
     @api.doc(
@@ -246,13 +250,16 @@ class GetInstructorCoursesEndpoint(Resource):
             )
 
 create_course_parser = api.parser()
+# Course Fields
 create_course_parser.add_argument('name', type=str, help='Name', location='form', required=True)
 create_course_parser.add_argument('description', type=str, help='Description', location='form', required=True)
 create_course_parser.add_argument('course_type', type=str, help='Course Type', location='form', required=True)
 create_course_parser.add_argument('duration', type=str, help='Duration', location='form', required=True)
+create_course_parser.add_argument('course_image', type=FileStorage, location='files', required=True)
 create_course_parser.add_argument('price', type=float, help='Price', location='form', required=True)
 create_course_parser.add_argument('difficulty', type=str, help='Difficulty', location='form', required=True)
 create_course_parser.add_argument('skills', type=str, action='split', help='Skills', location='form', required=True)
+# Specific Course Fields
 create_course_parser.add_argument('school_name', type=str, help='School Name', location='form', required=False)
 create_course_parser.add_argument('program_type', type=str, help='Program Type', location='form', required=False)
 create_course_parser.add_argument('field', type=str, help='Field', location='form', required=False)
@@ -260,6 +267,10 @@ create_course_parser.add_argument('major', type=str, help='Major', location='for
 create_course_parser.add_argument('department', type=str, help='Department', location='form', required=False)
 create_course_parser.add_argument('subject', type=str, help='Subject', location='form', required=False)
 create_course_parser.add_argument('platform', type=str, help='Platform', location='form', required=False)
+# Chapter and Lesson Structure and Files
+create_course_parser.add_argument('content', type=str, help='Content', location='form', required=True)
+# Ensure all filenames are unique
+create_course_parser.add_argument('files', type=FileStorage, location='files', action='append')
 
 class CreateCourseEndpoint(Resource):
     @api.doc(
@@ -276,39 +287,43 @@ class CreateCourseEndpoint(Resource):
                 'description': 'Bearer token',
                 'required': True
             },
-            'file': {
-                'in': 'formData',
-                'type': 'file',
-                'description': 'The file to upload',
-                'required': False
-            }
         },
         description="""
             Fill in school_name, program_type, field, and major for academic courses.
             Fill in department for professional courses.
             Fill in subject for specialization courses.
             Fill in platform for project courses.
-            CreateCourseRequest {
-                title: string;
-                description: string;
-                price: number;
-                duration: number; // in weeks
-                difficulty: string; // beginner, intermediate, advanced
-                skills: string[];
-                image?: File;
-                chapters: {
-                    title: string;
-                    order: number;
-                    lessons: {
-                    title: string;
-                    course_type: 'text' | 'video' | 'homework';
-                    order: number;
-                    content?: string;  // For rich text
-                    file?: File;       // For file uploads
-                    }[];
-                }[];
-                }
-        """
+            Example content JSON string:
+
+            {
+                "chapters": [
+                    {
+                        "title": "Chapter 1",
+                        "order": 1,
+                        "lessons": [
+                            {
+                                "name": "Introduction",
+                                "lesson_type": "text",
+                                "order": 1,
+                                "content": "{\"heading\": \"This is a text lesson...\"}"
+                            },
+                            {
+                                "name": "Video Tutorial",
+                                "lesson_type": "video",
+                                "order": 2,
+                                "video_key": "video1.mp4"
+                            },
+                            {
+                                "name": "Assignment",
+                                "lesson_type": "homework",
+                                "order": 3,
+                                "homework_key": "assignment1.pdf"
+                            }
+                        ]
+                    }
+                ]
+            }
+            """
     )
     @api.expect(create_course_parser)
     @jwt_required()
@@ -318,12 +333,13 @@ class CreateCourseEndpoint(Resource):
         name = data.get('name')
         description = data.get('description')
         course_type = data.get('course_type')
+        content = json.loads(data.get('content'))
 
         optional_course_data = {
-            'duration': data.get('duration'),
-            'price': data.get('price'),
+            'duration': round(float(data.get('duration')), 1),
+            'price': round(float(data.get('price')), 2),
             'difficulty': data.get('difficulty'),
-            'skills': data.get('skills'),
+            'skills': data.getlist('skills'),
             'school_name': data.get('school_name', None),
             'program_type': data.get('program_type', None),
             'field': data.get('field', None),
@@ -332,87 +348,106 @@ class CreateCourseEndpoint(Resource):
             'subject': data.get('subject', None),
             'platform': data.get('platform', None)
         }
-
-        if 'file' not in request.files:
-            return Response(
-                json.dumps({'message': "No file part"}),
-                status=400, mimetype='application/json'
-            )
         
-        file = request.files['file']
-        
-        if file.filename == '':
-            return Response(
-                json.dumps({'message': "No selected file"}),
-                status=400, mimetype='application/json'
-            )
-        
-        if not allowed_file(file.filename):
-            return Response(
-                json.dumps({'message': "Invalid file type"}),
-                status=400, mimetype='application/json'
-            )
+        files = request.files.getlist('files')
+        filemap = {f.filename: f for f in files if f.filename}
 
         instructor_email = get_jwt_identity()
 
-        with session_scope() as session:
-            instructor = Instructor.get_instructor_by_email(session, instructor_email)
-            if not instructor:
-                return Response(
-                    json.dumps({"error": "Instructor not found"}),
-                    status=404, mimetype='application/json'
+        try:
+            with session_scope() as session:
+                instructor = Instructor.get_instructor_by_email(session, instructor_email)
+                if not instructor:
+                    return Response(
+                        json.dumps({"error": "Instructor not found"}),
+                        status=404, mimetype='application/json'
+                    )
+                
+                community_name = instructor.company
+                community = Community.get_community_by_name(session, community_name)
+                if not community:
+                    return Response(
+                        json.dumps({"error": "The community is not found"}),
+                        status=404, mimetype='application/json'
+                    )
+
+                # Add course
+                optional_course_data = {k: v for k, v in optional_course_data.items() if v is not None}
+                course = Course.add_course(
+                    session,
+                    community_id=community.id,
+                    name=name,
+                    description=description,
+                    course_type=course_type,
+                    **optional_course_data
                 )
-            
-            community_name = instructor.company
-            community = Community.get_community_by_name(session, community_name)
-            if not community:
-                return Response(
-                    json.dumps({"error": "The community is not found"}),
-                    status=404, mimetype='application/json'
-                )
+                course_image = request.files.get('course_image')
+                if not course_image or not allowed_file(course_image.filename):
+                    return Response(
+                        json.dumps({"error": "Invalid or missing course image file"}),
+                        status=400, mimetype='application/json'
+                    )
+                course_image_url = upload_file(course_image, f"course_{str(course.id)}")
+                course.image_url = course_image_url
+                instructor.courses.append(course)
 
-            optional_course_data = {k: v for k, v in optional_course_data.items() if v is not None}
+                # Add chapter
+                for chapter_data in content['chapters']:
+                    chapter = Chapter.add_chapter(
+                        session,
+                        course_id=course.id,
+                        title=chapter_data['title'],
+                        order=chapter_data['order']
+                    )
 
-            course = Course.add_course(
-                session,
-                community_id=community.id,
-                name=name,
-                description=description,
-                course_type=course_type,
-                **optional_course_data
+                    # Add lesson
+                    for lesson_data in chapter_data['lessons']:
+                        lesson = Lesson.add_lesson(
+                            session,
+                            name=lesson_data['name'],
+                            lesson_type=lesson_data['lesson_type'],
+                        )
+
+                        if lesson.lesson_type == 'text':
+                            content = lesson_data['content']
+                            lesson.content = content
+                        elif lesson.lesson_type == 'video':
+                            video_file = filemap.get(lesson_data['video_key'])
+                            if video_file:
+                                video_url = upload_file(video_file, f"lesson_{str(lesson.id)}")
+                                lesson.video_url = video_url
+                            else:
+                                return Response(
+                                    json.dumps({"message": f"File {lesson_data['video_key']} not found"}),
+                                    status=400, mimetype='application/json'
+                                )
+                        elif lesson.lesson_type == 'homework':
+                            homework_file = filemap.get(lesson_data['homework_key'])
+                            if homework_file:
+                                homework_url = upload_file(homework_file, f"lesson_{str(lesson.id)}")
+                                lesson.homework_url = homework_url
+                            else:
+                                return Response(
+                                    json.dumps({"message": f"File {lesson_data['homework_key']} not found"}),
+                                    status=400, mimetype='application/json'
+                                )
+                        else:
+                            return Response(
+                                json.dumps({"message": "Invalid lesson type"}),
+                                status=400, mimetype='application/json'
+                            )
+                        
+                        ChapterService.attach_lesson(session, chapter.id, lesson.id, lesson_data['order'])
+
+            return Response(
+                json.dumps({'message': f'Course successfully created'}),
+                status=200, mimetype="application/json"
             )
-
-            file_extension = os.path.splitext(file.filename)[1]
-            unique_filename = f"course_{str(course.id)}{file_extension}"
-
-            try:
-                base_filename = os.path.splitext(unique_filename)[0]
-                response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=base_filename)
-                if 'Contents' in response:
-                    for obj in response['Contents']:
-                        s3_client.delete_object(Bucket=bucket_name, Key=obj['Key'])
-            except ClientError as e:
-                if e.response['Error']['Code'] != '404':
-                    raise
-
-            s3_client.upload_fileobj(
-                file,
-                bucket_name,
-                unique_filename,
-                ExtraArgs={
-                    'ContentType': file.content_type
-                }
+        except ValueError as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=400, mimetype='application/json'
             )
-
-            image_url = f"https://{cloudfront_domain}/{unique_filename}"
-            course.image = image_url
-
-            instructor.courses.append(course)
-
-        return Response(
-            json.dumps({'message': f'Course ({name}) created'}),
-            status=200, mimetype="application/json"
-        )
 
 # edit_course_parser = api.parser()
 
