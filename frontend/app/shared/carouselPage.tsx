@@ -1,9 +1,17 @@
-import { router } from "expo-router";
+import { router, useSegments } from "expo-router";
 import React, { useRef, useState, useEffect } from "react";
-import { View, Text, FlatList, Image, Dimensions } from "react-native";
+import {
+    View,
+    Text,
+    FlatList,
+    Image,
+    Dimensions,
+    BackHandler,
+} from "react-native";
 import { carouselPageConstants as Constants } from "@/constants/textConstants";
 import MediumButton from "@/components/MediumButton";
 import { ROLE_SELECTION_PAGE } from "@/constants/pages";
+import { CAROUSEL_PAGE } from "@/constants/pages";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
@@ -33,6 +41,23 @@ export default function OnboardingCarousel() {
         setCurrentSlideIndex(newIndex);
     };
 
+    const segments = useSegments();
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            () => {
+                // Get the current route
+                const currentRoute = segments[segments.length - 1];
+                // If we're on the member home page, go to hardware home
+                if (currentRoute === "carouselPage") {
+                    BackHandler.exitApp(); // Exit the app
+                    return true;
+                }
+
+                return false;
+            }
+        );
+    });
     const renderItem = ({ item }: any) => (
         <View style={{ width, alignItems: "center", justifyContent: "center" }}>
             <Image
