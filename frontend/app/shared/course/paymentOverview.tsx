@@ -6,17 +6,21 @@ import {
     Image,
     ScrollView,
     Dimensions,
+    Alert,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useStripe } from "@stripe/stripe-react-native";
+import * as Linking from "expo-linking";
 
 import { paymentOverviewConstants as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
 import BackButton from "@/components/BackButton";
-import PaymentProgressBar from "@/components/PaymentProgressBar";
 import { router, useLocalSearchParams } from "expo-router";
 import Course from "@/types/shared/Course/Course";
 import icons from "@/constants/icons";
+import useAppStore from "@/store/appStore";
+import useAuthStore from "@/store/authStore";
 
 const PaymentOverview = () => {
     // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
@@ -32,6 +36,14 @@ const PaymentOverview = () => {
     ];
     const price = 35;
 
+    const name = useAuthStore((state) => state.username);
+    const email = useAuthStore((state) => state.email);
+    const fetchStripePaymentSheet = useAppStore(
+        (state) => state.fetchPaymentSheet
+    );
+    const { initPaymentSheet, presentPaymentSheet } = useStripe();
+    const [loading, setLoading] = useState(false);
+
     const { courseSelected } = useLocalSearchParams();
     const course: Course =
         typeof courseSelected === "string" ? JSON.parse(courseSelected) : [];
@@ -39,6 +51,57 @@ const PaymentOverview = () => {
     const handleSkillPress = (skill: string) => {
         console.log(skill);
     };
+    const handlePayment = async (
+        donationAmount: number,
+        default_currency: string
+    ) => {
+        setLoading(true);
+        try {
+            const { payment_intent, ephemeral_key, customer_id } =
+                await fetchStripePaymentSheet(
+                    donationAmount.toString(),
+                    default_currency
+                );
+            await initPaymentSheet({
+                merchantDisplayName: Constants.merchantDisplayName,
+
+                customerId: customer_id,
+                customerEphemeralKeySecret: ephemeral_key,
+                paymentIntentClientSecret: payment_intent,
+
+                allowsDelayedPaymentMethods: true,
+                defaultBillingDetails: {
+                    name: name,
+                    email: email,
+                },
+                returnURL: Linking.createURL("stripe-redirect"),
+
+                // Enable Apple Pay
+                applePay: {
+                    merchantCountryCode: "SG",
+                },
+            });
+            const { error } = await presentPaymentSheet();
+            if (error) {
+                Alert.alert("Payment cancelled", "You have cancelled payment.");
+            } else {
+                router.push({
+                    pathname: "./paymentCompleted",
+                    params: {
+                        courseSelected: courseSelected,
+                    },
+                });
+            }
+        } catch (error) {
+            Alert.alert(
+                "Error",
+                "An error occurred while processing your donation. Please try again later."
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
@@ -46,8 +109,6 @@ const PaymentOverview = () => {
                 <BackButton />
             </View>
             <ScrollView>
-                {/* Progress Bar */}
-                <PaymentProgressBar active={1} />
                 {/* Title */}
                 <View style={styles.titleView}>
                     <Text style={styles.title}>{Constants.title}</Text>
@@ -132,14 +193,10 @@ const PaymentOverview = () => {
                 {/* Continue Button */}
                 <TouchableOpacity
                     style={styles.continueButton}
-                    onPress={() =>
-                        router.push({
-                            pathname: "./paymentMethod",
-                            params: {
-                                courseSelected: courseSelected,
-                            },
-                        })
-                    }
+                    onPress={() => {
+                        const default_currency = "SGD";
+                        handlePayment(price, default_currency);
+                    }}
                 >
                     <Text style={styles.continueText}>
                         {Constants.continueButton}

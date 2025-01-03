@@ -1,30 +1,20 @@
 import { StyleSheet, View, Text, Image } from "react-native";
 import React, { useState } from "react";
 import { Dropdown } from "react-native-element-dropdown";
+
+import Channel from "@/types/shared/Channel";
 import { memberGuestAppBarConstants as Constants } from "@/constants/textConstants";
+import useAppStore from "@/store/appStore";
+import { Colors } from "@/constants/colors";
 
 // AppBar used in member_guest homepage
 
-interface Option {
-    label: string;
-    value: string;
-}
+const AppBar = () => {
+    const channels = useAppStore((state) => state.channels);
+    const channel_id = useAppStore((state) => state.channel_id);
+    const setChannelIdStore = useAppStore((state) => state.setChannelId);
 
-interface AppBarProps {
-    options: Option[];
-}
-
-const AppBar: React.FC<AppBarProps> = ({ options }) => {
-    // const options = ["Channel 1", "Profile", "Settings", "Logout"];
-    const [value, setValue] = useState(options[0] || null);
-
-    const renderItem = (item: Option) => {
-        return (
-            <View style={styles.container}>
-                <Text>{item.label}</Text>
-            </View>
-        );
-    };
+    const [channelSelect, setChannelSelected] = useState(channel_id);
     return (
         <Dropdown
             style={styles.dropdown}
@@ -37,18 +27,25 @@ const AppBar: React.FC<AppBarProps> = ({ options }) => {
                     style={styles.iconStyle}
                 />
             )}
-            data={options}
+            data={channels}
             search
             maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={Constants.dropDownPlaceholder}
+            labelField="name"
+            valueField="id"
+            placeholder={
+                channels.find((channel) => channel.id === channel_id)?.name ||
+                Constants.dropDownPlaceholder
+            }
             searchPlaceholder={Constants.searchPlaceholder}
-            value={value}
             onChange={(item) => {
-                setValue(item);
+                setChannelSelected(item.id);
+                setChannelIdStore(item.id);
             }}
-            renderItem={renderItem}
+            renderItem={(item) => (
+                <View style={styles.container}>
+                    <Text>{item.name}</Text>
+                </View>
+            )}
             itemContainerStyle={styles.itemContainerStyle}
         />
     );
@@ -56,7 +53,7 @@ const AppBar: React.FC<AppBarProps> = ({ options }) => {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 1,
+        padding: 7,
         flexDirection: "row",
         justifyContent: "space-between",
         alignContent: "center",
@@ -81,12 +78,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     placeholderStyle: {
-        fontSize: 16,
+        fontSize: 18,
+        fontFamily: "Inter-Bold",
+        color: Colors.defaultBlue,
     },
     selectedTextStyle: {
         fontSize: 18,
         fontFamily: "Inter-Bold",
-        color: "#356FC5",
+        color: Colors.defaultBlue,
     },
     iconStyle: {
         width: 20,

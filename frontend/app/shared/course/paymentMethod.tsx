@@ -18,6 +18,12 @@ import { router, useLocalSearchParams } from "expo-router";
 import Course from "@/types/shared/Course/Course";
 import { paymentMethodConstants as Constants } from "@/constants/textConstants";
 
+// THIS FILE IS NO LONGER IN USE
+// THIS FILE IS NO LONGER IN USE
+// THIS FILE IS NO LONGER IN USE
+// THIS FILE IS NO LONGER IN USE
+// THIS FILE IS NO LONGER IN USE
+
 const PaymentMethod = () => {
     // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
     const price = 35;
