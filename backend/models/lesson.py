@@ -41,7 +41,7 @@ class LessonBuilder:
         """ Factory method for homework lesson builder """
         builder = cls(LESSON.HOMEWORK)
         builder._specific_attrs = {
-            'homework_file_url': ""
+            'homework_url': ""
         }
         return builder
     
@@ -64,10 +64,10 @@ class LessonBuilder:
         return self
     
     # HomeworkLesson specific attribute
-    def homework_file_url(self, homework_file_url):
+    def homework_url(self, homework_url):
         if self._lesson['lesson_type'] != LESSON.HOMEWORK:
-            raise ValueError("Homework file URL is only available for HomeworkLesson")
-        self._specific_attrs['homework_file_url'] = homework_file_url
+            raise ValueError("Homework URL is only available for HomeworkLesson")
+        self._specific_attrs['homework_url'] = homework_url
         return self
     
     def build(self):
@@ -141,8 +141,8 @@ class Lesson(Base):
                 if 'video_url' in kwargs:
                     builder.video_url(kwargs['video_url'])
             elif lesson_type == LESSON.HOMEWORK:
-                if 'homework_file_url' in kwargs:
-                    builder.homework_file_url(kwargs['homework_file_url'])
+                if 'homework_url' in kwargs:
+                    builder.homework_url(kwargs['homework_url'])
             
             lesson = builder.build()
 
@@ -240,7 +240,7 @@ class HomeworkLesson(Lesson):
     __tablename__ = 'homework_lessons'
 
     id = Column(Integer, ForeignKey('lessons.id'), primary_key=True)
-    homework_file_url = Column(String, nullable=False, default="")
+    homework_url = Column(String, nullable=False, default="")
 
     # Many-to-many relationship with Enrollment
     enrollments = relationship('Enrollment', secondary="homework_submissions", back_populates='homework_submissions')
