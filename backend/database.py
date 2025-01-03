@@ -9,6 +9,10 @@ from contextlib import contextmanager
 COMMUNITY_DATASET_PATH = './data/communities.csv'
 INSTRUCTOR_DATASET_PATH = './data/instructors.csv'
 COURSES_DATASET_PATH = './data/coursera_cleaned.csv'
+SAMPLE_INTRO_TEXT_LESSON_PATH = './data/sample_intro_text_lesson.json'
+SAMPLE_OUTRO_TEXT_LESSON_PATH = './data/sample_outro_text_lesson.json'
+SAMPLE_VIDEO_LESSON_PATH = './data/sample_video_lesson.mp4'
+SAMPLE_HOMEWORK_LESSON_PATH = './data/sample_homework_lesson.pdf'
 
 db = SQLAlchemy()
 Base = declarative_base()
@@ -52,10 +56,13 @@ def session_scope():
 
 def load_initial_data():
     """ Load initial data into database """
+    print("Loading initial data into the database. This process may take a while. Please be patient...")
     load_channel()
     load_communities()
     load_instructors()
     load_courses()
+    load_chapters()
+    load_lessons()
 
 def load_channel():
     """ Create a default public channel """
@@ -165,4 +172,119 @@ def load_courses():
                     instructor_email = instructor_name.strip().replace('.', '').replace('(', '').replace(')', '').replace(' ', '_').lower() + "@edu.com"
                     instructor = Instructor.get_instructor_by_email(session, instructor_email)
                     InstructorService.attach_course(session, instructor.id, course.id)
+
+def load_chapters():
+    from models.course import Course
+    from models.chapter import Chapter
+
+    with session_scope() as session:
+        with open(COURSES_DATASET_PATH, newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                course_name = row['Course Title'].strip()
+                modules = [module.strip() for module in row['Modules'].split(',')]
+
+                if len(modules) < 3:
+                    modules = ['Week 1', 'Week 2', 'Week 3']
+
+                course = Course.get_course_by_name(session, course_name)
+                if not course:
+                    print(f"Course not found: {course_name}")
+                    break
+
+                for i in range(1, 4): # Add 3 chapters for each course
+                    Chapter.add_chapter(
+                        session,
+                        course_id=course.id,
+                        title=modules[i-1],
+                        order=i
+                    )
+
+def load_lessons():
+    from pathlib import Path
+    from werkzeug.datastructures import FileStorage
+
+    from models.course import Course
+    from models.lesson import Lesson, LESSON
+    from services.chapter_services import ChapterService
+    from utils.s3 import upload_file
+
+    with session_scope() as session:
+        courses = Course.get_courses(session)
+        for course in courses:
+            chapters = course.chapters
+            for chapter in chapters:
+                if chapter.order == 1: # Introduction chapter
+                    with open(SAMPLE_INTRO_TEXT_LESSON_PATH, 'r') as file:
+                        intro_text = file.read()
+
+                    lesson = Lesson.add_lesson(
+                        session,
+                        name="Introduction",
+                        lesson_type=LESSON.TEXT,
+                        content=intro_text,
+                    )
+
+                    ChapterService.attach_lesson(session, chapter.id, lesson.id, 1)
+                elif chapter.order == 2: # Main content chapter
+                    # # Add video lesson
+                    # with open(SAMPLE_VIDEO_LESSON_PATH, 'rb') as f:
+                    #     file = FileStorage(
+                    #         stream=f,
+                    #         filename=Path(SAMPLE_VIDEO_LESSON_PATH).name,
+                    #         content_type='video/mp4'
+                    #     )
+
+                    #     lesson = Lesson.add_lesson(
+                    #         session,
+                    #         name="Main Content - Video",
+                    #         lesson_type=LESSON.VIDEO,
+                    #     )
+
+                    #     lesson.video_url = upload_file(file, f"lesson_{lesson.id}")
+
+                    #     ChapterService.attach_lesson(session, chapter.id, lesson.id, 1)
+
+                    # # Add homework lesson
+                    # with open(SAMPLE_HOMEWORK_LESSON_PATH, 'rb') as f:
+                    #     file = FileStorage(
+                    #         stream=f,
+                    #         filename=Path(SAMPLE_HOMEWORK_LESSON_PATH).name,
+                    #         content_type='application/pdf'
+                    #     )
+
+                    #     lesson = Lesson.add_lesson(
+                    #         session,
+                    #         name="Main Content - Homework",
+                    #         lesson_type=LESSON.HOMEWORK,
+                    #     )
+
+                    #     lesson.homework_url = upload_file(file, f"lesson_{lesson.id}")
+
+                    #     ChapterService.attach_lesson(session, chapter.id, lesson.id, 2)
+
+                    with open(SAMPLE_INTRO_TEXT_LESSON_PATH, 'r') as file:
+                        intro_text = file.read()
+
+                    lesson = Lesson.add_lesson(
+                        session,
+                        name="Main Content",
+                        lesson_type=LESSON.TEXT,
+                        content=intro_text,
+                    )
+
+                    ChapterService.attach_lesson(session, chapter.id, lesson.id, 1)
+                elif chapter.order == 3: # Conclusion chapter
+                    with open(SAMPLE_OUTRO_TEXT_LESSON_PATH, 'r') as file:
+                        outro_text = file.read()
+
+                    lesson = Lesson.add_lesson(
+                        session,
+                        name="Conclusion",
+                        lesson_type=LESSON.TEXT,
+                        content=outro_text,
+                    )
+
+                    ChapterService.attach_lesson(session, chapter.id, lesson.id, 1)
+                
 

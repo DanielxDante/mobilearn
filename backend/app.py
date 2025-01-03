@@ -206,36 +206,61 @@ def init_course_endpoints():
     from endpoints.course.review import GetUserCourseReviewEndpoint, SaveReviewEndpoint
     from endpoints.course.enroll import (
         GetUserEnrolledCoursesEndpoint,
+        GetTopEnrolledCoursesEndpoint,
         EnrollUserEndpoint,
         WithdrawUserEndpoint
     )
+    from endpoints.course.favourite import (
+        GetFavouriteCoursesEndpoint,
+        AddFavouriteCourseEndpoint,
+        RemoveFavouriteCourseEndpoint
+    )
+    from endpoints.course.recommender import GetRecommendedCoursesEndpoint
 
-    get_course_path = f"/{VERSION}/course/getCourse/<string:course_id>"
+    get_course_path = f"/{VERSION}/getCourse/<string:course_id>"
     ns_course.add_resource(GetCourseEndpoint, get_course_path)
 
-    search_courses_path = f"/{VERSION}/course/search/<string:channel_id>"
+    search_courses_path = f"/{VERSION}/search/<string:channel_id>"
     ns_course.add_resource(SearchCoursesEndpoint, search_courses_path)
 
-    get_instructor_courses_path = f"/{VERSION}/course/getInstructorCourses"
+    get_instructor_courses_path = f"/{VERSION}/instructor/getInstructorCourses"
     ns_course.add_resource(GetInstructorCoursesEndpoint, get_instructor_courses_path)
 
-    create_course_path = f"/{VERSION}/course/create"
+    create_course_path = f"/{VERSION}/instructor/create"
     ns_course.add_resource(CreateCourseEndpoint, create_course_path)
 
-    get_user_course_review_path = f"/{VERSION}/course/getUserReview/<string:course_id>"
+    get_user_course_review_path = f"/{VERSION}/user/getReview/<string:course_id>"
     ns_course.add_resource(GetUserCourseReviewEndpoint, get_user_course_review_path)
 
-    save_course_review_path = f"/{VERSION}/course/saveReview"
+    save_course_review_path = f"/{VERSION}/user/saveReview"
     ns_course.add_resource(SaveReviewEndpoint, save_course_review_path)
 
-    get_user_enrolled_courses_path = f"/{VERSION}/course/getEnrolledCourses/<string:channel_id>"
+    get_user_enrolled_courses_path = f"/{VERSION}/user/getEnrolledCourses/<string:channel_id>"
     ns_course.add_resource(GetUserEnrolledCoursesEndpoint, get_user_enrolled_courses_path)
 
-    enroll_user_path = f"/{VERSION}/course/enroll"
+    get_user_top_enrolled_courses_path = f"/{VERSION}/user/getTopEnrolledCourses/<string:channel_id>"
+    ns_course.add_resource(GetTopEnrolledCoursesEndpoint, get_user_top_enrolled_courses_path)
+
+    # get_instructor_top_enrolled_courses_path = f"/{VERSION}/instructor/getTopEnrolledCourses/<string:channel_id>"
+    # ns_course.add_resource(GetTopEnrolledCoursesEndpoint, get_instructor_top_enrolled_courses_path)
+
+    enroll_user_path = f"/{VERSION}/user/enrollCourse"
     ns_course.add_resource(EnrollUserEndpoint, enroll_user_path)
 
-    withdraw_user_path = f"/{VERSION}/course/withdraw"
+    withdraw_user_path = f"/{VERSION}/user/withdrawCourse"
     ns_course.add_resource(WithdrawUserEndpoint, withdraw_user_path)
+
+    get_favourite_courses_path = f"/{VERSION}/user/getFavouriteCourses/<string:channel_id>"
+    ns_course.add_resource(GetFavouriteCoursesEndpoint, get_favourite_courses_path)
+
+    add_favourite_course_path = f"/{VERSION}/user/addFavouriteCourse"
+    ns_course.add_resource(AddFavouriteCourseEndpoint, add_favourite_course_path)
+
+    remove_favourite_course_path = f"/{VERSION}/user/removeFavouriteCourse"
+    ns_course.add_resource(RemoveFavouriteCourseEndpoint, remove_favourite_course_path)
+
+    get_recommended_courses_path = f"/{VERSION}/user/getRecommendedCourses/<string:channel_id>"
+    ns_course.add_resource(GetRecommendedCoursesEndpoint, get_recommended_courses_path)
 
 def init_analytics_endpoints():
     pass

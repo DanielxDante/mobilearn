@@ -1,0 +1,50 @@
+{
+    "title": "Congratulations on Completing Your E-Learning Course",
+    "author": "Course Team",
+    "content": [
+        {
+            "type": "heading",
+            "level": 1,
+            "text": "Congratulations!"
+        },
+        {
+            "type": "paragraph",
+            "text": "You have successfully completed the course. We hope you found the content informative and engaging."
+        },
+        {
+            "type": "heading",
+            "level": 2,
+            "text": "Course Summary"
+        },
+        {
+            "type": "paragraph",
+            "text": "Throughout this course, you have covered a variety of topics and participated in numerous activities designed to enhance your learning experience."
+        },
+        {
+            "type": "list",
+            "ordered": false,
+            "items": [
+                "Key concepts and theories",
+                "Practical applications",
+                "Interactive quizzes and activities"
+            ]
+        },
+        {
+            "type": "heading",
+            "level": 2,
+            "text": "Next Steps"
+        },
+        {
+            "type": "paragraph",
+            "text": "As you move forward, we encourage you to apply the knowledge and skills you have gained. Continue to explore and learn, and don't hesitate to revisit the course materials if needed."
+        },
+        {
+            "type": "paragraph",
+            "text": "If you have any feedback or questions, please reach out to our support team. We are here to help you succeed."
+        },
+        {
+            "type": "paragraph",
+            "text": "Thank you for being a part of our e-learning community. We wish you all the best in your future endeavors!"
+        }
+    ]
+}

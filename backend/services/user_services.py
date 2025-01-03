@@ -1,9 +1,14 @@
+from sqlalchemy import func, not_
+
 from models.user import User
 from models.channel import Channel, STATUS as CHANNEL_STATUS
+from models.community import Community
+from models.channel_community import ChannelCommunity
 from models.course import Course, STATUS as COURSE_STATUS
 from models.user_channel import UserChannel
 from models.enrollment import Enrollment
 from models.review import Review
+from models.favourite import Favourite
 
 class UserServiceError(Exception):
     pass
@@ -45,8 +50,12 @@ class UserService:
         courses = (
             session.query(Course)
             .join(Enrollment)
+            .join(User)
+            .join(UserChannel)
+            .join(Channel)
             .filter(
                 Enrollment.user_id == user.id,
+                Channel.id == channel_id,
                 Course.status == COURSE_STATUS.ACTIVE
             )
         )
@@ -58,6 +67,75 @@ class UserService:
             .limit(per_page)
             .all()
         )
+        
+        return paginated_courses
+    
+    @staticmethod
+    def get_top_enrolled_courses(session, user_email, channel_id, page, per_page):
+        """ Get top enrolled courses """
+        user = User.get_user_by_email(session, user_email)
+        if not user:
+            raise ValueError("User not found")
+        
+        channel = Channel.get_channel_by_id(session, channel_id)
+        if not channel:
+            raise ValueError("Channel not found")
+        
+        offset = (page - 1) * per_page
+        
+        courses = (
+            session.query(Course)
+            .join(Enrollment)
+            .join(User)
+            .join(UserChannel)
+            .join(Channel)
+            .filter(
+                Enrollment.user_id != user.id,
+                Channel.id == channel_id,
+                Course.status == COURSE_STATUS.ACTIVE
+            )
+        )
+
+        paginated_courses = (
+            courses
+            .group_by(Course.id)
+            .order_by(func.count(Enrollment.user_id).desc())
+            .offset(offset)
+            .limit(per_page)
+            .all()
+        )
+
+        # Fallback to top rated courses if there are not enough enrollment data
+        if len(paginated_courses) < 5:
+            user_enrolled_courses = (
+                session.query(Course)
+                .join(Enrollment)
+                .join(User)
+                .join(UserChannel)
+                .join(Channel)
+                .filter(
+                    Enrollment.user_id == user.id,
+                    Channel.id == channel_id,
+                    Course.status == COURSE_STATUS.ACTIVE
+                )
+            )
+
+            fallback_courses = (
+                session.query(Course)
+                .join(Community)
+                .join(ChannelCommunity)
+                .join(Channel)
+                .filter(
+                    Channel.id == channel_id,
+                    not_(Course.id.in_([course.id for course in user_enrolled_courses])),
+                    Course.status == COURSE_STATUS.ACTIVE,
+                )
+                .order_by(Course.rating.desc())
+                .offset(offset)
+                .limit(per_page)
+                .all()
+            )
+            paginated_courses = fallback_courses
         
         return paginated_courses
     
@@ -213,4 +291,74 @@ class UserService:
             raise ValueError("Review not found")
         
         session.delete(review)
+        session.flush()
+    
+    @staticmethod
+    def get_user_favourite_courses(session, user_email, channel_id, page, per_page):
+        """ Get all favourite courses of a user """
+        user = User.get_user_by_email(session, user_email)
+        if not user:
+            raise ValueError("User not found")
+        
+        channel = Channel.get_channel_by_id(session, channel_id)
+        if not channel:
+            raise ValueError("Channel not found")
+        
+        offset = (page - 1) * per_page
+        
+        courses = (
+            session.query(Course)
+            .join(Favourite)
+            .join(User)
+            .join(UserChannel)
+            .join(Channel)
+            .filter(
+                User.id == user.id,
+                Channel.id == channel_id,
+                Course.status == COURSE_STATUS.ACTIVE
+            )
+        )
+
+        paginated_courses = (
+            courses
+            .order_by(Favourite.created.desc())
+            .offset(offset)
+            .limit(per_page)
+            .all()
+        )
+        
+        return paginated_courses
+    
+    @staticmethod
+    def add_favourite_course(session, user_email, course_id):
+        """ Add a course to the user's favourite courses """
+        user = User.get_user_by_email(session, user_email)
+        if not user:
+            raise ValueError("User not found")
+        
+        course = Course.get_course_by_id(session, course_id)
+        if not course:
+            raise ValueError("Course not found")
+        
+        if course in user.course_favourites:
+            raise ValueError("Course is already in the user's favourite courses")
+        
+        user.course_favourites.append(course)
+        session.flush()
+    
+    @staticmethod
+    def remove_favourite_course(session, user_email, course_id):
+        """ Remove a course from the user's favourite courses """
+        user = User.get_user_by_email(session, user_email)
+        if not user:
+            raise ValueError("User not found")
+        
+        course = Course.get_course_by_id(session, course_id)
+        if not course:
+            raise ValueError("Course not found")
+        
+        if course not in user.course_favourites:
+            raise ValueError("Course is not in the user's favourite courses")
+        
+        user.course_favourites.remove(course)
         session.flush()

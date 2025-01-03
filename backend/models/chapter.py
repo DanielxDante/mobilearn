@@ -2,6 +2,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, func
 from sqlalchemy.orm import relationship
 
 from database import Base
+from models.course import Course
 from models.chapter_lesson import ChapterLesson
 
 class Chapter(Base):
@@ -29,12 +30,26 @@ class Chapter(Base):
         return session.query(Chapter).filter_by(id=id).first()
     
     @staticmethod
+    def add_chapter(session, course_id, title, order):
+        chapter = Chapter(
+            title=title,
+            order=order
+        )
+        course = Course.get_course_by_id(session, course_id)
+        course.chapters.append(chapter)
+        
+        session.flush()
+
+        return chapter
+    
+    @staticmethod
     def change_title(session, id, title):
         chapter = Chapter.get_chapter_by_id(session, id)
         if not chapter:
             raise ValueError("Chapter not found")
         
         chapter.title = title
+        chapter.updated = func.now()
         session.flush()
 
         return chapter
@@ -46,6 +61,7 @@ class Chapter(Base):
             raise ValueError("Chapter not found")
         
         chapter.order = new_order
+        chapter.updated = func.now()
         session.flush()
 
         return chapter
