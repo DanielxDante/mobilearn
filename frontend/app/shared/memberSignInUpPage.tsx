@@ -64,7 +64,7 @@ const SignUpPage = () => {
                     isBlue={true}
                     onPress={() => {
                         router.push(MEMBER_LOGIN_PAGE);
-                        console.log("login pressed");
+                        // console.log("login pressed");
                     }}
                 ></Button>
                 <Button

@@ -20,10 +20,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
     const renderItem = (item: Course) => (
         <TouchableOpacity key={item.id} onPress={() => onSelect(item.id)}>
             <View style={styles.courseContainer}>
-                <Image
-                    source={item.image}
-                    style={styles.courseImage}
-                />
+                <Image source={item.image} style={styles.courseImage} />
                 <View style={styles.courseInfo}>
                     <Text style={styles.courseTitle} numberOfLines={1}>
                         {item.title}
@@ -42,7 +39,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
                             color="#356FC5"
                             borderColor="#D9D9D9"
                             unfilledColor="#D9D9D9"
-                            width={250}
+                            width={null}
                         />
                         <View style={styles.progressTextContainer}>
                             <Text style={styles.progressText}>
@@ -82,7 +79,7 @@ const styles = StyleSheet.create({
     },
     courseImage: {
         width: 80,
-        height: 60, 
+        height: 60,
         resizeMode: "cover",
         borderRadius: 5,
     },
