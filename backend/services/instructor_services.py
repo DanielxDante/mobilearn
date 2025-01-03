@@ -8,9 +8,9 @@ class InstructorServiceError(Exception):
 
 class InstructorService:
     @staticmethod
-    def get_instructor_courses(session, instructor_id):
+    def get_instructor_courses(session, instructor_email):
         """ Get courses attached to an instructor """
-        instructor = Instructor.get_instructor_by_id(session, instructor_id)
+        instructor = Instructor.get_instructor_by_email(session, instructor_email)
         if not instructor:
             raise ValueError("Instructor not found")
         
@@ -18,8 +18,8 @@ class InstructorService:
             session.query(Course)
             .join(Offer)
             .filter(
-                Offer.instructor_id == instructor_id,
-                Course.status == COURSE_STATUS.ACTIVE
+                Offer.instructor_id == instructor.id,
+                Course.status != COURSE_STATUS.DISABLED
             )
             .order_by(Course.created.desc())
             .all()

@@ -14,6 +14,7 @@ from models.course import Course, COURSE
 from models.instructor import Instructor
 from models.community import Community
 from services.course_services import CourseService
+from services.instructor_services import InstructorService
 from utils.s3 import s3_client, allowed_file, bucket_name, cloudfront_domain
 
 class GetCourseEndpoint(Resource):
@@ -35,6 +36,7 @@ class GetCourseEndpoint(Resource):
     @jwt_required()
     def get(self, course_id):
         """ Get course info """
+        # TODO: include chapters and lessons?
         session = create_session()
 
         try:
@@ -117,8 +119,6 @@ class SearchCoursesEndpoint(Resource):
             json.dumps({'courses': courses_info}),
             status=200, mimetype='application/json'
         )
-
-# class GetTopEnrolledCourses(Resource): 
     
 class GetInstructorCoursesEndpoint(Resource):
     @api.doc(
@@ -139,18 +139,19 @@ class GetInstructorCoursesEndpoint(Resource):
     @jwt_required()
     def get(self):
         """ Get courses the instructor is teaching """
+        # TODO: include status to know non-approved courses as well
         current_email = get_jwt_identity()
 
         session = create_session()
 
         try:
-            courses = CourseService.get_instructor_courses(session, current_email)
+            courses = InstructorService.get_instructor_courses(session, current_email)
             courses_info = [{
                 'id': course.id,
                 'name': course.name,
                 'description': course.description,
-                'image': course.image
-            } for course in courses]
+                'image': course.image_url
+            } for course in courses] 
         except ValueError as ee:
             return Response(
                 json.dumps({"error": str(ee)}),
@@ -314,3 +315,5 @@ class CreateCourseEndpoint(Resource):
 # edit_course_parser = api.parser()
 
 # class EditCourseEndpoint(Resource):
+
+# class CompleteLessonEndpoint(Resource):

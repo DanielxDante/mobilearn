@@ -54,13 +54,13 @@ class GetUserEnrolledCoursesEndpoint(Resource):
                 page=page,
                 per_page=per_page
             )
-            course_ids = [{
+            course_info = [{
                 'id': course.id,
                 'course_name': course.name,
                 'rating': str(course.rating),
                 'course_image': course.image_url,
                 'community_name': course.community.name,
-                # 'progress': str(course.progress) # TODO: Add progress
+                # 'progress': str(course.progress) # TODO: Add progress in differentiate between in progress and completed courses
             } for course in courses]
         except ValueError as ee:
             return Response(
@@ -68,11 +68,70 @@ class GetUserEnrolledCoursesEndpoint(Resource):
                 status=404, mimetype='application/json'
             )
         return Response(
-            json.dumps({'courses': course_ids}),
+            json.dumps({'courses': course_info}),
             status=200, mimetype='application/json'
         )
 
-# class GetTopEnrolledCoursesEndpoint(Resource):
+class GetTopEnrolledCoursesEndpoint(Resource):
+    @api.doc(
+        responses={
+            200: 'Ok',
+            401: 'Unauthorized',
+            404: 'Resource not found',
+            500: 'Internal Server Error'
+        },
+        params={
+            'Authorization': {
+                'in': 'header',
+                'description': 'Bearer token',
+                'required': True
+            },
+            'page': {
+                'in': 'query',
+                'description': 'Page number',
+                'required': False
+            },
+            'per_page': {
+                'in': 'query',
+                'description': 'Number of courses per page',
+                'required': False
+            }
+        },
+    )
+    @jwt_required()
+    def get(self, channel_id):
+        """ Get top enrolled courses """
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 5))
+
+        current_email = get_jwt_identity()
+
+        session = create_session()
+
+        try:
+            courses = UserService.get_top_enrolled_courses(
+                session,
+                user_email=current_email,
+                channel_id=channel_id,
+                page=page,
+                per_page=per_page
+            )
+            course_info = [{
+                'id': course.id,
+                'course_name': course.name,
+                'rating': str(course.rating),
+                'course_image': course.image_url,
+                'community_name': course.community.name,
+            } for course in courses]
+        except ValueError as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=404, mimetype='application/json'
+            )
+        return Response(
+            json.dumps({'courses': course_info}),
+            status=200, mimetype='application/json'
+        )
     
 enroll_user_parser = api.parser()
 enroll_user_parser.add_argument('course_id', type=int, help='Course ID', location='json', required=True)

@@ -1,9 +1,12 @@
-from sqlalchemy import or_
+from sqlalchemy import or_, not_, func
 
 from models.course import Course, STATUS as COURSE_STATUS
 from models.channel import Channel
 from models.community import Community
 from models.channel_community import ChannelCommunity
+from models.user import User
+from models.user_channel import UserChannel
+from models.enrollment import Enrollment
 from models.instructor import Instructor, STATUS as INSTRUCTOR_STATUS
 from models.offer import Offer
 
@@ -73,4 +76,51 @@ class CourseService:
         
         return instructors
     
-    # @staticmethod
+    @staticmethod
+    def get_recommended_courses(session, user_email, channel_id, page, per_page):
+        """ Get recommended courses for the user """
+        # TODO: Implement a proper recommendation model and infer from it
+        user = User.get_user_by_email(session, user_email)
+        if not user:
+            raise ValueError("User not found")
+        
+        channel = Channel.get_channel_by_id(session, channel_id)
+        if not channel:
+            raise ValueError("Channel not found")
+        
+        offset = (page - 1) * per_page
+
+        user_enrolled_courses = (
+            session.query(Course)
+            .join(Enrollment)
+            .join(User)
+            .join(UserChannel)
+            .join(Channel)
+            .filter(
+                Enrollment.user_id == user.id,
+                Channel.id == channel_id,
+                Course.status == COURSE_STATUS.ACTIVE
+            )
+        )
+
+        courses = (
+            session.query(Course)
+            .join(Community)
+            .join(ChannelCommunity)
+            .join(Channel)
+            .filter(
+                Channel.id == channel_id,
+                not_(Course.id.in_([course.id for course in user_enrolled_courses])),
+                Course.status == COURSE_STATUS.ACTIVE,
+            )
+        )
+        
+        paginated_courses = (
+            courses
+            .order_by(func.random())
+            .offset(offset)
+            .limit(per_page)
+            .all()
+        )
+        
+        return paginated_courses

@@ -30,7 +30,7 @@ class CourseBuilder:
             'course_type': course_type,
             'duration': None,
             'rating': 0.00,
-            'image_url': None,
+            'image_url': "",
             'currency': 'SGD',
             'price': None,
             'difficulty': None,
@@ -164,7 +164,7 @@ class CourseBuilder:
         return self
 
     def build(self):
-        """ Build the appropriate course type based on course_type """
+        """ Build the appropriate course instance based on course_type """
         if not all([
             self._course['name'],
             self._course['description'],
@@ -195,7 +195,7 @@ class Course(Base):
     # common fields
     duration = Column(Numeric(5, 1), nullable=True) # weeks
     rating = Column(Numeric(4, 2), nullable=True, default=0.00) # 0 means unrated, users can rate from 0.00 to 5.00
-    image_url = Column(String, nullable=True)
+    image_url = Column(String, nullable=True, default="")
     currency = Column(String, nullable=True, default='SGD') # ISO 4217, default in SGD
     price = Column(Numeric(10, 2), nullable=True, default=0.00) # 0 means free
     difficulty = Column(Enum(DIFFICULTY), nullable=True)
