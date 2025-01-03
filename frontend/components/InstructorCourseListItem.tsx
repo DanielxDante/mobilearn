@@ -24,27 +24,33 @@ const CourseListItem: React.FC<CourseListItemProps> = ({ item, onSelect }) => {
   return (
     <TouchableOpacity
       style={styles.courseContainer}
-      onPress={() => onSelect(item.id.toString())}
+      onPress={() => onSelect(item.course_id.toString())}
     >
       <Image
-        source={item.image}
+        source={{ uri: item.course_image }}
         style={styles.courseImage}
         resizeMode="cover"
       />
       <View style={styles.courseInfo}>
         <Text style={styles.courseTitle} numberOfLines={1} ellipsizeMode="tail">
-          {item.title}
+          {item.course_name}
         </Text>
         <Text
           style={styles.courseSchool}
           numberOfLines={1}
           ellipsizeMode="tail"
         >
-          {item.school}
+          {item.community_name}
         </Text>
-        <View style={styles.ratingContainer}>
-          <Image source={images.starRating} style={styles.ratingIcon} />
-          <Text style={styles.ratingText}>{item.rating}</Text>
+        <View style={styles.lastRowContainer}>
+          <View style={styles.ratingContainer}>
+            <Image source={images.starRating} style={styles.ratingIcon} />
+            <Text style={styles.ratingText}>{item.rating}</Text>
+          </View>
+          <View style={styles.userCountContainer}>
+            <Image source={icons.userCount} style={styles.userCountImage} />
+            <Text style={styles.userCount}>{item.enrollment_count}</Text>
+          </View>
         </View>
         <Text
           style={styles.courseDescription}
@@ -53,13 +59,13 @@ const CourseListItem: React.FC<CourseListItemProps> = ({ item, onSelect }) => {
         >
           {item.description}
         </Text>
-        <View style={styles.lastRowContainer}>
+        {/* <View style={styles.lastRowContainer}>
           <Text style={styles.buttonStyle}>{textConstants.viewCourse}</Text>
           <View style={styles.userCountContainer}>
             <Image source={icons.userCount} style={styles.userCountImage} />
-            <Text style={styles.userCount}>{item.enrolledCount}</Text>
+            <Text style={styles.userCount}>{item.enrollment_count}</Text>
           </View>
-        </View>
+        </View> */}
       </View>
     </TouchableOpacity>
   );
@@ -85,9 +91,10 @@ const styles = StyleSheet.create({
   },
   courseImage: {
     width: width * 0.25,
-    height: height * 0.18,
+    height: height * 0.15,
     borderRadius: 8,
     marginRight: 10,
+    objectFit: "fill",
   },
   courseInfo: {
     flex: 1,
@@ -97,7 +104,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     color: Colors.defaultBlue,
-    marginBottom: 4,
+    marginBottom: 0,
   },
   courseSchool: {
     fontSize: 12,
@@ -125,9 +132,10 @@ const styles = StyleSheet.create({
   },
   lastRowContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 0,
+    columnGap: 20,
   },
   buttonStyle: {
     fontSize: 12,

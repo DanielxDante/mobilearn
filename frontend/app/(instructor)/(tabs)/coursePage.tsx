@@ -12,23 +12,93 @@ import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
-import { courseListData as allCourses } from "@/constants/temporaryCourseData";
+//import { courseListData as allCourses } from "@/constants/temporaryCourseData";
 import { Colors } from "@/constants/colors";
 import { instructorCoursePageConstants as textConstants } from "@/constants/textConstants";
 import CourseListItem from "@/components/InstructorCourseListItem";
 import SearchBar from "../../../components/SearchBar";
-const CoursePage = () => {
-  const [filteredCourses, setFilteredCourses] = useState(allCourses);
+import {
+  COURSE_GET_ALL_INSTRUCTOR_COURSES,
+  COURSE_GET_ENROLLED_COURSE,
+} from "@/constants/routes";
+import useAuthStore from "@/store/authStore";
+import Course from "@/types/shared/Course/Course";
 
-  const handleSelectCourse = (id: string) => {
+const CoursePage = () => {
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
+  const token = useAuthStore((state) => state.access_token); // Move the hook here
+
+  useEffect(() => {
+    // Fetch all courses with authorization token
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch(COURSE_GET_ALL_INSTRUCTOR_COURSES, {
+          method: "GET",
+          headers: {
+            Accept: "application/json", // Matches `-H 'accept: application/json'` from the curl
+            Authorization: token, // Matches `-H 'Authorization: Bearer ...'` from the curl
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch courses");
+        }
+        const data = await response.json();
+
+        // Map over the data to transform `name` into `title`, because the component expects `title`
+        const active_courses = data.active_courses.map((course: any) => ({
+          ...course,
+          course_id: course.id, // Add a `course_id` field based on `id`
+          //course_name: course.name, // Add a `title` field based on `name`
+          course_image: course.image, // Add a `course_image` field based on `image`
+
+          // name: undefined, // Optionally remove the `name` field
+        }));
+
+        const not_approved_courses = data.not_approved_courses.map(
+          (course: any) => ({
+            ...course,
+            course_id: course.id, // Add a `course_id` field based on `id`
+            //course_name: course.name, // Add a `title` field based on `name`
+            course_image: course.image, // Add a `course_image` field based on `image`
+          })
+        );
+
+        setFilteredCourses(active_courses);
+        //console.log(data);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    if (token) {
+      fetchCourses(); // Call fetch only if token is available
+    }
+  }, [token]); // Add token as a dependency
+
+  const handleSelectCourse = async (id: string) => {
     console.log("Course " + id + " Selected");
     const courseSelected = filteredCourses.find(
-      (course) => course.id.toString() === id
+      (course) => course.course_id.toString() === id
     );
+    const path = COURSE_GET_ENROLLED_COURSE + "/" + id;
+    const response = await fetch(path, {
+      method: "GET",
+      headers: {
+        Accept: "application/json", // Matches `-H 'accept: application/json'` from the curl
+        Authorization: token, // Matches `-H 'Authorization: Bearer ...'` from the curl
+        course_id: courseSelected?.course_id.toString(), // Add the course ID as a header
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch courses");
+    }
+    const data = await response.json();
+    console.log("Course Info: ", data);
+
     router.push({
       pathname: "../../shared/course/instructorCourseContent",
       params: {
-        courseSelected: JSON.stringify(courseSelected),
+        courseSelected: JSON.stringify(data),
       },
     });
   };
@@ -51,7 +121,7 @@ const CoursePage = () => {
       <View>
         <SearchBar
           placeholder={textConstants.searchBarPlaceholder}
-          courseListData={allCourses}
+          courseListData={filteredCourses}
           onSearchResultsChange={setFilteredCourses} // Update the list when search results change
         />
       </View>

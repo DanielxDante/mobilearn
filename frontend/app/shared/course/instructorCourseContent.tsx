@@ -28,10 +28,10 @@ const CourseContent = () => {
   );
 
   const [selectedChapterId, setSelectedChapterId] = useState<number>(
-    course.chapters[0]?.id
+    course.chapters[0]?.chapter_id
   );
   const selectedChapter = course.chapters.find(
-    (chapter) => chapter.id === selectedChapterId
+    (chapter) => chapter.chapter_id === selectedChapterId
   );
 
   const handleChapterSelect = (chapterId: number) => {
@@ -44,7 +44,7 @@ const CourseContent = () => {
     const lessonSelected = course.chapters
       .map((chapter) => chapter.lessons)
       .flat()
-      .find((lesson) => lesson.id === lessonId);
+      .find((lesson) => lesson.lesson_id === lessonId);
     router.push({
       pathname: "./lessonContent",
       params: {
@@ -53,25 +53,25 @@ const CourseContent = () => {
     });
   };
 
-  const renderLectureItem = (lesson: Lesson) => (
+  const renderLectureItem = (lesson: Lesson, order: number) => (
     <View style={styles.lessonItemContainer}>
       {/* Lessone title */}
       <Text style={styles.lessonTitle} numberOfLines={1}>
-        {Constants.lesson} {lesson.id}: {lesson.title}
+        {Constants.lesson} {order}: {lesson.lesson_name}
       </Text>
-      <View style={styles.lessonContainer}>
+      {/* <View style={styles.lessonContainer}>
         <TouchableOpacity
           style={styles.topicContainer}
-          onPress={() => handleLessonSelect(lesson.id)}
+          onPress={() => handleLessonSelect(lesson.lesson_id)}
         >
           <View style={styles.lessonContainerDescription}>
             <Text style={styles.lessonDescription} numberOfLines={3}>
-              {lesson.description}
+              Lesson Description
             </Text>
             <View style={styles.lessonBar}></View>
           </View>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
   );
 
@@ -98,42 +98,57 @@ const CourseContent = () => {
           <Text style={styles.editCourseButtonText}>Edit Course</Text>
         </TouchableOpacity>
       </View>
+      {/* if video is not available, show a placeholder image */}
+      {videoUrl ? (
+        <View style={styles.videoContainer}>
+          {/* Video component */}
+          <VideoPlayer uri={videoUrl} />
+        </View>
+      ) : (
+        <Image
+          source={{ uri: course.course_image }}
+          style={styles.courseImage}
+          resizeMode="cover"
+        />
+      )}
 
-      <View style={styles.videoContainer}>
-        {/* Video component */}
-        <VideoPlayer uri={videoUrl} />
-      </View>
       <ScrollView>
         {/* Course title and subtitle */}
-        <Text style={styles.title}>{course.title}</Text>
-        <Text style={styles.school}>{course.school}</Text>
+        <Text style={styles.title}>{course.course_name}</Text>
+        <Text style={styles.school}>{course.community_name}</Text>
+        <Text style={styles.courseContentsTitle}>
+          {Constants.courseContents}
+        </Text>
         {/* Chapter buttons */}
         <View style={styles.chapterButtonContainer}>
           {course.chapters.length <= 3 ? (
             // Render up to 4 chapter buttons if there are 3 or fewer chapters
             course.chapters.map((chapter) => (
               <TouchableOpacity
-                key={chapter.id}
+                key={chapter.chapter_id}
                 style={[
                   styles.chapterButton,
                   {
                     backgroundColor:
-                      selectedChapterId === chapter.id
+                      selectedChapterId === chapter.chapter_id
                         ? Colors.defaultBlue
                         : "#E0E0E0",
                   },
                 ]}
-                onPress={() => handleChapterSelect(chapter.id)}
+                onPress={() => handleChapterSelect(chapter.chapter_id)}
               >
                 <Text
                   style={[
                     styles.chapterButtonText,
                     {
-                      color: selectedChapterId === chapter.id ? "#FFF" : "#000",
+                      color:
+                        selectedChapterId === chapter.chapter_id
+                          ? "#FFF"
+                          : "#000",
                     },
                   ]}
                 >
-                  {Constants.chapter} {chapter.id}
+                  {Constants.chapter} {chapter.order}
                 </Text>
               </TouchableOpacity>
             ))
@@ -145,8 +160,8 @@ const CourseContent = () => {
                   console.log("RNPicker value: " + value);
                 }}
                 items={course.chapters.map((chapter) => ({
-                  label: `Chapter ${chapter.id}`,
-                  value: chapter.id,
+                  label: `${chapter.order}. ${chapter.chapter_title}`,
+                  value: chapter.chapter_id,
                 }))}
                 placeholder={{
                   label: Constants.pickerPlaceholder,
@@ -162,12 +177,15 @@ const CourseContent = () => {
             </View>
           )}
         </View>
-        <Text style={styles.courseContentsTitle}>
-          {Constants.courseContents}
+
+        <Text style={styles.chapterContentsTitle}>
+          {selectedChapter?.chapter_title}
         </Text>
         {selectedChapter && selectedChapter.lessons.length > 0 ? (
-          selectedChapter.lessons.map((lesson: Lesson) => (
-            <View key={lesson.id}>{renderLectureItem(lesson)}</View>
+          selectedChapter.lessons.map((lesson: Lesson, order: number) => (
+            <View key={lesson.lesson_id}>
+              {renderLectureItem(lesson, order + 1)}
+            </View>
           ))
         ) : (
           <Text>No lessons available</Text> // Fallback if no lectures
@@ -199,6 +217,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
   },
+  courseImage: {
+    width: "100%",
+    height: 200,
+    marginTop: 5,
+  },
   editCourseButton: {
     padding: 5,
     backgroundColor: Colors.tabsIconGray,
@@ -225,7 +248,7 @@ const styles = StyleSheet.create({
   chapterButtonContainer: {
     flexDirection: "row",
     marginHorizontal: 10,
-    marginVertical: 20,
+    marginVertical: 10,
   },
   chapterButton: {
     padding: 10,
@@ -249,8 +272,15 @@ const styles = StyleSheet.create({
     color: Colors.defaultBlue,
     fontSize: 20,
     marginHorizontal: 25,
-    marginBottom: 10,
+    marginTop: 20,
     alignSelf: "center",
+  },
+  chapterContentsTitle: {
+    fontFamily: "Inter-SemiBold",
+    color: Colors.defaultBlue,
+    fontSize: 18,
+    marginTop: 10,
+    marginHorizontal: 15,
   },
   lessonItemContainer: {
     marginVertical: 10,
@@ -269,7 +299,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   topicContainer: {
-    paddingBottom: 2,
+    paddingBottom: 0,
     flexDirection: "row",
     alignItems: "center",
   },
