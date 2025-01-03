@@ -32,7 +32,7 @@ const CourseListItem: React.FC<CourseListItemProps> = ({ item, onSelect }) => {
         resizeMode="cover"
       />
       <View style={styles.courseInfo}>
-        <Text style={styles.courseTitle} numberOfLines={1} ellipsizeMode="tail">
+        <Text style={styles.courseTitle} numberOfLines={2} ellipsizeMode="tail">
           {item.course_name}
         </Text>
         <Text
@@ -47,10 +47,13 @@ const CourseListItem: React.FC<CourseListItemProps> = ({ item, onSelect }) => {
             <Image source={images.starRating} style={styles.ratingIcon} />
             <Text style={styles.ratingText}>{item.rating}</Text>
           </View>
-          <View style={styles.userCountContainer}>
-            <Image source={icons.userCount} style={styles.userCountImage} />
-            <Text style={styles.userCount}>{item.enrollment_count}</Text>
-          </View>
+          {/* // if enrollment_count is not available, dont render this view */}
+          {item.enrollment_count ? (
+            <View style={styles.userCountContainer}>
+              <Image source={icons.userCount} style={styles.userCountImage} />
+              <Text style={styles.userCount}>{item.enrollment_count}</Text>
+            </View>
+          ) : null}
         </View>
         <Text
           style={styles.courseDescription}

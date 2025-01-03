@@ -26,7 +26,7 @@ import Course from "@/types/shared/Course/Course";
 
 const CoursePage = () => {
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
-  const token = useAuthStore((state) => state.access_token); // Move the hook here
+  const token = useAuthStore((state) => state.access_token);
 
   useEffect(() => {
     // Fetch all courses with authorization token
@@ -128,7 +128,7 @@ const CoursePage = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {filteredCourses.map((course) => (
           <CourseListItem
-            key={course.id}
+            key={course.course_id}
             item={course}
             onSelect={handleSelectCourse}
           />

@@ -52,6 +52,8 @@ const COURSE_BASE_URL = `${BACKEND_BASE_URL}${COURSE_NAMESPACE}${VERSION}`;
 const COURSE_SEARCH = `/search`;
 export const COURSE_GET_ALL_INSTRUCTOR_COURSES = `${COURSE_BASE_URL}/instructor/getInstructorCourses`;
 export const COURSE_GET_ENROLLED_COURSE = `${COURSE_BASE_URL}/getEnrolledCourse`;
+export const COURSE_GET_UNENROLLED_COURSE = `${COURSE_BASE_URL}/getUnenrolledCourse`;
+export const COURSE_GET_TOP_COURSES_INSTRUCTOR = `${COURSE_BASE_URL}/instructor/getTopEnrolledCourses`;
 
 // PAYMENT NAMESPACE
 const PAYMENT_NAMESPACE = "/payment";
