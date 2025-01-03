@@ -1,9 +1,9 @@
 export const VERSION = process.env.EXPO_PUBLIC_VERSION
-    ? `/${process.env.EXPO_PUBLIC_VERSION}`
-    : "/1.0";
+  ? `/${process.env.EXPO_PUBLIC_VERSION}`
+  : "/1.0";
 export const BACKEND_BASE_URL =
-    process.env.BACKEND_BASE_URL ??
-    `http://${process.env.EXPO_PUBLIC_LOCAL_IP_ADDR}:8080`;
+  process.env.BACKEND_BASE_URL ??
+  `http://${process.env.EXPO_PUBLIC_LOCAL_IP_ADDR}:8080`;
 
 // AUTH NAMESPACE
 const AUTH_NAMESPACE = "/auth";
@@ -50,6 +50,10 @@ const CHANNEL_INVITE_USER = `/channel/inviteUser`;
 const COURSE_NAMESPACE = "/course";
 const COURSE_BASE_URL = `${BACKEND_BASE_URL}${COURSE_NAMESPACE}${VERSION}`;
 const COURSE_SEARCH = `/search`;
+export const COURSE_GET_ALL_INSTRUCTOR_COURSES = `${COURSE_BASE_URL}/instructor/getInstructorCourses`;
+export const COURSE_GET_ENROLLED_COURSE = `${COURSE_BASE_URL}/getEnrolledCourse`;
+export const COURSE_GET_UNENROLLED_COURSE = `${COURSE_BASE_URL}/getUnenrolledCourse`;
+export const COURSE_GET_TOP_COURSES_INSTRUCTOR = `${COURSE_BASE_URL}/instructor/getTopEnrolledCourses`;
 
 // PAYMENT NAMESPACE
 const PAYMENT_NAMESPACE = "/payment";

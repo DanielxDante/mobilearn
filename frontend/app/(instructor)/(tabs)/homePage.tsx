@@ -7,10 +7,10 @@ import {
   StyleSheet,
   BackHandler,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useSegments } from "expo-router";
-import TopCourses from "@/app/(member_guest)/home/topCourses";
+import TopCourses from "@/app/(instructor)/home/topCourses";
 import { MEMBER_GUEST_TABS } from "@/constants/pages";
 import useAuthStore from "@/store/authStore";
 
@@ -26,6 +26,7 @@ import { memberGuestHomeConstants as Constants } from "@/constants/textConstants
 import Statistics from "@/components/Statistics";
 import LatestNews from "@/components/LatestNews";
 import { instructorHomePageConstants as textConstants } from "@/constants/textConstants";
+import { COURSE_GET_TOP_COURSES_INSTRUCTOR } from "@/constants/routes";
 
 const statsData = [
   { label: "Your Course", value: "23", description: "Lesson" },
@@ -54,6 +55,10 @@ const newsData = [
 
 const Home = () => {
   const segments = useSegments();
+  const token = useAuthStore((state) => state.access_token);
+  const [page, setPage] = useState(1);
+  const [topCourseData, setTopCourseData] = useState([]);
+
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -69,18 +74,43 @@ const Home = () => {
         return false;
       }
     );
-
     return () => backHandler.remove();
   }, [router, segments]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const url =
+        COURSE_GET_TOP_COURSES_INSTRUCTOR + `?page=${page}&per_page=5`;
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Accept: "application/json", // Matches `-H 'accept: application/json'` from the curl
+            Authorization: token, // Matches `-H 'Authorization: Bearer ...'` from the curl
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch courses");
+        }
+        const data = await response.json();
+        console.log("Top courses data:", data);
+        setTopCourseData(data.courses);
+      } catch (error) {
+        console.error("Error fetching courses for home page:", error);
+      }
+    };
+    fetchCourses();
+  }, [token, page]);
 
   const handleSelectCourse = (id: number) => {
     // TODO: INCLUDE COURSE NAVIGATION
     console.log("Course " + id + " Selected");
-    const courseSelected = courseListData.find((course) => course.id === id);
+    const courseSelected = topCourseData.find((course) => course.id === id);
+    console.log("Course selected:", courseSelected);
     router.push({
       pathname: "../../shared/course/courseDetails",
       params: {
-        courseSelected: JSON.stringify(courseSelected),
+        courseSelected: id.toString(),
       },
     });
   };
@@ -115,7 +145,7 @@ const Home = () => {
             <TouchableOpacity
               onPress={() => {
                 router.push({
-                  pathname: "/(member_guest)/home/topCoursesSeeAll",
+                  pathname: "/(instructor)/home/topCoursesSeeAll",
                   params: {
                     suggestions: JSON.stringify(topCourseData),
                   },
