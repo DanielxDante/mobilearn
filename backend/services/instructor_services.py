@@ -1,7 +1,6 @@
 from models.instructor import Instructor
 from models.course import Course, STATUS as COURSE_STATUS
 from models.offer import Offer
-from models.community import Community
 
 class InstructorServiceError(Exception):
     pass

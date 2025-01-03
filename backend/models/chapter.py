@@ -1,4 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, func
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -19,7 +20,12 @@ class Chapter(Base):
     course = relationship("Course", back_populates="chapters")
 
     # Many-to-many relationship with Lesson
-    lessons = relationship("Lesson", secondary="chapter_lessons", back_populates="chapters")
+    lessons = relationship(
+        "Lesson",
+        secondary="chapter_lessons",
+        back_populates="chapters",
+        order_by="ChapterLesson.order"
+    )
 
     @staticmethod
     def get_chapters(session):
