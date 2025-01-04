@@ -26,11 +26,7 @@ const CourseListItem: React.FC<CourseListItemProps> = ({ item, onSelect }) => {
       style={styles.courseContainer}
       onPress={() => onSelect(item.course_id.toString())}
     >
-      <Image
-        source={{ uri: item.course_image }}
-        style={styles.courseImage}
-        resizeMode="cover"
-      />
+      <Image source={{ uri: item.course_image }} style={styles.courseImage} />
       <View style={styles.courseInfo}>
         <Text style={styles.courseTitle} numberOfLines={2} ellipsizeMode="tail">
           {item.course_name}
@@ -91,13 +87,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 4,
+    alignItems: "center",
   },
   courseImage: {
     width: width * 0.25,
-    height: height * 0.15,
+    height: height * 0.1,
     borderRadius: 8,
     marginRight: 10,
-    objectFit: "fill",
+    objectFit: "contain",
   },
   courseInfo: {
     flex: 1,
