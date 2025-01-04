@@ -560,3 +560,9 @@ export const chat = {
     addChat: require("@/assets/images/addChat.png"),
     searchChat: require("@/assets/images/searchChat.png"),
 };
+
+export const chatChannel = {
+    backButton: require("@/assets/images/notifications/backButton.png"),
+    clipIcon: require("@/assets/images/icons/clipIcon.png"),
+    msgInputPlaceholder: "Write a message...",
+};

@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { chat as Constants } from "@/constants/textConstants";
 import { router } from "expo-router";
 import { Colors } from "@/constants/colors";
-import { TimeAgo } from "@/components/TimeAgo";
+import { formatTime } from "@/components/DateFormatter";
 
 interface ChatItemProps {
     name: string;
@@ -55,23 +55,15 @@ const ChatItem: React.FC<ChatItemProps> = ({
                     </Text>
                 </View>
                 <View>
-                    <Text style={styles.timeText}>
-                        {formatter.format(time)}
-                    </Text>
+                    <Text style={styles.timeText}>{formatTime(time)}</Text>
                 </View>
             </View>
         </TouchableOpacity>
     );
 };
 
-const formatter = new Intl.DateTimeFormat("en-SG", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-});
-
 const handleOpenChat = () => {
-    console.log("Chat open");
+    router.push("../chat/chatChannel");
 };
 
 const Chat = () => {
@@ -122,7 +114,7 @@ const Chat = () => {
                     numUnreadMessages={3}
                 />
                 <ChatItem
-                    name="Mike Ox"
+                    name="Mike Oxlong"
                     profilePicture={require("@/assets/images/member_guest_images/blank_profile_pic.jpg")}
                     latestMessage="Hello! Good Morning."
                     time={new Date(2025, 0, 4, 12, 0, 0, 0)}
