@@ -42,6 +42,7 @@ const CourseDetails = () => {
   const [courseData, setCourseData] = useState<Course | null>(null);
   const token = useAuthStore((state) => state.access_token);
   const company = useAuthStore((state) => state.company);
+  const [course_image, setCourseImage] = useState<string>("");
 
   useEffect(() => {
     // Fetch all courses with authorization token
@@ -63,6 +64,7 @@ const CourseDetails = () => {
         const data = await response.json();
         console.log("Course Info: ", data);
         setCourseData(data);
+        setCourseImage(data.course_image);
         //console.log(data);
       } catch (error) {
         console.error("Error fetching courses COURSEDETAILS:", error);
@@ -73,10 +75,25 @@ const CourseDetails = () => {
 
   return (
     <SafeAreaView>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Image
+            source={require("../../../assets/images/icons/arrow-left-line.png")}
+            //style={styles.backButton}
+          />
+        </TouchableOpacity>
+      </View>
       <ScrollView>
-        <VideoPlayer
-          uri={"https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"}
-        />
+        {/* if picture is not available, show loading */}
+        {course_image ? (
+          <Image
+            source={{ uri: course_image }}
+            style={styles.courseImage}
+            resizeMode="cover"
+          />
+        ) : (
+          <ActivityIndicator size="large" color="#0000ff" />
+        )}
         {/* Course Information */}
         {courseData && (
           <View style={styles.container}>
@@ -192,11 +209,29 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingHorizontal: 25,
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 10,
+  },
   title: {
     fontFamily: "Inter-SemiBold",
     color: Colors.defaultBlue,
     marginTop: 15,
     fontSize: 20,
+  },
+  videoContainer: {
+    marginTop: 10,
+    marginHorizontal: 16,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  courseImage: {
+    width: "100%",
+    height: 200,
+    marginTop: 5,
   },
   school: {
     fontFamily: "Inter-Regular",
