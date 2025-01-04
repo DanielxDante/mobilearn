@@ -554,3 +554,15 @@ export const memberDonatePage = {
     donateButtonText: "Donate",
     merchantDisplayName: "MobiLearn, Inc.",
 };
+
+export const chat = {
+    appBarTitle: "Chats",
+    addChat: require("@/assets/images/addChat.png"),
+    searchChat: require("@/assets/images/searchChat.png"),
+};
+
+export const chatChannel = {
+    backButton: require("@/assets/images/notifications/backButton.png"),
+    clipIcon: require("@/assets/images/icons/clipIcon.png"),
+    msgInputPlaceholder: "Write a message...",
+};
