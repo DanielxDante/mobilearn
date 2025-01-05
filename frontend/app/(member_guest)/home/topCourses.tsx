@@ -22,24 +22,25 @@ const TopCourses: React.FC<ContinueWatchingProps> = ({
     courseData,
     onSelect,
 }) => {
-    const first3Courses = courseData.slice(0, 3);
-
     const renderItem = ({ item }: { item: Course }) => (
         <TouchableOpacity
             style={styles.courseContainer}
-            onPress={() => onSelect(item.id)}
+            onPress={() => onSelect(item.course_id)}
         >
             <View style={styles.courseInfo}>
-                <Image source={item.image} style={styles.courseImage} />
+                <Image
+                    source={{ uri: item.course_image }}
+                    style={styles.courseImage}
+                />
                 <Text style={styles.courseTitle} numberOfLines={2}>
-                    {item.title}
+                    {item.course_name}
                 </Text>
                 <Text
                     style={styles.courseSchool}
                     numberOfLines={1}
                     ellipsizeMode="tail"
                 >
-                    {item.school}
+                    {item.community_name}
                 </Text>
                 <View style={styles.ratingContainer}>
                     <Image
@@ -56,9 +57,9 @@ const TopCourses: React.FC<ContinueWatchingProps> = ({
         <View>
             <View style={styles.listContainer}>
                 <FlatList
-                    data={first3Courses}
+                    data={courseData}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item.id.toString()}
+                    keyExtractor={(item) => item.course_id.toString()}
                     horizontal
                     ListHeaderComponent={
                         <View style={styles.headerFooterSpacing} />
