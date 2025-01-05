@@ -55,7 +55,10 @@ export interface AppState {
     getFavouriteCourses: (page?: string, per_page?: string) => Promise<void>;
     getRecommendedCourses: (page?: string, per_page?: string) => Promise<void>;
     getReview: (course_id: number) => Promise<void>;
-    getTopEnrolledCourses: (page?: string, per_page?: string) => Promise<void>;
+    getTopEnrolledCourses: (
+        page?: string,
+        per_page?: string
+    ) => Promise<Course[]>;
     removeFavouriteCourse: (course_id: number) => Promise<void>;
     saveReview: (
         course_id: number,
@@ -296,12 +299,9 @@ export const useAppStore = create<AppState>()(
                         rating: course.rating,
                         enrollment_count: undefined,
                     }));
-                    set((state) => ({
-                        top_enrolled_courses: [
-                            ...state.top_enrolled_courses,
-                            ...mappedCourses,
-                        ],
-                    }));
+                    set({
+                        top_enrolled_courses: mappedCourses,
+                    });
                     // Tentatively returns nothing for successful API request
                 } catch (error: any) {
                     console.error(error);
@@ -337,6 +337,7 @@ export const useAppStore = create<AppState>()(
                     const response = await axios.get(
                         `${COURSE_USER_GET_TOP_ENROLLED_COURSES_URL}/${get().channel_id.toString()}`,
                         {
+                            params: { page, per_page },
                             headers: { "Content-Type": "application/json" },
                         }
                     );
@@ -356,12 +357,14 @@ export const useAppStore = create<AppState>()(
                             enrollment_count: undefined,
                         })
                     );
-                    set((state) => ({
-                        top_enrolled_courses: [
-                            ...state.top_enrolled_courses,
-                            ...mappedCourses,
-                        ],
-                    }));
+                    if (get().top_enrolled_courses.length === 0) {
+                        // ONLY SET FIRST 5 COURSES IN TOP_ENROLLED_COURSES
+                        set({ top_enrolled_courses: mappedCourses });
+                    } else {
+                        //  RETURN NEXT 5 COURSES TO COMPONENT (topCoursesSeeAll)
+                        return mappedCourses;
+                    }
+
                     // Tentatively returns nothing for successful API request
                 } catch (error: any) {
                     console.error(error);

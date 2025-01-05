@@ -21,7 +21,7 @@ import useAppStore from "@/store/appStore";
 const LIMIT = 20; // Set the maximum number of courses to fetch
 
 const TopCoursesSeeAll = () => {
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(2);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const topEnrolledCourses = useAppStore(
@@ -42,12 +42,18 @@ const TopCoursesSeeAll = () => {
     const fetchCourses = async () => {
         if (loading || !hasMore) return;
         setLoading(true);
-        await getTopEnrolledCourses(page.toString(), "5");
+        const nextFiveCourses = await getTopEnrolledCourses(
+            page.toString(),
+            "5"
+        );
+        setTopCourseData((prevData) => [...prevData, ...nextFiveCourses]);
+        setLoading(false);
         if (topCourseData.length >= LIMIT) {
             setHasMore(false);
         }
     };
-    console.log(page);
+    console.log("Page: " + page);
+
     useEffect(() => {
         if (topCourseData.length < LIMIT && hasMore) {
             fetchCourses();
