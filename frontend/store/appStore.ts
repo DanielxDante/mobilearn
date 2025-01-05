@@ -21,10 +21,16 @@ import {
 } from "@/constants/routes";
 import Channel from "@/types/shared/Channel";
 import Course from "@/types/shared/Course/Course";
+import Review from "@/types/shared/Course/Review";
 
 export interface AppState {
-    channels: Channel[];
-    channel_id?: number;
+    channels: Channel[]; // List of Channels that user has access to
+    channel_id: number; // ID of user's current channel
+    favourite_courses?: Course[]; // List of user's favourite courses
+    enrolled_courses?: Course[]; // List of user's enrolled courses
+    recommended_courses: Course[]; // List of user's recommended courses
+    top_enrolled_courses: Course[];
+    review?: Review; // Not sure if review or reviews should be stored
     fetchPaymentSheet: (
         amount: string,
         currency: string
@@ -43,12 +49,29 @@ export interface AppState {
         page?: string,
         per_page?: string
     ) => Promise<any[]>;
+    addFavouriteCourse: (course_id: number) => Promise<void>;
+    enrollCourse: (course_id: number) => Promise<void>;
+    getEnrolledCourses: (page?: string, per_page?: string) => Promise<void>;
+    getFavouriteCourses: (page?: string, per_page?: string) => Promise<void>;
+    getRecommendedCourses: (page?: string, per_page?: string) => Promise<void>;
+    getReview: (course_id: number) => Promise<void>;
+    getTopEnrolledCourses: () => Promise<void>;
+    removeFavouriteCourse: (course_id: number) => Promise<void>;
+    saveReview: (
+        course_id: number,
+        rating: number,
+        review_text: string
+    ) => Promise<void>;
+    withdrawCourse: (course_id: number) => Promise<void>;
 }
 
 export const useAppStore = create<AppState>()(
     persist(
         (set, get) => ({
             channels: [],
+            channel_id: 0,
+            recommended_courses: [],
+            top_enrolled_courses: [],
             fetchPaymentSheet: async (amount, currency) => {
                 console.log("Fetching donation payment sheet...");
                 try {
@@ -135,20 +158,8 @@ export const useAppStore = create<AppState>()(
                 console.log("(Store) setChannelId: " + channel_id);
                 set({ channel_id: channel_id });
             },
-            searchCourse: async (
-                channel_id: number,
-                search_term?: string,
-                page?: string,
-                per_page?: string
-            ) => {
+            searchCourse: async (channel_id, search_term, page?, per_page?) => {
                 try {
-                    const requestData: any = { search_term };
-                    if (page) {
-                        requestData.page = page;
-                    }
-                    if (per_page) {
-                        requestData.per_page = per_page;
-                    }
                     const response = await axios.get(
                         `${COURSE_SEARCH_URL}/${channel_id.toString()}`,
                         {
@@ -163,6 +174,257 @@ export const useAppStore = create<AppState>()(
                     }
                 } catch (error: any) {
                     console.error(error.message);
+                }
+            },
+            addFavouriteCourse: async (course_id) => {
+                console.log("(Store) Add Favourite Course: " + course_id);
+                try {
+                    const response = await axios.post(
+                        COURSE_USER_ADD_FAVOURITE_COURSE_URL,
+                        { course_id },
+                        { headers: { "Content-Type": "application/json" } }
+                    );
+                    // Tentatively returns nothing for successful API request
+                    // Response is {"message": "Course successfully added to favourites"}
+                } catch (error: any) {
+                    console.error(error);
+                }
+            },
+            enrollCourse: async (course_id) => {
+                console.log("(Store) Enroll Course: " + course_id);
+                try {
+                    const response = await axios.post(
+                        COURSE_USER_ENROLL_COURSE_URL,
+                        { course_id },
+                        { headers: { "Content-Type": "application/json" } }
+                    );
+                    // Tentatively returns nothing for successful API request
+                    // Response is {"message": "User successfully enrolled"}
+                } catch (error: any) {
+                    console.error(error);
+                }
+            },
+            getEnrolledCourses: async (page?, per_page?) => {
+                console.log("(Store) Get Enrolled Courses");
+                try {
+                    const response = await axios.get(
+                        `${COURSE_USER_GET_ENROLLED_COURSES_URL}/${get().channel_id.toString()}`,
+                        {
+                            params: { page, per_page },
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+                    const responseData = response.data;
+                    // MAP API response to FE Course type
+                    const mappedCourses = responseData.courses.map(
+                        (course: any) => ({
+                            course_id: course.id,
+                            community_id: undefined,
+                            course_image: course.course_image,
+                            course_name: course.course_name,
+                            community_name: course.community_name,
+                            description: undefined,
+                            instructors: undefined,
+                            chapters: undefined,
+                            rating: course.rating,
+                            enrollment_count: undefined,
+                        })
+                    );
+                    set({
+                        enrolled_courses: mappedCourses,
+                    });
+                    // Tentatively returns nothing for successful API request
+                } catch (error: any) {
+                    console.error(error);
+                }
+            },
+            getFavouriteCourses: async (page?, per_page?) => {
+                console.log("(Store) Get Favourite Courses");
+                try {
+                    const response = await axios.get(
+                        `${COURSE_USER_GET_FAVOURITE_COURSES_URL}/${get().channel_id.toString()}`,
+                        {
+                            params: { page, per_page },
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+                    const responseData = response.data;
+                    // MAP API response to FE Course type
+                    const mappedCourses = responseData.courses.map(
+                        (course: any) => ({
+                            course_id: course.id,
+                            community_id: undefined,
+                            course_image: course.course_image,
+                            course_name: course.course_name,
+                            community_name: course.community_name,
+                            description: undefined,
+                            instructors: undefined,
+                            chapters: undefined,
+                            rating: course.rating,
+                            enrollment_count: course.enrollments,
+                        })
+                    );
+                    set({
+                        favourite_courses: mappedCourses,
+                    });
+                    // Tentatively returns nothing for successful API request
+                } catch (error: any) {
+                    console.error(error);
+                }
+            },
+            getRecommendedCourses: async (page, per_page) => {
+                console.log("(Store) Get Recommended Courses");
+                try {
+                    const response = await axios.get(
+                        `${COURSE_USER_GET_RECOMMENDED_COURSES_URL}/${get().channel_id.toString()}`,
+                        {
+                            params: { page, per_page },
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+                    const responseData = response.data;
+                    // MAP API response to FE Course type
+                    const mappedCourses = responseData.courses.map(
+                        (course: any) => ({
+                            course_id: course.id,
+                            community_id: undefined,
+                            course_image: course.course_image,
+                            course_name: course.course_name,
+                            community_name: course.community_name,
+                            description: undefined,
+                            instructors: undefined,
+                            chapters: undefined,
+                            rating: course.rating,
+                            enrollment_count: undefined,
+                        })
+                    );
+                    set({
+                        recommended_courses: mappedCourses,
+                    });
+                    // Tentatively returns nothing for successful API request
+                } catch (error: any) {
+                    console.error(error);
+                }
+            },
+            getReview: async (course_id) => {
+                console.log("(Store) Get Review for course: " + course_id);
+                try {
+                    const response = await axios.get(
+                        `${COURSE_USER_GET_REVIEW_URL}/${course_id.toString()}`,
+                        {
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+                    const responseData = response.data;
+                    const reviewData: Review = {
+                        course_id: course_id,
+                        rating: responseData.rating,
+                        review_text: responseData.review_text,
+                    };
+                    // Assuming only 1 review is stored at a time in store
+                    set({
+                        review: reviewData,
+                    });
+                    // Tentatively returns nothing for successful API request
+                } catch (error: any) {
+                    console.error(error);
+                }
+            },
+            getTopEnrolledCourses: async () => {
+                console.log("(Store) Get Top Enrolled Courses");
+                try {
+                    const response = await axios.get(
+                        `${COURSE_USER_GET_TOP_ENROLLED_COURSES_URL}/${get().channel_id.toString()}`,
+                        {
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+                    const responseData = response.data;
+                    // MAP API response to FE Course type
+                    const mappedCourses = responseData.courses.map(
+                        (course: any) => ({
+                            course_id: course.id,
+                            community_id: undefined,
+                            course_image: course.course_image,
+                            course_name: course.course_name,
+                            community_name: course.community_name,
+                            description: undefined,
+                            instructors: undefined,
+                            chapters: undefined,
+                            rating: course.rating,
+                            enrollment_count: undefined,
+                        })
+                    );
+                    set({
+                        top_enrolled_courses: mappedCourses,
+                    });
+                    // Tentatively returns nothing for successful API request
+                } catch (error: any) {
+                    console.error(error);
+                }
+            },
+            removeFavouriteCourse: async (course_id) => {
+                console.log("(Store) Remove Favourite Course");
+                try {
+                    const response = await axios.post(
+                        `${COURSE_USER_REMOVE_FAVOURITE_COURSE_URL}`,
+                        { course_id },
+                        { headers: { "Content-Type": "application/json" } }
+                    );
+                    const responseData = response.data;
+                    if (response.status === 200) {
+                        get().getFavouriteCourses();
+                    }
+                    // Tentatively returns nothing for successful API request
+                } catch (error: any) {
+                    console.error(error);
+                }
+            },
+            saveReview: async (course_id, rating, review_text) => {
+                console.log("(Store) Save Review for course: " + course_id);
+                try {
+                    const response = await axios.post(
+                        `${COURSE_USER_SAVE_REVIEW_URL}`,
+                        {
+                            params: { course_id, rating, review_text },
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+                    const review: Review = {
+                        course_id: course_id,
+                        rating: rating,
+                        review_text: review_text,
+                    };
+                    if (response.status === 200) {
+                        // Set saved review into store
+                        set({
+                            review: review,
+                        });
+                    }
+                    // Tentatively returns nothing for successful API request
+                } catch (error: any) {
+                    console.error(error);
+                }
+            },
+            withdrawCourse: async (course_id) => {
+                console.log("(Store) Withdraw from course: " + course_id);
+                try {
+                    const response = await axios.post(
+                        `${COURSE_USER_WITHDRAW_COURSE_URL}`,
+                        {
+                            params: { course_id },
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+                    if (response.status === 200) {
+                        // Call all course APIs to ensure withdrawn course is not inside store??
+                        get().getEnrolledCourses();
+                        get().getFavouriteCourses();
+                        get().getEnrolledCourses();
+                    }
+                    // Tentatively returns nothing for successful API request
+                } catch (error: any) {
+                    console.error(error);
                 }
             },
         }),
