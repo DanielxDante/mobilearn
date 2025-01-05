@@ -296,9 +296,12 @@ export const useAppStore = create<AppState>()(
                         rating: course.rating,
                         enrollment_count: undefined,
                     }));
-                    set({
-                        recommended_courses: mappedCourses,
-                    });
+                    set((state) => ({
+                        top_enrolled_courses: [
+                            ...state.top_enrolled_courses,
+                            ...mappedCourses,
+                        ],
+                    }));
                     // Tentatively returns nothing for successful API request
                 } catch (error: any) {
                     console.error(error);
@@ -353,9 +356,12 @@ export const useAppStore = create<AppState>()(
                             enrollment_count: undefined,
                         })
                     );
-                    set({
-                        top_enrolled_courses: mappedCourses,
-                    });
+                    set((state) => ({
+                        top_enrolled_courses: [
+                            ...state.top_enrolled_courses,
+                            ...mappedCourses,
+                        ],
+                    }));
                     // Tentatively returns nothing for successful API request
                 } catch (error: any) {
                     console.error(error);

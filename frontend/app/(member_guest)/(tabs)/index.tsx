@@ -48,17 +48,21 @@ const Home = () => {
 
     useEffect(() => {
         getEnrolledCourses();
-        getRecommendedCourses();
+        getRecommendedCourses("1", "5");
         getTopEnrolledCourses("1", "5");
     }, []);
 
     const [enrolledData, setEnrolledData] = useState<Course[] | undefined>(
-        enrolledCourses
+        () => {
+            return enrolledCourses?.slice(0, 2);
+        }
     );
-    const [suggestionsData, setSuggestionsData] =
-        useState<Course[]>(recommendedCourses);
-    const [topCourseData, setTopCourseData] =
-        useState<Course[]>(topEnrolledCourses);
+    const [suggestionsData, setSuggestionsData] = useState<Course[]>(() => {
+        return recommendedCourses.slice(0, 5);
+    });
+    const [topCourseData, setTopCourseData] = useState<Course[]>(() => {
+        return topEnrolledCourses.slice(0, 5);
+    });
 
     const segments = useSegments();
     useEffect(() => {
@@ -162,14 +166,9 @@ const Home = () => {
                             </Text>
                             <TouchableOpacity
                                 onPress={() => {
-                                    router.push({
-                                        pathname:
-                                            "/(member_guest)/home/suggestionsSeeAll",
-                                        params: {
-                                            suggestions:
-                                                JSON.stringify(suggestionsData),
-                                        },
-                                    });
+                                    router.push(
+                                        "/(member_guest)/home/suggestionsSeeAll"
+                                    );
                                 }}
                             >
                                 <Text style={styles.seeAllText}>
@@ -190,14 +189,9 @@ const Home = () => {
                             </Text>
                             <TouchableOpacity
                                 onPress={() => {
-                                    router.push({
-                                        pathname:
-                                            "/(member_guest)/home/topCoursesSeeAll",
-                                        params: {
-                                            suggestions:
-                                                JSON.stringify(topCourseData),
-                                        },
-                                    });
+                                    router.push(
+                                        "/(member_guest)/home/topCoursesSeeAll"
+                                    );
                                 }}
                             >
                                 <Text style={styles.seeAllText}>
