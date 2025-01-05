@@ -31,7 +31,6 @@ const memberChannelSignUpPage = () => {
             // console.log(
             //     "Redirecting to homepage with channel_id: " + channelId
             // );
-            router.push("/(member_guest)/(tabs)");
         } else if (inviteCode) {
             // Redirect to homepage with new inviteCode
             // console.log("Invite code: " + inviteCode);
@@ -42,7 +41,6 @@ const memberChannelSignUpPage = () => {
                     //     "Redirecting to homepage with channel_id: " + response
                     // );
                     setInviteCode("");
-                    router.push("/(member_guest)/(tabs)");
                 } else if (response === "Channel already joined") {
                     alert("Channel already joined");
                 } else {
@@ -53,7 +51,9 @@ const memberChannelSignUpPage = () => {
             }
         } else {
             alert("Please select a channel or enter an invite code.");
+            return;
         }
+        router.push("/(member_guest)/(tabs)");
     };
     return (
         <SafeAreaView style={styles.container}>

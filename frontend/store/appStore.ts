@@ -55,7 +55,7 @@ export interface AppState {
     getFavouriteCourses: (page?: string, per_page?: string) => Promise<void>;
     getRecommendedCourses: (page?: string, per_page?: string) => Promise<void>;
     getReview: (course_id: number) => Promise<void>;
-    getTopEnrolledCourses: () => Promise<void>;
+    getTopEnrolledCourses: (page?: string, per_page?: string) => Promise<void>;
     removeFavouriteCourse: (course_id: number) => Promise<void>;
     saveReview: (
         course_id: number,
@@ -284,20 +284,18 @@ export const useAppStore = create<AppState>()(
                     );
                     const responseData = response.data;
                     // MAP API response to FE Course type
-                    const mappedCourses = responseData.courses.map(
-                        (course: any) => ({
-                            course_id: course.id,
-                            community_id: undefined,
-                            course_image: course.course_image,
-                            course_name: course.course_name,
-                            community_name: course.community_name,
-                            description: undefined,
-                            instructors: undefined,
-                            chapters: undefined,
-                            rating: course.rating,
-                            enrollment_count: undefined,
-                        })
-                    );
+                    const mappedCourses = responseData.map((course: any) => ({
+                        course_id: course.id,
+                        community_id: undefined,
+                        course_image: course.course_image,
+                        course_name: course.course_name,
+                        community_name: course.community_name,
+                        description: undefined,
+                        instructors: undefined,
+                        chapters: undefined,
+                        rating: course.rating,
+                        enrollment_count: undefined,
+                    }));
                     set({
                         recommended_courses: mappedCourses,
                     });
@@ -330,7 +328,7 @@ export const useAppStore = create<AppState>()(
                     console.error(error);
                 }
             },
-            getTopEnrolledCourses: async () => {
+            getTopEnrolledCourses: async (page?, per_page?) => {
                 console.log("(Store) Get Top Enrolled Courses");
                 try {
                     const response = await axios.get(

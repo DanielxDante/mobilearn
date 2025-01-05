@@ -52,14 +52,14 @@ const COURSE_BASE_URL = `${BACKEND_BASE_URL}${COURSE_NAMESPACE}${VERSION}`;
 const COURSE_SEARCH = `/search`;
 const COURSE_USER_ADD_FAVOURITE_COURSE = `/user/addFavouriteCourse`;
 const COURSE_USER_ENROLL_COURSE = `/user/enrollCourse`;
-const COURSE_USER_GET_FAVOURITE_COURSES = `user/getFavouriteCourses`;
-const COURSE_USER_GET_ENROLLED_COURSES = `user/getEnrolledCourses`;
-const COURSE_USER_GET_RECOMMENDED_COURSES = `user/getRecommendedCourses`;
-const COURSE_USER_GET_REVIEW = `user/getReview`;
-const COURSE_USER_GET_TOP_ENROLLED_COURSES = `user/getTopEnrolledCourses`;
-const COURSE_USER_REMOVE_FAVOURITE_COURSE = `user/removeFavouriteCourse`;
-const COURSE_USER_SAVE_REVIEW = `user/saveReview`;
-const COURSE_USER_WITHDRAW_COURSE = `user/withdrawCourse`;
+const COURSE_USER_GET_FAVOURITE_COURSES = `/user/getFavouriteCourses`;
+const COURSE_USER_GET_ENROLLED_COURSES = `/user/getEnrolledCourses`;
+const COURSE_USER_GET_RECOMMENDED_COURSES = `/user/getRecommendedCourses`;
+const COURSE_USER_GET_REVIEW = `/user/getReview`;
+const COURSE_USER_GET_TOP_ENROLLED_COURSES = `/user/getTopEnrolledCourses`;
+const COURSE_USER_REMOVE_FAVOURITE_COURSE = `/user/removeFavouriteCourse`;
+const COURSE_USER_SAVE_REVIEW = `/user/saveReview`;
+const COURSE_USER_WITHDRAW_COURSE = `/user/withdrawCourse`;
 
 // PAYMENT NAMESPACE
 const PAYMENT_NAMESPACE = "/payment";
