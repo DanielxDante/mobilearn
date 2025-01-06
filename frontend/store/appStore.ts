@@ -7,6 +7,9 @@ import {
     PAYMENT_STRIPE_FETCH_PAYMENT_SHEET_URL,
     CHANNEL_USER_GET_CHANNELS_URL,
     CHANNEL_USER_INVITE_URL,
+    COURSE_GET_ENROLLED_COURSE,
+    COURSE_GET_UNENROLLED_COURSE,
+    COURSE_GET_TOP_COURSES_INSTRUCTOR,
     COURSE_SEARCH_URL,
     COURSE_USER_ADD_FAVOURITE_COURSE_URL,
     COURSE_USER_ENROLL_COURSE_URL,
@@ -43,6 +46,12 @@ export interface AppState {
     getUserChannels: () => Promise<void>;
     inviteUser: (inviteCode: string) => Promise<any>;
     setChannelId: (channel_id: number) => Promise<void>;
+    getEnrolledCourse: (course_id: number) => Promise<void>;
+    getUnenrolledCourse: (course_id: number) => Promise<void>;
+    getTopCoursesInstructor: (
+        page?: string,
+        per_page?: string
+    ) => Promise<Course[]>;
     searchCourse: (
         channel_id: number,
         search_term?: string,
@@ -53,9 +62,12 @@ export interface AppState {
     enrollCourse: (course_id: number) => Promise<void>;
     getEnrolledCourses: (page?: string, per_page?: string) => Promise<void>;
     getFavouriteCourses: (page?: string, per_page?: string) => Promise<void>;
-    getRecommendedCourses: (page?: string, per_page?: string) => Promise<void>;
+    getRecommendedCourses: (
+        page?: string,
+        per_page?: string
+    ) => Promise<Course[]>;
     getReview: (course_id: number) => Promise<void>;
-    getTopEnrolledCourses: (
+    getTopEnrolledCoursesUser: (
         page?: string,
         per_page?: string
     ) => Promise<Course[]>;
@@ -100,11 +112,16 @@ export const useAppStore = create<AppState>()(
                 }
             },
             logout: async () => {
-                console.log("Logging out appStore");
+                console.log("(appStore) Logging out");
                 try {
                     set({
                         channels: [],
-                        channel_id: undefined,
+                        channel_id: 0,
+                        favourite_courses: [],
+                        enrolled_courses: undefined,
+                        recommended_courses: [],
+                        top_enrolled_courses: [],
+                        review: undefined,
                     });
                 } catch (error) {
                     console.error("Error logging out of AppStore:", error);
@@ -160,6 +177,81 @@ export const useAppStore = create<AppState>()(
             setChannelId: async (channel_id) => {
                 console.log("(Store) setChannelId: " + channel_id);
                 set({ channel_id: channel_id });
+            },
+            getEnrolledCourse: async (course_id) => {
+                console.log(
+                    "(Store) Get Enrolled Course for course: " + course_id
+                );
+                try {
+                    const response = await axios.get(
+                        `${COURSE_GET_ENROLLED_COURSE}/${course_id.toString()}`,
+                        {
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+                    const responseData = response.data;
+                    if (response.status === 200) {
+                        return responseData;
+                    }
+                } catch (error: any) {
+                    console.error(error.message);
+                }
+            },
+            getUnenrolledCourse: async (course_id) => {
+                console.log(
+                    "(Store) Get Unenrolled Course for course: " + course_id
+                );
+                try {
+                    const response = await axios.get(
+                        `${COURSE_GET_UNENROLLED_COURSE}/${course_id.toString()}`,
+                        {
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+                    const responseData = response.data;
+                    if (response.status === 200) {
+                        return responseData;
+                    }
+                } catch (error: any) {
+                    console.error(error.message);
+                }
+            },
+            getTopCoursesInstructor: async (page, per_page) => {
+                console.log("(Store) Instructor Get Top Course");
+                try {
+                    const response = await axios.get(
+                        `${COURSE_GET_TOP_COURSES_INSTRUCTOR}`,
+                        {
+                            params: { page, per_page },
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+                    const responseData = response.data;
+                    // MAP API response to FE Course type
+                    const mappedCourses = responseData.courses.map(
+                        (course: any) => ({
+                            course_id: course.id,
+                            community_id: undefined,
+                            course_image: course.course_image,
+                            course_name: course.course_name,
+                            community_name: course.community_name,
+                            description: undefined,
+                            instructors: undefined,
+                            chapters: undefined,
+                            rating: course.rating,
+                            enrollment_count: undefined,
+                        })
+                    );
+                    if (get().top_enrolled_courses.length === 0) {
+                        // ONLY SET FIRST 5 COURSES IN TOP_ENROLLED_COURSES
+                        set({ top_enrolled_courses: mappedCourses });
+                    } else {
+                        //  RETURN NEXT 5 COURSES TO COMPONENT (topCoursesSeeAll)
+                        return mappedCourses;
+                    }
+                } catch (error: any) {
+                    console.error(error.message);
+                }
             },
             searchCourse: async (channel_id, search_term, page?, per_page?) => {
                 try {
@@ -236,6 +328,7 @@ export const useAppStore = create<AppState>()(
                     set({
                         enrolled_courses: mappedCourses,
                     });
+                    console.log(get().enrolled_courses);
                     // Tentatively returns nothing for successful API request
                 } catch (error: any) {
                     console.error(error);
@@ -299,9 +392,16 @@ export const useAppStore = create<AppState>()(
                         rating: course.rating,
                         enrollment_count: undefined,
                     }));
-                    set({
-                        top_enrolled_courses: mappedCourses,
-                    });
+                    if (get().recommended_courses.length === 0) {
+                        // ONLY SET FIRST 5 COURSES IN RECOMMENDED_COURSES
+                        set({
+                            recommended_courses: mappedCourses,
+                        });
+                    } else {
+                        //  RETURN NEXT 5 COURSES TO COMPONENT (suggestionsSeeAll)
+                        return mappedCourses;
+                    }
+
                     // Tentatively returns nothing for successful API request
                 } catch (error: any) {
                     console.error(error);
@@ -331,7 +431,7 @@ export const useAppStore = create<AppState>()(
                     console.error(error);
                 }
             },
-            getTopEnrolledCourses: async (page?, per_page?) => {
+            getTopEnrolledCoursesUser: async (page?, per_page?) => {
                 console.log("(Store) Get Top Enrolled Courses");
                 try {
                     const response = await axios.get(

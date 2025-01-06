@@ -4,12 +4,10 @@ import {
     TouchableOpacity,
     StyleSheet,
     Image,
-    FlatList,
     ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFonts } from "expo-font";
 import { router } from "expo-router";
 
 import { Colors } from "@/constants/colors";
@@ -28,7 +26,7 @@ const TopCoursesSeeAll = () => {
         (state) => state.top_enrolled_courses
     );
     const getTopEnrolledCourses = useAppStore(
-        (state) => state.getTopEnrolledCourses
+        (state) => state.getTopEnrolledCoursesUser
     );
 
     const [topCourseData, setTopCourseData] =
@@ -85,9 +83,8 @@ const TopCoursesSeeAll = () => {
                 </Text>
             </View>
             {/* Top Courses Display section */}
-            <View>
+            <View style={styles.scrollContainerOutside}>
                 <ScrollView
-                    contentContainerStyle={styles.scrollContainer}
                     onMomentumScrollEnd={handleLoadMore} // Load more when scrolling ends
                 >
                     {topCourseData.map((course) => (
@@ -118,7 +115,7 @@ const styles = StyleSheet.create({
     },
     appBarContainer: {
         flexDirection: "row",
-        marginTop: 20,
+        marginVertical: 15,
         alignItems: "center",
     },
     backButton: {
@@ -127,8 +124,8 @@ const styles = StyleSheet.create({
         marginLeft: 25,
         padding: 5,
     },
-    scrollContainer: {
-        paddingBottom: 20,
+    scrollContainerOutside: {
+        flex: 1,
     },
     suggestionsHeader: {
         color: Colors.defaultBlue,

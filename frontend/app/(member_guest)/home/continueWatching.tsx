@@ -15,17 +15,23 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
     courseData,
     onSelect,
 }) => {
-    const first2Courses = courseData.slice(0, 2);
-
     const renderItem = (item: Course) => (
-        <TouchableOpacity key={item.id} onPress={() => onSelect(item.id)}>
+        <TouchableOpacity
+            key={item.course_id}
+            onPress={() => onSelect(item.course_id)}
+        >
             <View style={styles.courseContainer}>
-                <Image source={item.image} style={styles.courseImage} />
+                <Image
+                    source={{ uri: item.course_image }}
+                    style={styles.courseImage}
+                />
                 <View style={styles.courseInfo}>
                     <Text style={styles.courseTitle} numberOfLines={1}>
-                        {item.title}
+                        {item.course_name}
                     </Text>
-                    <Text style={styles.courseSchool}>{item.school}</Text>
+                    <Text style={styles.courseSchool}>
+                        {item.community_name}
+                    </Text>
                     <View style={styles.ratingContainer}>
                         <Image
                             source={Constants.starIcon}
@@ -33,21 +39,24 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
                         />
                         <Text style={styles.ratingText}>{item.rating}</Text>
                     </View>
-                    <View style={styles.progressContainer}>
-                        <Progress.Bar
-                            progress={item.completionRate}
-                            color="#356FC5"
-                            borderColor="#D9D9D9"
-                            unfilledColor="#D9D9D9"
-                            width={null}
-                        />
-                        <View style={styles.progressTextContainer}>
-                            <Text style={styles.progressText}>
-                                {item.completionRate * 100}
-                                {Constants.completionRateText}
-                            </Text>
+                    {/* Commented out as completionRate not yet done */}
+                    {item.completion_rate ? (
+                        <View style={styles.progressContainer}>
+                            <Progress.Bar
+                                progress={item.completion_rate}
+                                color="#356FC5"
+                                borderColor="#D9D9D9"
+                                unfilledColor="#D9D9D9"
+                                width={null}
+                            />
+                            <View style={styles.progressTextContainer}>
+                                <Text style={styles.progressText}>
+                                    {item.completion_rate * 100}
+                                    {Constants.completionRateText}
+                                </Text>
+                            </View>
                         </View>
-                    </View>
+                    ) : null}
                 </View>
             </View>
         </TouchableOpacity>
@@ -58,7 +67,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
             <Text style={styles.headerText}>
                 {Constants.continueWatchingSubtitle}
             </Text>
-            {first2Courses.map(renderItem)}
+            {courseData.map(renderItem)}
         </View>
     );
 };
