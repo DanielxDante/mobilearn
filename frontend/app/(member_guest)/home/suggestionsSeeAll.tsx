@@ -4,7 +4,6 @@ import {
     TouchableOpacity,
     StyleSheet,
     Image,
-    FlatList,
     ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
@@ -41,12 +40,18 @@ const SuggestionsSeeAll = () => {
     const fetchCourses = async () => {
         if (loading || !hasMore) return;
         setLoading(true);
-        await getRecommendedCourses(page.toString(), "5");
+        const nextFiveCourses = await getRecommendedCourses(
+            page.toString(),
+            "5"
+        );
+        setSuggestionData((prevData) => [...prevData, ...nextFiveCourses]);
+        setLoading(false);
         if (suggestionData.length >= LIMIT) {
             setHasMore(false);
         }
     };
-    console.log(page);
+    console.log("Page: " + page);
+
     useEffect(() => {
         if (suggestionData.length < LIMIT && hasMore) {
             fetchCourses();
@@ -78,9 +83,8 @@ const SuggestionsSeeAll = () => {
                 </Text>
             </View>
             {/* Suggestions Display section */}
-            <View>
+            <View style={styles.scrollContainerOutside}>
                 <ScrollView
-                    contentContainerStyle={styles.scrollContainer}
                     onMomentumScrollEnd={handleLoadMore} // Load more when scrolling ends
                 >
                     {suggestionData.map((course) => (
@@ -111,7 +115,7 @@ const styles = StyleSheet.create({
     },
     appBarContainer: {
         flexDirection: "row",
-        marginTop: 20,
+        marginVertical: 15,
         alignItems: "center",
     },
     backButton: {
@@ -120,8 +124,8 @@ const styles = StyleSheet.create({
         marginLeft: 25,
         padding: 5,
     },
-    scrollContainer: {
-        paddingBottom: 20,
+    scrollContainerOutside: {
+        flex: 1,
     },
     suggestionsHeader: {
         color: Colors.defaultBlue,
