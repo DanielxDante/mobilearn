@@ -72,7 +72,7 @@ class InstructorService:
                     not_(Course.id.in_([course.id for course in instructor_courses])),
                     Course.status == COURSE_STATUS.ACTIVE,
                 )
-                .order_by(Course.rating.desc())
+                .order_by(Course.rating.desc(), Course.id)
                 .offset(offset)
                 .limit(per_page)
                 .all()

@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from database import Base
 
 class Message(Base):
+    # Only text messages for now
     __tablename__ = 'messages'
 
     id = Column(Integer, primary_key=True)
@@ -21,6 +22,10 @@ class Message(Base):
         return session.query(Message).all()
     
     @staticmethod
+    def get_message_by_id(session, id):
+        return session.query(Message).filter_by(id=id).first()
+    
+    @staticmethod
     def get_messages_by_chat_id(session, chat_id):
         return session.query(Message).filter_by(chat_id=chat_id).all()
     
@@ -33,32 +38,29 @@ class Message(Base):
         return session.query(Message).filter_by(chat_id=chat_id, sender_id=sender_id).all()
     
     @staticmethod
-    def add_message(session, chat_id, sender_email, content):
-        sender = User.get_user_by_email(session, sender_email)
-        if not sender:
-            raise ValueError(f'User with email {sender_email} not found')
-        
-        sender_chat = session.query(UserChat).filter_by(user_id=sender.id, chat_id=chat_id).first()
-        if not sender_chat:
-            raise ValueError(f'User {sender_email} is not a member of chat {chat_id}')
-
+    def add_message(session, chat_id, sender_id, content):
         new_message = Message(
             chat_id=chat_id,
-            sender_id=sender.id,
+            sender_id=sender_id,
             content=content
         )
         session.add(new_message)
         session.flush()
 
+        return new_message
+
     @staticmethod
-    def edit_message(session, message_id, content):
-        message = session.query(Message).filter_by(id=message_id).first()
-        message.content = content
+    def change_content(session, message_id, new_content):
+        message = Message.get_message_by_id(session, message_id)
+        if not message:
+            raise ValueError(f'Message with id {message_id} not found')
+        
+        message.content = new_content
         session.flush()
 
     @staticmethod
     def delete_message(session, message_id):
-        message = session.query(Message).filter_by(id=message_id).first()
+        message = Message.get_message_by_id(session, message_id)
         session.delete(message)
         session.flush()
 
