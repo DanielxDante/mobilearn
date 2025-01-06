@@ -46,10 +46,20 @@ const Home = () => {
         (state) => state.getTopEnrolledCourses
     );
 
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
-        getEnrolledCourses();
-        getRecommendedCourses("1", "5");
-        getTopEnrolledCourses("1", "5");
+        const fetchData = async () => {
+            setLoading(true);
+            await getEnrolledCourses();
+            await getRecommendedCourses("1", "5");
+            await getTopEnrolledCourses("1", "5");
+
+            setSuggestionsData(recommendedCourses.slice(0, 5));
+            setTopCourseData(topEnrolledCourses.slice(0, 5));
+            setLoading(false);
+        };
+        fetchData();
     }, []);
 
     const [enrolledData, setEnrolledData] = useState<Course[] | undefined>(

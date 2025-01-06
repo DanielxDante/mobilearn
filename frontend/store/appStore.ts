@@ -53,7 +53,10 @@ export interface AppState {
     enrollCourse: (course_id: number) => Promise<void>;
     getEnrolledCourses: (page?: string, per_page?: string) => Promise<void>;
     getFavouriteCourses: (page?: string, per_page?: string) => Promise<void>;
-    getRecommendedCourses: (page?: string, per_page?: string) => Promise<void>;
+    getRecommendedCourses: (
+        page?: string,
+        per_page?: string
+    ) => Promise<Course[]>;
     getReview: (course_id: number) => Promise<void>;
     getTopEnrolledCourses: (
         page?: string,
@@ -100,11 +103,16 @@ export const useAppStore = create<AppState>()(
                 }
             },
             logout: async () => {
-                console.log("Logging out appStore");
+                console.log("(appStore) Logging out");
                 try {
                     set({
                         channels: [],
-                        channel_id: undefined,
+                        channel_id: 0,
+                        favourite_courses: [],
+                        enrolled_courses: undefined,
+                        recommended_courses: [],
+                        top_enrolled_courses: [],
+                        review: undefined,
                     });
                 } catch (error) {
                     console.error("Error logging out of AppStore:", error);
@@ -299,9 +307,20 @@ export const useAppStore = create<AppState>()(
                         rating: course.rating,
                         enrollment_count: undefined,
                     }));
-                    set({
-                        top_enrolled_courses: mappedCourses,
-                    });
+                    console.log(
+                        "Recommended courses length: " +
+                            get().recommended_courses.length
+                    );
+                    if (get().recommended_courses.length === 0) {
+                        // ONLY SET FIRST 5 COURSES IN RECOMMENDED_COURSES
+                        set({
+                            recommended_courses: mappedCourses,
+                        });
+                    } else {
+                        //  RETURN NEXT 5 COURSES TO COMPONENT (suggestionsSeeAll)
+                        return mappedCourses;
+                    }
+
                     // Tentatively returns nothing for successful API request
                 } catch (error: any) {
                     console.error(error);
