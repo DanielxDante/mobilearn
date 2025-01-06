@@ -29,17 +29,22 @@ class Chat(Base):
     def add_chat(session, is_group, **kwargs):
         new_chat = Chat(
             is_group=is_group,
-            name=kwargs.get('name', None),
+            name=kwargs.get('name', ""),
             chat_picture_url=kwargs.get('chat_picture_url', "")
         )
+        
         session.add(new_chat)
         session.flush()
+
+        return new_chat
     
     @staticmethod
     def change_name(session, chat_id, new_name):
         chat = Chat.get_chat_by_id(session, chat_id)
         if not chat:
             raise ValueError(f'Chat with id {chat_id} not found')
+        if not chat.is_group:
+            raise ValueError('Cannot change name of private chat')
         
         chat.name = new_name
         session.flush()
@@ -49,6 +54,8 @@ class Chat(Base):
         chat = Chat.get_chat_by_id(session, chat_id)
         if not chat:
             raise ValueError(f'Chat with id {chat_id} not found')
+        if not chat.is_group:
+            raise ValueError('Cannot change picture of private chat')
         
         chat.chat_picture_url = new_chat_picture_url
         session.flush()

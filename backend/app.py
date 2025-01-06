@@ -277,11 +277,51 @@ def init_course_endpoints():
 
 def init_chat_endpoints():
     from endpoints.chat.chat import (
-        SearchUsersEndpoint
+        SearchUsersEndpoint,
+        GetUserChatsEndpoint,
+        GetChatDetailsEndpoint,
+        CreatePrivateChatEndpoint,
+        CreateGroupChatEndpoint,
+        EditGroupChatNameEndpoint,
+        EditGroupChatPictureEndpoint,
+        AddGroupChatMembersEndpoint,
+        RemoveGroupChatMemberEndpoint,
+        ElevateGroupChatAdminEndpoint
     )
+    from endpoints.chat.message import GetChatMessagesEndpoint
 
-    search_users_path = f"/{VERSION}/chat/searchUsers"
+    search_users_path = f"/{VERSION}/searchUsers"
     ns_chat.add_resource(SearchUsersEndpoint, search_users_path)
+
+    get_user_chats_path = f"/{VERSION}/getUserChats"
+    ns_chat.add_resource(GetUserChatsEndpoint, get_user_chats_path)
+
+    get_chat_details_path = f"/{VERSION}/getChatDetails/<string:chat_id>"
+    ns_chat.add_resource(GetChatDetailsEndpoint, get_chat_details_path)
+
+    create_private_chat_path = f"/{VERSION}/createPrivateChat"
+    ns_chat.add_resource(CreatePrivateChatEndpoint, create_private_chat_path)
+
+    create_group_chat_path = f"/{VERSION}/createGroupChat"
+    ns_chat.add_resource(CreateGroupChatEndpoint, create_group_chat_path)
+
+    edit_group_chat_name_path = f"/{VERSION}/editGroupChatName"
+    ns_chat.add_resource(EditGroupChatNameEndpoint, edit_group_chat_name_path)
+
+    edit_group_chat_picture_path = f"/{VERSION}/editGroupChatPicture"
+    ns_chat.add_resource(EditGroupChatPictureEndpoint, edit_group_chat_picture_path)
+
+    add_group_chat_members_path = f"/{VERSION}/addGroupChatMembers"
+    ns_chat.add_resource(AddGroupChatMembersEndpoint, add_group_chat_members_path)
+
+    remove_group_chat_member_path = f"/{VERSION}/removeGroupChatMember"
+    ns_chat.add_resource(RemoveGroupChatMemberEndpoint, remove_group_chat_member_path)
+
+    elevate_group_chat_admin_path = f"/{VERSION}/elevateGroupChatAdmin"
+    ns_chat.add_resource(ElevateGroupChatAdminEndpoint, elevate_group_chat_admin_path)
+
+    get_chat_messages_path = f"/{VERSION}/getChatMessages/<string:chat_id>"
+    ns_chat.add_resource(GetChatMessagesEndpoint, get_chat_messages_path)
 
 def init_analytics_endpoints():
     pass

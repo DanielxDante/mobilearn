@@ -6,19 +6,34 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 
-from app import api
+from app import api, socketio
 from database import session_scope, create_session
 from models.user import User
 from models.chat import Chat
 from models.message import Message
+from services.chat_services import ChatService
 
 @socketio.on('connect')
 def handle_connect():
-    print('Client connected')
+    pass
 
 @socketio.on('disconnect')
 def handle_disconnect():
     print('Client disconnected')
+
+@socketio.on('join_chat')
+def handle_join_chat(data):
+    # verify user is part of chat
+    # get paginated messages
+    pass
+
+@socketio.on('leave_chat')
+def handle_leave_chat(data):
+    pass
+
+@socketio.on('send_message')
+def handle_send_message(data):
+    pass
 
 class GetChatMessagesEndpoint(Resource):
     @api.doc(
@@ -33,48 +48,56 @@ class GetChatMessagesEndpoint(Resource):
                 'in': 'header',
                 'description': 'Bearer token',
                 'required': True
+            },
+            'page': {
+                'in': 'query',
+                'description': 'Page number',
+                'required': False
+            },
+            'per_page': {
+                'in': 'query',
+                'description': 'Number of users per page',
+                'required': False
             }
         }
     )
     @jwt_required()
-    def get(self):
+    def get(self, chat_id):
         """ Get paginated chat messages """
-        data = request.get_json()
-        user_email = data.get('user_email')
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 50))
         
         current_email = get_jwt_identity()
 
-        with session_scope() as session:
-            try:
-                new_chat_id = Chat.create_private_chat(session, current_email, user_email)
-            except ValueError as ee:
-                return Response(
-                    json.dumps({'message': str(ee)}),
-                    status=400, mimetype='application/json'
-                )
-        return Response(
-            json.dumps({'chat_id': new_chat_id}),
-            status=200, mimetype='application/json'
-        )
+        session = create_session()
 
-# class SendChatMessageEndpoint(Resource):
-#     @api.doc(
-#         responses={
-#             200: 'Ok',
-#             400: 'Bad request',
-#             401: 'Unauthorized',
-#             404: 'Resource not found',
-#             500: 'Internal Server Error'
-#         },
-#         params={
-#             'Authorization': {
-#                 'in': 'header',
-#                 'description': 'Bearer token',
-#                 'required': True
-#             }
-#         },
-#         description="""
-#             Example request JSON:
-
-#             {
-#                 "user_email": "
+        try:
+            messages = ChatService.get_chat_messages(
+                session,
+                initiator_email=current_email,
+                chat_id=chat_id,
+                page=page,
+                per_page=per_page
+            )
+            return Response(
+                json.dumps({'messages': [{
+                    'id': message.id,
+                    'sender_id': message.sender_id,
+                    'content': message.content,
+                    'timestamp': message.timestamp
+                } for message in messages]}),
+                status=200, mimetype='application/json'
+            )
+        except ValueError as ee:
+            return Response(
+                json.dumps({'message': str(ee)}),
+                status=404, mimetype='application/json'
+            )
+        except Exception as ee:
+            return Response(
+                json.dumps({'error': str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
+        
