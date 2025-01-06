@@ -60,7 +60,7 @@ class GetFavouriteCoursesEndpoint(Resource):
                     'rating': str(course.rating),
                     'course_image': course.image_url,
                     'community_name': course.community.name,
-                    'enrollments': int(course.user_enrollments.count() if course.user_enrollments else 0),
+                    'enrollments': int(len(course.user_enrollments) if course.user_enrollments else 0),
                 } for course in courses]
 
                 return Response(

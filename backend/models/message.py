@@ -1,10 +1,7 @@
 from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.associationproxy import association_proxy
 
 from database import Base
-from models.user import User
-from models.user_chat import UserChat
 
 class Message(Base):
     __tablename__ = 'messages'
@@ -13,7 +10,7 @@ class Message(Base):
     chat_id = Column(Integer, ForeignKey('chats.id'), nullable=False)
     sender_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     content = Column(Text, nullable=False)
-    timestamp = Column(DateTime, default=func.now(), nullable=False)
+    timestamp = Column(DateTime(timezone=True), default=func.now(), nullable=False)
     
     # Many-to-one relationship with User and Chat
     sender = relationship("User", back_populates="sent_messages")

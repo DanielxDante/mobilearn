@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, Boolean, ForeignKey, DateTime, func
-from sqlalchemy.orm import relationship
 
 from database import Base
 
@@ -9,8 +8,9 @@ class UserChat(Base):
 
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
     chat_id = Column(Integer, ForeignKey('chats.id'), primary_key=True)
-    is_admin = Column(Boolean, nullable=False, default=False)
-    joined = Column(DateTime, default=func.now(), nullable=False)
+    is_admin = Column(Boolean, nullable=False, default=False) # False for both users in private chats
+    joined = Column(DateTime(timezone=True), default=func.now(), nullable=False)
+    last_read = Column(DateTime(timezone=True), default=func.now(), nullable=False)
     
     def __repr__(self):
-        return f'<User: {self.user_id}, Chat: {self.chat_id}>'
+        return f'<(UserChat) User: {self.user_id}, Chat: {self.chat_id}>'
