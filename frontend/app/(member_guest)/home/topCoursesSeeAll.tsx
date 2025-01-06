@@ -26,7 +26,7 @@ const TopCoursesSeeAll = () => {
         (state) => state.top_enrolled_courses
     );
     const getTopEnrolledCourses = useAppStore(
-        (state) => state.getTopEnrolledCourses
+        (state) => state.getTopEnrolledCoursesUser
     );
 
     const [topCourseData, setTopCourseData] =

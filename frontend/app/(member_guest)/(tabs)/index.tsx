@@ -38,7 +38,7 @@ const Home = () => {
         (state) => state.getRecommendedCourses
     );
     const getTopEnrolledCourses = useAppStore(
-        (state) => state.getTopEnrolledCourses
+        (state) => state.getTopEnrolledCoursesUser
     );
 
     const [loading, setLoading] = useState(false);

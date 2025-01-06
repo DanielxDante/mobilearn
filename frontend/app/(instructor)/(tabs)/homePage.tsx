@@ -20,6 +20,8 @@ import Statistics from "@/components/Statistics";
 import LatestNews from "@/components/LatestNews";
 import { instructorHomePageConstants as textConstants } from "@/constants/textConstants";
 import { COURSE_GET_TOP_COURSES_INSTRUCTOR } from "@/constants/routes";
+import useAppStore from "@/store/appStore";
+import Course from "@/types/shared/Course/Course";
 
 const statsData = [
     { label: "Your Course", value: "23", description: "Lesson" },
@@ -48,9 +50,18 @@ const newsData = [
 
 const Home = () => {
     const segments = useSegments();
-    const token = useAuthStore((state) => state.access_token);
+    const [loading, setLoading] = useState(false);
+    const topEnrolledCourses = useAppStore(
+        (state) => state.top_enrolled_courses
+    );
+    const getTopEnrolledCourses = useAppStore(
+        (state) => state.getTopCoursesInstructor
+    );
+
     const [page, setPage] = useState(1);
-    const [topCourseData, setTopCourseData] = useState([]);
+    const [topCourseData, setTopCourseData] = useState<Course[]>(() => {
+        return topEnrolledCourses.slice(0, 5);
+    });
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener(
@@ -71,34 +82,25 @@ const Home = () => {
     }, [router, segments]);
 
     useEffect(() => {
-        const fetchCourses = async () => {
-            const url =
-                COURSE_GET_TOP_COURSES_INSTRUCTOR + `?page=${page}&per_page=5`;
-            try {
-                const response = await fetch(url, {
-                    method: "GET",
-                    headers: {
-                        Accept: "application/json", // Matches `-H 'accept: application/json'` from the curl
-                        Authorization: token, // Matches `-H 'Authorization: Bearer ...'` from the curl
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error("Failed to fetch courses");
-                }
-                const data = await response.json();
-                console.log("Top courses data:", data);
-                setTopCourseData(data.courses);
-            } catch (error) {
-                console.error("Error fetching courses for home page:", error);
-            }
+        const fetchData = async () => {
+            setLoading(true);
+            await getTopEnrolledCourses("1", "5");
         };
-        fetchCourses();
-    }, [token, page]);
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        if (topEnrolledCourses.length > 0) {
+            setTopCourseData(topEnrolledCourses.slice(0, 5));
+        }
+    }, [topEnrolledCourses]);
 
     const handleSelectCourse = (id: number) => {
         // TODO: INCLUDE COURSE NAVIGATION
         console.log("Course " + id + " Selected");
-        const courseSelected = topCourseData.find((course) => course.id === id);
+        const courseSelected = topCourseData.find(
+            (course) => course.course_id === id
+        );
         console.log("Course selected:", courseSelected);
         router.push({
             pathname: "../../shared/course/courseDetails",
