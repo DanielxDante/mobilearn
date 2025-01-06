@@ -32,6 +32,7 @@ ns_account = Namespace(name='account', description='Account operations')
 ns_channel = Namespace(name='channel', description='Channel operations')
 ns_community = Namespace(name='community', description='Community operations')
 ns_course = Namespace(name='course', description='Course operations')
+ns_chat = Namespace(name='chat', description='Chat operations')
 ns_analytics = Namespace(name='analytics', description='Analytics operations')
 ns_payment = Namespace(name='payment', description='Payment operations')
 ns_admin = Namespace(name='admin', description='Admin operations')
@@ -274,6 +275,14 @@ def init_course_endpoints():
     get_recommended_courses_path = f"/{VERSION}/user/getRecommendedCourses/<string:channel_id>"
     ns_course.add_resource(GetRecommendedCoursesEndpoint, get_recommended_courses_path)
 
+def init_chat_endpoints():
+    from endpoints.chat.chat import (
+        SearchUsersEndpoint
+    )
+
+    search_users_path = f"/{VERSION}/chat/searchUsers"
+    ns_chat.add_resource(SearchUsersEndpoint, search_users_path)
+
 def init_analytics_endpoints():
     pass
 
@@ -341,6 +350,9 @@ def init():
     init_course_endpoints()
     api.add_namespace(ns_course)
 
+    init_chat_endpoints()
+    api.add_namespace(ns_chat)
+
     init_analytics_endpoints()
     api.add_namespace(ns_analytics)
 
@@ -362,14 +374,6 @@ def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
     token = db.session.query(TokenBlocklist.id).filter_by(jti=jti, token_type=token_type).first()
 
     return token is not None
-
-@socketio.on('connect')
-def handle_connect():
-    print('Client connected')
-
-@socketio.on('disconnect')
-def handle_disconnect():
-    print('Client disconnected')
 
 @app.before_request
 def handle_preflight():

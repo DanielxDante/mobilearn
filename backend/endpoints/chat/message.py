@@ -10,6 +10,15 @@ from app import api
 from database import session_scope, create_session
 from models.user import User
 from models.chat import Chat
+from models.message import Message
+
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
 
 class GetChatMessagesEndpoint(Resource):
     @api.doc(
