@@ -19,11 +19,6 @@ import { MEMBER_GUEST_TABS } from "@/constants/pages";
 import useAppStore from "@/store/appStore";
 import Course from "@/types/shared/Course/Course";
 
-import {
-    courseListData,
-    continueWatchingData,
-} from "@/constants/temporaryCourseData";
-
 import { AutocompleteDropdownContextProvider } from "react-native-autocomplete-dropdown";
 import { Colors } from "@/constants/colors";
 import { memberGuestHomeConstants as Constants } from "@/constants/textConstants";
@@ -54,19 +49,31 @@ const Home = () => {
             await getEnrolledCourses();
             await getRecommendedCourses("1", "5");
             await getTopEnrolledCourses("1", "5");
-
-            setSuggestionsData(recommendedCourses.slice(0, 5));
-            setTopCourseData(topEnrolledCourses.slice(0, 5));
-            setLoading(false);
         };
         fetchData();
     }, []);
 
-    const [enrolledData, setEnrolledData] = useState<Course[] | undefined>(
-        () => {
-            return enrolledCourses?.slice(0, 2);
+    useEffect(() => {
+        if (enrolledCourses && enrolledCourses.length > 0) {
+            setContinueWatchingData(enrolledCourses.slice(0, 5));
         }
-    );
+    }, [recommendedCourses]);
+    useEffect(() => {
+        if (recommendedCourses.length > 0) {
+            setSuggestionsData(recommendedCourses.slice(0, 5));
+        }
+    }, [recommendedCourses]);
+    useEffect(() => {
+        if (topEnrolledCourses.length > 0) {
+            setTopCourseData(topEnrolledCourses.slice(0, 5));
+        }
+    }, [topEnrolledCourses]);
+
+    const [continueWatchingData, setContinueWatchingData] = useState<
+        Course[] | undefined
+    >(() => {
+        return enrolledCourses?.slice(0, 2);
+    });
     const [suggestionsData, setSuggestionsData] = useState<Course[]>(() => {
         return recommendedCourses.slice(0, 5);
     });
@@ -102,7 +109,7 @@ const Home = () => {
         // TODO: INCLUDE COURSE NAVIGATION
         // console.log("Course " + id + " Selected");
         const mergedCourses = [
-            ...(enrolledData || []),
+            ...(continueWatchingData || []),
             ...suggestionsData,
             ...topCourseData,
         ];
@@ -110,7 +117,7 @@ const Home = () => {
             (course) => course.course_id === id
         );
         if (courseSelected) {
-            const checkEnrolled = enrolledData?.find(
+            const checkEnrolled = continueWatchingData?.find(
                 (course) => course.course_id === courseSelected.course_id
             );
             if (checkEnrolled) {
@@ -162,12 +169,16 @@ const Home = () => {
                         <Search handleSelectCourse={handleSelectCourse} />
                     </View>
                     {/* Continue Watching */}
-                    <View style={styles.continueWatchingContainer}>
-                        <ContinueWatching
-                            courseData={continueWatchingData}
-                            onSelect={handleSelectCourse}
-                        />
-                    </View>
+                    {continueWatchingData &&
+                        continueWatchingData.length > 0 && (
+                            <View style={styles.continueWatchingContainer}>
+                                <ContinueWatching
+                                    courseData={continueWatchingData || []}
+                                    onSelect={handleSelectCourse}
+                                />
+                            </View>
+                        )}
+
                     {/* Suggestions for You */}
                     <View style={styles.suggestionsContainer}>
                         <View style={styles.suggestionsHeader}>

@@ -244,6 +244,7 @@ export const useAppStore = create<AppState>()(
                     set({
                         enrolled_courses: mappedCourses,
                     });
+                    console.log(get().enrolled_courses);
                     // Tentatively returns nothing for successful API request
                 } catch (error: any) {
                     console.error(error);
@@ -307,10 +308,6 @@ export const useAppStore = create<AppState>()(
                         rating: course.rating,
                         enrollment_count: undefined,
                     }));
-                    console.log(
-                        "Recommended courses length: " +
-                            get().recommended_courses.length
-                    );
                     if (get().recommended_courses.length === 0) {
                         // ONLY SET FIRST 5 COURSES IN RECOMMENDED_COURSES
                         set({

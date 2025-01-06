@@ -14,13 +14,6 @@ import TopCourses from "@/app/(instructor)/home/topCourses";
 import { MEMBER_GUEST_TABS } from "@/constants/pages";
 import useAuthStore from "@/store/authStore";
 
-import {
-    channelData,
-    courseListData,
-    continueWatchingData,
-    suggestionsData,
-    topCourseData,
-} from "@/constants/temporaryCourseData";
 import { Colors } from "@/constants/colors";
 import { memberGuestHomeConstants as Constants } from "@/constants/textConstants";
 import Statistics from "@/components/Statistics";
