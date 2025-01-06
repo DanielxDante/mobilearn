@@ -11,6 +11,8 @@ from models.user_channel import UserChannel
 from models.review import Review
 from models.enrollment import Enrollment
 from models.favourite import Favourite
+from models.user_chat import UserChat
+from models.message import Message
 
 class User(Base):
     __tablename__ = 'users'
@@ -31,7 +33,7 @@ class User(Base):
     # Many-to-many relationship with Chat
     chats = relationship("Chat", secondary="user_chats", back_populates="users")
 
-    # One-to-many relationship with Message
+    # Many-to-one relationship with Message
     sent_messages = relationship("Message", back_populates="sender", cascade="all, delete-orphan")
 
     # Many-to=many relationship with Channel

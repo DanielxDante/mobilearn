@@ -1,6 +1,6 @@
-from sqlalchemy import func, not_
+from sqlalchemy import func, not_, or_
 
-from models.user import User
+from models.user import User, STATUS as USER_STATUS
 from models.channel import Channel, STATUS as CHANNEL_STATUS
 from models.community import Community
 from models.channel_community import ChannelCommunity
@@ -14,6 +14,41 @@ class UserServiceError(Exception):
     pass
 
 class UserService:
+    @staticmethod
+    def search_users(session, searcher_email, search_term, page, per_page):
+        """ Search for users """
+        searcher = User.get_user_by_email(session, searcher_email)
+        if not searcher:
+            raise ValueError("User not found")
+        
+        offset = (page - 1) * per_page
+
+        users = (
+            session.query(User)
+            .filter(
+                User.id != searcher.id,
+                User.status == USER_STATUS.ACTIVE,
+            )
+        )
+
+        if (search_term):
+            search_filters = [
+                User.email.ilike(f'%{search_term}%'),
+                User.name.ilike(f'%{search_term}%'),
+            ]
+
+            users = users.filter(or_(*search_filters))
+        
+        paginated_users = (
+            users
+            .order_by(User.name.asc())
+            .offset(offset)
+            .limit(per_page)
+            .all()
+        )
+        
+        return paginated_users
+
     @staticmethod
     def get_user_channels(session, user_email):
         """ Get all active channels that a user has been invited to """
@@ -118,6 +153,7 @@ class UserService:
                     Channel.id == channel_id,
                     Course.status == COURSE_STATUS.ACTIVE
                 )
+                .all()
             )
 
             fallback_courses = (
@@ -130,7 +166,7 @@ class UserService:
                     not_(Course.id.in_([course.id for course in user_enrolled_courses])),
                     Course.status == COURSE_STATUS.ACTIVE,
                 )
-                .order_by(Course.rating.desc())
+                .order_by(Course.rating.desc(), Course.id)
                 .offset(offset)
                 .limit(per_page)
                 .all()

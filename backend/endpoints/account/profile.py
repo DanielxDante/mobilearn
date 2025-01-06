@@ -37,16 +37,24 @@ class GetUserNameEndpoint(Resource):
 
         session = create_session()
         
-        user = User.get_user_by_email(session, current_email)
-        if user:
+        try:
+            user = User.get_user_by_email(session, current_email)
             return Response(
                 json.dumps({'name': user.name}),
                 status=200, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'message': 'User not found'}),
-            status=500, mimetype='application/json'
-        )
+        except ValueError as ee: 
+            return Response(
+                json.dumps({'message': str(ee)}),
+                status=404, mimetype='application/json'
+            )
+        except Exception as e:
+            return Response(
+                json.dumps({'message': str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 change_user_name_parser = api.parser()
 change_user_name_parser.add_argument('new_name', type=str, help='New Name', location='json', required=True)
