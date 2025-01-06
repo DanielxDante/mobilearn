@@ -7,23 +7,21 @@ import {
     StyleSheet,
     BackHandler,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useSegments } from "expo-router";
 
 import AppBar from "@/components/AppBar";
 import Search from "@/components/Search";
 import ContinueWatching from "@/app/(member_guest)/home/continueWatching";
-import SuggestionsSection from "@/app/(member_guest)/home/suggestionsSection";
 import TopCourses from "@/app/(member_guest)/home/topCourses";
 import { MEMBER_GUEST_TABS } from "@/constants/pages";
 import useAppStore from "@/store/appStore";
+import Course from "@/types/shared/Course/Course";
 
 import {
     courseListData,
     continueWatchingData,
-    suggestionsData,
-    topCourseData,
 } from "@/constants/temporaryCourseData";
 
 import { AutocompleteDropdownContextProvider } from "react-native-autocomplete-dropdown";
@@ -33,6 +31,38 @@ import { memberGuestHomeConstants as Constants } from "@/constants/textConstants
 const Home = () => {
     const channels = useAppStore((state) => state.channels);
     const channel_id = useAppStore((state) => state.channel_id);
+    const recommendedCourses = useAppStore(
+        (state) => state.recommended_courses
+    );
+    const topEnrolledCourses = useAppStore(
+        (state) => state.top_enrolled_courses
+    );
+    const enrolledCourses = useAppStore((state) => state.enrolled_courses);
+    const getEnrolledCourses = useAppStore((state) => state.getEnrolledCourses);
+    const getRecommendedCourses = useAppStore(
+        (state) => state.getRecommendedCourses
+    );
+    const getTopEnrolledCourses = useAppStore(
+        (state) => state.getTopEnrolledCourses
+    );
+
+    useEffect(() => {
+        getEnrolledCourses();
+        getRecommendedCourses("1", "5");
+        getTopEnrolledCourses("1", "5");
+    }, []);
+
+    const [enrolledData, setEnrolledData] = useState<Course[] | undefined>(
+        () => {
+            return enrolledCourses?.slice(0, 2);
+        }
+    );
+    const [suggestionsData, setSuggestionsData] = useState<Course[]>(() => {
+        return recommendedCourses.slice(0, 5);
+    });
+    const [topCourseData, setTopCourseData] = useState<Course[]>(() => {
+        return topEnrolledCourses.slice(0, 5);
+    });
 
     const segments = useSegments();
     useEffect(() => {
@@ -61,23 +91,37 @@ const Home = () => {
     const handleSelectCourse = (id: number) => {
         // TODO: INCLUDE COURSE NAVIGATION
         // console.log("Course " + id + " Selected");
-        const courseSelected = courseListData.find(
-            (course) => course.id === id
+        const mergedCourses = [
+            ...(enrolledData || []),
+            ...suggestionsData,
+            ...topCourseData,
+        ];
+        const courseSelected = mergedCourses.find(
+            (course) => course.course_id === id
         );
-        if (courseSelected?.paid == false) {
-            router.push({
-                pathname: "../../shared/course/courseDetails",
-                params: {
-                    courseSelected: JSON.stringify(courseSelected),
-                },
-            });
+        if (courseSelected) {
+            const checkEnrolled = enrolledData?.find(
+                (course) => course.course_id === courseSelected.course_id
+            );
+            if (checkEnrolled) {
+                // If enrolled
+                router.push({
+                    pathname: "../shared/course/courseContent",
+                    params: {
+                        courseSelected: JSON.stringify(courseSelected),
+                    },
+                });
+            } else {
+                // Else not enrolled
+                router.push({
+                    pathname: "../../shared/course/courseDetails",
+                    params: {
+                        courseSelected: JSON.stringify(courseSelected),
+                    },
+                });
+            }
         } else {
-            router.push({
-                pathname: "../shared/course/courseContent",
-                params: {
-                    courseSelected: JSON.stringify(courseSelected),
-                },
-            });
+            alert("Course not selected");
         }
     };
 
@@ -122,14 +166,9 @@ const Home = () => {
                             </Text>
                             <TouchableOpacity
                                 onPress={() => {
-                                    router.push({
-                                        pathname:
-                                            "/(member_guest)/home/suggestionsSeeAll",
-                                        params: {
-                                            suggestions:
-                                                JSON.stringify(suggestionsData),
-                                        },
-                                    });
+                                    router.push(
+                                        "/(member_guest)/home/suggestionsSeeAll"
+                                    );
                                 }}
                             >
                                 <Text style={styles.seeAllText}>
@@ -137,7 +176,7 @@ const Home = () => {
                                 </Text>
                             </TouchableOpacity>
                         </View>
-                        <SuggestionsSection
+                        <TopCourses
                             courseData={suggestionsData}
                             onSelect={handleSelectCourse}
                         />
@@ -150,14 +189,9 @@ const Home = () => {
                             </Text>
                             <TouchableOpacity
                                 onPress={() => {
-                                    router.push({
-                                        pathname:
-                                            "/(member_guest)/home/topCoursesSeeAll",
-                                        params: {
-                                            suggestions:
-                                                JSON.stringify(topCourseData),
-                                        },
-                                    });
+                                    router.push(
+                                        "/(member_guest)/home/topCoursesSeeAll"
+                                    );
                                 }}
                             >
                                 <Text style={styles.seeAllText}>
