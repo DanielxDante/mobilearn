@@ -110,7 +110,7 @@ const CoursePage = () => {
         <TouchableOpacity
           style={styles.createCourseButton}
           onPress={() => {
-            router.push("../shared/course/createCoursePage");
+            router.push("../../shared/course/createCoursePage");
           }}
         >
           <Text style={styles.createCourseButtonText}>
