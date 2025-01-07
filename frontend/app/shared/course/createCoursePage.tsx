@@ -602,6 +602,7 @@ export default function createCoursePage() {
       const response = await fetch(COURSE_CREATE_COURSE, {
         method: "POST",
         headers: {
+          "Content-Type": "multipart/form-data",
           Authorization: token,
         },
         body: formData,
