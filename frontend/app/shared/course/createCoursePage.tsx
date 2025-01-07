@@ -29,9 +29,11 @@ import Lesson from "@/types/shared/Course/Lesson";
 import * as DocumentPicker from "expo-document-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Editor from "@/components/dom-components/RichTextEditor";
-import { set } from "lodash";
+import { remove, set } from "lodash";
+import { COURSE_CREATE_COURSE } from "@/constants/routes";
 
 export default function createCoursePage() {
+  const token = useAuthStore((state) => state.access_token);
   const { courseToEdit } = useLocalSearchParams();
   const course = useMemo(
     () => (typeof courseToEdit === "string" ? JSON.parse(courseToEdit) : null),
@@ -523,8 +525,6 @@ export default function createCoursePage() {
   };
 
   function registerCourse(): void {
-    //remove files if the lesson id, i.e. the key, is not in the files object
-    //console.log("Files before filtering: ", inputs.files);
     const files = Object.keys(inputs.files).reduce((acc, key) => {
       if (
         inputs.chapters.some((chapter) =>
@@ -535,17 +535,98 @@ export default function createCoursePage() {
       }
       return acc;
     }, {});
-    //console.log("Files after filtering: ", files);
+
     setInputs((prev) => ({ ...prev, files }));
-    // check if all fields are filled
+
+    // Validate inputs
     if (!validate()) {
       alert(textConstants.fillAllFieldsAlert);
       return;
     }
-    // if all fields are filled, send the data to the backend
+
     alert(textConstants.courseCreatedAlert);
-    // IMPLEMENT API CALL HERE
+
+    const formData = new FormData();
+
+    // Append basic form data
+    formData.append("name", inputs.courseTitle);
+    formData.append("description", inputs.courseInfo);
+    formData.append("course_type", inputs.courseType);
+    formData.append("duration", inputs.duration);
+
+    // Append course image
+    formData.append("course_image", inputs.coursePicture);
+
+    // Append additional fields
+    formData.append("price", inputs.price);
+    formData.append("difficulty", inputs.difficulty);
+    formData.append("skills", inputs.skills);
+    formData.append("school_name", inputs.school);
+    formData.append("program_type", inputs.programType);
+    formData.append("field", inputs.field);
+    formData.append("major", inputs.major);
+    formData.append("department", inputs.department);
+    formData.append("subject", inputs.subject);
+    formData.append("platform", inputs.platform);
+
+    // Modify chapters and add content
+    const modifiedChapters = removeIds();
+    console.log(
+      "Modified chapters: ",
+      JSON.stringify({ chapters: modifiedChapters })
+    );
+    const content = {
+      chapters: modifiedChapters,
+    };
+    console.log("The type of Content: ", typeof content);
+    formData.append("content", JSON.stringify(content));
+    // Append files
+    Object.values(files).forEach((file) => {
+      formData.append("files", file);
+    });
+
+    // Debugging formData
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+    console.log("Form Data: ", formData);
+    // Call API
+    postCourse(formData);
   }
+
+  async function postCourse(formData: FormData): Promise<void> {
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+    try {
+      const response = await fetch(COURSE_CREATE_COURSE, {
+        method: "POST",
+        headers: {
+          Authorization: token,
+        },
+        body: formData,
+      });
+      console.log("Response: ", response);
+    } catch (error) {
+      console.error("Error creating course: ", error);
+    }
+  }
+
+  function removeIds() {
+    // remove all chapter IDs and lesson IDs and return the modified chapters
+    const modifiedChapters = inputs.chapters.map((chapter) => {
+      const modifiedChapter = { ...chapter };
+      delete modifiedChapter.id;
+      modifiedChapter.lessons = modifiedChapter.lessons.map((lesson) => {
+        const modifiedLesson = { ...lesson };
+        delete modifiedLesson.id;
+        return modifiedLesson;
+      });
+      return modifiedChapter;
+    });
+    return modifiedChapters;
+  }
+
   function updateCourse(): () => void {
     throw new Error("Function not implemented.");
   }
