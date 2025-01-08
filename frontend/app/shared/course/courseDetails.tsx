@@ -6,89 +6,69 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Dimensions
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 
-import VideoPlayer from "@/components/VideoPlayer";
 import Course from "@/types/shared/Course/Course";
 import { courseDetailsConstants as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
 import icons from "@/constants/icons";
 import useAuthStore from "@/store/authStore";
-import { COURSE_GET_UNENROLLED_COURSE } from "@/constants/routes";
+import useAppStore from "@/store/appStore";
 
 const CourseDetails = () => {
   // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
-  const numLectures = 50;
-  const learningTime = "4 Weeks";
   const certicationType = "Online Certification";
-  const skills = [
-    "Typography",
-    "Layout Composition",
-    "Branding",
-    "Visual communication",
-    "Editorial design",
-  ];
 
-  const { courseSelected } = useLocalSearchParams();
-  //   const course: Course =
-  //     typeof courseSelected === "string" ? JSON.parse(courseSelected) : [];
+  const { courseId } = useLocalSearchParams();
 
   const handleSkillPress = (skill: string) => {
     console.log(skill);
   };
   const [courseData, setCourseData] = useState<Course | null>(null);
-  const token = useAuthStore((state) => state.access_token);
+  const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse)
   const company = useAuthStore((state) => state.company);
   const [course_image, setCourseImage] = useState<string>("");
 
   useEffect(() => {
-    // Fetch all courses with authorization token
     const fetchCourseData = async () => {
-      try {
-        const path =
-          COURSE_GET_UNENROLLED_COURSE + "/" + courseSelected?.toString();
-        const response = await fetch(path, {
-          method: "GET",
-          headers: {
-            Accept: "application/json", // Matches `-H 'accept: application/json'` from the curl
-            Authorization: token, // Matches `-H 'Authorization: Bearer ...'` from the curl
-            course_id: courseSelected?.toString(), // Add the course ID as a header
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch courses");
-        }
-        const data = await response.json();
-        console.log("Course Info: ", data);
+        const data = await getUnenrolledCourse(Number(courseId));
         setCourseData(data);
         setCourseImage(data.course_image);
-        //console.log(data);
-      } catch (error) {
-        console.error("Error fetching courses COURSEDETAILS:", error);
-      }
-    };
+      };
     fetchCourseData();
-  }, [token]); // Add token as a dependency
+  }, [courseId]);
 
+  const { width: screenWidth } = Dimensions.get('window')
+  const [imageHeight, setImageHeight] = useState(0)
+  useEffect(() => {
+    if (course_image) {
+      Image.getSize(course_image, (width, height) => {
+        const aspectRatio = width/height;
+        const calculatedHeight = screenWidth/aspectRatio;
+        setImageHeight(calculatedHeight);
+      })
+    }
+  }, [course_image])
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <Image
             source={require("../../../assets/images/icons/arrow-left-line.png")}
-            //style={styles.backButton}
+            style={styles.backButton}
           />
         </TouchableOpacity>
       </View>
-      <ScrollView>
+      <ScrollView style={styles.body}>
         {/* if picture is not available, show loading */}
         {course_image ? (
           <Image
             source={{ uri: course_image }}
-            style={styles.courseImage}
+            style={[styles.courseImage, {height: imageHeight}]}
             resizeMode="cover"
           />
         ) : (
@@ -96,7 +76,7 @@ const CourseDetails = () => {
         )}
         {/* Course Information */}
         {courseData && (
-          <View style={styles.container}>
+          <View style={styles.courseDetails}>
             <Text style={styles.title}>{courseData.course_name}</Text>
             <Text style={styles.school}>{courseData.community_name}</Text>
             <View style={styles.enrolledCountContainer}>
@@ -185,7 +165,7 @@ const CourseDetails = () => {
                     router.push({
                       pathname: "./paymentOverview",
                       params: {
-                        courseSelected: courseSelected,
+                        courseId: courseData.course_id,
                       },
                     })
                   }
@@ -206,15 +186,24 @@ const CourseDetails = () => {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "flex-start",
-    paddingHorizontal: 25,
+    flex: 1,
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingVertical: 15,
+  },
+  backButton: {
+    height: 25,
+    width: 25,
+  },
+  body: {
+    flex: 1,
+  },
+  courseDetails: {
+    justifyContent: "flex-start",
+    paddingHorizontal: 25,
   },
   title: {
     fontFamily: "Inter-SemiBold",
@@ -222,16 +211,8 @@ const styles = StyleSheet.create({
     marginTop: 15,
     fontSize: 20,
   },
-  videoContainer: {
-    marginTop: 10,
-    marginHorizontal: 16,
-    borderRadius: 10,
-    overflow: "hidden",
-  },
   courseImage: {
     width: "100%",
-    height: 200,
-    marginTop: 5,
   },
   school: {
     fontFamily: "Inter-Regular",

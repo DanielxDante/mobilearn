@@ -5,45 +5,77 @@ import {
     StyleSheet,
     TouchableOpacity,
     Image,
+    ActivityIndicator,
+    Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import RNPickerSelect from "react-native-picker-select";
 import { router } from "expo-router";
-import VideoPlayer from "@/components/VideoPlayer";
 import { useLocalSearchParams } from "expo-router";
 import Course from "@/types/shared/Course/Course";
 import { Colors } from "@/constants/colors";
 import { courseContentConstants as Constants } from "@/constants/textConstants";
-import Chapter from "@/types/shared/Course/Chapter";
 import Lesson from "@/types/shared/Course/Lesson";
+import useAppStore from "@/store/appStore";
 
 const CourseContent = () => {
-    const { courseSelected } = useLocalSearchParams();
-    const course: Course =
-        typeof courseSelected === "string" ? JSON.parse(courseSelected) : [];
-    const [videoUrl, setVideoUrl] = useState(
-        course.chapters[0].lessons[0].contentUrl
+    const { courseId } = useLocalSearchParams();
+    const [course, setCourse] = useState<Course>();
+    const getEnrolledCourse = useAppStore((state) => state.getEnrolledCourse)
+    const [course_image, setCourseImage] = useState<string>("");
+    const [selectedChapterId, setSelectedChapterId] = useState<string|null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+    const fetchCourseData = async () => {
+        setLoading(true);
+        const data = await getEnrolledCourse(Number(courseId));
+        setCourse(data);
+        setCourseImage(data.course_image);
+        setSelectedChapterId(data.chapters[0].chapter_id)
+        setLoading(false);
+        };
+    fetchCourseData();
+    }, [courseId]);
+
+    const { width: screenWidth } = Dimensions.get('window')
+      const [imageHeight, setImageHeight] = useState(0)
+      useEffect(() => {
+        if (course_image) {
+          Image.getSize(course_image, (width, height) => {
+            const aspectRatio = width/height;
+            const calculatedHeight = screenWidth/aspectRatio;
+            setImageHeight(calculatedHeight);
+          })
+        }
+      }, [course_image])
+
+    // Ensure that course is available before continuing
+    if (loading) {
+        return (
+        <SafeAreaView style={styles.container}>
+            <ActivityIndicator size="large" color={Colors.defaultBlue} />
+        </SafeAreaView>
+        );
+    }
+
+    
+    const selectedChapter = course?.chapters.find(
+        (chapter) => chapter.chapter_id === selectedChapterId
     );
 
-    const [selectedChapterId, setSelectedChapterId] = useState<number>(
-        course.chapters[0]?.id
-    );
-    const selectedChapter = course.chapters.find(
-        (chapter) => chapter.id === selectedChapterId
-    );
-
-    const handleChapterSelect = (chapterId: number) => {
+    const handleChapterSelect = (chapterId: string) => {
         setSelectedChapterId(chapterId);
         console.log("Chapter: " + chapterId);
     };
 
-    const handleLessonSelect = (lessonId: number) => {
+    const handleLessonSelect = (lessonId: string) => {
         console.log("Lesson id: " + lessonId);
-        const lessonSelected = course.chapters
+        const lessonSelected = course?.chapters
             .map((chapter) => chapter.lessons)
             .flat()
-            .find((lesson) => lesson.id === lessonId);
+            .find((lesson) => lesson.lesson_id === lessonId.toString());
         router.push({
             pathname: "./lessonContent",
             params: {
@@ -54,16 +86,17 @@ const CourseContent = () => {
 
     const renderLectureItem = (lesson: Lesson) => (
         <View style={styles.lessonItemContainer}>
-            {/* Lessone title */}
+            {/* Lesson title */}
             <Text style={styles.lessonTitle} numberOfLines={1}>
-                {Constants.lesson} {lesson.id}: {lesson.title}
+                {Constants.lesson} {lesson.lesson_id}: {lesson.lesson_name}
             </Text>
             <View style={styles.lessonContainer}>
                 <TouchableOpacity
                     style={styles.topicContainer}
-                    onPress={() => handleLessonSelect(lesson.id)}
+                    onPress={() => handleLessonSelect(lesson.lesson_id)}
                 >
-                    <View style={styles.lessonContainerDescription}>
+                    {/* For lesson description if there will be any */}
+                    {/* <View style={styles.lessonContainerDescription}>
                         <Text
                             style={styles.lessonDescription}
                             numberOfLines={3}
@@ -71,8 +104,9 @@ const CourseContent = () => {
                             {lesson.description}
                         </Text>
                         <View style={styles.lessonBar}></View>
-                    </View>
-                    {lesson.completionStatus ? (
+                    </View> */}
+                    {/* For lesson completionStatus if there will be any */}
+                    {/* {lesson.completionStatus ? (
                         <View style={styles.lessonContainerTickDone}>
                             <Image
                                 source={Constants.tick}
@@ -81,54 +115,63 @@ const CourseContent = () => {
                         </View>
                     ) : (
                         <View style={styles.lessonContainerTick}></View>
-                    )}
+                    )} */}
                 </TouchableOpacity>
             </View>
         </View>
     );
 
-    // console.log(course.chapters.find(chapter => chapter.id==selectedChapterId))
-
     return (
         <SafeAreaView style={styles.container}>
-            <VideoPlayer uri={videoUrl} />
-            <ScrollView>
+            {course && (
+                <ScrollView>
+                {course_image ? (
+                    <Image
+                    source={{ uri: course_image }}
+                    style={[styles.courseImage, {height: imageHeight}]}
+                    resizeMode="cover"
+                    />
+                ) : (
+                    <ActivityIndicator size="large" color="#0000ff" />
+                )}
                 {/* Course title and subtitle */}
-                <Text style={styles.title}>{course.title}</Text>
-                <Text style={styles.school}>{course.school}</Text>
+                <Text style={styles.title}>{course.course_name}</Text>
+                <Text style={styles.school}>{course.community_name}</Text>
                 {/* Chapter buttons */}
                 <View style={styles.chapterButtonContainer}>
-                    {course.chapters.length <= 3 ? (
+                    {course.chapters.length <=2 ? (
                         // Render up to 4 chapter buttons if there are 3 or fewer chapters
-                        course.chapters.map((chapter) => (
-                            <TouchableOpacity
-                                key={chapter.id}
-                                style={[
-                                    styles.chapterButton,
-                                    {
-                                        backgroundColor:
-                                            selectedChapterId === chapter.id
-                                                ? Colors.defaultBlue
-                                                : "#E0E0E0",
-                                    },
-                                ]}
-                                onPress={() => handleChapterSelect(chapter.id)}
-                            >
-                                <Text
+                        course.chapters
+                            .sort((a, b) => a.order - b.order) // Sorting chapters by order
+                            .map((chapter) => (
+                                <TouchableOpacity
+                                    key={chapter.chapter_id}
                                     style={[
-                                        styles.chapterButtonText,
+                                        styles.chapterButton,
                                         {
-                                            color:
-                                                selectedChapterId === chapter.id
-                                                    ? "#FFF"
-                                                    : "#000",
+                                            backgroundColor:
+                                                selectedChapterId === chapter.chapter_id
+                                                    ? Colors.defaultBlue
+                                                    : "#E0E0E0",
                                         },
                                     ]}
+                                    onPress={() => handleChapterSelect(chapter.chapter_id)}
                                 >
-                                    {Constants.chapter} {chapter.id}
-                                </Text>
-                            </TouchableOpacity>
-                        ))
+                                    <Text
+                                        style={[
+                                            styles.chapterButtonText,
+                                            {
+                                                color:
+                                                    selectedChapterId === chapter.chapter_id
+                                                        ? "#FFF"
+                                                        : "#000",
+                                            },
+                                        ]}
+                                    >
+                                        {`Chap ${chapter.order}`}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))
                     ) : (
                         <View style={styles.picker}>
                             <RNPickerSelect
@@ -136,9 +179,10 @@ const CourseContent = () => {
                                     handleChapterSelect(value);
                                     console.log("RNPicker value: " + value);
                                 }}
-                                items={course.chapters.map((chapter) => ({
-                                    label: `Chapter ${chapter.id}`,
-                                    value: chapter.id,
+                                items={course.chapters.sort((a,b) => a.order - b.order)
+                                    .map((chapter) => ({
+                                    label: `Chapter ${chapter.order}`,
+                                    value: chapter.chapter_id,
                                 }))}
                                 placeholder={{
                                     label: Constants.pickerPlaceholder,
@@ -159,13 +203,14 @@ const CourseContent = () => {
                 </Text>
                 {selectedChapter && selectedChapter.lessons.length > 0 ? (
                     selectedChapter.lessons.map((lesson: Lesson) => (
-                        <View key={lesson.id}>{renderLectureItem(lesson)}</View>
+                        <View key={lesson.lesson_id}>{renderLectureItem(lesson)}</View>
                     ))
                 ) : (
-                    <Text>No lessons available</Text> // Fallback if no lectures
+                    <Text>{Constants.noLessonsAvailable}</Text> // Fallback if no lectures
                 )}
                 <View style={styles.spaceBelow}></View>
             </ScrollView>
+            )}
         </SafeAreaView>
     );
 };
@@ -173,6 +218,10 @@ const CourseContent = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    courseImage: {
+        width: "100%",
+        height: 200,
     },
     title: {
         fontFamily: "Inter-Bold",

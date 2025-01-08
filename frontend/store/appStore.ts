@@ -34,6 +34,7 @@ export interface AppState {
     recommended_courses: Course[]; // List of user's recommended courses
     top_enrolled_courses: Course[];
     review?: Review; // Not sure if review or reviews should be stored
+    selectedCourse?: Course;
     fetchPaymentSheet: (
         amount: string,
         currency: string
@@ -46,8 +47,8 @@ export interface AppState {
     getUserChannels: () => Promise<void>;
     inviteUser: (inviteCode: string) => Promise<any>;
     setChannelId: (channel_id: number) => Promise<void>;
-    getEnrolledCourse: (course_id: number) => Promise<void>;
-    getUnenrolledCourse: (course_id: number) => Promise<void>;
+    getEnrolledCourse: (course_id: number) => Promise<Course>;
+    getUnenrolledCourse: (course_id: number) => Promise<Course>;
     getTopCoursesInstructor: (
         page?: string,
         per_page?: string
@@ -191,6 +192,9 @@ export const useAppStore = create<AppState>()(
                     );
                     const responseData = response.data;
                     if (response.status === 200) {
+                        set({
+                            selectedCourse: responseData,
+                        })
                         return responseData;
                     }
                 } catch (error: any) {
@@ -210,6 +214,9 @@ export const useAppStore = create<AppState>()(
                     );
                     const responseData = response.data;
                     if (response.status === 200) {
+                        set({
+                            selectedCourse: responseData,
+                        })
                         return responseData;
                     }
                 } catch (error: any) {
