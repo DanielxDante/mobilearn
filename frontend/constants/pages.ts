@@ -43,6 +43,10 @@ export const INSTRUCTOR_HOME =
   `/${INSTRUCTOR_NAMESPACE}/homePage` as Href<string>;
 export const INSTRUCTOR_COURSEPAGE =
   `/${INSTRUCTOR_NAMESPACE}/coursePage` as Href<string>;
+export const INSTRUCTOR_COURSECONTENT =
+  `/shared/course/instructorCourseContent` as Href<string>;
+export const INSTRUCTOR_CREATE_COURSE =
+  `/shared/course/createCoursePage` as Href<string>;
 // ADMIN PAGES
 export const ADMIN_NAMESPACE = "(admin)";
 export const ADMIN_HOME = `/${ADMIN_NAMESPACE}` as Href<string>;

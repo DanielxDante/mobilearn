@@ -514,7 +514,7 @@ export const instructorCreateCoursePageConstants = {
   nextButtonText: "Next",
   saveButtonText: "Save",
   updateButtonText: "Update",
-  registerButtonText: "Register",
+  createButtonText: "Create Course",
   minus: "-",
   plus: "+",
   lessonTypeTitle: "Lesson Type",
@@ -524,6 +524,8 @@ export const instructorCreateCoursePageConstants = {
   courseCreatedAlert: "Course has been created.",
   emptyLessonAlert:
     "You have a lesson with no content. Remove it, or add content.",
+  courseCreationFailedAlert: "Failed to create course.",
+  emptyChapterAlert: "You need to make at least one chapter!",
 };
 
 export const instructorEditProfilePage = {

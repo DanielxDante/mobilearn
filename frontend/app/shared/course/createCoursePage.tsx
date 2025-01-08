@@ -5,7 +5,6 @@ import {
   Text,
   View,
   Image,
-  Dimensions,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -18,22 +17,22 @@ import InputDropDownField from "@/components/InputDropDownField";
 import useAuthStore from "@/store/authStore"; // Import the store
 import { instructorCreateCoursePageConstants as textConstants } from "@/constants/textConstants";
 import icons from "@/constants/icons";
-import LargeButton from "@/components/LargeButton";
 import { Colors } from "@/constants/colors";
 import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
-const { height, width } = Dimensions.get("window"); // Get the screen width
 import { useLocalSearchParams } from "expo-router";
 import Chapter from "@/types/shared/Course/Chapter";
 import Lesson from "@/types/shared/Course/Lesson";
 import * as DocumentPicker from "expo-document-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Editor from "@/components/dom-components/RichTextEditor";
-import { remove, set } from "lodash";
-import { COURSE_CREATE_COURSE } from "@/constants/routes";
+import useAppStore from "@/store/appStore";
+import { INSTRUCTOR_HOME } from "@/constants/pages";
 
 export default function createCoursePage() {
   const token = useAuthStore((state) => state.access_token);
+  const createCourse = useAppStore(
+    (state) => state.createCourse
+  ) as unknown as (formData: FormData) => Promise<{ message: string }>;
   const { courseToEdit } = useLocalSearchParams();
   const course = useMemo(
     () => (typeof courseToEdit === "string" ? JSON.parse(courseToEdit) : null),
@@ -76,7 +75,7 @@ export default function createCoursePage() {
             id: `${Date.now()}-${Math.random()}`,
             name: textConstants.lesson_placeholder + " 1",
             order: 1,
-            lesson_type: textConstants.lessonTypePlaceholder.toLowerCase(),
+            lesson_type: textConstants.lessonTypePlaceholder,
           },
         ],
       },
@@ -102,8 +101,32 @@ export default function createCoursePage() {
     chapters: false,
   });
 
+  function validateChapters(chapters: any, alertFlag: number) {
+    //loop through all lessons, make sure every lesson, has content, video_key, and homework_key
+    if (chapters.length === 0) {
+      alert(textConstants.emptyChapterAlert);
+      return true;
+    }
+    for (let i = 0; i < chapters.length; i++) {
+      for (let j = 0; j < chapters[i].lessons.length; j++) {
+        if (
+          !chapters[i].lessons[j].content &&
+          !chapters[i].lessons[j].video_key &&
+          !chapters[i].lessons[j].homework_key
+        ) {
+          if (alertFlag == 0) {
+            alert(textConstants.emptyLessonAlert);
+          } else {
+          }
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   //function to check if all fields are filled
-  const validate = () => {
+  const validate = (alertFlag: number) => {
     const errors = {
       courseTitle: !inputs.courseTitle,
       courseInfo: !inputs.courseInfo,
@@ -120,7 +143,7 @@ export default function createCoursePage() {
       department: !inputs.department,
       subject: !inputs.subject,
       platform: !inputs.platform,
-      chapters: validateChapters(inputs.chapters),
+      chapters: validateChapters(inputs.chapters, alertFlag),
     };
     if (inputs.courseType === textConstants.courseType_options[0]) {
       errors.department = false;
@@ -132,7 +155,6 @@ export default function createCoursePage() {
       errors.programType = false;
       errors.field = false;
       errors.major = false;
-      // errors.department = false;
       errors.subject = false;
       errors.platform = false;
     }
@@ -142,7 +164,6 @@ export default function createCoursePage() {
       errors.field = false;
       errors.major = false;
       errors.department = false;
-      //errors.subject = false;
       errors.platform = false;
     }
     if (inputs.courseType === textConstants.courseType_options[3]) {
@@ -152,55 +173,84 @@ export default function createCoursePage() {
       errors.major = false;
       errors.department = false;
       errors.subject = false;
-      //errors.platform = false;
     }
     setValidationErrors(errors);
+    setValidated(!Object.values(errors).some((error) => error));
     return !Object.values(errors).some((error) => error);
   };
 
-  const addFile = (key: string, file: any) => {
-    setInputs((prev) => ({
-      ...prev,
-      files: {
-        ...prev.files,
-        [key]: file, // Add or update the file with the given key
-      },
-    }));
-  };
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const savedData = await AsyncStorage.getItem("courseData");
-        if (savedData) {
-          setInputs(JSON.parse(savedData));
+  function filterFilesByChapters(chapters: any, files: any) {
+    const filteredFiles = {};
+    const lessonIdarray: string[] = [];
+    // Loop through all chapters and lessons to extract lesson IDs that have files
+    for (let i = 0; i < chapters.length; i++) {
+      for (let j = 0; j < chapters[i].lessons.length; j++) {
+        if (
+          chapters[i].lessons[j].video_key ||
+          chapters[i].lessons[j].homework_key
+        ) {
+          lessonIdarray.push(chapters[i].lessons[j].id);
         }
-        //console.log(textConstants.asyncLoadMessage, savedData);
-      } catch (error) {
-        console.error(textConstants.asyncFailLoadMessage, error);
       }
-    };
-    loadData();
-  }, []);
-
-  // Save data to AsyncStorage whenever inputs change
-  useEffect(() => {
-    const saveData = async () => {
-      try {
-        await AsyncStorage.setItem("courseData", JSON.stringify(inputs));
-      } catch (error) {
-        console.error(textConstants.asyncFailSaveMessage, error);
+    }
+    // Filter files by lesson IDs
+    Object.entries(files).forEach(([key, fileData]) => {
+      if (lessonIdarray.includes(key)) {
+        filteredFiles[key] = fileData;
       }
-    };
-    saveData();
-  }, [inputs]);
+    });
+    //assign filteredFiles;
+    setInputs((prev) => ({ ...prev, files: filteredFiles }));
+  }
 
   // Handler for input changes
-  const handleChange = (e, fieldName) => {
-    //console.log("Event: ", e);
-    setInputs({
-      ...inputs,
-      [fieldName]: e,
+  const handleChange = (e: any, fieldName: string) => {
+    setInputs((prev) => {
+      let updatedInputs = { ...prev, [fieldName]: e }; // Update the current field
+
+      if (fieldName === "courseType") {
+        if (e === textConstants.courseType_options[0]) {
+          updatedInputs = {
+            ...updatedInputs,
+            // Reset only the relevant fields
+            department: "",
+            subject: "",
+            platform: "",
+          };
+        } else if (e === textConstants.courseType_options[1]) {
+          updatedInputs = {
+            ...updatedInputs,
+            school: "",
+            programType: "",
+            field: "",
+            major: "",
+            subject: "",
+            platform: "",
+          };
+        } else if (e === textConstants.courseType_options[2]) {
+          updatedInputs = {
+            ...updatedInputs,
+            school: "",
+            programType: "",
+            field: "",
+            major: "",
+            department: "",
+            platform: "",
+          };
+        } else if (e === textConstants.courseType_options[3]) {
+          updatedInputs = {
+            ...updatedInputs,
+            school: "",
+            programType: "",
+            field: "",
+            major: "",
+            department: "",
+            subject: "",
+          };
+        }
+      }
+
+      return updatedInputs;
     });
   };
 
@@ -218,17 +268,6 @@ export default function createCoursePage() {
       )
     : null;
 
-  const handleChapterTap = (id: string) => {
-    setSelectedChapterId(id);
-    setInternalPage(4);
-  };
-
-  const handleLessonTap = (id: string, index: any) => {
-    setSelectedLessonId(id);
-    setSelectedLessonIndex(index);
-    setInternalPage(5);
-  };
-
   const addChapter = () => {
     setInputs((prev) => ({
       ...prev,
@@ -245,7 +284,7 @@ export default function createCoursePage() {
               id: `${Date.now()}-${Math.random()}`,
               name: textConstants.lesson_placeholder + " 1",
               order: 1,
-              lesson_type: textConstants.lessonTypePlaceholder.toLowerCase(),
+              lesson_type: textConstants.lessonTypePlaceholder,
             },
           ],
         },
@@ -279,71 +318,23 @@ export default function createCoursePage() {
   };
 
   const removeChapter = (id: string) => {
-    // setChapters((prev) =>
-    //   sortChapters(prev.filter((chapter) => chapter.id !== id))
-    // );
     setInputs((prev) => {
       // First, remove the chapter by its id
       const updatedChapters = prev.chapters.filter(
         (chapter) => chapter.id !== id
       );
-      //console.log("Updated chapters after removal:", updatedChapters);
-
       // Then, sort the remaining chapters by 'order'
       const sortedChapters = sortChapters(updatedChapters);
-      //console.log("Sorted chapters after reassigning order:", sortedChapters);
-
       const updatedChaptersWithNames = updateChapterNames(sortedChapters);
-
       return {
         ...prev,
         chapters: updatedChaptersWithNames,
       };
     });
   };
-
-  const updateLesson = (
-    lessonIndex: number,
-    key:
-      | "title"
-      | "lesson_type"
-      | "order"
-      | ("content" | "video_key" | "homework_key"),
-    value: string
-  ) => {
-    if (!selectedChapterId) return;
-
-    setInputs((prev) => {
-      let updatedChapters = prev.chapters.map((chapter) =>
-        chapter.id.toString() === selectedChapterId
-          ? {
-              ...chapter,
-              lessons: chapter.lessons.map((lesson, index) => {
-                if (index === lessonIndex) {
-                  const updatedLesson = { ...lesson, [key]: value };
-
-                  // If the key is one of "content", "video_key", or "homework_key", remove the others
-                  if (["content", "video_key", "homework_key"].includes(key)) {
-                    updatedLesson.content =
-                      key === "content" ? value : undefined;
-                    updatedLesson.video_key =
-                      key === "video_key" ? value : undefined;
-                    updatedLesson.homework_key =
-                      key === "homework_key" ? value : undefined;
-                  }
-
-                  return updatedLesson;
-                }
-                return lesson;
-              }),
-            }
-          : chapter
-      );
-
-      return { ...prev, chapters: updatedChapters };
-    });
-
-    //console.log("Updated lessons:", inputs.chapters[0]?.lessons);
+  const handleChapterTap = (id: string) => {
+    setSelectedChapterId(id);
+    setInternalPage(4);
   };
 
   const handleNumberOfLessonsChange = (value: string) => {
@@ -361,7 +352,7 @@ export default function createCoursePage() {
                   (_, index) =>
                     chapter.lessons[index] || {
                       name: `${textConstants.lesson_placeholder} ${index + 1}`,
-                      lesson_type: textConstants.lessonTypePlaceholder.toLowerCase(),
+                      lesson_type: textConstants.lessonTypePlaceholder,
                       order: index + 1,
                       id: `${Date.now()}-${Math.random()}`,
                     }
@@ -369,6 +360,57 @@ export default function createCoursePage() {
             }
           : chapter
       ),
+    }));
+  };
+
+  const handleLessonTap = (id: string, index: any) => {
+    setSelectedLessonId(id);
+    setSelectedLessonIndex(index);
+    setInternalPage(5);
+  };
+
+  const updateLesson = (
+    lessonIndex: number,
+    key:
+      | "name"
+      | "lesson_type"
+      | "order"
+      | ("content" | "video_key" | "homework_key"),
+    value: string
+  ) => {
+    if (!selectedChapterId) return;
+
+    setInputs((prev) => {
+      let updatedChapters = prev.chapters.map((chapter) =>
+        chapter.id.toString() === selectedChapterId
+          ? {
+              ...chapter,
+              lessons: chapter.lessons.map((lesson, index) => {
+                if (index === lessonIndex) {
+                  if (key === "lesson_type") {
+                    delete lesson.content;
+                    delete lesson.video_key;
+                    delete lesson.homework_key;
+                  }
+                  const updatedLesson = { ...lesson, [key]: value };
+                  return updatedLesson;
+                }
+                return lesson;
+              }),
+            }
+          : chapter
+      );
+      return { ...prev, chapters: updatedChapters };
+    });
+  };
+
+  const addFile = (key: string, file: any) => {
+    setInputs((prev) => ({
+      ...prev,
+      files: {
+        ...prev.files,
+        [key]: file, // Add or update the file with the given key
+      },
     }));
   };
 
@@ -380,13 +422,9 @@ export default function createCoursePage() {
         aspect: [1, 1],
         quality: 1,
       });
-      //console.log("ImagePicker result: ", result);
-
       if (result.canceled) {
-        //console.log("Image selection cancelled");
         return;
       }
-
       if (result.assets[0]) {
         const uri = result.assets[0].uri;
 
@@ -400,10 +438,10 @@ export default function createCoursePage() {
           name: filename ?? "profile.jpg",
           type,
         } as any);
-
-        //setcoursePicture(formData);
-        // setInputs((prev) => ({ ...prev, coursePicture: formData }));
-        inputs.coursePicture = { uri, name: filename, type };
+        setInputs((prev) => ({
+          ...prev,
+          coursePicture: { uri, name: filename, type },
+        }));
         alert(textConstants.profilePictureUploadAlert);
       } else {
         alert(textConstants.fileUndefinedAlert);
@@ -412,6 +450,7 @@ export default function createCoursePage() {
       console.error(textConstants.handleEditProfilePictureError, error);
     }
   };
+
   const handleUploadVideo = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -419,13 +458,9 @@ export default function createCoursePage() {
         allowsEditing: true,
         quality: 1,
       });
-      //console.log("VideoPicker result: ", result);
-
       if (result.canceled) {
-        //console.log("Video selection cancelled");
         return;
       }
-
       if (result.assets[0]) {
         const uri = result.assets[0].uri;
 
@@ -434,17 +469,9 @@ export default function createCoursePage() {
         const type = match ? `video/${match[1]}` : "video/mp4";
         const file_name = result.assets[0].fileName;
 
-        const formData = new FormData();
-        formData.append("file", {
-          uri,
-          name: filename ?? "video.mp4",
-          type,
-        } as any);
-
         if (selectedLessonIndex !== null) {
           updateLesson(selectedLessonIndex, "video_key", file_name);
-          addFile(selectedLessonId, formData);
-          //console.log("Files: ", inputs.files);
+          addFile(selectedLessonId, { uri, name: file_name, type });
         }
         alert(textConstants.videoUploadedAlert);
       } else {
@@ -460,10 +487,8 @@ export default function createCoursePage() {
       let result = await DocumentPicker.getDocumentAsync({
         type: "application/pdf", // Restrict to PDFs
       });
-      //console.log("DocumentPicker result: ", result);
 
       if (result.canceled) {
-        //console.log("PDF selection cancelled");
         return;
       }
 
@@ -481,17 +506,9 @@ export default function createCoursePage() {
         const filename = uri.split("/").pop();
         const type = "application/pdf";
 
-        const formData = new FormData();
-        formData.append("file", {
-          uri,
-          name: filename ?? "document.pdf",
-          type,
-        });
-
         if (selectedLessonIndex !== null) {
           updateLesson(selectedLessonIndex, "homework_key", file_name);
-          addFile(selectedLessonId, formData);
-          //console.log("Files: ", inputs.files);
+          addFile(selectedLessonId, { uri, name: file_name, type });
         }
 
         alert(textConstants.pdfUploadedAlert);
@@ -509,15 +526,14 @@ export default function createCoursePage() {
       const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
       if (status !== "granted") {
         // If permission is not granted, request it
-        //console.log("Requesting permission");
         await requestPermission();
       } else {
-        //console.log("Permissions already granted");
       }
     } catch (error) {
       console.error(textConstants.checkingPermissionError, error);
     }
   };
+
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -525,28 +541,33 @@ export default function createCoursePage() {
     }
   };
 
+  function removeIds() {
+    // remove all chapter IDs and lesson IDs and return the modified chapters
+    const modifiedChapters = inputs.chapters.map((chapter) => {
+      const modifiedChapter = { ...chapter };
+      delete modifiedChapter.id;
+      modifiedChapter.lessons = modifiedChapter.lessons.map((lesson) => {
+        const modifiedLesson = {
+          ...lesson,
+          lesson_type: lesson.lesson_type.toLowerCase(),
+        };
+        delete modifiedLesson.id;
+        return modifiedLesson;
+      });
+      return modifiedChapter;
+    });
+    return modifiedChapters;
+  }
+
   function registerCourse(): void {
-    const files = Object.keys(inputs.files).reduce((acc, key) => {
-      if (
-        inputs.chapters.some((chapter) =>
-          chapter.lessons.some((lesson) => lesson.id === key)
-        )
-      ) {
-        acc[key] = inputs.files[key];
-      }
-      return acc;
-    }, {});
-
-    setInputs((prev) => ({ ...prev, files }));
-
+    // Validate chapters and files
+    filterFilesByChapters(inputs.chapters, inputs.files);
     // Validate inputs
-    if (!validate()) {
+    if (!validate(0)) {
       alert(textConstants.fillAllFieldsAlert);
       return;
     }
-
     alert(textConstants.courseCreatedAlert);
-
     const formData = new FormData();
 
     // Append basic form data
@@ -572,71 +593,59 @@ export default function createCoursePage() {
 
     // Modify chapters and add content
     const modifiedChapters = removeIds();
-    console.log(
-      "Modified chapters: ",
-      JSON.stringify({ chapters: modifiedChapters })
-    );
     const content = {
       chapters: modifiedChapters,
     };
-    console.log("The type of Content: ", typeof content);
     formData.append("content", JSON.stringify(content));
     // Append files
-    Object.values(files).forEach((file) => {
+    Object.entries(inputs.files).forEach(([key, file]) => {
       formData.append("files", file);
     });
-
-    // Debugging formData
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
-    console.log("Form Data: ", formData);
     // Call API
     postCourse(formData);
   }
 
   async function postCourse(formData: FormData): Promise<void> {
-    for (const pair of formData.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
+    const response = await createCourse(formData);
+    if (response.message.includes("success")) {
+      alert(textConstants.courseCreatedAlert);
+      AsyncStorage.removeItem("courseData");
+      router.push(INSTRUCTOR_HOME);
+    } else {
+      alert(textConstants.courseCreationFailedAlert);
     }
-    try {
-      const response = await fetch(COURSE_CREATE_COURSE, {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: token,
-        },
-        body: formData,
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Failed to create course: ", errorData.error);
-        return;
-      }
-      console.log("Response: ", response);
-    } catch (error) {
-      console.error("Error creating course: ", error);
-    }
-  }
-
-  function removeIds() {
-    // remove all chapter IDs and lesson IDs and return the modified chapters
-    const modifiedChapters = inputs.chapters.map((chapter) => {
-      const modifiedChapter = { ...chapter };
-      delete modifiedChapter.id;
-      modifiedChapter.lessons = modifiedChapter.lessons.map((lesson) => {
-        const modifiedLesson = { ...lesson };
-        delete modifiedLesson.id;
-        return modifiedLesson;
-      });
-      return modifiedChapter;
-    });
-    return modifiedChapters;
   }
 
   function updateCourse(): () => void {
     throw new Error("Function not implemented.");
   }
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const savedData = await AsyncStorage.getItem("courseData");
+        if (savedData) {
+          setInputs(JSON.parse(savedData));
+        }
+      } catch (error) {
+        console.error(textConstants.asyncFailLoadMessage, error);
+      }
+    };
+    loadData();
+  }, []);
+
+  // Save data to AsyncStorage whenever inputs change
+  useEffect(() => {
+    const saveData = async () => {
+      try {
+        await AsyncStorage.setItem("courseData", JSON.stringify(inputs));
+      } catch (error) {
+        console.error(textConstants.asyncFailSaveMessage, error);
+      }
+    };
+    saveData();
+    validate(1);
+  }, [inputs]);
 
   return (
     <>
@@ -650,7 +659,13 @@ export default function createCoursePage() {
                     //clear async storage
                     AsyncStorage.removeItem("courseData");
                   }
-                : () => setInternalPage(internalPage - 1)
+                : () => {
+                    if (internalPage === 4) {
+                      validateChapters(inputs.chapters, 0);
+                      filterFilesByChapters(inputs.chapters, inputs.files);
+                    }
+                    setInternalPage(internalPage - 1);
+                  }
             }
             style={{ marginBottom: 16, alignSelf: "flex-start" }}
           >
@@ -840,7 +855,10 @@ export default function createCoursePage() {
                 )}
                 <RegisterButton
                   text={textConstants.nextButtonText}
-                  onPress={() => setInternalPage(3)}
+                  onPress={() => {
+                    // validate(2);
+                    setInternalPage(3);
+                  }}
                 />
               </View>
             </ScrollView>
@@ -919,8 +937,8 @@ export default function createCoursePage() {
                     onPress={() => handleLessonTap(lesson.id, index)}
                   >
                     <Text style={styles.chapterText}>
-                      {lesson.title
-                        ? lesson.title
+                      {lesson.name
+                        ? lesson.name
                         : `${textConstants.lesson_placeholder} ${index + 1}`}
                     </Text>
                   </TouchableOpacity>
@@ -936,10 +954,10 @@ export default function createCoursePage() {
               <InputField // Lesson name
                 inputTitle={textConstants.lesson_placeholder}
                 placeholder={textConstants.lesson_placeholder ?? ""}
-                value={selectedLesson.title}
+                value={selectedLesson.name}
                 onChangeText={(text) =>
                   selectedLessonIndex !== null &&
-                  updateLesson(selectedLessonIndex, "title", text)
+                  updateLesson(selectedLessonIndex, "name", text)
                 }
               />
               <InputDropDownField
@@ -958,11 +976,6 @@ export default function createCoursePage() {
                 <Editor
                   setPlainText={setPlainText}
                   setEditorState={setEditorState}
-                  updateLesson={updateLesson}
-                  selectedLessonIndex={
-                    selectedLessonIndex ? selectedLessonIndex : 0
-                  }
-                  lesson_type="content"
                   initialState={selectedLesson.content}
                 ></Editor>
               </View>
@@ -1003,16 +1016,6 @@ export default function createCoursePage() {
                 </TouchableOpacity>
               </View>
             )}
-            <View style={styles.fixedButtonContainer}>
-              <LargeButton
-                text={textConstants.saveButtonText}
-                onPress={() => {
-                  //console.log("Updated Chapter:", selectedChapter);
-                  validateChapters(inputs.chapters);
-                  setInternalPage(3);
-                }}
-              />
-            </View>
           </View>
         )}
       </SafeAreaView>
@@ -1023,27 +1026,39 @@ export default function createCoursePage() {
             text={
               courseToEdit
                 ? textConstants.updateButtonText
-                : textConstants.registerButtonText
+                : textConstants.createButtonText
             }
-            //onPress={courseToEdit ? updateCourse() : registerCourse()}
+            style={validated ? styles.registerButton : styles.disabledButton}
             onPress={() => {
-              if (courseToEdit) {
-                updateCourse();
+              if (validated) {
+                if (courseToEdit) {
+                  updateCourse();
+                } else {
+                  registerCourse();
+                }
               } else {
-                registerCourse();
+                validateChapters(inputs.chapters, 0);
+                alert(textConstants.fillAllFieldsAlert);
               }
             }}
-            //onPress={() => {console.log(inputs)}}
           />
         )}
-        {(internalPage == 5 || internalPage == 4) && (
+        {(internalPage === 5 || internalPage === 4) && (
           <View style={styles.fixedButtonContainer}>
             <RegisterButton
               text={textConstants.saveButtonText}
               onPress={() => {
-                //console.log("Updated Chapter:", selectedChapter);
-                validateChapters(inputs.chapters);
-                setInternalPage(3);
+                if (internalPage == 4) {
+                  filterFilesByChapters(inputs.chapters, inputs.files);
+                  validateChapters(inputs.chapters, 0);
+                } else if (
+                  internalPage == 5 &&
+                  selectedLesson.lesson_type ===
+                    textConstants.lessonTypeOptions[0]
+                ) {
+                  updateLesson(selectedLessonIndex, "content", editorState);
+                }
+                setInternalPage(internalPage - 1);
               }}
             />
           </View>
@@ -1148,23 +1163,20 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontStyle: "italic",
   },
+  //styling for register button
+  registerButton: {
+    backgroundColor: Colors.defaultBlue,
+    padding: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  //styling for a disabled register button
+  disabledButton: {
+    backgroundColor: Colors.Gray,
+    padding: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
-function validateChapters(chapters: any) {
-  //loop through all lessons, make sure every lesson, has content, video_key, and homework_key
-  console.log("Validating chapters");
-  for (let i = 0; i < chapters.length; i++) {
-    for (let j = 0; j < chapters[i].lessons.length; j++) {
-      console.log(chapters[i].lessons[j]);
-      if (
-        !chapters[i].lessons[j].content &&
-        !chapters[i].lessons[j].video_key &&
-        !chapters[i].lessons[j].homework_key
-      ) {
-        alert(textConstants.emptyLessonAlert);
-        return true;
-      }
-    }
-  }
-  console.log("Chapters are valid");
-  return false;
-}

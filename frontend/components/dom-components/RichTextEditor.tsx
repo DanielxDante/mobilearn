@@ -15,7 +15,7 @@ import TreeViewPlugin from "./plugins/TreeViewPlugin";
 import { $getRoot, EditorState, LexicalEditor } from "lexical";
 import LoadState from "./LoadState";
 // DO NOT ADD ANY MORE IMPORTS (like react)
-const placeholder = "Enter some rich text...";
+const placeholder = "Enter lesson content here...";
 
 const editorConfig = {
   namespace: "React.js Demo",
@@ -31,16 +31,10 @@ export default function Editor({
   setPlainText,
   setEditorState,
   initialState,
-  updateLesson,
-  selectedLessonIndex,
-  lesson_type,
 }: {
   setPlainText: React.Dispatch<React.SetStateAction<string>>;
   setEditorState: React.Dispatch<React.SetStateAction<string | null>>;
   initialState: string;
-  updateLesson: any;
-  selectedLessonIndex: number;
-  lesson_type: string;
 }) {
   return (
     <>
@@ -69,11 +63,12 @@ export default function Editor({
                   setPlainText(textContent);
                 });
                 setEditorState(JSON.stringify(editorState.toJSON()));
-                updateLesson(
-                  selectedLessonIndex,
-                  lesson_type,
-                  JSON.stringify(editorState.toJSON())
-                );
+
+                // updateLesson(
+                //   selectedLessonIndex,
+                //   lesson_type,
+                //   JSON.stringify(editorState.toJSON())
+                // );
               }}
               ignoreHistoryMergeTagChange
               ignoreSelectionChange
