@@ -68,6 +68,13 @@ class GetUnenrolledCourseEndpoint(Resource):
                 json.dumps({"error": str(ee)}),
                 status=500, mimetype='application/json'
             )
+        except Exception as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 class GetEnrolledCourseEndpoint(Resource):
     @api.doc(
@@ -125,6 +132,13 @@ class GetEnrolledCourseEndpoint(Resource):
                 json.dumps({"error": str(ee)}),
                 status=500, mimetype='application/json'
             )
+        except Exception as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 class SearchCoursesEndpoint(Resource):
     @api.doc(
@@ -185,15 +199,23 @@ class SearchCoursesEndpoint(Resource):
                 'community_name': course.community.name,
                 'community_logo': course.community.community_logo_url,
             } for course in courses]
+
+            return Response(
+                json.dumps({'courses': courses_info}),
+                status=200, mimetype='application/json'
+            )
         except ValueError as ee:
             return Response(
                 json.dumps({"error": str(ee)}),
                 status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'courses': courses_info}),
-            status=200, mimetype='application/json'
-        )
+        except Exception as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
     
 class GetInstructorCoursesEndpoint(Resource):
     @api.doc(
@@ -248,6 +270,13 @@ class GetInstructorCoursesEndpoint(Resource):
                 json.dumps({"error": str(ee)}),
                 status=404, mimetype='application/json'
             )
+        except Exception as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 create_course_parser = api.parser()
 # Course Fields

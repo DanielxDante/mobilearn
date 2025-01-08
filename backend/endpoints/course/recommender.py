@@ -61,6 +61,7 @@ class GetRecommendedCoursesEndpoint(Resource):
                 'course_image': course.image_url,
                 'community_name': course.community.name,
             } for course in courses]
+
             return Response(
                 json.dumps(course_info),
                 status=200, mimetype='application/json'
@@ -70,3 +71,10 @@ class GetRecommendedCoursesEndpoint(Resource):
                 json.dumps({"error": str(ee)}),
                 status=404, mimetype='application/json'
             )
+        except Exception as e:
+            return Response(
+                json.dumps({"error": str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()

@@ -336,7 +336,8 @@ def init_admin_endpoints():
     from endpoints.admin.status import (
         ChangeUserStatusEndpoint,
         ChangeInstructorStatusEndpoint,
-        ChangeChannelStatusEndpoint
+        ChangeChannelStatusEndpoint,
+        ChangeCourseStatusEndpoint
     )
     from endpoints.admin.membership import ChangeUserMembershipEndpoint
     from endpoints.admin.channel import CreateChannelEndpoint
@@ -366,6 +367,9 @@ def init_admin_endpoints():
 
     enroll_user_path = f"/{VERSION}/course/enroll"
     ns_admin.add_resource(EnrollUserEndpoint, enroll_user_path)
+
+    change_course_status_path = f"/{VERSION}/course/editStatus"
+    ns_admin.add_resource(ChangeCourseStatusEndpoint, change_course_status_path)
 
 def init_internal_endpoints():
     pass

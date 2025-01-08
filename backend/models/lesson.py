@@ -3,8 +3,8 @@ from sqlalchemy.orm import relationship
 
 from database import Base
 from enums.lesson import LESSON
+from models.user import User
 from models.chapter import Chapter
-from models.lesson_completion import LessonCompletion
 
 class LessonBuilder:
     """ Unified builder for creating Lesson instances with factory method """
@@ -102,8 +102,8 @@ class Lesson(Base):
     # Many-to-many relationship with Chapter
     chapters = relationship('Chapter', secondary="chapter_lessons", back_populates='lessons')
 
-    # Many-to-many relationship with Enrollment
-    enrollments = relationship('Enrollment', secondary="lesson_completions", back_populates='completed_lessons')
+    # Many-to-many relationship with User
+    users = relationship('User', secondary="lesson_completions", back_populates='lesson_completions')
 
     __mapper_args__ = {
         'polymorphic_identity': 'lesson',
@@ -242,8 +242,8 @@ class HomeworkLesson(Lesson):
     id = Column(Integer, ForeignKey('lessons.id'), primary_key=True)
     homework_url = Column(String, nullable=False, default="")
 
-    # Many-to-many relationship with Enrollment
-    enrollments = relationship('Enrollment', secondary="homework_submissions", back_populates='homework_submissions')
+    # Many-to-many relationship with User
+    submissions = relationship('User', secondary="homework_submissions", back_populates='homework_submissions')
     
     __mapper_args__ = {
         'polymorphic_identity': LESSON.HOMEWORK

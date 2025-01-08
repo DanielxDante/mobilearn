@@ -63,15 +63,23 @@ class GetUserEnrolledCoursesEndpoint(Resource):
                 'community_name': course.community.name,
                 # 'progress': str(course.progress) # TODO: Add progress to differentiate between in progress and completed courses
             } for course in courses]
+
+            return Response(
+                json.dumps({'courses': course_info}),
+                status=200, mimetype='application/json'
+            )
         except ValueError as ee:
             return Response(
                 json.dumps({"error": str(ee)}),
                 status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'courses': course_info}),
-            status=200, mimetype='application/json'
-        )
+        except Exception as e:
+            return Response(
+                json.dumps({"error": str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 class GetUserTopEnrolledCoursesEndpoint(Resource):
     @api.doc(
@@ -124,15 +132,23 @@ class GetUserTopEnrolledCoursesEndpoint(Resource):
                 'course_image': course.image_url,
                 'community_name': course.community.name,
             } for course in courses]
+
+            return Response(
+                json.dumps({'courses': course_info}),
+                status=200, mimetype='application/json'
+            )
         except ValueError as ee:
             return Response(
                 json.dumps({"error": str(ee)}),
                 status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'courses': course_info}),
-            status=200, mimetype='application/json'
-        )
+        except Exception as e:
+            return Response(
+                json.dumps({"error": str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
     
 enroll_user_parser = api.parser()
 enroll_user_parser.add_argument('course_id', type=int, help='Course ID', location='json', required=True)
@@ -280,12 +296,20 @@ class GetInstructorTopEnrolledCoursesEndpoint(Resource):
                 'course_image': course.image_url,
                 'community_name': course.community.name,
             } for course in courses]
+
+            return Response(
+                json.dumps({'courses': course_info}),
+                status=200, mimetype='application/json'
+            )    
         except ValueError as ee:
             return Response(
                 json.dumps({"error": str(ee)}),
                 status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'courses': course_info}),
-            status=200, mimetype='application/json'
-        )         
+        except Exception as e:
+            return Response(
+                json.dumps({"error": str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()

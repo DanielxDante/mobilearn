@@ -33,16 +33,24 @@ class GetCommunitiesEndpoint(Resource):
                 'community_type': community.community_type,
                 'community_logo_url': community.community_logo_url
             } for community in communities]
+
+            return Response(
+                json.dumps({'communities': communities_info}),
+                status=200, mimetype='application/json'
+            )
         except ValueError as ee:
             return Response(
                 json.dumps({"error": str(ee)}),
                 status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'communities': communities_info}),
-            status=200, mimetype='application/json'
-        )
-
+        except Exception as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
+        
 class GetCommunityInstructorsEndpoint(Resource):
     @api.doc(
         responses={
@@ -71,15 +79,23 @@ class GetCommunityInstructorsEndpoint(Resource):
                 'name': instructor.name,
                 'profile_picture_url': instructor.profile_picture_url
             } for instructor in instructors]
+
+            return Response(
+                json.dumps({'instructors': instructors_info}),
+                status=200, mimetype='application/json'
+            )
         except ValueError as ee:
             return Response(
                 json.dumps({"error": str(ee)}),
                 status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'instructors': instructors_info}),
-            status=200, mimetype='application/json'
-        )
+        except Exception as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 class GetInstructorDetailsEndpoint(Resource):
     @api.doc(
@@ -119,4 +135,11 @@ class GetInstructorDetailsEndpoint(Resource):
                 json.dumps({"error": str(ee)}),
                 status=404, mimetype='application/json'
             )
+        except Exception as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
         

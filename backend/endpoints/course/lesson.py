@@ -39,6 +39,9 @@ class GetLessonEndpoint(Resource):
 
         try:
             lesson = Lesson.get_lesson_by_id(session, lesson_id)
+            if not lesson:
+                raise ValueError("Lesson not found")
+            
             lesson_data = {
                 'id': lesson.id,
                 'name': lesson.name,
@@ -78,7 +81,6 @@ class GetLessonEndpoint(Resource):
 
 complete_lesson_parser = api.parser()
 complete_lesson_parser.add_argument('course_id', type=int, required=True, location='json')
-
 
 class CompleteLessonEndpoint(Resource):
     @api.doc(
@@ -182,3 +184,21 @@ class SubmitHomeworkEndpoint(Resource):
                 json.dumps({"error": str(ee)}),
                 status=500, mimetype='application/json'
             )
+        
+# Initialize
+recommender = AdvancedCourseRecommender()
+
+# Train
+recommender.fit(interactions_df, courses_df)
+
+# Get recommendations
+user_recs = recommender.get_recommendations(user_id="user123")
+similar_courses = recommender.get_recommendations(course_id="course456")
+preference_recs = recommender.get_recommendations(user_preferences={
+    "category": "Machine Learning",
+    "difficulty": "Intermediate",
+    "max_price": 100
+})
+
+# Save/load
+recommender.save_model("recommender_v1.pt")
