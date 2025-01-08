@@ -143,7 +143,7 @@ class Lesson(Base):
             elif lesson_type == LESSON.HOMEWORK:
                 if 'homework_url' in kwargs:
                     builder.homework_url(kwargs['homework_url'])
-
+            
             lesson = builder.build()
 
             session.add(lesson)
