@@ -273,9 +273,9 @@ class Course(Base):
                 COURSE.SPECIALIZATION: CourseBuilder.create_specialization,
                 COURSE.PROJECT: CourseBuilder.create_project
             }.get(course_type)()
-
+            
             builder.name(name).description(description)
-
+            
             if 'duration' in kwargs:
                 builder.duration(kwargs['duration'])
             if 'image_url' in kwargs:
@@ -307,14 +307,14 @@ class Course(Base):
             elif course_type == COURSE.PROJECT:
                 if 'platform' in kwargs:
                     builder.platform(kwargs['platform'])
-
+            
             course = builder.build()
 
             community = Community.get_community_by_id(session, community_id)
             community.courses.append(course)
-
+            
             session.flush()
-
+            
             return course
             
         except Exception as e:

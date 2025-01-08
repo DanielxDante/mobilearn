@@ -1,9 +1,9 @@
 export const VERSION = process.env.EXPO_PUBLIC_VERSION
-  ? `/${process.env.EXPO_PUBLIC_VERSION}`
-  : "/1.0";
+    ? `/${process.env.EXPO_PUBLIC_VERSION}`
+    : "/1.0";
 export const BACKEND_BASE_URL =
-  process.env.BACKEND_BASE_URL ??
-  `http://${process.env.EXPO_PUBLIC_LOCAL_IP_ADDR}:8080`;
+    process.env.BACKEND_BASE_URL ??
+    `http://${process.env.EXPO_PUBLIC_LOCAL_IP_ADDR}:8080`;
 
 // AUTH NAMESPACE
 const AUTH_NAMESPACE = "/auth";
@@ -108,7 +108,6 @@ export const COURSE_GET_ALL_INSTRUCTOR_COURSES = `${COURSE_BASE_URL}/instructor/
 export const COURSE_GET_ENROLLED_COURSE = `${COURSE_BASE_URL}/getEnrolledCourse`;
 export const COURSE_GET_UNENROLLED_COURSE = `${COURSE_BASE_URL}/getUnenrolledCourse`;
 export const COURSE_GET_TOP_COURSES_INSTRUCTOR = `${COURSE_BASE_URL}/instructor/getTopEnrolledCourses`;
-export const COURSE_CREATE_COURSE = `${COURSE_BASE_URL}/instructor/create`;
 export const COURSE_USER_ADD_FAVOURITE_COURSE_URL = `${COURSE_BASE_URL}${COURSE_USER_ADD_FAVOURITE_COURSE}`;
 export const COURSE_USER_ENROLL_COURSE_URL = `${COURSE_BASE_URL}${COURSE_USER_ENROLL_COURSE}`;
 export const COURSE_USER_GET_FAVOURITE_COURSES_URL = `${COURSE_BASE_URL}${COURSE_USER_GET_FAVOURITE_COURSES}`;
