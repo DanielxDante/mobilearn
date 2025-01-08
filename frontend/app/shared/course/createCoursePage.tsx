@@ -74,9 +74,9 @@ export default function createCoursePage() {
         lessons: [
           {
             id: `${Date.now()}-${Math.random()}`,
-            title: textConstants.lesson_placeholder + " 1",
+            name: textConstants.lesson_placeholder + " 1",
             order: 1,
-            lesson_type: textConstants.lessonTypePlaceholder,
+            lesson_type: textConstants.lessonTypePlaceholder.toLowerCase(),
           },
         ],
       },
@@ -243,9 +243,9 @@ export default function createCoursePage() {
           lessons: [
             {
               id: `${Date.now()}-${Math.random()}`,
-              title: textConstants.lesson_placeholder + " 1",
+              name: textConstants.lesson_placeholder + " 1",
               order: 1,
-              lesson_type: textConstants.lessonTypePlaceholder,
+              lesson_type: textConstants.lessonTypePlaceholder.toLowerCase(),
             },
           ],
         },
@@ -360,8 +360,8 @@ export default function createCoursePage() {
                 .map(
                   (_, index) =>
                     chapter.lessons[index] || {
-                      title: `${textConstants.lesson_placeholder} ${index + 1}`,
-                      lesson_type: textConstants.lessonTypePlaceholder,
+                      name: `${textConstants.lesson_placeholder} ${index + 1}`,
+                      lesson_type: textConstants.lessonTypePlaceholder.toLowerCase(),
                       order: index + 1,
                       id: `${Date.now()}-${Math.random()}`,
                     }
@@ -395,14 +395,15 @@ export default function createCoursePage() {
         const type = match ? `image/${match[1]}` : "image/jpeg";
 
         const formData = new FormData();
-        formData.append("file", {
+        formData.append("course_image", {
           uri,
           name: filename ?? "profile.jpg",
           type,
         } as any);
 
         //setcoursePicture(formData);
-        setInputs((prev) => ({ ...prev, coursePicture: formData }));
+        // setInputs((prev) => ({ ...prev, coursePicture: formData }));
+        inputs.coursePicture = { uri, name: filename, type };
         alert(textConstants.profilePictureUploadAlert);
       } else {
         alert(textConstants.fileUndefinedAlert);
@@ -551,7 +552,7 @@ export default function createCoursePage() {
     // Append basic form data
     formData.append("name", inputs.courseTitle);
     formData.append("description", inputs.courseInfo);
-    formData.append("course_type", inputs.courseType);
+    formData.append("course_type", inputs.courseType.toLowerCase());
     formData.append("duration", inputs.duration);
 
     // Append course image
@@ -559,7 +560,7 @@ export default function createCoursePage() {
 
     // Append additional fields
     formData.append("price", inputs.price);
-    formData.append("difficulty", inputs.difficulty);
+    formData.append("difficulty", inputs.difficulty.toLowerCase());
     formData.append("skills", inputs.skills);
     formData.append("school_name", inputs.school);
     formData.append("program_type", inputs.programType);
@@ -607,6 +608,11 @@ export default function createCoursePage() {
         },
         body: formData,
       });
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Failed to create course: ", errorData.error);
+        return;
+      }
       console.log("Response: ", response);
     } catch (error) {
       console.error("Error creating course: ", error);

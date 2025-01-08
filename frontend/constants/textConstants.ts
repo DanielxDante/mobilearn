@@ -442,7 +442,7 @@ export const instructorCreateCoursePageConstants = {
   courseName: "Course Title",
   courseDescription: "Course Description",
   courseType: "Course Type",
-  courseType_options: ["Academic", "Professional", "Specialisation", "Project"],
+  courseType_options: ["Academic", "Professional", "Specialization", "Project"],
   courseDuration: "Course Duration",
   coursePicture: "Course Picture",
   coursePicturePlaceholder: "Upload a picture",
