@@ -309,6 +309,7 @@ const useAuthStore = create<AuthState>()(
                 }
             },
             setupAxiosInterceptors: () => {
+                console.log("Setting up Axios interceptors...");
                 axios.interceptors.request.use(async (config) => {
                     if (config.url === AUTH_REFRESH_TOKEN_URL) {
                         config.headers.Authorization = get().refresh_token;
