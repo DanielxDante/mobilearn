@@ -410,6 +410,7 @@ export const courseContentConstants = {
   courseContents: "Course Contents",
   lesson: "Lesson",
   tick: require("@/assets/images/icons/tick.png"),
+  noLessonsAvailable: "No lessons available",
 };
 
 export const instructorHomePageConstants = {
@@ -616,13 +617,13 @@ export const memberDonatePage = {
 };
 
 export const chat = {
-    appBarTitle: "Chats",
-    addChat: require("@/assets/images/addChat.png"),
-    searchChat: require("@/assets/images/searchChat.png"),
+  appBarTitle: "Chats",
+  addChat: require("@/assets/images/addChat.png"),
+  searchChat: require("@/assets/images/searchChat.png"),
 };
 
 export const chatChannel = {
-    backButton: require("@/assets/images/notifications/backButton.png"),
-    clipIcon: require("@/assets/images/icons/clipIcon.png"),
-    msgInputPlaceholder: "Write a message...",
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  clipIcon: require("@/assets/images/icons/clipIcon.png"),
+  msgInputPlaceholder: "Write a message...",
 };
