@@ -8,7 +8,7 @@ import Lesson from "@/types/shared/Course/Lesson";
 // }
 
 export default interface Chapter {
-  chapter_id: number;
+  chapter_id: string;
   chapter_title: string;
   order: number;
   lessons: Lesson[];

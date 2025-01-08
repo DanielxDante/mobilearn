@@ -19,7 +19,6 @@ import { memberGuestHomeConstants as Constants } from "@/constants/textConstants
 import Statistics from "@/components/Statistics";
 import LatestNews from "@/components/LatestNews";
 import { instructorHomePageConstants as textConstants } from "@/constants/textConstants";
-import { COURSE_GET_TOP_COURSES_INSTRUCTOR } from "@/constants/routes";
 import useAppStore from "@/store/appStore";
 import Course from "@/types/shared/Course/Course";
 
@@ -105,7 +104,7 @@ const Home = () => {
         router.push({
             pathname: "../../shared/course/courseDetails",
             params: {
-                courseSelected: id.toString(),
+                courseId: id.toString(),
             },
         });
     };
