@@ -73,7 +73,7 @@ export default function createCoursePage() {
         lessons: [
           {
             lesson_id: `${Date.now()}-${Math.random()}`,
-            name: textConstants.lesson_placeholder + " 1",
+            lesson_name: textConstants.lesson_placeholder + " 1",
             order: 1,
             lesson_type: textConstants.lessonTypePlaceholder,
           },
@@ -283,7 +283,7 @@ export default function createCoursePage() {
           lessons: [
             {
               lesson_id: `${Date.now()}-${Math.random()}`,
-              name: textConstants.lesson_placeholder + " 1",
+              lesson_name: textConstants.lesson_placeholder + " 1",
               order: 1,
               lesson_type: textConstants.lessonTypePlaceholder,
             },
@@ -352,7 +352,9 @@ export default function createCoursePage() {
                 .map(
                   (_, index) =>
                     chapter.lessons[index] || {
-                      name: `${textConstants.lesson_placeholder} ${index + 1}`,
+                      lesson_name: `${textConstants.lesson_placeholder} ${
+                        index + 1
+                      }`,
                       lesson_type: textConstants.lessonTypePlaceholder,
                       order: index + 1,
                       lesson_id: `${Date.now()}-${Math.random()}`,
@@ -373,7 +375,7 @@ export default function createCoursePage() {
   const updateLesson = (
     lessonIndex: number,
     key:
-      | "name"
+      | "lesson_name"
       | "lesson_type"
       | "order"
       | ("content" | "video_key" | "homework_key"),
@@ -546,16 +548,18 @@ export default function createCoursePage() {
     // remove all chapter IDs and lesson IDs and return the modified chapters
     const modifiedChapters = inputs.chapters.map((chapter) => {
       const modifiedChapter = { ...chapter, title: chapter.chapter_title };
-      delete modifiedChapter.id;
+      // delete modifiedChapter.id;
       delete modifiedChapter.chapter_id;
       delete modifiedChapter.chapter_title;
       modifiedChapter.lessons = modifiedChapter.lessons.map((lesson) => {
         const modifiedLesson = {
           ...lesson,
           lesson_type: lesson.lesson_type.toLowerCase(),
+          name: lesson.lesson_name,
         };
-        delete modifiedLesson.id;
+        // delete modifiedLesson.id;
         delete modifiedLesson.lesson_id;
+        delete modifiedLesson.lesson_name;
         return modifiedLesson;
       });
       return modifiedChapter;
@@ -614,7 +618,7 @@ export default function createCoursePage() {
     const response = await createCourse(formData);
     if (response.message.includes("success")) {
       alert(textConstants.courseCreatedAlert);
-      // AsyncStorage.removeItem("courseData");
+      AsyncStorage.removeItem("courseData");
       router.push(INSTRUCTOR_HOME);
     } else {
       alert(textConstants.courseCreationFailedAlert);
@@ -946,8 +950,8 @@ export default function createCoursePage() {
                     onPress={() => handleLessonTap(lesson.lesson_id, index)}
                   >
                     <Text style={styles.chapterText}>
-                      {lesson.name
-                        ? lesson.name
+                      {lesson.lesson_name
+                        ? lesson.lesson_name
                         : `${textConstants.lesson_placeholder} ${index + 1}`}
                     </Text>
                   </TouchableOpacity>
@@ -963,10 +967,10 @@ export default function createCoursePage() {
               <InputField // Lesson name
                 inputTitle={textConstants.lesson_placeholder}
                 placeholder={textConstants.lesson_placeholder ?? ""}
-                value={selectedLesson.name}
+                value={selectedLesson.lesson_name}
                 onChangeText={(text) =>
                   selectedLessonIndex !== null &&
-                  updateLesson(selectedLessonIndex, "name", text)
+                  updateLesson(selectedLessonIndex, "lesson_name", text)
                 }
               />
               <InputDropDownField
