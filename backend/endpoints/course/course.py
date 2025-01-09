@@ -468,6 +468,9 @@ class CreateCourseEndpoint(Resource):
                         
                         ChapterService.attach_lesson(session, chapter.id, lesson.id, lesson_data['order'])
 
+            # Send a notification to the admin for approval
+            # This can be done through a notification service or email
+
             return Response(
                 json.dumps({'message': f'Course successfully created'}),
                 status=200, mimetype="application/json"

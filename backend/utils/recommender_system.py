@@ -248,3 +248,21 @@ class AdvancedCourseRecommender:
         self.scaler = state['scaler']
         self.faiss_index = faiss.deserialize_index(state['faiss_index'])
         self.logger.info(f"Model loaded from {path}")
+
+# Initialize
+recommender = AdvancedCourseRecommender()
+
+# Train
+recommender.fit(interactions_df, courses_df)
+
+# Get recommendations
+user_recs = recommender.get_recommendations(user_id="user123")
+similar_courses = recommender.get_recommendations(course_id="course456")
+preference_recs = recommender.get_recommendations(user_preferences={
+    "category": "Machine Learning",
+    "difficulty": "Intermediate",
+    "max_price": 100
+})
+
+# Save/load
+recommender.save_model("recommender_v1.pt")

@@ -123,6 +123,14 @@ class InstructorSignupEndpoint(Resource):
                     gender
                 )
                 CommunityService.attach_instructor(session, community.id, instructor.id)
+
+                # Send a notification to the admin for approval
+                # This can be done through a messaging service or email e.g., MailTrap
+
+                return Response(
+                    json.dumps({'message': 'Instructor signup successful'}),
+                    status=200, mimetype='application/json'
+                )
             except ValueError as ee:
                 return Response(
                     json.dumps({'message': str(ee)}),
@@ -133,7 +141,4 @@ class InstructorSignupEndpoint(Resource):
                     json.dumps({'message': str(ee)}),
                     status=500, mimetype='application/json'
                 )
-        return Response(
-            json.dumps({'message': 'Instructor signup successful'}),
-            status=200, mimetype='application/json'
-        )
+        

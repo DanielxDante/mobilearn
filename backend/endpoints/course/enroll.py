@@ -10,6 +10,7 @@ from app import api
 from database import session_scope, create_session
 from services.user_services import UserService
 from services.instructor_services import InstructorService
+from services.course_services import CourseService
 
 class GetUserEnrolledCoursesEndpoint(Resource):
     @api.doc(
@@ -59,9 +60,14 @@ class GetUserEnrolledCoursesEndpoint(Resource):
                 'id': course.id,
                 'course_name': course.name,
                 'rating': str(course.rating),
+                'description': course.description,
                 'course_image': course.image_url,
                 'community_name': course.community.name,
-                # 'progress': str(course.progress) # TODO: Add progress to differentiate between in progress and completed courses
+                'progress': float(CourseService.calculate_course_progress(
+                    session,
+                    current_email,
+                    course.id
+                ))
             } for course in courses]
 
             return Response(
