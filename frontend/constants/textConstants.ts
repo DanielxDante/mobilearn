@@ -494,6 +494,7 @@ export const instructorCreateCoursePageConstants = {
   asyncLoadMessage: "Loaded course data from AsyncStorage",
   asyncFailLoadMessage: "Failed to load course data from AsyncStorage",
   asyncFailSaveMessage: "Failed to save course data to AsyncStorage",
+  asyncFailClearMessage: "Failed to clear course data from AsyncStorage",
   // title_key: "title",
   // lessonType_key: "lesson_type",
   // order_key: "order",
