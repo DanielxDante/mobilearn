@@ -1,3 +1,5 @@
+# TO BE DEPRECATED
+
 from sqlalchemy import Enum, Column, Integer, Text, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 

@@ -226,6 +226,12 @@ def init_course_endpoints():
         RemoveFavouriteCourseEndpoint
     )
     from endpoints.course.recommender import GetRecommendedCoursesEndpoint
+    from endpoints.course.lesson import (
+        GetLessonDetailsEndpoint,
+        PreviewLessonEndpoint,
+        CompleteLessonEndpoint,
+        SubmitHomeworkEndpoint
+    )
 
     get_unenrolled_course_path = f"/{VERSION}/getUnenrolledCourse/<string:course_id>"
     ns_course.add_resource(GetUnenrolledCourseEndpoint, get_unenrolled_course_path)
@@ -274,6 +280,18 @@ def init_course_endpoints():
 
     get_recommended_courses_path = f"/{VERSION}/user/getRecommendedCourses/<string:channel_id>"
     ns_course.add_resource(GetRecommendedCoursesEndpoint, get_recommended_courses_path)
+
+    get_lesson_details_path = f"/{VERSION}/user/getLessonDetails/<string:lesson_id>"
+    ns_course.add_resource(GetLessonDetailsEndpoint, get_lesson_details_path)
+
+    preview_lesson_path = f"/{VERSION}/instructor/previewLesson/<string:lesson_id>"
+    ns_course.add_resource(PreviewLessonEndpoint, preview_lesson_path)
+
+    complete_lesson_path = f"/{VERSION}/user/completeLesson"
+    ns_course.add_resource(CompleteLessonEndpoint, complete_lesson_path)
+
+    submit_homework_path = f"/{VERSION}/user/submitHomework"
+    ns_course.add_resource(SubmitHomeworkEndpoint, submit_homework_path)
 
 def init_chat_endpoints():
     from endpoints.chat.chat import (
@@ -336,7 +354,8 @@ def init_admin_endpoints():
     from endpoints.admin.status import (
         ChangeUserStatusEndpoint,
         ChangeInstructorStatusEndpoint,
-        ChangeChannelStatusEndpoint
+        ChangeChannelStatusEndpoint,
+        ChangeCourseStatusEndpoint
     )
     from endpoints.admin.membership import ChangeUserMembershipEndpoint
     from endpoints.admin.channel import CreateChannelEndpoint
@@ -366,6 +385,9 @@ def init_admin_endpoints():
 
     enroll_user_path = f"/{VERSION}/course/enroll"
     ns_admin.add_resource(EnrollUserEndpoint, enroll_user_path)
+
+    change_course_status_path = f"/{VERSION}/course/editStatus"
+    ns_admin.add_resource(ChangeCourseStatusEndpoint, change_course_status_path)
 
 def init_internal_endpoints():
     pass

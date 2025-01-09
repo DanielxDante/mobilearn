@@ -9,6 +9,10 @@ from models.user_channel import UserChannel
 from models.enrollment import Enrollment
 from models.instructor import Instructor, STATUS as INSTRUCTOR_STATUS
 from models.offer import Offer
+from models.chapter import Chapter
+from models.lesson import Lesson
+from models.chapter_lesson import ChapterLesson
+from models.lesson_completion import LessonCompletion
 
 class CourseServiceError(Exception):
     pass
@@ -127,3 +131,70 @@ class CourseService:
 
     # @staticmethod
     # def attach_instructor
+
+    # @staticmethod
+    # def detach_instructor
+
+    @staticmethod
+    def calculate_course_progress(session, user_email, course_id):
+        """ Calculate course progress for the user """
+        user = User.get_user_by_email(session, user_email)
+        if not user:
+            raise ValueError("User not found")
+        
+        course = Course.get_course_by_id(session, course_id)
+        if not course:
+            raise ValueError("Course not found")
+
+        total_lessons = (
+            session.query(
+                Course.id.label('course_id'),
+                func.count(Lesson.id).label('total_lessons')
+            )
+            .join(Chapter)
+            .join(ChapterLesson)
+            .join(Lesson)
+            .group_by(Course.id)
+            .subquery()
+        )
+
+        # Get completed lessons per course for the user
+        completed_lessons = (
+            session.query(
+                Course.id.label('course_id'),
+                func.count(LessonCompletion.lesson_id).label('completed_lessons')
+            )
+            .join(Chapter)
+            .join(ChapterLesson)
+            .join(Lesson)
+            .join(LessonCompletion, 
+                (LessonCompletion.lesson_id == Lesson.id) & 
+                (LessonCompletion.user_id == user.id))
+            .group_by(Course.id)
+            .subquery()
+        )
+
+        # Calculate progress percentage
+        progress_query = (
+            session.query(
+                Course.id,
+                Course.name,
+                func.coalesce(completed_lessons.c.completed_lessons, 0).label('completed'),
+                total_lessons.c.total_lessons.label('total'),
+                (func.coalesce(completed_lessons.c.completed_lessons, 0) * 100.0 / 
+                total_lessons.c.total_lessons).label('progress')
+            )
+            .join(Enrollment, 
+                (Enrollment.course_id == Course.id) & 
+                (Enrollment.user_id == user.id))
+            .join(total_lessons, total_lessons.c.course_id == Course.id)
+            .outerjoin(completed_lessons, completed_lessons.c.course_id == Course.id)
+            .filter(
+                Course.status == COURSE_STATUS.ACTIVE,
+                Course.id == course_id
+            )
+            .first()
+        )
+
+        return progress_query.progress if progress_query else 0.0
+    

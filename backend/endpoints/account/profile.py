@@ -128,16 +128,25 @@ class GetUserGenderEndpoint(Resource):
 
         session = create_session()
         
-        user = User.get_user_by_email(session, current_email)
-        if user:
+        try:
+            user = User.get_user_by_email(session, current_email)
+            if user:
+                return Response(
+                    json.dumps({'gender': user.gender}),
+                    status=200, mimetype='application/json'
+                )
+        except ValueError as ee:
             return Response(
-                json.dumps({'gender': user.gender}),
-                status=200, mimetype='application/json'
+                json.dumps({'message': str(ee)}),
+                status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'message': 'User not found'}),
-            status=500, mimetype='application/json'
-        )
+        except Exception as e:
+            return Response(
+                json.dumps({'message': str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
     
 change_user_gender_parser = api.parser()
 change_user_gender_parser.add_argument(
@@ -218,20 +227,29 @@ class GetUserProfilePictureEndpoint(Resource):
 
         session = create_session()
         
-        user = User.get_user_by_email(session, current_email)
-        if user:
-            profile_picture_url = user.profile_picture_url
-            if not profile_picture_url:
-                profile_picture_url = ""
+        try:
+            user = User.get_user_by_email(session, current_email)
+            if user:
+                profile_picture_url = user.profile_picture_url
+                if not profile_picture_url:
+                    profile_picture_url = ""
 
+                return Response(
+                    json.dumps({'profile_picture_url': profile_picture_url}),
+                    status=200, mimetype='application/json'
+                )
+        except ValueError as ee:
             return Response(
-                json.dumps({'profile_picture_url': profile_picture_url}),
-                status=200, mimetype='application/json'
+                json.dumps({'message': str(ee)}),
+                status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'message': 'User not found'}),
-            status=500, mimetype='application/json'
-        )
+        except Exception as e:
+            return Response(
+                json.dumps({'message': str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 class ChangeUserProfilePictureEndpoint(Resource):
     @api.doc(
@@ -351,16 +369,25 @@ class GetInstructorNameEndpoint(Resource):
 
         session = create_session()
         
-        instructor = Instructor.get_instructor_by_email(session, current_email)
-        if instructor:
+        try:
+            instructor = Instructor.get_instructor_by_email(session, current_email)
+            if instructor:
+                return Response(
+                    json.dumps({'name': instructor.name}),
+                    status=200, mimetype='application/json'
+                )
+        except ValueError as ee:
             return Response(
-                json.dumps({'name': instructor.name}),
-                status=200, mimetype='application/json'
+                json.dumps({'message': str(ee)}),
+                status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'message': 'Instructor not found'}),
-            status=500, mimetype='application/json'
-        )
+        except Exception as e:
+            return Response(
+                json.dumps({'message': str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 change_instructor_name_parser = api.parser()
 change_instructor_name_parser.add_argument('new_name', type=str, help='New Name', location='json', required=True)
@@ -434,16 +461,25 @@ class GetInstructorGenderEndpoint(Resource):
 
         session = create_session()
         
-        instructor = Instructor.get_instructor_by_email(session, current_email)
-        if instructor:
+        try:
+            instructor = Instructor.get_instructor_by_email(session, current_email)
+            if instructor:
+                return Response(
+                    json.dumps({'gender': instructor.gender}),
+                    status=200, mimetype='application/json'
+                )
+        except ValueError as ee:
             return Response(
-                json.dumps({'gender': instructor.gender}),
-                status=200, mimetype='application/json'
+                json.dumps({'message': str(ee)}),
+                status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'message': 'Instructor not found'}),
-            status=500, mimetype='application/json'
-        )
+        except Exception as e:
+            return Response(
+                json.dumps({'message': str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 change_instructor_gender_parser = api.parser()
 change_instructor_gender_parser.add_argument(
@@ -524,20 +560,29 @@ class GetInstructorProfilePictureEndpoint(Resource):
 
         session = create_session()
         
-        instructor = Instructor.get_instructor_by_email(session, current_email)
-        if instructor:
-            profile_picture_url = instructor.profile_picture_url
-            if not profile_picture_url:
-                profile_picture_url = ""
+        try:
+            instructor = Instructor.get_instructor_by_email(session, current_email)
+            if instructor:
+                profile_picture_url = instructor.profile_picture_url
+                if not profile_picture_url:
+                    profile_picture_url = ""
 
+                return Response(
+                    json.dumps({'profile_picture_url': profile_picture_url}),
+                    status=200, mimetype='application/json'
+                )
+        except ValueError as ee:
             return Response(
-                json.dumps({'profile_picture_url': profile_picture_url}),
-                status=200, mimetype='application/json'
+                json.dumps({'message': str(ee)}),
+                status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'message': 'Instructor not found'}),
-            status=500, mimetype='application/json'
-        )
+        except Exception as e:
+            return Response(
+                json.dumps({'message': str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 class ChangeInstructorProfilePictureEndpoint(Resource):
     @api.doc(
@@ -656,16 +701,25 @@ class GetInstructorPhoneNumberEndpoint(Resource):
 
         session = create_session()
         
-        instructor = Instructor.get_instructor_by_email(session, current_email)
-        if instructor:
+        try:
+            instructor = Instructor.get_instructor_by_email(session, current_email)
+            if instructor:
+                return Response(
+                    json.dumps({'phone_number': instructor.phone_number}),
+                    status=200, mimetype='application/json'
+                )
+        except ValueError as ee:
             return Response(
-                json.dumps({'phone_number': instructor.phone_number}),
-                status=200, mimetype='application/json'
+                json.dumps({'message': str(ee)}),
+                status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'message': 'Instructor not found'}),
-            status=500, mimetype='application/json'
-        )
+        except Exception as e:
+            return Response(
+                json.dumps({'message': str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 change_instructor_phone_number_parser = api.parser()
 change_instructor_phone_number_parser.add_argument(
@@ -745,16 +799,25 @@ class GetInstructorPositionEndpoint(Resource):
 
         session = create_session()
         
-        instructor = Instructor.get_instructor_by_email(session, current_email)
-        if instructor:
+        try:
+            instructor = Instructor.get_instructor_by_email(session, current_email)
+            if instructor:
+                return Response(
+                    json.dumps({'position': instructor.position}),
+                    status=200, mimetype='application/json'
+                )
+        except ValueError as ee:
             return Response(
-                json.dumps({'position': instructor.position}),
-                status=200, mimetype='application/json'
+                json.dumps({'message': str(ee)}),
+                status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'message': 'Instructor not found'}),
-            status=500, mimetype='application/json'
-        )
+        except Exception as e:
+            return Response(
+                json.dumps({'message': str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 change_instructor_position_parser = api.parser()
 change_instructor_position_parser.add_argument(

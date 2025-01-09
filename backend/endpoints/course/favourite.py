@@ -44,34 +44,42 @@ class GetFavouriteCoursesEndpoint(Resource):
 
         current_email = get_jwt_identity()
 
-        with session_scope() as session:
-            try:
-                courses = UserService.get_user_favourite_courses(
-                    session,
-                    user_email=current_email,
-                    channel_id=channel_id,
-                    page=page,
-                    per_page=per_page
-                )
-                course_info = [{
-                    'id': course.id,
-                    'course_name': course.name,
-                    'description': course.description,
-                    'rating': str(course.rating),
-                    'course_image': course.image_url,
-                    'community_name': course.community.name,
-                    'enrollments': int(len(course.user_enrollments) if course.user_enrollments else 0),
-                } for course in courses]
+        session = create_session()
 
-                return Response(
-                    json.dumps(course_info),
-                    status=200, mimetype='application/json'
-                )
-            except ValueError as ee:
-                return Response(
-                    json.dumps({"error": str(ee)}),
-                    status=404, mimetype='application/json'
-                )
+        try:
+            courses = UserService.get_user_favourite_courses(
+                session,
+                user_email=current_email,
+                channel_id=channel_id,
+                page=page,
+                per_page=per_page
+            )
+            course_info = [{
+                'id': course.id,
+                'course_name': course.name,
+                'description': course.description,
+                'rating': str(course.rating),
+                'course_image': course.image_url,
+                'community_name': course.community.name,
+                'enrollments': int(len(course.user_enrollments) if course.user_enrollments else 0),
+            } for course in courses]
+
+            return Response(
+                json.dumps(course_info),
+                status=200, mimetype='application/json'
+            )
+        except ValueError as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=404, mimetype='application/json'
+            )
+        except Exception as e:
+            return Response(
+                json.dumps({"error": str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 add_favourite_course_parser = api.parser()
 add_favourite_course_parser.add_argument('course_id', type=int, help='Course ID', location='json', required=True)

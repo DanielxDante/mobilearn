@@ -11,6 +11,8 @@ from models.user_channel import UserChannel
 from models.review import Review
 from models.enrollment import Enrollment
 from models.favourite import Favourite
+from models.lesson_completion import LessonCompletion
+from models.homework_submission import HomeworkSubmission
 from models.user_chat import UserChat
 from models.message import Message
 
@@ -43,6 +45,10 @@ class User(Base):
     course_reviews = relationship("Course", secondary="reviews", back_populates="user_reviews")
     course_enrollments = relationship("Course", secondary="enrollments", back_populates="user_enrollments")
     course_favourites = relationship("Course", secondary="favourites", back_populates="user_favourites")
+
+    # Many-to-many relationship with Lesson
+    lesson_completions = relationship("Lesson", secondary="lesson_completions", back_populates="users")
+    homework_submissions = relationship("HomeworkLesson", secondary="homework_submissions", back_populates="submissions")
 
     @hybrid_property
     def password(self):

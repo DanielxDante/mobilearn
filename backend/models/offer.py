@@ -1,3 +1,5 @@
+# TO BE DEPRECATED
+
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, func
 
 from database import Base

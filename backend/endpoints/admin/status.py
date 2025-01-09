@@ -7,6 +7,7 @@ from database import session_scope, create_session
 from models.user import User, STATUS as USER_STATUS
 from models.instructor import Instructor, STATUS as INSTRUCTOR_STATUS
 from models.channel import Channel, STATUS as CHANNEL_STATUS
+from models.course import Course, STATUS as COURSE_STATUS
 from utils.admin_decorator import require_admin_key
 
 change_user_status_parser = api.parser()
@@ -191,3 +192,73 @@ class ChangeChannelStatusEndpoint(Resource):
             json.dumps({'message': '(Admin) Channel status changed successfully'}),
             status=200, mimetype='application/json'
         )
+
+change_course_status_parser = api.parser()
+change_course_status_parser.add_argument(
+    'course_id', 
+    type=str,
+    help='Course ID',
+    location='json',
+    required=True
+)
+change_course_status_parser.add_argument(
+    'new_status',
+    type=str,
+    help='New Status',
+    location='json',
+    required=True,
+    choices=COURSE_STATUS.values()
+)
+
+class ChangeCourseStatusEndpoint(Resource):
+    @api.doc(
+        responses={
+            200: 'Ok',
+            400: 'Bad request',
+            403: 'Forbidden',
+            404: 'Resource not found',
+            500: 'Internal Server Error'
+        },
+        params={
+            'X-Admin-Key': {
+                'in': 'header',
+                'description': 'Admin key for running admin apis',
+                'required': True
+            }
+        },
+        description="""
+            Example request JSON:
+
+            {
+                "course_id": 421,
+                "new_status": "approved"
+            }
+            """
+    )
+    @api.expect(change_course_status_parser)
+    @require_admin_key
+    def post(self):
+        """ Change course status """
+        data = request.get_json()
+        course_id = data.get('course_id')
+        new_status = data.get('new_status')
+        
+        with session_scope() as session:
+            try:
+                Course.change_status(session, course_id, new_status)
+
+                return Response(
+                    json.dumps({'message': '(Admin) Course status changed successfully'}),
+                    status=200, mimetype='application/json'
+                )
+            except ValueError as ee:
+                return Response(
+                    json.dumps({'message': str(ee)}),
+                    status=400, mimetype='application/json'
+                )
+            except Exception as e:
+                return Response(
+                    json.dumps({'message': str(e)}),
+                    status=500, mimetype='application/json'
+                )
+        

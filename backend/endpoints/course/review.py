@@ -53,8 +53,15 @@ class GetUserCourseReviewEndpoint(Resource):
         except ValueError as ee:
             return Response(
                 json.dumps({"error": str(ee)}),
+                status=404, mimetype='application/json'
+            )
+        except Exception as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
                 status=500, mimetype='application/json'
             )
+        finally:
+            session.close()
 
 save_review_parser = api.parser()
 save_review_parser.add_argument('course_id', type=int, help='Course ID', location='json', required=True)
