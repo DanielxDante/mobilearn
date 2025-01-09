@@ -391,7 +391,7 @@ class CreateCourseEndpoint(Resource):
                         json.dumps({"error": "Instructor not found"}),
                         status=404, mimetype='application/json'
                     )
-                
+
                 community_name = instructor.company
                 community = Community.get_community_by_name(session, community_name)
                 if not community:
@@ -410,18 +410,21 @@ class CreateCourseEndpoint(Resource):
                     course_type=course_type,
                     **optional_course_data
                 )
+
                 course_image = request.files.get('course_image')
                 if not course_image or not allowed_file(course_image.filename):
                     return Response(
                         json.dumps({"error": "Invalid or missing course image file"}),
                         status=400, mimetype='application/json'
                     )
+
                 course_image_url = upload_file(course_image, f"course_{str(course.id)}")
                 course.image_url = course_image_url
                 instructor.courses.append(course)
 
                 # Add chapter
                 for chapter_data in content['chapters']:
+                    print(chapter_data)
                     chapter = Chapter.add_chapter(
                         session,
                         course_id=course.id,
@@ -479,6 +482,11 @@ class CreateCourseEndpoint(Resource):
             return Response(
                 json.dumps({"error": str(ee)}),
                 status=400, mimetype='application/json'
+            )
+        except Exception as e:
+            return Response(
+                json.dumps({"error": str(e)}),
+                status=500, mimetype='application/json'
             )
 
 # edit_course_parser = api.parser()

@@ -7,8 +7,11 @@
 // }
 
 export default interface Lesson {
-  lesson_id: number;
+  lesson_id: string;
   lesson_name: string;
-  contentUrl: string;
-  completionStatus: boolean;
+  lesson_type: string;
+  order: number;
+  content?: string;
+  video_key?: string;
+  homework_key?: string;
 }

@@ -91,9 +91,8 @@ const TopCoursesSeeAll = () => {
                 </Text>
             </View>
             {/* Suggestions Display Section */}
-            <View>
+            <View style={styles.scrollContainerOutside}>
                 <ScrollView
-                    contentContainerStyle={styles.scrollContainer}
                     onMomentumScrollEnd={handleLoadMore} // Load more when scrolling ends
                 >
                     {topCourseData.map((course) => (
@@ -124,7 +123,7 @@ const styles = StyleSheet.create({
     },
     appBarContainer: {
         flexDirection: "row",
-        marginTop: 20,
+        marginVertical: 15,
         alignItems: "center",
     },
     backButton: {
@@ -133,8 +132,8 @@ const styles = StyleSheet.create({
         marginLeft: 25,
         padding: 5,
     },
-    scrollContainer: {
-        paddingBottom: 20,
+    scrollContainerOutside: {
+        flex: 1,
     },
     suggestionsHeader: {
         color: Colors.defaultBlue,

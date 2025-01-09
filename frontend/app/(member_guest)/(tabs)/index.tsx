@@ -106,7 +106,6 @@ const Home = () => {
     };
 
     const handleSelectCourse = (id: number) => {
-        // TODO: INCLUDE COURSE NAVIGATION
         // console.log("Course " + id + " Selected");
         const mergedCourses = [
             ...(continueWatchingData || []),
@@ -125,7 +124,7 @@ const Home = () => {
                 router.push({
                     pathname: "../shared/course/courseContent",
                     params: {
-                        courseSelected: JSON.stringify(courseSelected),
+                        courseId: courseSelected.course_id,
                     },
                 });
             } else {
@@ -133,7 +132,7 @@ const Home = () => {
                 router.push({
                     pathname: "../../shared/course/courseDetails",
                     params: {
-                        courseSelected: JSON.stringify(courseSelected),
+                        courseId: courseSelected.course_id,
                     },
                 });
             }
