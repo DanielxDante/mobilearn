@@ -42,17 +42,24 @@ class GetUserChannelsEndpoint(Resource):
                 'description': channel.description,
                 'channel_picture_url': channel.channel_picture_url
             } for channel in channels]
+
+            return Response(
+                json.dumps({'channels': channels_info}),
+                status=200, mimetype='application/json'
+            )
         except ValueError as ee:
             return Response(
                 json.dumps({"error": str(ee)}),
                 status=404, mimetype='application/json'
             )
-        return Response(
-            json.dumps({'channels': channels_info}),
-            status=200, mimetype='application/json'
-        )
-
-
+        except Exception as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
+        
 invite_user_channel_parser = api.parser()
 invite_user_channel_parser.add_argument('invite_code', type=str, help='Channel Invite Code', location='json', required=True)
 
