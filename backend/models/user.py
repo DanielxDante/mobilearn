@@ -27,6 +27,7 @@ class User(Base):
     profile_picture_url = Column(String, nullable=True)
     membership = Column(Enum(MEMBERSHIP, name="membership_enum"), nullable=False, default=MEMBERSHIP.NORMAL)
     stripe_customer_id = Column(String, nullable=True)
+    device_token = Column(String, nullable=True)
     created = Column(DateTime(timezone=True), nullable=False, default=func.now())
     updated = Column(DateTime(timezone=True), nullable=False, default=func.now())
     latest_login = Column(DateTime(timezone=True), nullable=False, default=func.now())

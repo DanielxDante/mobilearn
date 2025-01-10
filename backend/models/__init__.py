@@ -8,3 +8,4 @@ from .community import Community
 from .course import Course
 from .chapter import Chapter
 from .lesson import Lesson
+from .notification import Notification

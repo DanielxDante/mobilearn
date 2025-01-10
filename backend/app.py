@@ -66,6 +66,7 @@ def setup_environment():
         from models import course
         from models import chapter
         from models import lesson
+        from models import notification
 
         create_tables()
         check_db()
@@ -110,6 +111,10 @@ def init_account_endpoints():
         ChangeInstructorEmailEndpoint, ChangeInstructorPasswordEndpoint,
         ChangeInstructorCompanyEndpoint
     )
+    from endpoints.account.notification import (
+        GetUserUnreadNotificationsEndpoint,
+        GetInstructorUnreadNotificationsEndpoint
+    )
 
     get_user_name_path = f"/{VERSION}/user/profile/getName"
     ns_account.add_resource(GetUserNameEndpoint, get_user_name_path)
@@ -134,6 +139,9 @@ def init_account_endpoints():
 
     change_user_password_path = f"/{VERSION}/user/security/editPassword"
     ns_account.add_resource(ChangeUserPasswordEndpoint, change_user_password_path)
+
+    get_user_unread_notifications_path = f"/{VERSION}/user/notification/getUnread"
+    ns_account.add_resource(GetUserUnreadNotificationsEndpoint, get_user_unread_notifications_path)
 
     #####################################################################################
 
@@ -176,6 +184,9 @@ def init_account_endpoints():
     change_instructor_company_path = f"/{VERSION}/instructor/security/editCompany"
     ns_account.add_resource(ChangeInstructorCompanyEndpoint, change_instructor_company_path)
 
+    get_instructor_unread_notifications_path = f"/{VERSION}/instructor/notification/getUnread"
+    ns_account.add_resource(GetInstructorUnreadNotificationsEndpoint, get_instructor_unread_notifications_path)
+
 def init_channel_endpoints():
     from endpoints.channel.channel import (
         GetUserChannelsEndpoint,
@@ -210,7 +221,9 @@ def init_course_endpoints():
         GetEnrolledCourseEndpoint,
         SearchCoursesEndpoint,
         GetInstructorCoursesEndpoint,
-        CreateCourseEndpoint
+        CreateCourseEndpoint,
+        RetrieveCourseDetailsEndpoint,
+        EditCourseEndpoint
     )
     from endpoints.course.review import GetUserCourseReviewEndpoint, SaveReviewEndpoint
     from endpoints.course.enroll import (
@@ -247,6 +260,12 @@ def init_course_endpoints():
 
     create_course_path = f"/{VERSION}/instructor/create"
     ns_course.add_resource(CreateCourseEndpoint, create_course_path)
+
+    retrieve_course_details_path = f"/{VERSION}/instructor/getCourseDetails/<string:course_id>"
+    ns_course.add_resource(RetrieveCourseDetailsEndpoint, retrieve_course_details_path)
+
+    edit_course_path = f"/{VERSION}/instructor/edit"
+    ns_course.add_resource(EditCourseEndpoint, edit_course_path)
 
     get_user_course_review_path = f"/{VERSION}/user/getReview/<string:course_id>"
     ns_course.add_resource(GetUserCourseReviewEndpoint, get_user_course_review_path)
