@@ -201,8 +201,8 @@ class TextLesson(Lesson):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'name': self.name,
+            'lesson_id': self.id,
+            'lesson_name': self.name,
             'lesson_type': self.lesson_type,
             'content': self.content
         }
@@ -230,8 +230,8 @@ class VideoLesson(Lesson):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'name': self.name,
+            'lesson_id': self.id,
+            'lesson_name': self.name,
             'lesson_type': self.lesson_type,
             'video_url': self.video_url
         }
@@ -262,8 +262,8 @@ class HomeworkLesson(Lesson):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'name': self.name,
+            'lesson_id': self.id,
+            'lesson_name': self.name,
             'lesson_type': self.lesson_type,
-            'question_count': self.question_count
+            'homework_url': self.homework_url
         }

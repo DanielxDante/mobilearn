@@ -23,6 +23,7 @@ class Instructor(Base):
     company = Column(String, nullable=False)
     position = Column(String, nullable=False)
     stripe_account_id = Column(String, nullable=True)
+    device_token = Column(String, nullable=True)
     created = Column(DateTime(timezone=True), nullable=False, default=func.now())
     updated = Column(DateTime(timezone=True), nullable=False, default=func.now())
     latest_login = Column(DateTime(timezone=True), nullable=False, default=func.now())
