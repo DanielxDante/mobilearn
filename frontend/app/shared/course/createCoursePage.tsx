@@ -67,13 +67,13 @@ export default function createCoursePage() {
     platform: course?.platform || "",
     chapters: course?.chapters || [
       {
-        id: `${Date.now()}-${Math.random()}`, // unique id
-        title: textConstants.chapter_placeholder + " 1",
+        chapter_id: `${Date.now()}-${Math.random()}`, // unique id
+        chapter_title: textConstants.chapter_placeholder + " 1",
         order: 1,
         lessons: [
           {
-            id: `${Date.now()}-${Math.random()}`,
-            name: textConstants.lesson_placeholder + " 1",
+            lesson_id: `${Date.now()}-${Math.random()}`,
+            lesson_name: textConstants.lesson_placeholder + " 1",
             order: 1,
             lesson_type: textConstants.lessonTypePlaceholder,
           },
@@ -136,7 +136,7 @@ export default function createCoursePage() {
       coursePicture: !inputs.coursePicture,
       price: !inputs.price,
       difficulty: !inputs.difficulty,
-      skills: !inputs.skills,
+      skills: !inputs.skills[0],
       school: !inputs.school,
       programType: !inputs.programType,
       major: !inputs.major,
@@ -180,7 +180,7 @@ export default function createCoursePage() {
   };
 
   function filterFilesByChapters(chapters: any, files: any) {
-    const filteredFiles = {};
+    const filteredFiles: { [key: string]: any } = {};
     const lessonIdarray: string[] = [];
     // Loop through all chapters and lessons to extract lesson IDs that have files
     for (let i = 0; i < chapters.length; i++) {
@@ -189,7 +189,7 @@ export default function createCoursePage() {
           chapters[i].lessons[j].video_key ||
           chapters[i].lessons[j].homework_key
         ) {
-          lessonIdarray.push(chapters[i].lessons[j].id);
+          lessonIdarray.push(chapters[i].lessons[j].lesson_id);
         }
       }
     }
@@ -257,14 +257,15 @@ export default function createCoursePage() {
   const selectedChapter = selectedChapterId
     ? inputs.chapters.find(
         (chapter: Chapter) =>
-          chapter.id.toString() === selectedChapterId.toString()
+          chapter.chapter_id.toString() === selectedChapterId.toString()
       )
     : null;
 
   const selectedLesson = selectedChapter
     ? selectedLessonId &&
       selectedChapter.lessons.find(
-        (lesson: Lesson) => lesson.id.toString() === selectedLessonId.toString()
+        (lesson: Lesson) =>
+          lesson.lesson_id.toString() === selectedLessonId.toString()
       )
     : null;
 
@@ -274,15 +275,15 @@ export default function createCoursePage() {
       chapters: [
         ...prev.chapters,
         {
-          id: `${Date.now()}-${Math.random()}`, // unique id
-          title: `${textConstants.chapter_placeholder} ${
+          chapter_id: `${Date.now()}-${Math.random()}`, // unique id
+          chapter_title: `${textConstants.chapter_placeholder} ${
             prev.chapters.length + 1
           }`,
           order: prev.chapters.length + 1,
           lessons: [
             {
-              id: `${Date.now()}-${Math.random()}`,
-              name: textConstants.lesson_placeholder + " 1",
+              lesson_id: `${Date.now()}-${Math.random()}`,
+              lesson_name: textConstants.lesson_placeholder + " 1",
               order: 1,
               lesson_type: textConstants.lessonTypePlaceholder,
             },
@@ -305,12 +306,12 @@ export default function createCoursePage() {
     return chapters.map((chapter, index) => {
       // If the chapter name is in the format 'Chapter {number}', update it
       if (
-        chapter.title &&
-        chapter.title.startsWith(textConstants.chapter_placeholder)
+        chapter.chapter_title &&
+        chapter.chapter_title.startsWith(textConstants.chapter_placeholder)
       ) {
         return {
           ...chapter,
-          title: `${textConstants.chapter_placeholder} ${index + 1}`, // Update the chapter name to the new order
+          chapter_title: `${textConstants.chapter_placeholder} ${index + 1}`, // Update the chapter name to the new order
         };
       }
       return chapter;
@@ -321,7 +322,7 @@ export default function createCoursePage() {
     setInputs((prev) => {
       // First, remove the chapter by its id
       const updatedChapters = prev.chapters.filter(
-        (chapter) => chapter.id !== id
+        (chapter: Chapter) => chapter.chapter_id !== id
       );
       // Then, sort the remaining chapters by 'order'
       const sortedChapters = sortChapters(updatedChapters);
@@ -342,8 +343,8 @@ export default function createCoursePage() {
     const newLessonCount = parseInt(value, 10);
     setInputs((prev) => ({
       ...prev,
-      chapters: prev.chapters.map((chapter) =>
-        chapter.id.toString() === selectedChapterId
+      chapters: prev.chapters.map((chapter: Chapter) =>
+        chapter.chapter_id.toString() === selectedChapterId
           ? {
               ...chapter,
               lessons: Array(newLessonCount)
@@ -351,10 +352,12 @@ export default function createCoursePage() {
                 .map(
                   (_, index) =>
                     chapter.lessons[index] || {
-                      name: `${textConstants.lesson_placeholder} ${index + 1}`,
+                      lesson_name: `${textConstants.lesson_placeholder} ${
+                        index + 1
+                      }`,
                       lesson_type: textConstants.lessonTypePlaceholder,
                       order: index + 1,
-                      id: `${Date.now()}-${Math.random()}`,
+                      lesson_id: `${Date.now()}-${Math.random()}`,
                     }
                 ),
             }
@@ -372,7 +375,7 @@ export default function createCoursePage() {
   const updateLesson = (
     lessonIndex: number,
     key:
-      | "name"
+      | "lesson_name"
       | "lesson_type"
       | "order"
       | ("content" | "video_key" | "homework_key"),
@@ -381,8 +384,8 @@ export default function createCoursePage() {
     if (!selectedChapterId) return;
 
     setInputs((prev) => {
-      let updatedChapters = prev.chapters.map((chapter) =>
-        chapter.id.toString() === selectedChapterId
+      let updatedChapters = prev.chapters.map((chapter: Chapter) =>
+        chapter.chapter_id.toString() === selectedChapterId
           ? {
               ...chapter,
               lessons: chapter.lessons.map((lesson, index) => {
@@ -469,7 +472,7 @@ export default function createCoursePage() {
         const type = match ? `video/${match[1]}` : "video/mp4";
         const file_name = result.assets[0].fileName;
 
-        if (selectedLessonIndex !== null) {
+        if (selectedLessonIndex !== null && file_name && selectedLessonId) {
           updateLesson(selectedLessonIndex, "video_key", file_name);
           addFile(selectedLessonId, { uri, name: file_name, type });
         }
@@ -506,7 +509,7 @@ export default function createCoursePage() {
         const filename = uri.split("/").pop();
         const type = "application/pdf";
 
-        if (selectedLessonIndex !== null) {
+        if (selectedLessonIndex !== null && file_name && selectedLessonId) {
           updateLesson(selectedLessonIndex, "homework_key", file_name);
           addFile(selectedLessonId, { uri, name: file_name, type });
         }
@@ -543,15 +546,20 @@ export default function createCoursePage() {
 
   function removeIds() {
     // remove all chapter IDs and lesson IDs and return the modified chapters
-    const modifiedChapters = inputs.chapters.map((chapter) => {
-      const modifiedChapter = { ...chapter };
-      delete modifiedChapter.id;
-      modifiedChapter.lessons = modifiedChapter.lessons.map((lesson) => {
+    const modifiedChapters = inputs.chapters.map((chapter: any) => {
+      const modifiedChapter = { ...chapter, title: chapter.chapter_title };
+      // delete modifiedChapter.id;
+      delete modifiedChapter.chapter_id;
+      delete modifiedChapter.chapter_title;
+      modifiedChapter.lessons = modifiedChapter.lessons.map((lesson: any) => {
         const modifiedLesson = {
           ...lesson,
           lesson_type: lesson.lesson_type.toLowerCase(),
+          name: lesson.lesson_name,
         };
-        delete modifiedLesson.id;
+        // delete modifiedLesson.id;
+        delete modifiedLesson.lesson_id;
+        delete modifiedLesson.lesson_name;
         return modifiedLesson;
       });
       return modifiedChapter;
@@ -599,7 +607,7 @@ export default function createCoursePage() {
     formData.append("content", JSON.stringify(content));
     // Append files
     Object.entries(inputs.files).forEach(([key, file]) => {
-      formData.append("files", file);
+      formData.append("files", file as Blob);
     });
     // Call API
     postCourse(formData);
@@ -620,18 +628,29 @@ export default function createCoursePage() {
     throw new Error("Function not implemented.");
   }
 
+  // useEffect(() => {
+  //   const loadData = async () => {
+  //     try {
+  //       const savedData = await AsyncStorage.getItem("courseData");
+  //       if (savedData) {
+  //         setInputs(JSON.parse(savedData));
+  //       }
+  //     } catch (error) {
+  //       console.error(textConstants.asyncFailLoadMessage, error);
+  //     }
+  //   };
+  //   loadData();
+  // }, []);
+
   useEffect(() => {
-    const loadData = async () => {
+    const clearData = async () => {
       try {
-        const savedData = await AsyncStorage.getItem("courseData");
-        if (savedData) {
-          setInputs(JSON.parse(savedData));
-        }
+        await AsyncStorage.multiRemove(["courseData"]);
       } catch (error) {
-        console.error(textConstants.asyncFailLoadMessage, error);
+        console.error(textConstants.asyncFailClearMessage, error);
       }
     };
-    loadData();
+    clearData();
   }, []);
 
   // Save data to AsyncStorage whenever inputs change
@@ -645,7 +664,7 @@ export default function createCoursePage() {
     };
     saveData();
     validate(1);
-  }, [inputs]);
+  }, [inputs, inputs.chapters]);
 
   return (
     <>
@@ -870,16 +889,20 @@ export default function createCoursePage() {
             <Text style={styles.sectionHeader}>
               {textConstants.manageChapters}
             </Text>
-            {inputs.chapters.map((chapter, index) => (
-              <View key={chapter.id} style={styles.chapterBar}>
-                <TouchableOpacity onPress={() => handleChapterTap(chapter.id)}>
+            {inputs.chapters.map((chapter: Chapter, index: number) => (
+              <View key={chapter.chapter_id} style={styles.chapterBar}>
+                <TouchableOpacity
+                  onPress={() => handleChapterTap(chapter.chapter_id)}
+                >
                   <Text style={styles.chapterText}>
-                    {chapter.title
-                      ? chapter.title
+                    {chapter.chapter_title
+                      ? chapter.chapter_title
                       : `${textConstants.chapter_placeholder} ${index + 1}`}
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => removeChapter(chapter.id)}>
+                <TouchableOpacity
+                  onPress={() => removeChapter(chapter.chapter_id)}
+                >
                   <Text style={styles.removeButtonText}>
                     {textConstants.minus}
                   </Text>
@@ -901,13 +924,13 @@ export default function createCoursePage() {
             <InputField
               inputTitle={textConstants.editChapterTitle}
               placeholder={textConstants.placeholder ?? ""}
-              value={selectedChapter.title}
+              value={selectedChapter.chapter_title}
               onChangeText={(text) =>
                 setInputs((prev) => ({
                   ...prev,
-                  chapters: prev.chapters.map((chapter) =>
-                    chapter.id === selectedChapterId
-                      ? { ...chapter, title: text }
+                  chapters: prev.chapters.map((chapter: Chapter) =>
+                    chapter.chapter_id === selectedChapterId
+                      ? { ...chapter, chapter_title: text }
                       : chapter
                   ),
                 }))
@@ -931,14 +954,14 @@ export default function createCoursePage() {
                 padding: 8,
               }}
             >
-              {selectedChapter.lessons.map((lesson, index) => (
+              {selectedChapter.lessons.map((lesson: Lesson, index: number) => (
                 <View key={index} style={styles.chapterBar}>
                   <TouchableOpacity
-                    onPress={() => handleLessonTap(lesson.id, index)}
+                    onPress={() => handleLessonTap(lesson.lesson_id, index)}
                   >
                     <Text style={styles.chapterText}>
-                      {lesson.name
-                        ? lesson.name
+                      {lesson.lesson_name
+                        ? lesson.lesson_name
                         : `${textConstants.lesson_placeholder} ${index + 1}`}
                     </Text>
                   </TouchableOpacity>
@@ -954,10 +977,10 @@ export default function createCoursePage() {
               <InputField // Lesson name
                 inputTitle={textConstants.lesson_placeholder}
                 placeholder={textConstants.lesson_placeholder ?? ""}
-                value={selectedLesson.name}
+                value={selectedLesson.lesson_name}
                 onChangeText={(text) =>
                   selectedLessonIndex !== null &&
-                  updateLesson(selectedLessonIndex, "name", text)
+                  updateLesson(selectedLessonIndex, "lesson_name", text)
                 }
               />
               <InputDropDownField
@@ -1056,7 +1079,9 @@ export default function createCoursePage() {
                   selectedLesson.lesson_type ===
                     textConstants.lessonTypeOptions[0]
                 ) {
-                  updateLesson(selectedLessonIndex, "content", editorState);
+                  if (selectedLessonIndex !== null && editorState) {
+                    updateLesson(selectedLessonIndex, "content", editorState);
+                  }
                 }
                 setInternalPage(internalPage - 1);
               }}
