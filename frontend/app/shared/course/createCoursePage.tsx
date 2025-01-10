@@ -50,13 +50,19 @@ export default function createCoursePage() {
   const [editorState, setEditorState] = useState<string | null>(null); // Full editor state
   const [validated, setValidated] = useState(false);
   const [inputs, setInputs] = useState({
-    courseTitle: course?.title || "",
-    courseInfo: course?.info || "",
-    courseType: course?.type || textConstants.courseType_options[0],
-    duration: course?.duration || "",
+    courseTitle: course?.course_name || "", //done
+    courseInfo: course?.description || "", //done
+    courseType:
+      course?.course_type.charAt(0).toUpperCase() +
+        course?.course_type.slice(1) || textConstants.courseType_options[0], //done
+    duration: course?.duration || "", //done
     field: course?.field || "",
-    coursePicture: course?.picture || "",
-    price: course?.price || "",
+    coursePicture: course?.image || "", //done
+    price: course?.price || "", // done
+    // difficulty:
+    //   course?.difficulty.charAt(0).toUpperCase() +
+    //     course?.difficulty.slice(1) ||
+    //   textConstants.courseDifficulty_options[0],
     difficulty: course?.difficulty || textConstants.courseDifficulty_options[0],
     skills: course?.skills || [],
     school: course?.school || "",
@@ -65,7 +71,15 @@ export default function createCoursePage() {
     department: course?.department || "",
     subject: course?.subject || "",
     platform: course?.platform || "",
-    chapters: course?.chapters || [
+    chapters: course?.chapters?.map((chapter: any) => ({
+      ...chapter,
+      lessons: chapter.lessons?.map((lesson: any) => ({
+        ...lesson,
+        lesson_type:
+          lesson.lesson_type.charAt(0).toUpperCase() +
+          lesson.lesson_type.slice(1),
+      })),
+    })) || [
       {
         chapter_id: `${Date.now()}-${Math.random()}`, // unique id
         chapter_title: textConstants.chapter_placeholder + " 1",
@@ -547,19 +561,22 @@ export default function createCoursePage() {
   function removeIds() {
     // remove all chapter IDs and lesson IDs and return the modified chapters
     const modifiedChapters = inputs.chapters.map((chapter: any) => {
-      const modifiedChapter = { ...chapter, title: chapter.chapter_title };
+      const modifiedChapter = { ...chapter };
       // delete modifiedChapter.id;
-      delete modifiedChapter.chapter_id;
-      delete modifiedChapter.chapter_title;
+      if (modifiedChapter.chapter_id.toString().includes("-")) {
+        // sensing ID from frontend
+        // we  delete the ID
+        delete modifiedChapter.chapter_id;
+      } else {
+        // we do not do anything because the ID is from the backend
+      }
       modifiedChapter.lessons = modifiedChapter.lessons.map((lesson: any) => {
         const modifiedLesson = {
           ...lesson,
           lesson_type: lesson.lesson_type.toLowerCase(),
-          name: lesson.lesson_name,
         };
         // delete modifiedLesson.id;
         delete modifiedLesson.lesson_id;
-        delete modifiedLesson.lesson_name;
         return modifiedLesson;
       });
       return modifiedChapter;
@@ -622,6 +639,10 @@ export default function createCoursePage() {
     } else {
       alert(textConstants.courseCreationFailedAlert);
     }
+  }
+
+  function sentenceCaseHelper(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
   function updateCourse(): () => void {
