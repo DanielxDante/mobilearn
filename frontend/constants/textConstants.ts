@@ -630,3 +630,9 @@ export const chatChannel = {
   clipIcon: require("@/assets/images/icons/clipIcon.png"),
   msgInputPlaceholder: "Write a message...",
 };
+
+export const lessonContentPage = {
+  pageHeader: "Lesson Content",
+  homework: "Homework",
+  download: "Click to Download",
+};

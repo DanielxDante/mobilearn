@@ -12,7 +12,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
-//import { courseListData as allCourses } from "@/constants/temporaryCourseData";
 import { Colors } from "@/constants/colors";
 import { instructorCoursePageConstants as textConstants } from "@/constants/textConstants";
 import CourseListItem from "@/components/InstructorCourseListItem";
@@ -27,8 +26,7 @@ import {
 
 const CoursePage = () => {
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
-  // const token = useAuthStore((state) => state.access_token);
-  const getEnrolledCourse = useAppStore((state) => state.getEnrolledCourse);
+  const getCourseDetails = useAppStore((state) => state.getCourseDetails);
   const getInstructorCourses = useAppStore(
     (state) => state.getInstructorCourses
   );
@@ -51,13 +49,14 @@ const CoursePage = () => {
       (course) => course.course_id.toString() === id
     );
     if (courseSelected?.course_id !== undefined) {
-      const courseData = await getEnrolledCourse(courseSelected.course_id);
-      router.push({
-        pathname: INSTRUCTOR_COURSECONTENT,
-        params: {
-          courseSelected: JSON.stringify(courseData),
-        },
-      });
+      try {
+        await getCourseDetails(courseSelected.course_id.toString());
+        router.push({
+          pathname: INSTRUCTOR_COURSECONTENT,
+        });
+      } catch (error) {
+        console.error("Error getting course details)", error);
+      }
     } else {
       console.error("Course ID is undefined");
     }
