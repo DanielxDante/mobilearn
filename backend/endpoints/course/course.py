@@ -439,10 +439,10 @@ class CreateCourseEndpoint(Resource):
                             lesson_type=lesson_data['lesson_type'],
                         )
 
-                        if lesson.lesson_type == 'text':
+                        if lesson.lesson_type == LESSON.TEXT:
                             content = lesson_data['content']
                             lesson.content = content
-                        elif lesson.lesson_type == 'video':
+                        elif lesson.lesson_type == LESSON.VIDEO:
                             video_file = filemap.get(lesson_data['video_key'])
                             if video_file:
                                 video_url = upload_file(video_file, f"lesson_{str(lesson.id)}")
@@ -452,7 +452,7 @@ class CreateCourseEndpoint(Resource):
                                     json.dumps({"message": f"File {lesson_data['video_key']} not found"}),
                                     status=400, mimetype='application/json'
                                 )
-                        elif lesson.lesson_type == 'homework':
+                        elif lesson.lesson_type == LESSON.HOMEWORK:
                             homework_file = filemap.get(lesson_data['homework_key'])
                             if homework_file:
                                 homework_url = upload_file(homework_file, f"lesson_{str(lesson.id)}")
@@ -634,8 +634,6 @@ class EditCourseEndpoint(Resource):
 
         instructor_email = get_jwt_identity()
 
-        # add new chapter
-        # edit/reorder chapter 
         # delete chapter (NOT IMPLEMENTED)
         # add new lesson
         # edit/reorder lesson -> detach all lessons from chapter first
@@ -650,10 +648,16 @@ class EditCourseEndpoint(Resource):
                         status=400, mimetype='application/json'
                     )
                 
-                course = Course.get_course_by_id(session, course_id)
+                course = Course.admin_get_course_by_id(session, course_id)
                 if not course:
                     return Response(
                         json.dumps({"error": "Course not found"}),
+                        status=400, mimetype='application/json'
+                    )
+                
+                if course not in instructor.courses:
+                    return Response(
+                        json.dumps({"error": "Instructor is not offering this course"}),
                         status=400, mimetype='application/json'
                     )
                 
@@ -680,12 +684,90 @@ class EditCourseEndpoint(Resource):
                     **optional_course_data
                 )
 
+                # Edit chapter and lesson structure
+                for chapter_data in content['chapters']:
+                    if 'chapter_id' in chapter_data: # edit/reorder existing chapter
+                        chapter = Chapter.get_chapter_by_id(session, chapter_data['chapter_id'])
+                        if not chapter:
+                            raise ValueError("Chapter not found")
+                        
+                        Chapter.change_title(session, chapter.id, chapter_data['chapter_title'])
+                        Chapter.change_order(session, chapter.id, chapter_data['order'])
+                    else: # add new chapter
+                        chapter = Chapter.add_chapter(
+                            session,
+                            course_id=course.id,
+                            title=chapter_data['chapter_title'],
+                            order=chapter_data['order']
+                        )
+
+                    lesson_ids = [lesson.id for lesson in chapter.lessons]
+
+                    for lesson_data in chapter_data['lessons']:
+                        if 'lesson_id' in lesson_data: # edit/reorder existing lesson
+                            lesson_ids.remove(lesson_data['lesson_id'])
+
+                            ChapterService.detach_lesson(session, chapter.id, lesson_data['lesson_id'])
+
+                            lesson = Lesson.get_lesson_by_id(session, lesson_data['lesson_id'])
+                            if not lesson:
+                                raise ValueError("Lesson not found")
+                            
+                            Lesson.change_name(session, lesson.id, lesson_data['lesson_name'])
+                            Lesson.change_lesson_type(session, lesson.id, lesson_data['lesson_type'], **lesson_data)
+                        else: # add new lesson
+                            lesson = Lesson.add_lesson(
+                                session,
+                                name=lesson_data['lesson_name'],
+                                lesson_type=lesson_data['lesson_type'],
+                            )
+                        
+                        # if lesson.lesson_type == LESSON.TEXT:
+                        #     content = lesson_data['content']
+                        #     lesson.content = content
+                        if lesson.lesson_type == LESSON.VIDEO:
+                            video_file = filemap.get(lesson_data['video_key'])
+                            if video_file:
+                                video_url = upload_file(video_file, f"lesson_{str(lesson.id)}")
+                                lesson.video_url = video_url
+                            else:
+                                return Response(
+                                    json.dumps({"message": f"File {lesson_data['video_key']} not found"}),
+                                    status=400, mimetype='application/json'
+                                )
+                        elif lesson.lesson_type == LESSON.HOMEWORK:
+                            homework_file = filemap.get(lesson_data['homework_key'])
+                            if homework_file:
+                                homework_url = upload_file(homework_file, f"lesson_{str(lesson.id)}")
+                                lesson.homework_url = homework_url
+                            else:
+                                return Response(
+                                    json.dumps({"message": f"File {lesson_data['homework_key']} not found"}),
+                                    status=400, mimetype='application/json'
+                                )
+                        
+                        ChapterService.attach_lesson(session, chapter.id, lesson.id, lesson_data['order'])
+                    
+                    # delete remaining lessons that are not included in the edited chapter
+                    for lesson_id in lesson_ids:
+                        lesson = Lesson.get_lesson_by_id(session, lesson_id)
+                        if not lesson:
+                            raise ValueError("Lesson not found")
+                        
+                        Lesson.delete_lesson(session, lesson.id)
+
+                return Response(
+                    json.dumps({'message': 'Course successfully edited'}),
+                    status=200, mimetype="application/json"
+                )
+
             except ValueError as ee:
                 return Response(
                     json.dumps({"error": str(ee)}),
                     status=400, mimetype='application/json'
                 )
             except Exception as e:
+                print(str(e))
                 return Response(
                     json.dumps({"error": str(e)}),
                     status=500, mimetype='application/json'

@@ -8,7 +8,8 @@ from sqlalchemy import (
     ForeignKey,
     event,
     func,
-    select
+    select,
+    text
 )
 from typing import List
 from sqlalchemy.orm import relationship
@@ -341,7 +342,7 @@ class Course(Base):
             raise ValueError("Course not found")
     
     @staticmethod
-    def change_course_type(session, id, new_course_type, **kwargs):
+    def change_course_type(session, id, new_course_type, **new_course_fields):
         if new_course_type not in COURSE.values():
             raise ValueError("Invalid course type value")
         
@@ -352,65 +353,38 @@ class Course(Base):
         if old_course.course_type == new_course_type:
             return
         
-        builder = {
-            COURSE.ACADEMIC: CourseBuilder.create_academic,
-            COURSE.PROFESSIONAL: CourseBuilder.create_professional,
-            COURSE.SPECIALIZATION: CourseBuilder.create_specialization,
-            COURSE.PROJECT: CourseBuilder.create_project
-        }.get(new_course_type)()
+        # delete old polymprphic course record
+        delete_old_course_command = text(f"DELETE FROM {old_course.__tablename__} WHERE id = :id")
+        session.execute(delete_old_course_command, {'id': old_course.id})
 
-        builder.name(old_course.name).description(old_course.description)
+        type_course_map = {
+            COURSE.ACADEMIC: AcademicCourse,
+            COURSE.PROFESSIONAL: ProfessionalCourse,
+            COURSE.SPECIALIZATION: SpecializationCourse,
+            COURSE.PROJECT: ProjectCourse
+        }
+        new_course_columns = [c.key for c in type_course_map[new_course_type].__table__.columns]
+        new_course_fields = {k: v for k, v in new_course_fields.items() if k in new_course_columns}
 
-        if 'duration' in kwargs:
-            builder.duration(kwargs['duration'])
-        if 'image_url' in kwargs:
-            builder.image_url(kwargs['image_url'])
-        if 'price' in kwargs:
-            builder.price(kwargs['price'], kwargs.get('currency', 'SGD'))
-        if 'difficulty' in kwargs:
-            builder.difficulty(kwargs['difficulty'])
-        if 'skills' in kwargs: # delimited by commas
-            builder.skills(kwargs['skills'])
-        if 'status' in kwargs:
-            builder.status(kwargs['status'])
-            
-        if new_course_type == COURSE.ACADEMIC:
-            if 'school_name' in kwargs:
-                builder.school_name(kwargs['school_name'])
-            if 'program_type' in kwargs:
-                builder.program_type(kwargs['program_type'])
-            if 'field' in kwargs:
-                builder.field(kwargs['field'])
-            if 'major' in kwargs:
-                builder.major(kwargs['major'])
-        elif new_course_type == COURSE.PROFESSIONAL: 
-            if 'department' in kwargs:
-                builder.department(kwargs['department'])
-        elif new_course_type == COURSE.SPECIALIZATION:
-            if 'subject' in kwargs:
-                builder.subject(kwargs['subject'])
-        elif new_course_type == COURSE.PROJECT:
-            if 'platform' in kwargs:
-                builder.platform(kwargs['platform'])
+        # create new polymorphic course record
+        columns = ['id'] + list(new_course_fields.keys())
+        values = [f":{c}" for c in columns]
 
-        new_course = builder.build()
-        new_course.id = old_course.id
-        new_course.community_id = old_course.community_id
-
-        old_course_table = old_course.__tablename__
-        new_course_table = new_course.__tablename__
-
-        session.execute(
-            f"DELETE FROM {old_course_table} WHERE id = :id",
-            {'id': old_course.id}
+        insert_new_course_command = text(
+            f"INSERT INTO {type_course_map[new_course_type].__table__.name} "
+            f"({', '.join(columns)}) "
+            f"VALUES ({', '.join(values)})"
         )
 
-        # session.
+        params = {'id': old_course.id}
+        params.update(new_course_fields)
 
-        session.expire(old_course)
+        session.execute(insert_new_course_command, params)
 
-        session.flush()
+        # update course_type
+        old_course.course_type = new_course_type
 
+        return old_course 
     
     @staticmethod
     def change_duration(session, id, new_duration):
@@ -593,7 +567,7 @@ class ProfessionalCourse(Course):
 
     id = Column(Integer, ForeignKey('courses.id'), primary_key=True)
     department = Column(String, nullable=True) # e.g., Human Resources
-    skill = Column(String, nullable=True) # e.g., Leadership
+    subject = Column(String, nullable=True) # e.g., Leadership
 
     __mapper_args__ = {
         'polymorphic_identity': COURSE.PROFESSIONAL
@@ -610,10 +584,10 @@ class ProfessionalCourse(Course):
             raise ValueError("Course not found")
     
     @staticmethod
-    def change_skill(session, id, new_skill):
+    def change_subject(session, id, new_subject):
         course = ProfessionalCourse.get_course_by_id(session, id)
         if course:
-            course.skill = new_skill
+            course.subject = new_subject
             course.updated = func.now()
             session.flush()
         else:

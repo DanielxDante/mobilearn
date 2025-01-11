@@ -198,11 +198,3 @@ class CourseService:
 
         return progress_query.progress if progress_query else 0.0
     
-    @staticmethod
-    def edit_course(session, course_id):
-        """ Edit course details """
-
-
-
-        pass
-    
