@@ -121,6 +121,12 @@ export const signUpPageConstants = {
     },
   ],
   regButtonText: "Register",
+  inputsEmptyAlert: "Please fill in all fields.",
+  passwordMismatchAlert: "Passwords do not match.",
+  accountDisabledAlert: "Your account has been disabled.",
+  invalidCredentialsAlert:
+    "Please check your email and password and try again.",
+  errorSigningUpAlert: "An error occurred while signing up.",
 };
 
 export const instructorSignUpPageConstants = {
@@ -185,6 +191,9 @@ export const instructorSignUpPageConstants = {
     "+34 Spain",
     "+93 Afghanistan",
   ],
+  inputsEmptyAlert: "Please fill in all fields.",
+  passwordMismatchAlert: "Passwords do not match.",
+  errorSigningUpAlert: "An error occurred while signing up.",
   regButtonText: "Register",
 };
 

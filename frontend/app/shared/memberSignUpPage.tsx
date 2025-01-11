@@ -8,7 +8,11 @@ import InputField from "@/components/InputField";
 import InputDropDownField from "@/components/InputDropDownField";
 //import mobilearnHat from "../../assets/images/MobilearnHat.png";
 import useAuthStore from "@/store/authStore"; // Import the store
-import { signUpPageConstants as Constants } from "@/constants/textConstants";
+import { validateEmail } from "@/constants/regex";
+import {
+  signUpPageConstants as Constants,
+  signUpPageConstants,
+} from "@/constants/textConstants";
 import {
   MEMBER_GUEST_HOME,
   MEMBER_REGISTRATION_SUCCESS,
@@ -19,32 +23,77 @@ const { height, width } = Dimensions.get("window"); // Get the screen width
 export default function signUpPage() {
   const signup = useAuthStore((state) => state.signupUser);
   const login = useAuthStore((state) => state.loginUser);
+  const [inputs, setInputs] = useState({
+    name: "",
+    email: "",
+    gender: "",
+    password: "",
+    conPassword: "",
+    //membership: "normal",
+  });
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [gender, setGender] = useState("");
-  const [password, setPassword] = useState("");
-  const [conPassword, setConPassword] = useState("");
-  const [membership, setMembership] = useState("normal");
+  const [validationErrors, setValidationErrors] = useState({
+    name: false,
+    email: false,
+    gender: false,
+    password: false,
+    conPassword: false,
+    // membership: false,
+  });
+
+  const validateInputs = () => {
+    const errors = {
+      name: !inputs.name,
+      email: !inputs.email || !validateEmail(inputs.email),
+      gender: !inputs.gender,
+      password: !inputs.password,
+      conPassword: !inputs.conPassword,
+      // membership: !inputs.membership,
+    };
+    setValidationErrors(errors);
+    return Object.values(errors).every((error) => !error);
+  };
+
+  const handleInputChange = (name: string, value: string) => {
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
+    console.log(inputs);
+  };
 
   const handleRegistration = async () => {
+    if (!validateInputs()) {
+      alert(signUpPageConstants.inputsEmptyAlert);
+      return;
+    }
+    if (inputs.password !== inputs.conPassword) {
+      alert(signUpPageConstants.passwordMismatchAlert);
+      return;
+    }
     try {
-      await signup(name, email, password, gender.toLowerCase(), membership);
-      //router.push(MEMBER_REGISTRATION_SUCCESS);
-      const response = await login(email, password);
-
+      await signup(
+        inputs.name,
+        inputs.email,
+        inputs.password,
+        inputs.gender.toLowerCase(),
+        "normal"
+      );
+      //immediately login the user
+      const response = await login(inputs.email, inputs.password);
+      console.log(response);
       if (response === "normal") {
         router.push(MEMBER_REGISTRATION_SUCCESS);
       } else if (response === "User disabled") {
-        alert("Your account has been disabled. Please contact the admin.");
+        alert(signUpPageConstants.accountDisabledAlert);
       } else if (response === "Invalid credentials") {
-        alert("Please check your email and password and try again.");
+        alert(signUpPageConstants.invalidCredentialsAlert);
       } else {
-        alert("An error occurred while logging in");
+        alert(signUpPageConstants.errorSigningUpAlert);
       }
     } catch (error) {
       console.log(error);
-      alert("An error occurred while signing up");
+      alert(signUpPageConstants.errorSigningUpAlert);
     }
   };
 
@@ -100,34 +149,34 @@ export default function signUpPage() {
         <InputField
           inputTitle={Constants.fields[0].inputTitle}
           placeholder={Constants.fields[0].placeHolder ?? ""}
-          value={name}
-          onChangeText={setName}
+          value={inputs.name}
+          onChangeText={(value) => handleInputChange("name", value)}
         />
         <InputField
           inputTitle={Constants.fields[1].inputTitle}
           placeholder={Constants.fields[1].placeHolder ?? ""}
-          value={email}
-          onChangeText={setEmail}
+          value={inputs.email}
+          onChangeText={(value) => handleInputChange("email", value)}
         />
         <InputDropDownField
           inputTitle={Constants.fields[2].inputTitle}
           options={Constants.fields[2].options ?? []}
-          value={gender}
-          onChange={setGender}
+          value={inputs.gender}
+          onChange={(value) => handleInputChange("gender", value)}
         />
         <InputField
           inputTitle={Constants.fields[3].inputTitle}
           placeholder={Constants.fields[3].placeHolder ?? ""}
           secureTextEntry={true}
-          value={password}
-          onChangeText={setPassword}
+          value={inputs.password}
+          onChangeText={(value) => handleInputChange("password", value)}
         />
         <InputField
           inputTitle={Constants.fields[4].inputTitle}
           placeholder={Constants.fields[4].placeHolder ?? ""}
           secureTextEntry={true}
-          value={conPassword}
-          onChangeText={setConPassword}
+          value={inputs.conPassword}
+          onChangeText={(value) => handleInputChange("conPassword", value)}
         />
         <RegisterButton
           text={Constants.regButtonText}
