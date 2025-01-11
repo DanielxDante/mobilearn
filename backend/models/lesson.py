@@ -1,4 +1,4 @@
-from sqlalchemy import Enum, Column, Integer, Text, String, ForeignKey, DateTime, func
+from sqlalchemy import Enum, Column, Integer, Text, String, ForeignKey, DateTime, func, text
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -163,6 +163,51 @@ class Lesson(Base):
         session.flush()
 
         return lesson
+    
+    @staticmethod
+    def change_lesson_type(session, id, new_lesson_type, **new_lesson_fields):
+        if new_lesson_type not in LESSON.values():
+            raise ValueError("Invalid lesson type")
+
+        old_lesson = Lesson.get_lesson_by_id(session, id)
+        if not old_lesson:
+            raise ValueError("Lesson not found")
+        
+        if old_lesson.lesson_type == new_lesson_type:
+            return
+        
+        # delete old polymorphic lesson record
+        delete_old_lesson_command = text(f"DELETE FROM {old_lesson.__tablename__} WHERE id = :id")
+        session.execute(delete_old_lesson_command, {'id': old_lesson.id})
+
+        type_lesson_map = {
+            LESSON.TEXT: TextLesson,
+            LESSON.VIDEO: VideoLesson,
+            LESSON.HOMEWORK: HomeworkLesson
+        }
+
+        new_lesson_columns = [c.key for c in type_lesson_map[new_lesson_type].__table__.columns]
+        new_lesson_fields = {k: v for k, v in new_lesson_fields.items() if k in new_lesson_columns}
+
+        # create new polymorphic lesson record
+        columns = ['id'] + list(new_lesson_fields.keys())
+        values = [f":{c}" for c in columns]
+
+        insert_new_lesson_command = text(
+            f"INSERT INTO {type_lesson_map[new_lesson_type].__tablename__}"
+            f"({', '.join(columns)})"
+            f"VALUES ({', '.join(values)})"
+        )
+
+        params = {'id': old_lesson.id}
+        params.update(new_lesson_fields)
+
+        session.execute(insert_new_lesson_command, params)
+
+        # update lesson_type
+        old_lesson.lesson_type = new_lesson_type
+
+        return old_lesson
     
     @staticmethod
     def delete_lesson(session, id):
