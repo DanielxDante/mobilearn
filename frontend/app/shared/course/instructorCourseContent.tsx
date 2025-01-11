@@ -18,33 +18,33 @@ import { Colors } from "@/constants/colors";
 import { courseContentConstants as Constants } from "@/constants/textConstants";
 import Chapter from "@/types/shared/Course/Chapter";
 import Lesson from "@/types/shared/Course/Lesson";
+import useAppStore from "@/store/appStore";
+import icons from "@/constants/icons";
 
 const CourseContent = () => {
-  const { courseSelected } = useLocalSearchParams();
-  const course: Course =
-    typeof courseSelected === "string" ? JSON.parse(courseSelected) : [];
-  const [videoUrl, setVideoUrl] = useState(
-    course.chapters[0].lessons[0].contentUrl
-  );
+  const course = useAppStore((state) => state.selectedCourse);
 
-  const [selectedChapterId, setSelectedChapterId] = useState<number>(
-    course.chapters[0]?.chapter_id
+  const [selectedChapterId, setSelectedChapterId] = useState<string>(
+    course?.chapters[0]?.chapter_id ?? ""
   );
-  const selectedChapter = course.chapters.find(
+  const selectedChapter = course?.chapters.find(
     (chapter) => chapter.chapter_id === selectedChapterId
   );
 
-  const handleChapterSelect = (chapterId: number) => {
+  const handleChapterSelect = (chapterId: string) => {
     setSelectedChapterId(chapterId);
     console.log("Chapter: " + chapterId);
   };
 
-  const handleLessonSelect = (lessonId: number) => {
+  const handleLessonSelect = async (lessonId: string) => {
     console.log("Lesson id: " + lessonId);
-    const lessonSelected = course.chapters
+    const lessonSelected = course?.chapters
       .map((chapter) => chapter.lessons)
       .flat()
       .find((lesson) => lesson.lesson_id === lessonId);
+    // const lessonSelected = await getLesson(lessonId);
+
+    console.log("Lesson selected: ", lessonSelected);
     router.push({
       pathname: "./lessonContent",
       params: {
@@ -55,144 +55,137 @@ const CourseContent = () => {
 
   const renderLectureItem = (lesson: Lesson, order: number) => (
     <View style={styles.lessonItemContainer}>
-      {/* Lessone title */}
+      {/* Lesson title */}
       <Text style={styles.lessonTitle} numberOfLines={1}>
         {Constants.lesson} {order}: {lesson.lesson_name}
       </Text>
-      {/* <View style={styles.lessonContainer}>
-        <TouchableOpacity
-          style={styles.topicContainer}
-          onPress={() => handleLessonSelect(lesson.lesson_id)}
-        >
-          <View style={styles.lessonContainerDescription}>
-            <Text style={styles.lessonDescription} numberOfLines={3}>
-              Lesson Description
-            </Text>
-            <View style={styles.lessonBar}></View>
-          </View>
-        </TouchableOpacity>
-      </View> */}
     </View>
   );
 
-  // console.log(course.chapters.find(chapter => chapter.id==selectedChapterId))
-
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Image
-            source={require("../../../assets/images/icons/arrow-left-line.png")}
-            //style={styles.backButton}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.editCourseButton}
-          onPress={() =>
-            router.push({
-              pathname: "./createCoursePage",
-              params: { courseToEdit: JSON.stringify(course) },
-            })
-          }
-        >
-          <Text style={styles.editCourseButtonText}>Edit Course</Text>
-        </TouchableOpacity>
-      </View>
-      {/* if video is not available, show a placeholder image */}
-      {videoUrl ? (
-        <View style={styles.videoContainer}>
-          {/* Video component */}
-          <VideoPlayer uri={videoUrl} />
+    course && (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.appBarContainer}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={{ marginBottom: 16, alignSelf: "flex-start" }}
+          >
+            <Image
+              source={icons.backButton}
+              style={{
+                width: 24,
+                height: 24,
+                marginRight: 12,
+                tintColor: Colors.darkGray,
+              }}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.editCourseButton}
+            onPress={() => {
+              console.log("Course to edit: ", course);
+              router.push({
+                pathname: "./createCoursePage",
+                params: { courseToEdit: JSON.stringify(course) },
+              });
+            }}
+          >
+            <Text style={styles.editCourseButtonText}>Edit Course</Text>
+          </TouchableOpacity>
         </View>
-      ) : (
+        {/* if video is not available, show a placeholder image */}
+
         <Image
-          source={{ uri: course.course_image }}
+          source={{ uri: course?.image }}
           style={styles.courseImage}
           resizeMode="cover"
         />
-      )}
 
-      <ScrollView>
-        {/* Course title and subtitle */}
-        <Text style={styles.title}>{course.course_name}</Text>
-        <Text style={styles.school}>{course.community_name}</Text>
-        <Text style={styles.courseContentsTitle}>
-          {Constants.courseContents}
-        </Text>
-        {/* Chapter buttons */}
-        <View style={styles.chapterButtonContainer}>
-          {course.chapters.length <= 3 ? (
-            // Render up to 4 chapter buttons if there are 3 or fewer chapters
-            course.chapters.map((chapter) => (
-              <TouchableOpacity
-                key={chapter.chapter_id}
-                style={[
-                  styles.chapterButton,
-                  {
-                    backgroundColor:
-                      selectedChapterId === chapter.chapter_id
-                        ? Colors.defaultBlue
-                        : "#E0E0E0",
-                  },
-                ]}
-                onPress={() => handleChapterSelect(chapter.chapter_id)}
-              >
-                <Text
+        <ScrollView>
+          {/* Course title and subtitle */}
+          <Text style={styles.title}>{course.course_name}</Text>
+          <Text style={styles.school}>{course.community_name}</Text>
+          <Text style={styles.courseContentsTitle}>
+            {Constants.courseContents}
+          </Text>
+          {/* Chapter buttons */}
+          <View style={styles.chapterButtonContainer}>
+            {course.chapters.length <= 3 ? (
+              // Render up to 4 chapter buttons if there are 3 or fewer chapters
+              course.chapters.map((chapter) => (
+                <TouchableOpacity
+                  key={chapter.chapter_id}
                   style={[
-                    styles.chapterButtonText,
+                    styles.chapterButton,
                     {
-                      color:
+                      backgroundColor:
                         selectedChapterId === chapter.chapter_id
-                          ? "#FFF"
-                          : "#000",
+                          ? Colors.defaultBlue
+                          : "#E0E0E0",
                     },
                   ]}
+                  onPress={() => handleChapterSelect(chapter.chapter_id)}
                 >
-                  {Constants.chapter} {chapter.order}
-                </Text>
+                  <Text
+                    style={[
+                      styles.chapterButtonText,
+                      {
+                        color:
+                          selectedChapterId === chapter.chapter_id
+                            ? "#FFF"
+                            : "#000",
+                      },
+                    ]}
+                  >
+                    {Constants.chapter} {chapter.order}
+                  </Text>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View style={styles.picker}>
+                <RNPickerSelect
+                  onValueChange={(value) => {
+                    handleChapterSelect(value);
+                    console.log("RNPicker value: " + value);
+                  }}
+                  items={course.chapters.map((chapter) => ({
+                    label: `${chapter.order}. ${chapter.chapter_title}`,
+                    value: chapter.chapter_id,
+                  }))}
+                  placeholder={{
+                    label: Constants.pickerPlaceholder,
+                    value: null,
+                  }}
+                  style={{
+                    placeholder: {
+                      color: "#A9A9A9",
+                    },
+                  }}
+                  value={selectedChapterId}
+                />
+              </View>
+            )}
+          </View>
+
+          <Text style={styles.chapterContentsTitle}>
+            {selectedChapter?.chapter_title}
+          </Text>
+          {selectedChapter && selectedChapter.lessons.length > 0 ? (
+            selectedChapter.lessons.map((lesson: Lesson, order: number) => (
+              <TouchableOpacity
+                key={lesson.lesson_id}
+                onPress={() => handleLessonSelect(lesson.lesson_id)}
+              >
+                <View>{renderLectureItem(lesson, order + 1)}</View>
               </TouchableOpacity>
             ))
           ) : (
-            <View style={styles.picker}>
-              <RNPickerSelect
-                onValueChange={(value) => {
-                  handleChapterSelect(value);
-                  console.log("RNPicker value: " + value);
-                }}
-                items={course.chapters.map((chapter) => ({
-                  label: `${chapter.order}. ${chapter.chapter_title}`,
-                  value: chapter.chapter_id,
-                }))}
-                placeholder={{
-                  label: Constants.pickerPlaceholder,
-                  value: null,
-                }}
-                style={{
-                  placeholder: {
-                    color: "#A9A9A9",
-                  },
-                }}
-                value={selectedChapterId}
-              />
-            </View>
+            <Text>No lessons available</Text> // Fallback if no lectures
           )}
-        </View>
-
-        <Text style={styles.chapterContentsTitle}>
-          {selectedChapter?.chapter_title}
-        </Text>
-        {selectedChapter && selectedChapter.lessons.length > 0 ? (
-          selectedChapter.lessons.map((lesson: Lesson, order: number) => (
-            <View key={lesson.lesson_id}>
-              {renderLectureItem(lesson, order + 1)}
-            </View>
-          ))
-        ) : (
-          <Text>No lessons available</Text> // Fallback if no lectures
-        )}
-        <View style={styles.spaceBelow}></View>
-      </ScrollView>
-    </SafeAreaView>
+          <View style={styles.spaceBelow}></View>
+        </ScrollView>
+      </SafeAreaView>
+    )
   );
 };
 
@@ -207,8 +200,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 10,
   },
+  appBarContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 4,
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.defaultBlue,
+  },
   videoContainer: {
-    marginTop: 10,
+    // marginTop: 10,
     marginHorizontal: 16,
     borderRadius: 10,
     overflow: "hidden",
@@ -220,12 +223,14 @@ const styles = StyleSheet.create({
   courseImage: {
     width: "100%",
     height: 200,
-    marginTop: 5,
+    // marginTop: 5,
   },
   editCourseButton: {
     padding: 5,
     backgroundColor: Colors.tabsIconGray,
     borderRadius: 5,
+    alignSelf: "flex-end",
+    marginBottom: 16,
   },
   editCourseButtonText: {
     fontSize: 10,

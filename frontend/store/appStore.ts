@@ -23,10 +23,13 @@ import {
   COURSE_USER_WITHDRAW_COURSE_URL,
   COURSE_GET_ALL_INSTRUCTOR_COURSES,
   COURSE_CREATE_COURSE,
+  COURSE_INSTRUCTOR_GET_PREVIEW_LESSON,
+  COURSE_INSTRUCTOR_GET_COURSE_DETAILS,
 } from "@/constants/routes";
 import Channel from "@/types/shared/Channel";
 import Course from "@/types/shared/Course/Course";
 import Review from "@/types/shared/Course/Review";
+import Lesson from "@/types/shared/Course/Lesson";
 
 export interface AppState {
   channels: Channel[]; // List of Channels that user has access to
@@ -38,6 +41,7 @@ export interface AppState {
   review?: Review; // Not sure if review or reviews should be stored
   instructor_courses: Course[];
   selectedCourse?: Course;
+  instructorPreviewedLesson?: Lesson;
   fetchPaymentSheet: (
     amount: string,
     currency: string
@@ -57,6 +61,7 @@ export interface AppState {
     page?: string,
     per_page?: string
   ) => Promise<Course[]>;
+  getInstructorPreviewedLesson: (lesson_id: string) => Promise<Lesson>;
   searchCourse: (
     channel_id: number,
     search_term?: string,
@@ -66,6 +71,7 @@ export interface AppState {
   addFavouriteCourse: (course_id: number) => Promise<void>;
   enrollCourse: (course_id: number) => Promise<void>;
   getEnrolledCourses: (page?: string, per_page?: string) => Promise<void>;
+  getCourseDetails: (course_id: string) => Promise<void>;
   getFavouriteCourses: (page?: string, per_page?: string) => Promise<void>;
   getRecommendedCourses: (
     page?: string,
@@ -186,7 +192,7 @@ export const useAppStore = create<AppState>()(
               headers: { "Content-Type": "application/json" },
             }
           );
-          console.log(response);
+          // console.log(response);
           const responseData = response.data;
           if (response.status === 200) {
             set({
@@ -285,6 +291,49 @@ export const useAppStore = create<AppState>()(
           } else {
             //  RETURN NEXT 5 COURSES TO COMPONENT (topCoursesSeeAll)
             return mappedCourses;
+          }
+        } catch (error: any) {
+          console.error(error.message);
+        }
+      },
+      getInstructorPreviewedLesson: async (lesson_id) => {
+        console.log(
+          "(Store) Get Instructor Previewed Lesson for lesson: " + lesson_id
+        );
+        try {
+          const response = await axios.get(
+            `${COURSE_INSTRUCTOR_GET_PREVIEW_LESSON}/${lesson_id.toString()}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = await response.data;
+          if (response.status === 200) {
+            set({
+              instructorPreviewedLesson: responseData,
+            });
+            console.log("Instructor Previewed Lesson: ", responseData);
+            return responseData;
+          }
+        } catch (error: any) {
+          console.error(error.message);
+        }
+      },
+      getCourseDetails: async (course_id) => {
+        console.log("(Store) Get Course Details for course: " + course_id);
+        try {
+          const response = await axios.get(
+            `${COURSE_INSTRUCTOR_GET_COURSE_DETAILS}/${course_id}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status === 200) {
+            set({
+              selectedCourse: responseData,
+            });
+            // console.log("Course Details: ", responseData);
           }
         } catch (error: any) {
           console.error(error.message);
