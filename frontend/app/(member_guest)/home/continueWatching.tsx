@@ -29,7 +29,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
                     <Text style={styles.courseTitle} numberOfLines={1}>
                         {item.course_name}
                     </Text>
-                    <Text style={styles.courseSchool}>
+                    <Text style={styles.courseSchool} numberOfLines={1}>
                         {item.community_name}
                     </Text>
                     <View style={styles.ratingContainer}>
@@ -67,7 +67,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
             <Text style={styles.headerText}>
                 {Constants.continueWatchingSubtitle}
             </Text>
-            {courseData.map(renderItem)}
+            {courseData.slice(0,2).map(renderItem)}
         </View>
     );
 };

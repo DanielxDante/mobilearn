@@ -24,29 +24,18 @@ import useAuthStore from "@/store/authStore";
 
 const PaymentOverview = () => {
     // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
-    const numLectures = 50;
-    const learningTime = "4 Weeks";
     const certicationType = "Online Certification";
-    const skills = [
-        "Typography",
-        "Layout Composition",
-        "Branding",
-        "Visual communication",
-        "Editorial design",
-    ];
-    const price = 35;
 
     const name = useAuthStore((state) => state.username);
     const email = useAuthStore((state) => state.email);
+    const courseData = useAppStore((state) => state.selectedCourse);
+    const enrollCourse = useAppStore((state) => state.enrollCourse)
+
     const fetchStripePaymentSheet = useAppStore(
         (state) => state.fetchPaymentSheet
     );
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [loading, setLoading] = useState(false);
-
-    const { courseSelected } = useLocalSearchParams();
-    const course: Course =
-        typeof courseSelected === "string" ? JSON.parse(courseSelected) : [];
 
     const handleSkillPress = (skill: string) => {
         console.log(skill);
@@ -85,12 +74,18 @@ const PaymentOverview = () => {
             if (error) {
                 Alert.alert("Payment cancelled", "You have cancelled payment.");
             } else {
-                router.push({
-                    pathname: "./paymentCompleted",
-                    params: {
-                        courseSelected: courseSelected,
-                    },
-                });
+                const response = await enrollCourse(Number(courseId));
+                if (response === 200) {
+                    router.push({
+                        pathname: "./paymentCompleted",
+                        params: {
+                            courseId: courseId,
+                        },
+                    });
+                } else {
+                    Alert.alert("Error" + response, "An error occured in the store.")
+                }
+                
             }
         } catch (error) {
             Alert.alert(
@@ -101,7 +96,8 @@ const PaymentOverview = () => {
             setLoading(false);
         }
     };
-
+    console.log(courseData);
+    const { courseId } = useLocalSearchParams();
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
@@ -109,99 +105,140 @@ const PaymentOverview = () => {
                 <BackButton />
             </View>
             <ScrollView>
-                {/* Title */}
-                <View style={styles.titleView}>
-                    <Text style={styles.title}>{Constants.title}</Text>
-                </View>
-                {/* Course title */}
-                <View style={styles.courseTitleContainer}>
-                    <Text style={styles.courseTitle}>
-                        {Constants.courseNameSubtitle}
-                    </Text>
-                    <Text style={styles.courseName}>{course.title}</Text>
-                </View>
-                {/* Course Info */}
-                <View style={styles.courseInfoContainer}>
-                    <View style={styles.courseInfo}>
-                        <Image
-                            source={icons.lecture}
-                            style={styles.courseInfoIcon}
-                        />
-                        <Text style={styles.courseInfoText}>
-                            {"   "}
-                            {numLectures}
-                            {Constants.numLectures}
-                        </Text>
+                {
+                    (courseData && courseData.course_id.toString() == courseId ) && (
+                        <View>
+                            {/* Title */}
+                    <View style={styles.titleView}>
+                        <Text style={styles.title}>{Constants.title}</Text>
                     </View>
-                    <View style={styles.courseInfo}>
-                        <Image
-                            source={icons.clock}
-                            style={styles.courseInfoIcon}
-                        />
-                        <Text style={styles.courseInfoText}>
-                            {"   "}
-                            {learningTime}
+                    {/* Course title */}
+                    <View style={styles.courseTitleContainer}>
+                        <Text style={styles.courseTitle}>
+                            {Constants.courseNameSubtitle}
                         </Text>
+                        <View style={styles.courseNameContainer}>
+                            <Text style={styles.courseName} numberOfLines={2} ellipsizeMode="tail">{courseData.course_name}</Text>
+                        </View>
                     </View>
-                    <View style={styles.courseInfo}>
-                        <Image
-                            source={icons.certification}
-                            style={styles.courseInfoIcon}
-                        />
-                        <Text style={styles.courseInfoText}>
-                            {"   "}
-                            {certicationType}
+                    {/* Course Info */}
+                    <View style={styles.courseInfoContainer}>
+                        <View style={styles.courseInfo}>
+                            <Image
+                                source={icons.lecture}
+                                style={styles.courseInfoIcon}
+                            />
+                            <Text style={styles.courseInfoText}>
+                                {"   "}
+                                {courseData.lesson_count}
+                                {Constants.numLectures}
+                            </Text>
+                        </View>
+                        <View style={styles.courseInfo}>
+                            <Image
+                                source={icons.clock}
+                                style={styles.courseInfoIcon}
+                            />
+                            <Text style={styles.courseInfoText}>
+                                {"   "}
+                                {courseData.duration}
+                            </Text>
+                        </View>
+                        <View style={styles.courseInfo}>
+                            <Image
+                                source={icons.certification}
+                                style={styles.courseInfoIcon}
+                            />
+                            <Text style={styles.courseInfoText}>
+                                {"   "}
+                                {certicationType}
+                            </Text>
+                        </View>
+                    </View>
+                    {/* Skills section */}
+                    <View style={styles.skillSection}>
+                        <Text style={styles.skillsTitle}>
+                            {Constants.skillsTitle}
                         </Text>
+                        <View style={styles.skillsContainer}>
+                            {courseData.skills?.split(", ").map((skill, index) => (
+                                              <TouchableOpacity
+                                                key={index}
+                                                style={styles.skillButton}
+                                                onPress={() => handleSkillPress(skill)}
+                                              >
+                                                <Text style={styles.skillText}>{skill}</Text>
+                                              </TouchableOpacity>
+                                            ))}
+                        </View>
                     </View>
-                </View>
-                {/* Skills section */}
-                <View style={styles.skillSection}>
-                    <Text style={styles.skillsTitle}>
-                        {Constants.skillsTitle}
-                    </Text>
-                    <View style={styles.skillsContainer}>
-                        {skills.map((skill, index) => (
+                    {/* Price section */}
+                    <View style={styles.priceContainer}>
+                        <View style={styles.priceContainerLeft}>
+                            <Image
+                                source={Constants.dollarIcon}
+                                style={styles.dollarIcon}
+                            />
+                            <Text style={styles.totalPrice}>
+                                {"  "}
+                                {Constants.totalPrice}
+                            </Text>
+                        </View>
+                        {
+                            (courseData.price === "0.00" || parseFloat(courseData.price) === 0) ? (
+                                <Text style={styles.totalPrice}>
+                                {Constants.free}
+                        </Text>
+                            ) : (
+                                <Text style={styles.totalPrice}>
+                            {courseData.price}
+                            {Constants.currency}
+                        </Text>
+                            )
+                        }
+                    </View>
+                    {/* Horizontal line */}
+                    <View style={styles.horizontalLine}></View>
+                    {/* Continue Button */}
+                    {
+                        (courseData.price === "0.00" || parseFloat(courseData.price) === 0) ? (
                             <TouchableOpacity
-                                key={index}
-                                style={styles.skillButton}
-                                onPress={() => handleSkillPress(skill)}
+                                style={styles.continueButton}
+                                onPress={async () => {
+                                    const response = await enrollCourse(Number(courseId));
+                                    if (response === 200) {
+                                        router.push({
+                                            pathname: "./paymentCompleted",
+                                            params: {
+                                                courseId: courseId,
+                                            },
+                                        });
+                                    }
+                                }}
                             >
-                                <Text style={styles.skillText}>{skill}</Text>
+                                <Text style={styles.continueText}>
+                                    {Constants.continueButton}
+                                </Text>
                             </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-                {/* Price section */}
-                <View style={styles.priceContainer}>
-                    <View style={styles.priceContainerLeft}>
-                        <Image
-                            source={Constants.dollarIcon}
-                            style={styles.dollarIcon}
-                        />
-                        <Text style={styles.totalPrice}>
-                            {"  "}
-                            {Constants.totalPrice}
-                        </Text>
-                    </View>
-                    <Text style={styles.totalPrice}>
-                        {price}
-                        {Constants.currency}
-                    </Text>
-                </View>
-                {/* Horizontal line */}
-                <View style={styles.horizontalLine}></View>
-                {/* Continue Button */}
-                <TouchableOpacity
-                    style={styles.continueButton}
-                    onPress={() => {
-                        const default_currency = "SGD";
-                        handlePayment(price, default_currency);
-                    }}
-                >
-                    <Text style={styles.continueText}>
-                        {Constants.continueButton}
-                    </Text>
-                </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity
+                                style={styles.continueButton}
+                                onPress={() => {
+                                    const default_currency = "SGD";
+                                    handlePayment(Number(courseData.price), default_currency);
+                                }}
+                            >
+                            <Text style={styles.continueText}>
+                                {Constants.continueButton}
+                            </Text>
+                            </TouchableOpacity>
+                        )
+                    }
+                    
+                        </View>
+                    )
+                }
+                    
             </ScrollView>
         </SafeAreaView>
     );
@@ -213,6 +250,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "white",
+        padding: 1,
     },
     appBarContainer: {
         flexDirection: "row",
@@ -232,13 +270,16 @@ const styles = StyleSheet.create({
     },
     courseTitleContainer: {
         flexDirection: "row",
-        alignItems: "center",
+        alignItems: "flex-start",
     },
     courseTitle: {
         marginLeft: 20,
         fontFamily: "Inter-SemiBold",
         color: Colors.defaultBlue,
         fontSize: 15,
+    },
+    courseNameContainer: {
+        flex: 1,
     },
     courseName: {
         fontFamily: "Inter-Regular",

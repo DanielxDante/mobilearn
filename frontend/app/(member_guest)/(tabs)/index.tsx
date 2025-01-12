@@ -57,7 +57,7 @@ const Home = () => {
         if (enrolledCourses && enrolledCourses.length > 0) {
             setContinueWatchingData(enrolledCourses.slice(0, 5));
         }
-    }, [recommendedCourses]);
+    }, [enrolledCourses]);
     useEffect(() => {
         if (recommendedCourses.length > 0) {
             setSuggestionsData(recommendedCourses.slice(0, 5));
