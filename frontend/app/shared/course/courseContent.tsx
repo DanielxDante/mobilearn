@@ -75,7 +75,7 @@ const CourseContent = () => {
         const lessonSelected = course?.chapters
             .map((chapter) => chapter.lessons)
             .flat()
-            .find((lesson) => lesson.lesson_id === lessonId.toString());
+            .find((lesson) => lesson.lesson_id === lessonId);
         router.push({
             pathname: "./lessonContent",
             params: {
@@ -83,18 +83,20 @@ const CourseContent = () => {
             },
         });
     };
+    console.log(course?.chapters[0].lessons)
 
     const renderLectureItem = (lesson: Lesson) => (
         <View style={styles.lessonItemContainer}>
-            {/* Lesson title */}
-            <Text style={styles.lessonTitle} numberOfLines={1}>
-                {Constants.lesson} {lesson.lesson_id}: {lesson.lesson_name}
-            </Text>
+            
             <View style={styles.lessonContainer}>
                 <TouchableOpacity
                     style={styles.topicContainer}
                     onPress={() => handleLessonSelect(lesson.lesson_id)}
                 >
+                    {/* Lesson title */}
+                    <Text style={styles.lessonTitle} numberOfLines={1}>
+                        {Constants.lesson} {lesson.lesson_id}: {lesson.lesson_name}
+                    </Text>
                     {/* For lesson description if there will be any */}
                     {/* <View style={styles.lessonContainerDescription}>
                         <Text
@@ -181,7 +183,7 @@ const CourseContent = () => {
                                 }}
                                 items={course.chapters.sort((a,b) => a.order - b.order)
                                     .map((chapter) => ({
-                                    label: `Chapter ${chapter.order}`,
+                                    label: `Chapter ${chapter.order}: ${chapter.chapter_title}`,
                                     value: chapter.chapter_id,
                                 }))}
                                 placeholder={{
