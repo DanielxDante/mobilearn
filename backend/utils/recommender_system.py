@@ -60,7 +60,7 @@ class HybridRecommenderNet(pl.LightningModule):
         
         return self.predictor(combined).squeeze()
 
-class AdvancedCourseRecommender:
+class CourseRecommender:
     def __init__(self, use_gpu: bool = True):
         self.device = torch.device('cuda' if use_gpu and torch.cuda.is_available() else 'cpu')
         self.model = None
@@ -250,7 +250,7 @@ class AdvancedCourseRecommender:
         self.logger.info(f"Model loaded from {path}")
 
 # Initialize
-recommender = AdvancedCourseRecommender()
+recommender = CourseRecommender()
 
 # Train
 recommender.fit(interactions_df, courses_df)

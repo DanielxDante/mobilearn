@@ -60,6 +60,7 @@ class CourseBuilder:
         builder = cls(COURSE.PROFESSIONAL)
         builder._specific_attrs = {
             'department': None,
+            'expertise': None
         }
         return builder
 
@@ -148,6 +149,12 @@ class CourseBuilder:
         if self._course['course_type'] != COURSE.PROFESSIONAL:
             raise ValueError("department is only valid for professional courses")
         self._specific_attrs['department'] = department
+        return self
+    
+    def expertise(self, expertise: str) -> 'CourseBuilder':
+        if self._course['course_type'] != COURSE.PROFESSIONAL:
+            raise ValueError("expertise is only valid for professional courses")
+        self._specific_attrs['expertise'] = expertise
         return self
     
     # SpecializationCourse methods
@@ -302,6 +309,8 @@ class Course(Base):
             elif course_type == COURSE.PROFESSIONAL: 
                 if 'department' in kwargs:
                     builder.department(kwargs['department'])
+                if 'expertise' in kwargs:
+                    builder.expertise(kwargs['expertise'])
             elif course_type == COURSE.SPECIALIZATION:
                 if 'subject' in kwargs:
                     builder.subject(kwargs['subject'])
@@ -567,7 +576,7 @@ class ProfessionalCourse(Course):
 
     id = Column(Integer, ForeignKey('courses.id'), primary_key=True)
     department = Column(String, nullable=True) # e.g., Human Resources
-    subject = Column(String, nullable=True) # e.g., Leadership
+    expertise = Column(String, nullable=True) # e.g., Leadership
 
     __mapper_args__ = {
         'polymorphic_identity': COURSE.PROFESSIONAL

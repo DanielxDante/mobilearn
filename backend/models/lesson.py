@@ -1,10 +1,11 @@
 from sqlalchemy import Enum, Column, Integer, Text, String, ForeignKey, DateTime, func, text
 from sqlalchemy.orm import relationship
-
+from sqlalchemy.ext.associationproxy import association_proxy
 from database import Base
 from enums.lesson import LESSON
 from models.user import User
 from models.chapter import Chapter
+from models.chapter_lesson import ChapterLesson
 
 class LessonBuilder:
     """ Unified builder for creating Lesson instances with factory method """
@@ -244,12 +245,19 @@ class TextLesson(Lesson):
 
         return lesson
 
-    def to_dict(self):
+    def to_dict(self, session, chapter_id):
+        chapter_lesson = (
+            session.query(ChapterLesson)
+            .filter_by(lesson_id=self.id, chapter_id=chapter_id)
+            .first()
+        )
+
         return {
             'lesson_id': self.id,
             'lesson_name': self.name,
             'lesson_type': self.lesson_type,
-            'content': self.content
+            'content': self.content,
+            'order': chapter_lesson.order
         }
 
 class VideoLesson(Lesson):
@@ -273,12 +281,19 @@ class VideoLesson(Lesson):
 
         return lesson
 
-    def to_dict(self):
+    def to_dict(self, session, chapter_id):
+        chapter_lesson = (
+            session.query(ChapterLesson)
+            .filter_by(lesson_id=self.id, chapter_id=chapter_id)
+            .first()
+        )
+
         return {
             'lesson_id': self.id,
             'lesson_name': self.name,
             'lesson_type': self.lesson_type,
-            'video_url': self.video_url
+            'video_url': self.video_url,
+            'order': chapter_lesson.order
         }
 
 class HomeworkLesson(Lesson):
@@ -305,10 +320,17 @@ class HomeworkLesson(Lesson):
 
         return lesson
 
-    def to_dict(self):
+    def to_dict(self, session, chapter_id):
+        chapter_lesson = (
+            session.query(ChapterLesson)
+            .filter_by(lesson_id=self.id, chapter_id=chapter_id)
+            .first()
+        )
+
         return {
             'lesson_id': self.id,
             'lesson_name': self.name,
             'lesson_type': self.lesson_type,
-            'homework_url': self.homework_url
+            'homework_url': self.homework_url,
+            'order': chapter_lesson.order
         }

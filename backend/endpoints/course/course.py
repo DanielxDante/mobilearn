@@ -100,30 +100,38 @@ class GetEnrolledCourseEndpoint(Resource):
 
         try:
             course = Course.get_course_by_id(session, course_id)
+
+            course_info = {
+                'course_id': course.id,
+                'community_id': course.community_id,
+                'course_image': course.image_url,
+                'course_name': course.name,
+                'community_name': course.community.name,
+                'description': course.description,
+                'instructors': [{
+                    'instructor_id': instructor.id,
+                    'instructor_name': instructor.name,
+                    'instructor_profile_picture': instructor.profile_picture_url,
+                    'instructor_position': instructor.position,
+                } for instructor in course.instructors],
+                'chapters': sorted([{
+                    'chapter_id': chapter.id,
+                    'chapter_title': chapter.title,
+                    'order': chapter.order,
+                    'lessons': sorted(
+                        [lesson.to_dict(session, chapter.id) for lesson in chapter.lessons],
+                        key=lambda x: x['order']
+                    )
+                } for chapter in course.chapters], key=lambda x: x['order']),
+            }
+
+            # Remove 'order' field from lessons
+            for chapter in course_info['chapters']:
+                for lesson in chapter['lessons']:
+                    lesson.pop('order', None)
+                    
             return Response(
-                json.dumps({
-                    'course_id': course.id,
-                    'community_id': course.community_id,
-                    'course_image': course.image_url,
-                    'course_name': course.name,
-                    'community_name': course.community.name,
-                    'description': course.description,
-                    'instructors': [{
-                        'instructor_id': instructor.id,
-                        'instructor_name': instructor.name,
-                        'instructor_profile_picture': instructor.profile_picture_url,
-                        'instructor_position': instructor.position,
-                    } for instructor in course.instructors],
-                    'chapters': sorted([{
-                        'chapter_id': chapter.id,
-                        'chapter_title': chapter.title,
-                        'order': chapter.order,
-                        'lessons': [{
-                            'lesson_id': lesson.id,
-                            'lesson_name': lesson.name,
-                        } for lesson in chapter.lessons]
-                    } for chapter in course.chapters], key=lambda x: x['order']),
-                }),
+                json.dumps(course_info),
                 status=200, mimetype='application/json'
             )
         except ValueError as ee:
@@ -293,6 +301,7 @@ create_course_parser.add_argument('program_type', type=str, help='Program Type',
 create_course_parser.add_argument('field', type=str, help='Field', location='form', required=False)
 create_course_parser.add_argument('major', type=str, help='Major', location='form', required=False)
 create_course_parser.add_argument('department', type=str, help='Department', location='form', required=False)
+create_course_parser.add_argument('expertise', type=str, help='Expertise', location='form', required=False)
 create_course_parser.add_argument('subject', type=str, help='Subject', location='form', required=False)
 create_course_parser.add_argument('platform', type=str, help='Platform', location='form', required=False)
 # Chapter and Lesson Structure and Files
@@ -318,7 +327,7 @@ class CreateCourseEndpoint(Resource):
         },
         description="""
             Fill in school_name, program_type, field, and major for academic courses.
-            Fill in department for professional courses.
+            Fill in department and expertise for professional courses.
             Fill in subject for specialization courses.
             Fill in platform for project courses.
             Example content JSON string:
@@ -520,30 +529,55 @@ class RetrieveCourseDetailsEndpoint(Resource):
                     status=400, mimetype='application/json'
                 )
             
-            return Response(
-                json.dumps({
-                    'course_id': course.id,
-                    'community_id': course.community_id,
-                    'course_name': course.name,
-                    'description': course.description,
-                    'course_type': course.course_type,
-                    'duration': str(course.duration),
-                    'image': course.image_url,
-                    'price': str(course.price),
-                    'currency': course.currency,
-                    'instructors': [{
+            base_course_info = {
+                'course_id': course.id,
+                'community_id': course.community_id,
+                'course_name': course.name,
+                'description': course.description,
+                'duration': str(course.duration),
+                'image': course.image_url,
+                'price': str(course.price),
+                'currency': course.currency,
+                'difficulty': course.difficulty,
+                'skills': course.skills,
+                'course_type': course.course_type,
+                'instructors': [{
                         'instructor_id': instructor.id,
                         'instructor_name': instructor.name,
                         'instructor_profile_picture': instructor.profile_picture_url,
                         'instructor_position': instructor.position,
                     } for instructor in course.instructors],
-                    'chapters': sorted([{
-                        'chapter_id': chapter.id,
-                        'chapter_title': chapter.title,
-                        'order': chapter.order,
-                        'lessons': [lesson.to_dict() for lesson in chapter.lessons] # TODO: sort lessons by order
-                    } for chapter in course.chapters], key=lambda x: x['order']),
-                }),
+                'chapters': sorted([{
+                    'chapter_id': chapter.id,
+                    'chapter_title': chapter.title,
+                    'order': chapter.order,
+                    'lessons': sorted(
+                        [lesson.to_dict(session, chapter.id) for lesson in chapter.lessons],
+                        key=lambda x: x['order']
+                    )
+                } for chapter in course.chapters], key=lambda x: x['order']),
+            }
+
+            # Remove 'order' field from lessons
+            for chapter in base_course_info['chapters']:
+                for lesson in chapter['lessons']:
+                    lesson.pop('order', None)
+
+            if course.course_type == 'academic':
+                base_course_info['school_name'] = course.school_name
+                base_course_info['program_type'] = course.program_type
+                base_course_info['field'] = course.field
+                base_course_info['major'] = course.major
+            elif course.course_type == 'professional':
+                base_course_info['department'] = course.department
+                base_course_info['expertise'] = course.expertise
+            elif course.course_type == 'specialization':
+                base_course_info['subject'] = course.subject
+            elif course.course_type == 'project':
+                base_course_info['platform'] = course.platform
+            
+            return Response(
+                json.dumps(base_course_info),
                 status=200, mimetype='application/json'
             )
         except ValueError as ee:
