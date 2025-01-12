@@ -40,16 +40,16 @@ const CourseContent = () => {
     }, [courseId]);
 
     const { width: screenWidth } = Dimensions.get('window')
-      const [imageHeight, setImageHeight] = useState(0)
-      useEffect(() => {
+    const [imageHeight, setImageHeight] = useState(0)
+    useEffect(() => {
         if (course_image) {
-          Image.getSize(course_image, (width, height) => {
+            Image.getSize(course_image, (width, height) => {
             const aspectRatio = width/height;
             const calculatedHeight = screenWidth/aspectRatio;
             setImageHeight(calculatedHeight);
-          })
-        }
-      }, [course_image])
+            })
+    }
+    }, [course_image])
 
     // Ensure that course is available before continuing
     if (loading) {

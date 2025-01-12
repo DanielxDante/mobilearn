@@ -18,6 +18,7 @@ import { Colors } from "@/constants/colors";
 import icons from "@/constants/icons";
 import useAuthStore from "@/store/authStore";
 import useAppStore from "@/store/appStore";
+import BackButton from "@/components/BackButton";
 
 const CourseDetails = () => {
   // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
@@ -55,14 +56,10 @@ const CourseDetails = () => {
   }, [course_image])
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Image
-            source={require("../../../assets/images/icons/arrow-left-line.png")}
-            style={styles.backButton}
-          />
-        </TouchableOpacity>
-      </View>
+        {/* AppBar */}
+        <View style={styles.appBarContainer}>
+                <BackButton />
+        </View>
       <ScrollView style={styles.body}>
         {/* if picture is not available, show loading */}
         {course_image ? (
@@ -129,11 +126,9 @@ const CourseDetails = () => {
               <View style={styles.courseInfoRight}>
                 <Text style={styles.courseInfoRightText}>
                   {courseData.lesson_count}
-                  {/* {numLectures} */}
                   {Constants.numLectures}
                 </Text>
                 <Text style={styles.courseInfoRightText}>
-                  {/* {learningTime} */}
                   {courseData.duration}
                 </Text>
                 <Text style={styles.courseInfoRightText}>
@@ -188,15 +183,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  appBarContainer: {
+      flexDirection: "row",
+      marginTop: 20,
+      marginBottom: 20,
+      alignItems: "center",
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 15,
-  },
-  backButton: {
-    height: 25,
-    width: 25,
   },
   body: {
     flex: 1,

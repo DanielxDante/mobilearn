@@ -381,6 +381,7 @@ export const paymentOverviewConstants = {
   dollarIcon: icons.dollar,
   currency: "$",
   merchantDisplayName: "MobiLearn, Inc.",
+  free: "Free",
 };
 
 export const paymentMethodConstants = {

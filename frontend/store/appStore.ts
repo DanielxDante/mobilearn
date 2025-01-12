@@ -69,7 +69,7 @@ export interface AppState {
     per_page?: string
   ) => Promise<any[]>;
   addFavouriteCourse: (course_id: number) => Promise<void>;
-  enrollCourse: (course_id: number) => Promise<void>;
+  enrollCourse: (course_id: number) => Promise<number>;
   getEnrolledCourses: (page?: string, per_page?: string) => Promise<void>;
   getCourseDetails: (course_id: string) => Promise<void>;
   getFavouriteCourses: (page?: string, per_page?: string) => Promise<void>;
@@ -128,10 +128,13 @@ export const useAppStore = create<AppState>()(
             channels: [],
             channel_id: 0,
             favourite_courses: [],
-            enrolled_courses: undefined,
+            enrolled_courses: [],
             recommended_courses: [],
             top_enrolled_courses: [],
             review: undefined,
+            instructor_courses: [],
+            selectedCourse: undefined,
+            instructorPreviewedLesson: undefined,
           });
         } catch (error) {
           console.error("Error logging out of AppStore:", error);
@@ -358,7 +361,7 @@ export const useAppStore = create<AppState>()(
             console.log("Course created successfully: ", responseData);
             return responseData;
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error("Error creating course: ", error.message);
         }
       },
@@ -402,10 +405,15 @@ export const useAppStore = create<AppState>()(
             { course_id },
             { headers: { "Content-Type": "application/json" } }
           );
+          if (response.status === 200) {
+            get().getEnrolledCourses();
+          }
+          return response.status;
           // Tentatively returns nothing for successful API request
           // Response is {"message": "User successfully enrolled"}
         } catch (error: any) {
           console.error(error);
+          return 500;
         }
       },
       getEnrolledCourses: async (page?, per_page?) => {
@@ -435,7 +443,6 @@ export const useAppStore = create<AppState>()(
           set({
             enrolled_courses: mappedCourses,
           });
-          console.log(get().enrolled_courses);
           // Tentatively returns nothing for successful API request
         } catch (error: any) {
           console.error(error);

@@ -59,7 +59,7 @@ export default function signUpPage() {
       ...inputs,
       [name]: value,
     });
-    console.log(inputs);
+    // console.log(inputs);
   };
 
   const handleRegistration = async () => {

@@ -7,23 +7,18 @@ import {
     TouchableOpacity,
     Dimensions,
 } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import BackButton from "@/components/BackButton";
 import { Colors } from "@/constants/colors";
-import PaymentProgressBar from "@/components/PaymentProgressBar";
 import { router, useLocalSearchParams } from "expo-router";
-import Course from "@/types/shared/Course/Course";
 import { paymentCompletedConstants as Constants } from "@/constants/textConstants";
 
 const PaymentCompleted = () => {
     // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
 
-    const { courseSelected } = useLocalSearchParams();
-    const course: Course =
-        typeof courseSelected === "string" ? JSON.parse(courseSelected) : [];
-
+    const { courseId } = useLocalSearchParams();
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
@@ -49,13 +44,15 @@ const PaymentCompleted = () => {
                 {/* Continue Button */}
                 <TouchableOpacity
                     style={styles.continueButton}
-                    onPress={() =>
+                    onPress={() => {
+                        console.log("Going to courseContent now!");
                         router.push({
                             pathname: "./courseContent",
                             params: {
-                                courseSelected: courseSelected,
+                                courseId: courseId,
                             },
                         })
+                    }
                     }
                 >
                     <Text style={styles.continueText}>
