@@ -50,23 +50,22 @@ export default function createCoursePage() {
   const [editorState, setEditorState] = useState<string | null>(null); // Full editor state
   const [validated, setValidated] = useState(false);
   const [inputs, setInputs] = useState({
-    courseTitle: course?.course_name || "", //done
-    courseInfo: course?.description || "", //done
+    courseTitle: course?.course_name || "",
+    courseInfo: course?.description || "",
     courseType:
       course?.course_type.charAt(0).toUpperCase() +
-        course?.course_type.slice(1) || textConstants.courseType_options[0], //done
-    duration: course?.duration || "", //done
+        course?.course_type.slice(1) || textConstants.courseType_options[0],
+    duration: course?.duration || "",
     field: course?.field || "",
-    coursePicture: course?.image || "", //done
-    price: course?.price || "", // done
-    // difficulty:
-    //   course?.difficulty.charAt(0).toUpperCase() +
-    //     course?.difficulty.slice(1) ||
-    //   textConstants.courseDifficulty_options[0],
-    difficulty: course?.difficulty || textConstants.courseDifficulty_options[0],
+    coursePicture: course?.image || "",
+    price: course?.price || "",
+    difficulty:
+      course?.difficulty.charAt(0).toUpperCase() +
+        course?.difficulty.slice(1) ||
+      textConstants.courseDifficulty_options[0],
     skills: course?.skills || [],
-    school: course?.school || "",
-    programType: course?.programType || "",
+    school: course?.school_name || "",
+    programType: course?.program_type || "",
     major: course?.major || "",
     department: course?.department || "",
     subject: course?.subject || "",
@@ -150,7 +149,7 @@ export default function createCoursePage() {
       coursePicture: !inputs.coursePicture,
       price: !inputs.price,
       difficulty: !inputs.difficulty,
-      skills: !inputs.skills[0],
+      skills: !inputs.skills,
       school: !inputs.school,
       programType: !inputs.programType,
       major: !inputs.major,
@@ -607,7 +606,7 @@ export default function createCoursePage() {
     // Append additional fields
     formData.append("price", inputs.price);
     formData.append("difficulty", inputs.difficulty.toLowerCase());
-    formData.append("skills", inputs.skills);
+    formData.append("skills", inputs.skills.split(","));
     formData.append("school_name", inputs.school);
     formData.append("program_type", inputs.programType);
     formData.append("field", inputs.field);
@@ -794,10 +793,10 @@ export default function createCoursePage() {
                 <InputField // Skills
                   inputTitle={textConstants.courseSkills}
                   placeholder={textConstants.courseSkillsPlaceholder ?? ""}
-                  value={inputs.skills.join(",")}
+                  value={inputs.skills}
                   onChange={(e) => e.persist()}
                   onChangeText={(text) => {
-                    handleChange(text.split(","), "skills");
+                    handleChange(text, "skills");
                   }}
                 />
                 <RegisterButton
