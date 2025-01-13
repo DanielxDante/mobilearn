@@ -29,6 +29,16 @@ const CourseDetails = () => {
   const handleSkillPress = (skill: string) => {
     console.log(skill);
   };
+  const handleCommunitySelect = () => {
+    router.push({
+      pathname: "../communityPage",
+      params: {
+        communityId: courseData?.community_id,
+        communityName: courseData?.community_name,
+      },
+    })
+  }
+
   const [courseData, setCourseData] = useState<Course | null>(null);
   const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse)
   const company = useAuthStore((state) => state.company);
@@ -42,7 +52,6 @@ const CourseDetails = () => {
       };
     fetchCourseData();
   }, [courseId]);
-
   const { width: screenWidth } = Dimensions.get('window')
   const [imageHeight, setImageHeight] = useState(0)
   useEffect(() => {
@@ -75,7 +84,9 @@ const CourseDetails = () => {
         {courseData && (
           <View style={styles.courseDetails}>
             <Text style={styles.title}>{courseData.course_name}</Text>
+            <TouchableOpacity onPress={handleCommunitySelect}>
             <Text style={styles.school}>{courseData.community_name}</Text>
+            </TouchableOpacity>
             <View style={styles.enrolledCountContainer}>
               <Image
                 source={icons.userCount}

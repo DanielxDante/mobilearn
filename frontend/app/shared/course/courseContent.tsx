@@ -83,7 +83,15 @@ const CourseContent = () => {
             },
         });
     };
-    console.log(course?.chapters[0].lessons)
+    const handleCommunitySelect = () => {
+        router.push({
+          pathname: "../communityPage",
+          params: {
+            communityId: course?.community_id,
+            communityName: course?.community_name,
+          },
+        })
+      }
 
     const renderLectureItem = (lesson: Lesson) => (
         <View style={styles.lessonItemContainer}>
@@ -138,7 +146,9 @@ const CourseContent = () => {
                 )}
                 {/* Course title and subtitle */}
                 <Text style={styles.title}>{course.course_name}</Text>
-                <Text style={styles.school}>{course.community_name}</Text>
+                <TouchableOpacity onPress={handleCommunitySelect}>
+                    <Text style={styles.school}>{course.community_name}</Text>
+                </TouchableOpacity>
                 {/* Chapter buttons */}
                 <View style={styles.chapterButtonContainer}>
                     {course.chapters.length <=2 ? (
