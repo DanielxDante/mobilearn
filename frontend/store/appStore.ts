@@ -25,6 +25,7 @@ import {
   COURSE_CREATE_COURSE,
   COURSE_INSTRUCTOR_GET_PREVIEW_LESSON,
   COURSE_INSTRUCTOR_GET_COURSE_DETAILS,
+  COURSE_INSTRUCTOR_EDIT_COURSE,
 } from "@/constants/routes";
 import Channel from "@/types/shared/Channel";
 import Course from "@/types/shared/Course/Course";
@@ -90,6 +91,7 @@ export interface AppState {
   ) => Promise<void>;
   withdrawCourse: (course_id: number) => Promise<void>;
   createCourse: (formData: any) => Promise<void>;
+  editCourse: (formData: any) => Promise<void>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -363,6 +365,29 @@ export const useAppStore = create<AppState>()(
           }
         } catch (error: any) {
           console.error("Error creating course: ", error.message);
+        }
+      },
+      editCourse: async (formData) => {
+        console.log("(Store) Edit Course");
+        try {
+          const response = await axios.post(
+            COURSE_INSTRUCTOR_EDIT_COURSE, // URL
+            formData, // Payload
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                // Authorization: token, // Add your token if required
+              },
+            }
+          );
+
+          const responseData = response.data;
+          if (response.status === 200) {
+            console.log("Course edited successfully: ", responseData);
+            return responseData;
+          }
+        } catch (error: any) {
+          console.error("Error editing course: ", error.message);
         }
       },
       searchCourse: async (channel_id, search_term, page?, per_page?) => {

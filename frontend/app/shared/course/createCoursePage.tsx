@@ -27,12 +27,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Editor from "@/components/dom-components/RichTextEditor";
 import useAppStore from "@/store/appStore";
 import { INSTRUCTOR_HOME } from "@/constants/pages";
+import { update } from "lodash";
 
 export default function createCoursePage() {
   const token = useAuthStore((state) => state.access_token);
   const createCourse = useAppStore(
     (state) => state.createCourse
   ) as unknown as (formData: FormData) => Promise<{ message: string }>;
+  const editCourse = useAppStore((state) => state.editCourse) as unknown as (
+    formData: FormData
+  ) => Promise<{ message: string }>;
   const { courseToEdit } = useLocalSearchParams();
   const course = useMemo(
     () => (typeof courseToEdit === "string" ? JSON.parse(courseToEdit) : null),
@@ -357,7 +361,7 @@ export default function createCoursePage() {
     setInputs((prev) => ({
       ...prev,
       chapters: prev.chapters.map((chapter: Chapter) =>
-        chapter.chapter_id.toString() === selectedChapterId
+        chapter.chapter_id === selectedChapterId
           ? {
               ...chapter,
               lessons: Array(newLessonCount)
@@ -562,6 +566,7 @@ export default function createCoursePage() {
     const modifiedChapters = inputs.chapters.map((chapter: any) => {
       const modifiedChapter = { ...chapter };
       // delete modifiedChapter.id;
+      console.log("chapter: ", modifiedChapter);
       if (modifiedChapter.chapter_id.toString().includes("-")) {
         // sensing ID from frontend
         // we  delete the ID
@@ -569,15 +574,28 @@ export default function createCoursePage() {
       } else {
         // we do not do anything because the ID is from the backend
       }
-      modifiedChapter.lessons = modifiedChapter.lessons.map((lesson: any) => {
-        const modifiedLesson = {
-          ...lesson,
-          lesson_type: lesson.lesson_type.toLowerCase(),
-        };
-        // delete modifiedLesson.id;
-        delete modifiedLesson.lesson_id;
-        return modifiedLesson;
-      });
+      modifiedChapter.lessons = modifiedChapter.lessons.map(
+        (lesson: any, index: number) => {
+          let modifiedLesson = {
+            ...lesson,
+            lesson_type: lesson.lesson_type.toLowerCase(),
+          };
+          // delete modifiedLesson.id;
+          console.log("lesson: ", modifiedLesson);
+          if (modifiedLesson.lesson_id.toString().includes("-")) {
+            // sensing ID from frontend
+            // we  delete the ID
+            delete modifiedLesson.lesson_id;
+          } else {
+            // we do not do ID as it is from the backend, but add Order
+            modifiedLesson = {
+              ...modifiedLesson,
+              order: index + 1,
+            };
+          }
+          return modifiedLesson;
+        }
+      );
       return modifiedChapter;
     });
     return modifiedChapters;
@@ -591,7 +609,6 @@ export default function createCoursePage() {
       alert(textConstants.fillAllFieldsAlert);
       return;
     }
-    alert(textConstants.courseCreatedAlert);
     const formData = new FormData();
 
     // Append basic form data
@@ -620,13 +637,20 @@ export default function createCoursePage() {
     const content = {
       chapters: modifiedChapters,
     };
+    console.log("content: ", content);
     formData.append("content", JSON.stringify(content));
     // Append files
     Object.entries(inputs.files).forEach(([key, file]) => {
       formData.append("files", file as Blob);
     });
     // Call API
-    postCourse(formData);
+    if (courseToEdit) {
+      console.log("course: ", formData);
+      updateCourse(formData);
+    } else {
+      console.log("course: ", formData);
+      postCourse(formData);
+    }
   }
 
   async function postCourse(formData: FormData): Promise<void> {
@@ -640,12 +664,18 @@ export default function createCoursePage() {
     }
   }
 
-  function sentenceCaseHelper(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
+  // function sentenceCaseHelper(str: string): string {
+  //   return str.charAt(0).toUpperCase() + str.slice(1);
+  // }
 
-  function updateCourse(): () => void {
-    throw new Error("Function not implemented.");
+  async function updateCourse(formData: FormData): Promise<void> {
+    console.log("Updating.......");
+    const response = await editCourse(formData);
+    if (response.message.includes("success")) {
+      alert(textConstants.courseUpdatedAlert);
+      AsyncStorage.removeItem("courseData");
+      router.push(INSTRUCTOR_HOME);
+    }
   }
 
   // useEffect(() => {
@@ -1074,11 +1104,7 @@ export default function createCoursePage() {
             style={validated ? styles.registerButton : styles.disabledButton}
             onPress={() => {
               if (validated) {
-                if (courseToEdit) {
-                  updateCourse();
-                } else {
-                  registerCourse();
-                }
+                registerCourse();
               } else {
                 validateChapters(inputs.chapters, 0);
                 alert(textConstants.fillAllFieldsAlert);

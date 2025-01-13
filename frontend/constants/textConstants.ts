@@ -537,6 +537,7 @@ export const instructorCreateCoursePageConstants = {
     "You have a lesson with no content. Remove it, or add content.",
   courseCreationFailedAlert: "Failed to create course.",
   emptyChapterAlert: "You need to make at least one chapter!",
+  courseUpdatedAlert: "Course has been updated.",
 };
 
 export const instructorEditProfilePage = {
