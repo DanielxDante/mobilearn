@@ -82,6 +82,14 @@ export const memberLoginPageConstants = {
     { inputTitle: "Domain", options: ["Member", "Instructor"] },
   ],
   signInButtonText: "Sign In",
+  invalidCredentialsAlert:
+    "Please check your email and password and try again.",
+  errorSigningUpAlert: "An error occurred while signing up.",
+  unexpectedErrorAlert: "An unexpected error occurred.",
+  accountDisabledAlert: "Your account has been disabled.",
+  dontHaveAccountText: "Don't have an account?",
+  signUpText: "Sign Up here",
+  inputsEmptyAlert: "Please fill in all fields.",
 };
 
 export const instructorLoginPageConstants = {
@@ -96,6 +104,14 @@ export const instructorLoginPageConstants = {
     { inputTitle: "Domain", options: ["Member", "Instructor"] },
   ],
   signInButtonText: "Sign In",
+  invalidCredentialsAlert:
+    "Please check your email and password and try again.",
+  accountDisabledAlert: "Your account has been disabled.",
+  errorSigningUpAlert: "An error occurred while signing up.",
+  unexpectedErrorAlert: "An unexpected error occurred.",
+  dontHaveAccountText: "Don't have an account?",
+  signUpText: "Sign Up here",
+  inputsEmptyAlert: "Please fill in all fields.",
 };
 
 export const signUpPageConstants = {
@@ -195,6 +211,9 @@ export const instructorSignUpPageConstants = {
   passwordMismatchAlert: "Passwords do not match.",
   errorSigningUpAlert: "An error occurred while signing up.",
   regButtonText: "Register",
+  accountDisabledAlert: "Your account has been disabled.",
+  invalidCredentialsAlert:
+    "Please check your email and password and try again.",
 };
 
 export const registrationSuccessMember = {
@@ -537,6 +556,8 @@ export const instructorCreateCoursePageConstants = {
     "You have a lesson with no content. Remove it, or add content.",
   courseCreationFailedAlert: "Failed to create course.",
   emptyChapterAlert: "You need to make at least one chapter!",
+  courseUpdatedAlert: "Course has been updated.",
+  chapterRemovalDenial: "Existing chapters cannot be removed.",
 };
 
 export const instructorEditProfilePage = {
@@ -650,4 +671,4 @@ export const lessonContentPage = {
 export const communityPage = {
   instructors: "Instructors",
   default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
-}
+};

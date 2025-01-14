@@ -23,21 +23,25 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
 
   const handleSignIn = async () => {
-    try {
-      const response = await login(email, password);
+    if (email.length === 0 || password.length === 0) {
+      alert(Constants.inputsEmptyAlert);
+    } else {
+      try {
+        const response = await login(email, password);
 
-      if (response === "active") {
-        router.push(INSTRUCTOR_HOME);
-      } else if (response === "not_approved") {
-        router.push(INSTRUCTOR_WAITING_PAGE);
-      } else if (response === "disabled") {
-        alert("Your account has been disabled. Please contact the admin.");
-      } else if (response === "Invalid credentials") {
-        alert("Please check your email and password and try again.");
+        if (response === "active") {
+          router.push(INSTRUCTOR_HOME);
+        } else if (response === "not_approved") {
+          router.push(INSTRUCTOR_WAITING_PAGE);
+        } else if (response === "disabled") {
+          alert(Constants.accountDisabledAlert);
+        } else if (response === "Invalid credentials") {
+          alert(Constants.invalidCredentialsAlert);
+        }
+      } catch (error) {
+        console.error(Constants.unexpectedErrorAlert, error);
+        alert(Constants.errorSigningUpAlert);
       }
-    } catch (error) {
-      console.error("An unexpected error occurred:", error);
-      alert("An error occurred while logging in");
     }
   };
 
@@ -103,7 +107,10 @@ export default function LoginPage() {
           value={password}
           onChangeText={setPassword}
         />
-        <SignInButton text="Sign In" onPress={handleSignIn} />
+        <SignInButton
+          text={Constants.signInButtonText}
+          onPress={handleSignIn}
+        />
         <View
           style={{
             flexDirection: "row",
@@ -111,12 +118,12 @@ export default function LoginPage() {
             marginTop: 16,
           }}
         >
-          <Text>Don’t have an Account? </Text>
+          <Text>{Constants.dontHaveAccountText}</Text>
           <Link
             style={{ color: Colors.darkerBlue }}
             href={{ pathname: INSTRUCTOR_SIGNUP_PAGE }}
           >
-            Sign Up here
+            {Constants.signUpText}
           </Link>
         </View>
       </View>
