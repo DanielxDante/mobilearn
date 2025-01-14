@@ -747,10 +747,10 @@ class EditCourseEndpoint(Resource):
                                 lesson_type=lesson_data['lesson_type'],
                             )
                         
-                        # if lesson.lesson_type == LESSON.TEXT:
-                        #     content = lesson_data['content']
-                        #     lesson.content = content
-                        if lesson.lesson_type == LESSON.VIDEO:
+                        if lesson.lesson_type == LESSON.TEXT:
+                            content = lesson_data['content']
+                            lesson.content = content
+                        elif lesson.lesson_type == LESSON.VIDEO:
                             video_file = filemap.get(lesson_data['video_key'])
                             if video_file:
                                 video_url = upload_file(video_file, f"lesson_{str(lesson.id)}")
