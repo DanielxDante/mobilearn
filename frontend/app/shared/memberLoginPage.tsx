@@ -26,7 +26,7 @@ export default function LoginPage() {
 
   const handleSignIn = async () => {
     if (email.length === 0 || password.length === 0) {
-      alert("Please fill up all fields.");
+      alert(Constants.inputsEmptyAlert);
     } else {
       try {
         const response = await login(email, password);
@@ -34,15 +34,15 @@ export default function LoginPage() {
         if (response === "normal") {
           router.push(MEMBER_CHANNEL_REGISTRATION);
         } else if (response === "User disabled") {
-          alert("Your account has been disabled. Please contact the admin.");
+          alert(Constants.accountDisabledAlert);
         } else if (response === "Invalid credentials") {
-          alert("Please check your email and password and try again.");
+          alert(Constants.invalidCredentialsAlert);
         } else if (response === "admin") {
           router.push(ADMIN_HOME);
         }
       } catch (error) {
         console.log(error);
-        alert("An error occurred while logging in");
+        alert(Constants.errorSigningUpAlert);
       }
     }
   };
@@ -109,7 +109,10 @@ export default function LoginPage() {
           value={password}
           onChangeText={setPassword}
         />
-        <SignInButton text="Sign In" onPress={handleSignIn} />
+        <SignInButton
+          text={Constants.signInButtonText}
+          onPress={handleSignIn}
+        />
         <View
           style={{
             flexDirection: "row",
@@ -117,12 +120,12 @@ export default function LoginPage() {
             marginTop: 16,
           }}
         >
-          <Text>Don’t have an Account? </Text>
+          <Text>{Constants.dontHaveAccountText}</Text>
           <Link
             style={{ color: Colors.darkerBlue }}
             href={{ pathname: MEMBER_SIGNUP_PAGE }}
           >
-            Sign Up here
+            {Constants.signUpText}
           </Link>
         </View>
       </View>

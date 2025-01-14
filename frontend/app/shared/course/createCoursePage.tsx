@@ -800,6 +800,8 @@ export default function createCoursePage() {
                   onChangeText={(text) => {
                     handleChange(text, "courseInfo");
                   }}
+                  multiline={true}
+                  maxLength={500}
                 />
                 <InputField // Duration
                   inputTitle={textConstants.courseDuration}
