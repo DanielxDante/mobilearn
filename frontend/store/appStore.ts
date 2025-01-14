@@ -26,11 +26,15 @@ import {
   COURSE_INSTRUCTOR_GET_PREVIEW_LESSON,
   COURSE_INSTRUCTOR_GET_COURSE_DETAILS,
   COURSE_INSTRUCTOR_EDIT_COURSE,
+  COMMUNITY_GET_COMMUNITIES_URL,
+  COMMUNITY_GET_INSTRUCTOR_DETAILS_URL,
+  COMMUNITY_GET_INSTRUCTORS_URL,
 } from "@/constants/routes";
 import Channel from "@/types/shared/Channel";
 import Course from "@/types/shared/Course/Course";
 import Review from "@/types/shared/Course/Review";
 import Lesson from "@/types/shared/Course/Lesson";
+import Instructor from "@/types/shared/Course/Instructor";
 
 export interface AppState {
   channels: Channel[]; // List of Channels that user has access to
@@ -92,6 +96,9 @@ export interface AppState {
   withdrawCourse: (course_id: number) => Promise<void>;
   createCourse: (formData: any) => Promise<void>;
   editCourse: (formData: any) => Promise<void>;
+  getCommunities: () => Promise<any[]>;
+  getInstructorDetails: (instructor_id: string) => Promise<Instructor>;
+  getInstructors: (community_id: string) => Promise<Instructor[] | undefined>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -662,6 +669,57 @@ export const useAppStore = create<AppState>()(
             get().getEnrolledCourses();
           }
           // Tentatively returns nothing for successful API request
+        } catch (error: any) {
+          console.error(error);
+        }
+      },
+      getCommunities: async () => {
+        console.log("(Store) Get communities");
+        try {
+          const response = await axios.get(`${COMMUNITY_GET_COMMUNITIES_URL}`, {
+            headers: { "Content-Type": "application/json" },
+          });
+          const responseData = response.data;
+          return responseData.communities;
+        } catch (error: any) {
+          console.error(error);
+        }
+      },
+      getInstructorDetails: async (instructor_id: string) => {
+        console.log("(Store) Get Instructor Details");
+        try {
+          const response = await axios.get(
+            `${COMMUNITY_GET_INSTRUCTOR_DETAILS_URL}/${instructor_id}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          return responseData;
+        } catch (error: any) {
+          console.error(error);
+        }
+      },
+      getInstructors: async (community_id: string) => {
+        console.log("(Store) Get Instructors within community");
+        try {
+          const response = await axios.get(
+            `${COMMUNITY_GET_INSTRUCTORS_URL}/${community_id}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          const instructors: Instructor[] = responseData.instructors.map(
+            (instructor: any) => ({
+              instructor_id: instructor.id,
+              instructor_name: instructor.name,
+              instructor_profile_picture: instructor.profile_picture_url,
+              company: "",
+              instructor_position: "",
+            })
+          );
+          return instructors;
         } catch (error: any) {
           console.error(error);
         }

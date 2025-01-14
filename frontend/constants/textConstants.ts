@@ -647,3 +647,8 @@ export const lessonContentPage = {
   homework: "Homework",
   download: "Click to Download",
 };
+
+export const communityPage = {
+  instructors: "Instructors",
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+}
