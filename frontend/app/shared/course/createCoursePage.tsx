@@ -54,6 +54,7 @@ export default function createCoursePage() {
   const [editorState, setEditorState] = useState<string | null>(null); // Full editor state
   const [validated, setValidated] = useState(false);
   const [inputs, setInputs] = useState({
+    courseID: course?.course_id || "",
     courseTitle: course?.course_name || "",
     courseInfo: course?.description || "",
     courseType:
@@ -399,10 +400,10 @@ export default function createCoursePage() {
     value: string
   ) => {
     if (!selectedChapterId) return;
-
+    console.log("lessonIndex: ", lessonIndex);
     setInputs((prev) => {
       let updatedChapters = prev.chapters.map((chapter: Chapter) =>
-        chapter.chapter_id.toString() === selectedChapterId
+        chapter.chapter_id === selectedChapterId
           ? {
               ...chapter,
               lessons: chapter.lessons.map((lesson, index) => {
@@ -566,7 +567,7 @@ export default function createCoursePage() {
     const modifiedChapters = inputs.chapters.map((chapter: any) => {
       const modifiedChapter = { ...chapter };
       // delete modifiedChapter.id;
-      console.log("chapter: ", modifiedChapter);
+      //console.log("chapter: ", modifiedChapter);
       if (modifiedChapter.chapter_id.toString().includes("-")) {
         // sensing ID from frontend
         // we  delete the ID
@@ -581,7 +582,7 @@ export default function createCoursePage() {
             lesson_type: lesson.lesson_type.toLowerCase(),
           };
           // delete modifiedLesson.id;
-          console.log("lesson: ", modifiedLesson);
+          //console.log("lesson: ", modifiedLesson);
           if (modifiedLesson.lesson_id.toString().includes("-")) {
             // sensing ID from frontend
             // we  delete the ID
@@ -612,6 +613,10 @@ export default function createCoursePage() {
     const formData = new FormData();
 
     // Append basic form data
+    if (courseToEdit) {
+      formData.append("course_id", inputs.courseID);
+      //formData.append("community_id", inputs.communityID);
+    }
     formData.append("name", inputs.courseTitle);
     formData.append("description", inputs.courseInfo);
     formData.append("course_type", inputs.courseType.toLowerCase());
@@ -637,7 +642,7 @@ export default function createCoursePage() {
     const content = {
       chapters: modifiedChapters,
     };
-    console.log("content: ", content);
+    //console.log("content: ", content);
     formData.append("content", JSON.stringify(content));
     // Append files
     Object.entries(inputs.files).forEach(([key, file]) => {
@@ -645,10 +650,10 @@ export default function createCoursePage() {
     });
     // Call API
     if (courseToEdit) {
-      console.log("course: ", formData);
+      console.log("updated course data: ", formData);
       updateCourse(formData);
     } else {
-      console.log("course: ", formData);
+      console.log("course created: ", formData);
       postCourse(formData);
     }
   }
