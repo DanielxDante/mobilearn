@@ -33,6 +33,7 @@ const Home = () => {
         (state) => state.top_enrolled_courses
     );
     const enrolledCourses = useAppStore((state) => state.enrolled_courses);
+    const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse)
     const getEnrolledCourses = useAppStore((state) => state.getEnrolledCourses);
     const getRecommendedCourses = useAppStore(
         (state) => state.getRecommendedCourses
@@ -105,7 +106,7 @@ const Home = () => {
         console.log("handleSelectChannel called");
     };
 
-    const handleSelectCourse = (id: number) => {
+    const handleSelectCourse = async (id: number) => {
         // console.log("Course " + id + " Selected");
         const mergedCourses = [
             ...(continueWatchingData || []),
@@ -136,8 +137,16 @@ const Home = () => {
                     },
                 });
             }
-        } else {
-            alert("Course not selected");
+        } else { //Course not on homepage
+            const unenrolledCourse = await getUnenrolledCourse(id);
+            if (unenrolledCourse) {
+                router.push({
+                    pathname: "../../shared/course/courseDetails",
+                    params: {
+                        courseId: unenrolledCourse.course_id,
+                    },
+                });
+            }
         }
     };
 
