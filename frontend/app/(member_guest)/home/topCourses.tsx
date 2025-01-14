@@ -7,21 +7,56 @@ import {
     StyleSheet,
     Dimensions,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Colors } from "@/constants/colors";
 import { memberGuestTopCoursesSectionConstants as Constants } from "@/constants/textConstants";
 import Course from "@/types/shared/Course/Course";
+import useAppStore from "@/store/appStore";
+import { topCourseData } from "@/constants/temporaryCourseData";
 
 interface ContinueWatchingProps {
-    courseData: Course[];
+    data: "Suggestions" | "Top Courses";
     onSelect: (id: number) => void;
 }
 
 const TopCourses: React.FC<ContinueWatchingProps> = ({
-    courseData,
-    onSelect,
+    data, onSelect,
 }) => {
+    const topEnrolledCourses = useAppStore(
+        (state) => state.top_enrolled_courses
+    );
+    const recommendedCourses = useAppStore(
+        (state) => state.recommended_courses
+    );
+    const getTopEnrolledCourses = useAppStore(
+        (state) => state.getTopEnrolledCoursesUser
+    );
+    const getRecommendedCourses = useAppStore(
+        (state) => state.getRecommendedCourses
+    );
+
+    const [courses, setCourses] = useState<Course[]>([]);
+    useEffect(() => {
+        const fetchCourses = async () => {
+            if (data === "Suggestions") {
+                await getRecommendedCourses("1", "5");
+            } else if (data === "Top Courses") {
+                await getTopEnrolledCourses("1", "5");
+            }
+            }
+            fetchCourses();
+        }, []);
+
+    useEffect(() => {
+        if (data === "Suggestions" && recommendedCourses && recommendedCourses.length>0) {
+            setCourses(recommendedCourses.slice(0, 5));
+        } else if (data === "Top Courses" && topEnrolledCourses && topEnrolledCourses.length>0) {
+            setCourses(topEnrolledCourses.slice(0, 5))
+        }
+    }, [recommendedCourses, topEnrolledCourses])
+    
+    
     const renderItem = ({ item }: { item: Course }) => (
         <TouchableOpacity
             style={styles.courseContainer}
@@ -57,7 +92,7 @@ const TopCourses: React.FC<ContinueWatchingProps> = ({
         <View>
             <View style={styles.listContainer}>
                 <FlatList
-                    data={courseData}
+                    data={courses}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.course_id.toString()}
                     horizontal

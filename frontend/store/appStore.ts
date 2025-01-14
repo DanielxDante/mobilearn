@@ -143,6 +143,7 @@ export const useAppStore = create<AppState>()(
             selectedCourse: undefined,
             instructorPreviewedLesson: undefined,
           });
+          console.log("State after logout:", get());
         } catch (error) {
           console.error("Error logging out of AppStore:", error);
           throw new Error("An unexpected error occurred while logging out.");
@@ -414,6 +415,8 @@ export const useAppStore = create<AppState>()(
           );
           if (response.status === 200) {
             get().getEnrolledCourses();
+            get().getRecommendedCourses();
+            // get().getTopCoursesInstructor();
           }
           return response.status;
           // Tentatively returns nothing for successful API request

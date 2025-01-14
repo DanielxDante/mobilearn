@@ -1,20 +1,37 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as Progress from "react-native-progress";
 
 import { Colors } from "@/constants/colors";
 import { memberGuestContinueWatchingConstants as Constants } from "@/constants/textConstants";
 import Course from "@/types/shared/Course/Course";
+import useAppStore from "@/store/appStore";
 
 interface ContinueWatchingProps {
-    courseData: Course[];
     onSelect: (id: number) => void;
 }
 
 const ContinueWatching: React.FC<ContinueWatchingProps> = ({
-    courseData,
     onSelect,
 }) => {
+    const enrolledCourses = useAppStore((state) => state.enrolled_courses);
+    const getEnrolledCourses = useAppStore((state) => state.getEnrolledCourses);
+    const [courses, setCourses] = useState<Course[]>([]);
+
+    useEffect(() => {
+        const fetchCourses = async () => {
+            console.log("No, it is calling here!")
+            await getEnrolledCourses();
+        }
+        fetchCourses();
+    }, []);
+
+    useEffect(() => {
+        if (enrolledCourses && enrolledCourses.length > 0) {
+            setCourses(enrolledCourses.slice(0, 2));
+        }
+    }, [enrolledCourses]);
+
     const renderItem = (item: Course) => (
         <TouchableOpacity
             key={item.course_id}
@@ -64,10 +81,16 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
 
     return (
         <View>
-            <Text style={styles.headerText}>
-                {Constants.continueWatchingSubtitle}
-            </Text>
-            {courseData.slice(0,2).map(renderItem)}
+            {
+                (courses?.length > 0) && (
+                    <>
+                        <Text style={styles.headerText}>
+                            {Constants.continueWatchingSubtitle}
+                        </Text>
+                        {courses.map(renderItem)}
+                    </>
+                )
+            }
         </View>
     );
 };

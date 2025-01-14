@@ -96,7 +96,6 @@ const PaymentOverview = () => {
             setLoading(false);
         }
     };
-    console.log(courseData);
     const { courseId } = useLocalSearchParams();
     return (
         <SafeAreaView style={styles.container}>
