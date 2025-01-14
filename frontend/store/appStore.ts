@@ -79,12 +79,14 @@ export interface AppState {
   getFavouriteCourses: (page?: string, per_page?: string) => Promise<void>;
   getRecommendedCourses: (
     page?: string,
-    per_page?: string
+    per_page?: string,
+    pagination?: boolean,
   ) => Promise<Course[]>;
   getReview: (course_id: number) => Promise<void>;
   getTopEnrolledCoursesUser: (
     page?: string,
-    per_page?: string
+    per_page?: string,
+    pagination?: boolean
   ) => Promise<Course[]>;
   removeFavouriteCourse: (course_id: number) => Promise<void>;
   saveReview: (
@@ -416,7 +418,7 @@ export const useAppStore = create<AppState>()(
           if (response.status === 200) {
             get().getEnrolledCourses();
             get().getRecommendedCourses();
-            // get().getTopCoursesInstructor();
+            get().getTopEnrolledCoursesUser();
           }
           return response.status;
           // Tentatively returns nothing for successful API request
@@ -490,7 +492,7 @@ export const useAppStore = create<AppState>()(
           console.error(error);
         }
       },
-      getRecommendedCourses: async (page, per_page) => {
+      getRecommendedCourses: async (page, per_page, pagination = false) => {
         console.log("(Store) Get Recommended Courses");
         try {
           const response = await axios.get(
@@ -519,7 +521,13 @@ export const useAppStore = create<AppState>()(
             set({
               recommended_courses: mappedCourses,
             });
-          } else {
+          } else if (get().recommended_courses.length > 0 && pagination == false) {
+            // ANOTHER API CALL TO REFRESH RECOMMENDED_COURSES
+            set({
+              recommended_courses: mappedCourses,
+            });
+          }
+          else {
             //  RETURN NEXT 5 COURSES TO COMPONENT (suggestionsSeeAll)
             return mappedCourses;
           }
@@ -553,7 +561,7 @@ export const useAppStore = create<AppState>()(
           console.error(error);
         }
       },
-      getTopEnrolledCoursesUser: async (page?, per_page?) => {
+      getTopEnrolledCoursesUser: async (page?, per_page?, pagination = false) => {
         console.log("(Store) Get Top Enrolled Courses");
         try {
           const response = await axios.get(
@@ -580,7 +588,11 @@ export const useAppStore = create<AppState>()(
           if (get().top_enrolled_courses.length === 0) {
             // ONLY SET FIRST 5 COURSES IN TOP_ENROLLED_COURSES
             set({ top_enrolled_courses: mappedCourses });
-          } else {
+          } else if (get().top_enrolled_courses.length > 0 && pagination == false) {
+            // ANOTHER API CALL TO REFRESH TOP ENROLLED COURSES
+            set({ top_enrolled_courses: mappedCourses });
+          }
+          else {
             //  RETURN NEXT 5 COURSES TO COMPONENT (topCoursesSeeAll)
             return mappedCourses;
           }

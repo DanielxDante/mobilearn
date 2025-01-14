@@ -42,7 +42,8 @@ const SuggestionsSeeAll = () => {
         setLoading(true);
         const nextFiveCourses = await getRecommendedCourses(
             page.toString(),
-            "5"
+            "5",
+            true
         );
         setSuggestionData((prevData) => [...prevData, ...nextFiveCourses]);
         setLoading(false);

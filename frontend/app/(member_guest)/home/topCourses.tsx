@@ -40,9 +40,9 @@ const TopCourses: React.FC<ContinueWatchingProps> = ({
     useEffect(() => {
         const fetchCourses = async () => {
             if (data === "Suggestions") {
-                await getRecommendedCourses("1", "5");
+                await getRecommendedCourses("1", "5", false);
             } else if (data === "Top Courses") {
-                await getTopEnrolledCourses("1", "5");
+                await getTopEnrolledCourses("1", "5", false);
             }
             }
             fetchCourses();

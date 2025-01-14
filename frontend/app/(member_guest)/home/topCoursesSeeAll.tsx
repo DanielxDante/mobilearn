@@ -42,7 +42,8 @@ const TopCoursesSeeAll = () => {
         setLoading(true);
         const nextFiveCourses = await getTopEnrolledCourses(
             page.toString(),
-            "5"
+            "5",
+            true,
         );
         setTopCourseData((prevData) => [...prevData, ...nextFiveCourses]);
         setLoading(false);
