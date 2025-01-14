@@ -57,7 +57,7 @@ const CourseContent = () => {
     <View style={styles.lessonItemContainer}>
       {/* Lesson title */}
       <Text style={styles.lessonTitle} numberOfLines={1}>
-        {Constants.lesson} {order}: {lesson.lesson_name}
+        {lesson.lesson_name}
       </Text>
     </View>
   );

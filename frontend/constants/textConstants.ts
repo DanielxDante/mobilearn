@@ -538,6 +538,7 @@ export const instructorCreateCoursePageConstants = {
   courseCreationFailedAlert: "Failed to create course.",
   emptyChapterAlert: "You need to make at least one chapter!",
   courseUpdatedAlert: "Course has been updated.",
+  chapterRemovalDenial: "Existing chapters cannot be removed.",
 };
 
 export const instructorEditProfilePage = {

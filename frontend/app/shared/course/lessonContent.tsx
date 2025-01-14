@@ -79,11 +79,15 @@ const LessonContent = () => {
   };
 
   const handleDownload = async () => {
-    const supported = await Linking.canOpenURL(lesson.homework_key);
-    if (supported) {
-      Linking.openURL(lesson.homework_key);
+    if (lesson.homework_url) {
+      const supported = await Linking.canOpenURL(lesson.homework_url);
+      if (supported) {
+        Linking.openURL(lesson.homework_url);
+      } else {
+        console.error("Unable to open the URL");
+      }
     } else {
-      console.error("Unable to open the URL");
+      console.error("Homework URL is undefined");
     }
   };
 
@@ -104,9 +108,9 @@ const LessonContent = () => {
           <Text style={styles.title}>{lesson.lesson_name}</Text>
 
           {/* Render video */}
-          {lesson.lesson_type === "video" && lesson.video_key && (
+          {lesson.lesson_type === "video" && lesson.video_url && (
             <View style={styles.videoContainer}>
-              <VideoPlayer uri={lesson.video_key} />
+              <VideoPlayer uri={lesson.video_url} />
             </View>
           )}
 

@@ -130,7 +130,9 @@ export default function createCoursePage() {
         if (
           !chapters[i].lessons[j].content &&
           !chapters[i].lessons[j].video_key &&
-          !chapters[i].lessons[j].homework_key
+          !chapters[i].lessons[j].homework_key &&
+          !chapters[i].lessons[j].video_url &&
+          !chapters[i].lessons[j].homework_url
         ) {
           if (alertFlag == 0) {
             alert(textConstants.emptyLessonAlert);
@@ -337,6 +339,13 @@ export default function createCoursePage() {
   };
 
   const removeChapter = (id: string) => {
+    if (!id.toString().includes("-")) {
+      // sensing ID from backend
+      // cannot remove
+      alert(textConstants.chapterRemovalDenial);
+      return;
+    }
+
     setInputs((prev) => {
       // First, remove the chapter by its id
       const updatedChapters = prev.chapters.filter(
@@ -400,7 +409,7 @@ export default function createCoursePage() {
     value: string
   ) => {
     if (!selectedChapterId) return;
-    console.log("lessonIndex: ", lessonIndex);
+    //console.log("lessonIndex: ", lessonIndex);
     setInputs((prev) => {
       let updatedChapters = prev.chapters.map((chapter: Chapter) =>
         chapter.chapter_id === selectedChapterId
@@ -408,10 +417,18 @@ export default function createCoursePage() {
               ...chapter,
               lessons: chapter.lessons.map((lesson, index) => {
                 if (index === lessonIndex) {
-                  if (key === "lesson_type") {
+                  if (
+                    key === "lesson_type" &&
+                    lesson.lesson_id.toString().includes("-")
+                  ) {
                     delete lesson.content;
                     delete lesson.video_key;
                     delete lesson.homework_key;
+                  } else if (key === "lesson_type") {
+                    delete lesson.content;
+                    delete lesson.video_url;
+                    delete lesson.homework_url;
+                    setEditorState(null);
                   }
                   const updatedLesson = { ...lesson, [key]: value };
                   return updatedLesson;
@@ -650,10 +667,10 @@ export default function createCoursePage() {
     });
     // Call API
     if (courseToEdit) {
-      console.log("updated course data: ", formData);
+      //console.log("updated course data: ", formData);
       updateCourse(formData);
     } else {
-      console.log("course created: ", formData);
+      //console.log("course created: ", formData);
       postCourse(formData);
     }
   }
@@ -674,7 +691,7 @@ export default function createCoursePage() {
   // }
 
   async function updateCourse(formData: FormData): Promise<void> {
-    console.log("Updating.......");
+    //console.log("Updating.......");
     const response = await editCourse(formData);
     if (response.message.includes("success")) {
       alert(textConstants.courseUpdatedAlert);
@@ -1070,7 +1087,11 @@ export default function createCoursePage() {
                   <InputField
                     inputTitle={textConstants.video}
                     placeholder={textConstants.video_placeholder}
-                    value={selectedLesson.video_key}
+                    value={
+                      selectedLesson.video_url
+                        ? textConstants.videoUploadedAlert
+                        : selectedLesson.video_key
+                    }
                     editable={false} // Prevent manual text editing
                   />
                 </TouchableOpacity>
@@ -1088,7 +1109,11 @@ export default function createCoursePage() {
                   <InputField
                     inputTitle={textConstants.homework}
                     placeholder={textConstants.homework_placeholder}
-                    value={selectedLesson.homework_key}
+                    value={
+                      selectedLesson.homework_url
+                        ? textConstants.pdfUploadedAlert
+                        : selectedLesson.homework_key
+                    }
                     editable={false} // Prevent manual text editing
                   />
                 </TouchableOpacity>
