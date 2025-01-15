@@ -25,8 +25,9 @@ import { memberGuestHomeConstants as Constants } from "@/constants/textConstants
 
 const Home = () => {
     const enrolledCourses = useAppStore((state) => state.enrolled_courses);
-    const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse)
+    const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse);
     const getEnrolledCourses = useAppStore((state) => state.getEnrolledCourses);
+    const handleSelectCourse = useAppStore((state) => state.handleSelectCourse);
 
     // DO NOT REMOVE
     const [enrolledData, setEnrolledData] = useState<Course[]>([]);
@@ -66,31 +67,6 @@ const Home = () => {
 
     const handleSelectChannel = () => {
         console.log("handleSelectChannel called");
-    };
-
-    const handleSelectCourse = async (id: number) => {
-        // console.log("Course " + id + " Selected");
-        const courseSelected = enrolledData.find(
-            (course) => course.course_id === id
-        );
-        if (courseSelected) { // IF COURSE IS ALREADY ENROLLED
-            router.push({
-                pathname: "../shared/course/courseContent",
-                params: {
-                    courseId: courseSelected.course_id,
-                },
-            });
-        } else { // COURSE NOT YET ENROLLED
-            const unenrolledCourse = await getUnenrolledCourse(id);
-            if (unenrolledCourse) {
-                router.push({
-                    pathname: "../../shared/course/courseDetails",
-                    params: {
-                        courseId: unenrolledCourse.course_id,
-                    },
-                });
-            }
-        }
     };
 
     return (

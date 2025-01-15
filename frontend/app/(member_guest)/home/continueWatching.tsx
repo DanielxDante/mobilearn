@@ -20,7 +20,6 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
 
     useEffect(() => {
         const fetchCourses = async () => {
-            console.log("No, it is calling here!")
             await getEnrolledCourses();
         }
         fetchCourses();
@@ -31,7 +30,6 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
             setCourses(enrolledCourses.slice(0, 2));
         }
     }, [enrolledCourses]);
-
     const renderItem = (item: Course) => (
         <TouchableOpacity
             key={item.course_id}
@@ -56,8 +54,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
                         />
                         <Text style={styles.ratingText}>{item.rating}</Text>
                     </View>
-                    {/* Commented out as completionRate not yet done */}
-                    {item.completion_rate ? (
+                    {(item.completion_rate != undefined) ? (
                         <View style={styles.progressContainer}>
                             <Progress.Bar
                                 progress={item.completion_rate}

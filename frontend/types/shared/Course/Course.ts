@@ -28,7 +28,7 @@ export default interface Course {
     chapters: Chapter[]; // Matches "chapters"
     rating: string;
     enrollment_count: number; // Matches "enrollment_count"
-    completion_rate: number; // Yet to be implemented
+    completion_rate: number;
     lesson_count: string;
     duration: string;
     skills: string;

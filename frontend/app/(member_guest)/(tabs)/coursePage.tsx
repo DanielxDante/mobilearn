@@ -12,14 +12,31 @@ import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
-import { courseListData } from "@/constants/temporaryCourseData";
 import { Colors } from "@/constants/colors";
 import { memberGuestCoursePage as Constants } from "@/constants/textConstants";
 import CourseListItem from "@/components/CourseListItem";
 import Course from "@/types/shared/Course/Course";
 import CourseSectionTabs from "@/components/CourseSectionTabs";
+import useAppStore from "@/store/appStore";
 
 const CoursePage = () => {
+    const enrolledCourses = useAppStore((state) => state.enrolled_courses);
+    const getEnrolledCourses = useAppStore((state) => state.getEnrolledCourses);
+    const handleSelectCourse = useAppStore((state) => state.handleSelectCourse);
+    const [enrolledData, setEnrolledData] = useState<Course[]>([]);
+    useEffect(() => {
+        const fetchCourses = async () => {
+            await getEnrolledCourses();
+        }
+        fetchCourses();
+    }, []);
+
+    useEffect(() => {
+        if (enrolledCourses && enrolledCourses.length > 0) {
+            setEnrolledData(enrolledCourses);
+        }
+    }, [enrolledCourses]);
+    // console.log(enrolledCourses);
     // selectedSection: 0 for Saved, 1 for In Progress, 2 for Completed
     const [selectedSection, setSelectedSection] = useState(0);
     const [courses, setCourses] = useState<{
@@ -34,14 +51,14 @@ const CoursePage = () => {
 
     // FILTER AND SET COURSES BASED ON COMPLETION RATE
     useEffect(() => {
-        const savedCourses = courseListData.filter(
-            (course) => course.completionRate === 0
+        const savedCourses = enrolledData.filter(
+            (course) => course.completion_rate === 0
         );
-        const inProgressCourses = courseListData.filter(
-            (course) => course.completionRate > 0 && course.completionRate < 1
+        const inProgressCourses = enrolledData.filter(
+            (course) => course.completion_rate > 0 && course.completion_rate < 1
         );
-        const completedCourses = courseListData.filter(
-            (course) => course.completionRate === 1
+        const completedCourses = enrolledData.filter(
+            (course) => course.completion_rate === 1
         );
 
         setCourses({
@@ -49,7 +66,7 @@ const CoursePage = () => {
             inProgressCourses,
             completedCourses,
         });
-    }, []);
+    }, [enrolledData]);
 
     const getCoursesToDisplay = (section: number) => {
         switch (section) {
@@ -81,19 +98,19 @@ const CoursePage = () => {
         outputRange: [0, -width, -2 * width],
     });
 
-    const handleSelectCourse = (id: string) => {
-        // TODO: INCLUDE COURSE NAVIGATION
-        console.log("Course " + id + " Selected");
-        const courseSelected = courseListData.find(
-            (course) => course.id.toString() === id
-        );
-        router.push({
-            pathname: "../../shared/course/courseDetails",
-            params: {
-                courseSelected: JSON.stringify(courseSelected),
-            },
-        });
-    };
+    // const handleSelectCourse = (id: string) => {
+    //     // TODO: INCLUDE COURSE NAVIGATION
+    //     // console.log("Course " + id + " Selected");
+    //     const courseSelected = enrolledData.find(
+    //         (course) => course.course_id.toString() === id
+    //     );
+    //     router.push({
+    //         pathname: "../../shared/course/courseContent",
+    //         params: {
+    //             courseId: id,
+    //         },
+    //     });
+    // };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -135,9 +152,9 @@ const CoursePage = () => {
                     >
                         {getCoursesToDisplay(section).map((course) => (
                             <CourseListItem
-                                key={course.id}
+                                key={course.course_id}
                                 item={course}
-                                onSelect={handleSelectCourse}
+                                onSelect={() => {handleSelectCourse(course.course_id)}}
                             />
                         ))}
                     </ScrollView>

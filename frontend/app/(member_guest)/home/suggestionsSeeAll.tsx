@@ -22,6 +22,7 @@ const SuggestionsSeeAll = () => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const handleSelectCourse = useAppStore((state) => state.handleSelectCourse);
     const recommendedCourses = useAppStore(
         (state) => state.recommended_courses
     );
@@ -31,11 +32,6 @@ const SuggestionsSeeAll = () => {
 
     const [suggestionData, setSuggestionData] =
         useState<Course[]>(recommendedCourses);
-
-    const handleSelectCourse = (id: string) => {
-        // TODO: INCLUDE COURSE NAVIGATION
-        console.log("Course " + id + " Selected");
-    };
 
     const fetchCourses = async () => {
         if (loading || !hasMore) return;
@@ -92,7 +88,7 @@ const SuggestionsSeeAll = () => {
                         <CourseListItem
                             key={course.course_id}
                             item={course}
-                            onSelect={handleSelectCourse}
+                            onSelect={() => {handleSelectCourse(course.course_id)}}
                         />
                     ))}
                     {loading && (

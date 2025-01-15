@@ -34,6 +34,7 @@ import Course from "@/types/shared/Course/Course";
 import Review from "@/types/shared/Course/Review";
 import Lesson from "@/types/shared/Course/Lesson";
 import Instructor from "@/types/shared/Course/Instructor";
+import { router } from "expo-router";
 
 export interface AppState {
   channels: Channel[]; // List of Channels that user has access to
@@ -66,6 +67,7 @@ export interface AppState {
     per_page?: string
   ) => Promise<Course[]>;
   getInstructorPreviewedLesson: (lesson_id: string) => Promise<Lesson>;
+  createCourse: (formData: any) => Promise<void>;
   searchCourse: (
     channel_id: number,
     search_term?: string,
@@ -95,7 +97,7 @@ export interface AppState {
     review_text: string
   ) => Promise<void>;
   withdrawCourse: (course_id: number) => Promise<void>;
-  createCourse: (formData: any) => Promise<void>;
+  handleSelectCourse: (course_id: number) => Promise<void>;
   getCommunities: () => Promise<any[]>;
   getInstructorDetails: (instructor_id: string) => Promise<Instructor>;
   getInstructors: (community_id: string) => Promise<Instructor[]|undefined>;
@@ -145,7 +147,6 @@ export const useAppStore = create<AppState>()(
             selectedCourse: undefined,
             instructorPreviewedLesson: undefined,
           });
-          console.log("State after logout:", get());
         } catch (error) {
           console.error("Error logging out of AppStore:", error);
           throw new Error("An unexpected error occurred while logging out.");
@@ -205,7 +206,6 @@ export const useAppStore = create<AppState>()(
               headers: { "Content-Type": "application/json" },
             }
           );
-          // console.log(response);
           const responseData = response.data;
           if (response.status === 200) {
             set({
@@ -439,6 +439,7 @@ export const useAppStore = create<AppState>()(
             }
           );
           const responseData = response.data;
+          // console.log(JSON.stringify(responseData));
           // MAP API response to FE Course type
           const mappedCourses = responseData.courses.map((course: any) => ({
             course_id: course.id,
@@ -446,11 +447,12 @@ export const useAppStore = create<AppState>()(
             course_image: course.course_image,
             course_name: course.course_name,
             community_name: course.community_name,
-            description: undefined,
+            description: course.description,
             instructors: undefined,
             chapters: undefined,
             rating: course.rating,
             enrollment_count: undefined,
+            completion_rate: course.progress,
           }));
           set({
             enrolled_courses: mappedCourses,
@@ -661,6 +663,31 @@ export const useAppStore = create<AppState>()(
           // Tentatively returns nothing for successful API request
         } catch (error: any) {
           console.error(error);
+        }
+      },
+      handleSelectCourse: async (course_id: number) => {
+        const courseSelected = get().enrolled_courses?.find(
+          (course) => course.course_id === course_id
+        );
+        if (courseSelected) { // IF COURSE IS ALREADY ENROLLED
+          console.log("Hereeee!");
+          router.push({
+              pathname: "/shared/course/courseContent",
+              params: {
+                  courseId: courseSelected.course_id,
+              },
+          });
+        } else { // COURSE NOT YET ENROLLED
+          console.log("Here!");
+          const unenrolledCourse = await get().getUnenrolledCourse(course_id);
+          if (unenrolledCourse) {
+              router.push({
+                  pathname: "/shared/course/courseDetails",
+                  params: {
+                      courseId: unenrolledCourse.course_id,
+                  },
+              });
+          }
         }
       },
       getCommunities: async () => {
