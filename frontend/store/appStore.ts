@@ -69,6 +69,7 @@ export interface AppState {
   ) => Promise<Course[]>;
   getInstructorPreviewedLesson: (lesson_id: string) => Promise<Lesson>;
   createCourse: (formData: any) => Promise<void>;
+  editCourse: (formData: any) => Promise<void>;
   searchCourse: (
     channel_id: number,
     search_term?: string,
@@ -98,7 +99,7 @@ export interface AppState {
     review_text: string
   ) => Promise<void>;
   withdrawCourse: (course_id: number) => Promise<void>;
-  editCourse: (formData: any) => Promise<void>;
+  handleSelectCourse: (course_id: number) => Promise<void>;
   getCommunities: () => Promise<any[]>;
   getInstructorDetails: (instructor_id: string) => Promise<Instructor>;
   getInstructors: (community_id: string) => Promise<Instructor[] | undefined>;
