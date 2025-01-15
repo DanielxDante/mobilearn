@@ -45,7 +45,6 @@ const PaymentCompleted = () => {
                 <TouchableOpacity
                     style={styles.continueButton}
                     onPress={() => {
-                        console.log("Going to courseContent now!");
                         router.push({
                             pathname: "./courseContent",
                             params: {

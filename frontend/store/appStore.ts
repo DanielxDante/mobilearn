@@ -35,6 +35,7 @@ import Course from "@/types/shared/Course/Course";
 import Review from "@/types/shared/Course/Review";
 import Lesson from "@/types/shared/Course/Lesson";
 import Instructor from "@/types/shared/Course/Instructor";
+import { router } from "expo-router";
 
 export interface AppState {
   channels: Channel[]; // List of Channels that user has access to
@@ -67,6 +68,8 @@ export interface AppState {
     per_page?: string
   ) => Promise<Course[]>;
   getInstructorPreviewedLesson: (lesson_id: string) => Promise<Lesson>;
+  createCourse: (formData: any) => Promise<void>;
+  editCourse: (formData: any) => Promise<void>;
   searchCourse: (
     channel_id: number,
     search_term?: string,
@@ -80,12 +83,14 @@ export interface AppState {
   getFavouriteCourses: (page?: string, per_page?: string) => Promise<void>;
   getRecommendedCourses: (
     page?: string,
-    per_page?: string
+    per_page?: string,
+    pagination?: boolean,
   ) => Promise<Course[]>;
   getReview: (course_id: number) => Promise<void>;
   getTopEnrolledCoursesUser: (
     page?: string,
-    per_page?: string
+    per_page?: string,
+    pagination?: boolean
   ) => Promise<Course[]>;
   removeFavouriteCourse: (course_id: number) => Promise<void>;
   saveReview: (
@@ -94,8 +99,7 @@ export interface AppState {
     review_text: string
   ) => Promise<void>;
   withdrawCourse: (course_id: number) => Promise<void>;
-  createCourse: (formData: any) => Promise<void>;
-  editCourse: (formData: any) => Promise<void>;
+  handleSelectCourse: (course_id: number) => Promise<void>;
   getCommunities: () => Promise<any[]>;
   getInstructorDetails: (instructor_id: string) => Promise<Instructor>;
   getInstructors: (community_id: string) => Promise<Instructor[] | undefined>;
@@ -204,7 +208,6 @@ export const useAppStore = create<AppState>()(
               headers: { "Content-Type": "application/json" },
             }
           );
-          // console.log(response);
           const responseData = response.data;
           if (response.status === 200) {
             set({
@@ -439,6 +442,8 @@ export const useAppStore = create<AppState>()(
           );
           if (response.status === 200) {
             get().getEnrolledCourses();
+            get().getRecommendedCourses();
+            get().getTopEnrolledCoursesUser();
           }
           return response.status;
           // Tentatively returns nothing for successful API request
@@ -459,6 +464,7 @@ export const useAppStore = create<AppState>()(
             }
           );
           const responseData = response.data;
+          // console.log(JSON.stringify(responseData));
           // MAP API response to FE Course type
           const mappedCourses = responseData.courses.map((course: any) => ({
             course_id: course.id,
@@ -466,11 +472,12 @@ export const useAppStore = create<AppState>()(
             course_image: course.course_image,
             course_name: course.course_name,
             community_name: course.community_name,
-            description: undefined,
+            description: course.description,
             instructors: undefined,
             chapters: undefined,
             rating: course.rating,
             enrollment_count: undefined,
+            completion_rate: course.progress,
           }));
           set({
             enrolled_courses: mappedCourses,
@@ -512,7 +519,7 @@ export const useAppStore = create<AppState>()(
           console.error(error);
         }
       },
-      getRecommendedCourses: async (page, per_page) => {
+      getRecommendedCourses: async (page, per_page, pagination = false) => {
         console.log("(Store) Get Recommended Courses");
         try {
           const response = await axios.get(
@@ -541,7 +548,13 @@ export const useAppStore = create<AppState>()(
             set({
               recommended_courses: mappedCourses,
             });
-          } else {
+          } else if (get().recommended_courses.length > 0 && pagination == false) {
+            // ANOTHER API CALL TO REFRESH RECOMMENDED_COURSES
+            set({
+              recommended_courses: mappedCourses,
+            });
+          }
+          else {
             //  RETURN NEXT 5 COURSES TO COMPONENT (suggestionsSeeAll)
             return mappedCourses;
           }
@@ -575,7 +588,7 @@ export const useAppStore = create<AppState>()(
           console.error(error);
         }
       },
-      getTopEnrolledCoursesUser: async (page?, per_page?) => {
+      getTopEnrolledCoursesUser: async (page?, per_page?, pagination = false) => {
         console.log("(Store) Get Top Enrolled Courses");
         try {
           const response = await axios.get(
@@ -602,7 +615,11 @@ export const useAppStore = create<AppState>()(
           if (get().top_enrolled_courses.length === 0) {
             // ONLY SET FIRST 5 COURSES IN TOP_ENROLLED_COURSES
             set({ top_enrolled_courses: mappedCourses });
-          } else {
+          } else if (get().top_enrolled_courses.length > 0 && pagination == false) {
+            // ANOTHER API CALL TO REFRESH TOP ENROLLED COURSES
+            set({ top_enrolled_courses: mappedCourses });
+          }
+          else {
             //  RETURN NEXT 5 COURSES TO COMPONENT (topCoursesSeeAll)
             return mappedCourses;
           }
@@ -671,6 +688,31 @@ export const useAppStore = create<AppState>()(
           // Tentatively returns nothing for successful API request
         } catch (error: any) {
           console.error(error);
+        }
+      },
+      handleSelectCourse: async (course_id: number) => {
+        const courseSelected = get().enrolled_courses?.find(
+          (course) => course.course_id === course_id
+        );
+        if (courseSelected) { // IF COURSE IS ALREADY ENROLLED
+          console.log("Hereeee!");
+          router.push({
+              pathname: "/shared/course/courseContent",
+              params: {
+                  courseId: courseSelected.course_id,
+              },
+          });
+        } else { // COURSE NOT YET ENROLLED
+          console.log("Here!");
+          const unenrolledCourse = await get().getUnenrolledCourse(course_id);
+          if (unenrolledCourse) {
+              router.push({
+                  pathname: "/shared/course/courseDetails",
+                  params: {
+                      courseId: unenrolledCourse.course_id,
+                  },
+              });
+          }
         }
       },
       getCommunities: async () => {

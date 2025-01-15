@@ -27,10 +27,10 @@ const memberChannelSignUpPage = () => {
         channelId?: number
     ) => {
         if (channelId) {
-            setChannelIdStore(channelId);
-            // console.log(
-            //     "Redirecting to homepage with channel_id: " + channelId
-            // );
+            await setChannelIdStore(channelId);
+            console.log(
+                "Redirecting to homepage with channel_id: " + channelId
+            );
         } else if (inviteCode) {
             // Redirect to homepage with new inviteCode
             // console.log("Invite code: " + inviteCode);

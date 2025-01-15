@@ -24,63 +24,26 @@ import { Colors } from "@/constants/colors";
 import { memberGuestHomeConstants as Constants } from "@/constants/textConstants";
 
 const Home = () => {
-    const channels = useAppStore((state) => state.channels);
-    const channel_id = useAppStore((state) => state.channel_id);
-    const recommendedCourses = useAppStore(
-        (state) => state.recommended_courses
-    );
-    const topEnrolledCourses = useAppStore(
-        (state) => state.top_enrolled_courses
-    );
     const enrolledCourses = useAppStore((state) => state.enrolled_courses);
-    const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse)
+    const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse);
     const getEnrolledCourses = useAppStore((state) => state.getEnrolledCourses);
-    const getRecommendedCourses = useAppStore(
-        (state) => state.getRecommendedCourses
-    );
-    const getTopEnrolledCourses = useAppStore(
-        (state) => state.getTopEnrolledCoursesUser
-    );
+    const handleSelectCourse = useAppStore((state) => state.handleSelectCourse);
 
-    const [loading, setLoading] = useState(false);
-
+    // DO NOT REMOVE
+    const [enrolledData, setEnrolledData] = useState<Course[]>([]);
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
+        const fetchCourses = async () => {
             await getEnrolledCourses();
-            await getRecommendedCourses("1", "5");
-            await getTopEnrolledCourses("1", "5");
-        };
-        fetchData();
+        }
+        fetchCourses();
     }, []);
 
     useEffect(() => {
         if (enrolledCourses && enrolledCourses.length > 0) {
-            setContinueWatchingData(enrolledCourses.slice(0, 5));
+            setEnrolledData(enrolledCourses.slice(0, 2));
         }
     }, [enrolledCourses]);
-    useEffect(() => {
-        if (recommendedCourses.length > 0) {
-            setSuggestionsData(recommendedCourses.slice(0, 5));
-        }
-    }, [recommendedCourses]);
-    useEffect(() => {
-        if (topEnrolledCourses.length > 0) {
-            setTopCourseData(topEnrolledCourses.slice(0, 5));
-        }
-    }, [topEnrolledCourses]);
-
-    const [continueWatchingData, setContinueWatchingData] = useState<
-        Course[] | undefined
-    >(() => {
-        return enrolledCourses?.slice(0, 2);
-    });
-    const [suggestionsData, setSuggestionsData] = useState<Course[]>(() => {
-        return recommendedCourses.slice(0, 5);
-    });
-    const [topCourseData, setTopCourseData] = useState<Course[]>(() => {
-        return topEnrolledCourses.slice(0, 5);
-    });
+    // DO NOT REMOVE
 
     const segments = useSegments();
     useEffect(() => {
@@ -104,50 +67,6 @@ const Home = () => {
 
     const handleSelectChannel = () => {
         console.log("handleSelectChannel called");
-    };
-
-    const handleSelectCourse = async (id: number) => {
-        // console.log("Course " + id + " Selected");
-        const mergedCourses = [
-            ...(continueWatchingData || []),
-            ...suggestionsData,
-            ...topCourseData,
-        ];
-        const courseSelected = mergedCourses.find(
-            (course) => course.course_id === id
-        );
-        if (courseSelected) {
-            const checkEnrolled = continueWatchingData?.find(
-                (course) => course.course_id === courseSelected.course_id
-            );
-            if (checkEnrolled) {
-                // If enrolled
-                router.push({
-                    pathname: "../shared/course/courseContent",
-                    params: {
-                        courseId: courseSelected.course_id,
-                    },
-                });
-            } else {
-                // Else not enrolled
-                router.push({
-                    pathname: "../../shared/course/courseDetails",
-                    params: {
-                        courseId: courseSelected.course_id,
-                    },
-                });
-            }
-        } else { //Course not on homepage
-            const unenrolledCourse = await getUnenrolledCourse(id);
-            if (unenrolledCourse) {
-                router.push({
-                    pathname: "../../shared/course/courseDetails",
-                    params: {
-                        courseId: unenrolledCourse.course_id,
-                    },
-                });
-            }
-        }
     };
 
     return (
@@ -177,15 +96,11 @@ const Home = () => {
                         <Search handleSelectCourse={handleSelectCourse} />
                     </View>
                     {/* Continue Watching */}
-                    {continueWatchingData &&
-                        continueWatchingData.length > 0 && (
-                            <View style={styles.continueWatchingContainer}>
-                                <ContinueWatching
-                                    courseData={continueWatchingData || []}
-                                    onSelect={handleSelectCourse}
-                                />
-                            </View>
-                        )}
+                    <View style={styles.continueWatchingContainer}>
+                        <ContinueWatching
+                            onSelect={handleSelectCourse}
+                        />
+                    </View>
 
                     {/* Suggestions for You */}
                     <View style={styles.suggestionsContainer}>
@@ -206,7 +121,7 @@ const Home = () => {
                             </TouchableOpacity>
                         </View>
                         <TopCourses
-                            courseData={suggestionsData}
+                            data = "Suggestions"
                             onSelect={handleSelectCourse}
                         />
                     </View>
@@ -229,7 +144,7 @@ const Home = () => {
                             </TouchableOpacity>
                         </View>
                         <TopCourses
-                            courseData={topCourseData}
+                            data = "Top Courses"
                             onSelect={handleSelectCourse}
                         />
                     </View>
