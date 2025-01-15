@@ -10,8 +10,6 @@ const InputField: React.FC<InputFieldProps> = ({
   inputTitle,
   placeholder,
   secureTextEntry = false,
-  multiline = false,
-  maxLength = 100,
   ...rest
 }) => {
   return (
@@ -32,8 +30,7 @@ const InputField: React.FC<InputFieldProps> = ({
           fontSize: 18,
           borderRadius: 8,
         }}
-        multiline={multiline}
-        maxLength={maxLength}
+        {...rest}
       />
     </View>
   );
