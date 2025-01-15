@@ -25,6 +25,7 @@ import {
   COURSE_CREATE_COURSE,
   COURSE_INSTRUCTOR_GET_PREVIEW_LESSON,
   COURSE_INSTRUCTOR_GET_COURSE_DETAILS,
+  COURSE_INSTRUCTOR_EDIT_COURSE,
   COMMUNITY_GET_COMMUNITIES_URL,
   COMMUNITY_GET_INSTRUCTOR_DETAILS_URL,
   COMMUNITY_GET_INSTRUCTORS_URL,
@@ -97,10 +98,10 @@ export interface AppState {
     review_text: string
   ) => Promise<void>;
   withdrawCourse: (course_id: number) => Promise<void>;
-  handleSelectCourse: (course_id: number) => Promise<void>;
+  editCourse: (formData: any) => Promise<void>;
   getCommunities: () => Promise<any[]>;
   getInstructorDetails: (instructor_id: string) => Promise<Instructor>;
-  getInstructors: (community_id: string) => Promise<Instructor[]|undefined>;
+  getInstructors: (community_id: string) => Promise<Instructor[] | undefined>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -373,6 +374,29 @@ export const useAppStore = create<AppState>()(
           }
         } catch (error: any) {
           console.error("Error creating course: ", error.message);
+        }
+      },
+      editCourse: async (formData) => {
+        console.log("(Store) Edit Course");
+        try {
+          const response = await axios.post(
+            COURSE_INSTRUCTOR_EDIT_COURSE, // URL
+            formData, // Payload
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                // Authorization: token, // Add your token if required
+              },
+            }
+          );
+
+          const responseData = response.data;
+          if (response.status === 200) {
+            console.log("Course edited successfully: ", responseData);
+            return responseData;
+          }
+        } catch (error: any) {
+          console.error("Error editing course: ", error.message);
         }
       },
       searchCourse: async (channel_id, search_term, page?, per_page?) => {
@@ -693,19 +717,16 @@ export const useAppStore = create<AppState>()(
       getCommunities: async () => {
         console.log("(Store) Get communities");
         try {
-          const response = await axios.get(
-            `${COMMUNITY_GET_COMMUNITIES_URL}`,
-            {
-              headers: { "Content-Type": "application/json" },
-            }
-          );
+          const response = await axios.get(`${COMMUNITY_GET_COMMUNITIES_URL}`, {
+            headers: { "Content-Type": "application/json" },
+          });
           const responseData = response.data;
           return responseData.communities;
         } catch (error: any) {
           console.error(error);
         }
       },
-      getInstructorDetails: async(instructor_id: string) => {
+      getInstructorDetails: async (instructor_id: string) => {
         console.log("(Store) Get Instructor Details");
         try {
           const response = await axios.get(
@@ -720,7 +741,7 @@ export const useAppStore = create<AppState>()(
           console.error(error);
         }
       },
-      getInstructors: async(community_id: string) => {
+      getInstructors: async (community_id: string) => {
         console.log("(Store) Get Instructors within community");
         try {
           const response = await axios.get(
@@ -730,13 +751,15 @@ export const useAppStore = create<AppState>()(
             }
           );
           const responseData = response.data;
-          const instructors: Instructor[] = responseData.instructors.map((instructor: any) => ({
-            instructor_id: instructor.id,
-            instructor_name: instructor.name,
-            instructor_profile_picture: instructor.profile_picture_url,
-            company: "",
-            instructor_position: "",
-          }));
+          const instructors: Instructor[] = responseData.instructors.map(
+            (instructor: any) => ({
+              instructor_id: instructor.id,
+              instructor_name: instructor.name,
+              instructor_profile_picture: instructor.profile_picture_url,
+              company: "",
+              instructor_position: "",
+            })
+          );
           return instructors;
         } catch (error: any) {
           console.error(error);

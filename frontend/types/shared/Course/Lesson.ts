@@ -14,4 +14,6 @@ export default interface Lesson {
   content?: string;
   video_key?: string;
   homework_key?: string;
+  video_url?: string;
+  homework_url?: string;
 }

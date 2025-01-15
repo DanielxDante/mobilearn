@@ -27,12 +27,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Editor from "@/components/dom-components/RichTextEditor";
 import useAppStore from "@/store/appStore";
 import { INSTRUCTOR_HOME } from "@/constants/pages";
+import { update } from "lodash";
 
 export default function createCoursePage() {
   const token = useAuthStore((state) => state.access_token);
   const createCourse = useAppStore(
     (state) => state.createCourse
   ) as unknown as (formData: FormData) => Promise<{ message: string }>;
+  const editCourse = useAppStore((state) => state.editCourse) as unknown as (
+    formData: FormData
+  ) => Promise<{ message: string }>;
   const { courseToEdit } = useLocalSearchParams();
   const course = useMemo(
     () => (typeof courseToEdit === "string" ? JSON.parse(courseToEdit) : null),
@@ -50,6 +54,7 @@ export default function createCoursePage() {
   const [editorState, setEditorState] = useState<string | null>(null); // Full editor state
   const [validated, setValidated] = useState(false);
   const [inputs, setInputs] = useState({
+    courseID: course?.course_id || "",
     courseTitle: course?.course_name || "",
     courseInfo: course?.description || "",
     courseType:
@@ -125,7 +130,9 @@ export default function createCoursePage() {
         if (
           !chapters[i].lessons[j].content &&
           !chapters[i].lessons[j].video_key &&
-          !chapters[i].lessons[j].homework_key
+          !chapters[i].lessons[j].homework_key &&
+          !chapters[i].lessons[j].video_url &&
+          !chapters[i].lessons[j].homework_url
         ) {
           if (alertFlag == 0) {
             alert(textConstants.emptyLessonAlert);
@@ -332,6 +339,13 @@ export default function createCoursePage() {
   };
 
   const removeChapter = (id: string) => {
+    if (!id.toString().includes("-")) {
+      // sensing ID from backend
+      // cannot remove
+      alert(textConstants.chapterRemovalDenial);
+      return;
+    }
+
     setInputs((prev) => {
       // First, remove the chapter by its id
       const updatedChapters = prev.chapters.filter(
@@ -357,7 +371,7 @@ export default function createCoursePage() {
     setInputs((prev) => ({
       ...prev,
       chapters: prev.chapters.map((chapter: Chapter) =>
-        chapter.chapter_id.toString() === selectedChapterId
+        chapter.chapter_id === selectedChapterId
           ? {
               ...chapter,
               lessons: Array(newLessonCount)
@@ -395,18 +409,26 @@ export default function createCoursePage() {
     value: string
   ) => {
     if (!selectedChapterId) return;
-
+    //console.log("lessonIndex: ", lessonIndex);
     setInputs((prev) => {
       let updatedChapters = prev.chapters.map((chapter: Chapter) =>
-        chapter.chapter_id.toString() === selectedChapterId
+        chapter.chapter_id === selectedChapterId
           ? {
               ...chapter,
               lessons: chapter.lessons.map((lesson, index) => {
                 if (index === lessonIndex) {
-                  if (key === "lesson_type") {
+                  if (
+                    key === "lesson_type" &&
+                    lesson.lesson_id.toString().includes("-")
+                  ) {
                     delete lesson.content;
                     delete lesson.video_key;
                     delete lesson.homework_key;
+                  } else if (key === "lesson_type") {
+                    delete lesson.content;
+                    delete lesson.video_url;
+                    delete lesson.homework_url;
+                    setEditorState(null);
                   }
                   const updatedLesson = { ...lesson, [key]: value };
                   return updatedLesson;
@@ -562,6 +584,7 @@ export default function createCoursePage() {
     const modifiedChapters = inputs.chapters.map((chapter: any) => {
       const modifiedChapter = { ...chapter };
       // delete modifiedChapter.id;
+      //console.log("chapter: ", modifiedChapter);
       if (modifiedChapter.chapter_id.toString().includes("-")) {
         // sensing ID from frontend
         // we  delete the ID
@@ -569,15 +592,28 @@ export default function createCoursePage() {
       } else {
         // we do not do anything because the ID is from the backend
       }
-      modifiedChapter.lessons = modifiedChapter.lessons.map((lesson: any) => {
-        const modifiedLesson = {
-          ...lesson,
-          lesson_type: lesson.lesson_type.toLowerCase(),
-        };
-        // delete modifiedLesson.id;
-        delete modifiedLesson.lesson_id;
-        return modifiedLesson;
-      });
+      modifiedChapter.lessons = modifiedChapter.lessons.map(
+        (lesson: any, index: number) => {
+          let modifiedLesson = {
+            ...lesson,
+            lesson_type: lesson.lesson_type.toLowerCase(),
+          };
+          // delete modifiedLesson.id;
+          //console.log("lesson: ", modifiedLesson);
+          if (modifiedLesson.lesson_id.toString().includes("-")) {
+            // sensing ID from frontend
+            // we  delete the ID
+            delete modifiedLesson.lesson_id;
+          } else {
+            // we do not do ID as it is from the backend, but add Order
+            modifiedLesson = {
+              ...modifiedLesson,
+              order: index + 1,
+            };
+          }
+          return modifiedLesson;
+        }
+      );
       return modifiedChapter;
     });
     return modifiedChapters;
@@ -591,10 +627,13 @@ export default function createCoursePage() {
       alert(textConstants.fillAllFieldsAlert);
       return;
     }
-    alert(textConstants.courseCreatedAlert);
     const formData = new FormData();
 
     // Append basic form data
+    if (courseToEdit) {
+      formData.append("course_id", inputs.courseID);
+      //formData.append("community_id", inputs.communityID);
+    }
     formData.append("name", inputs.courseTitle);
     formData.append("description", inputs.courseInfo);
     formData.append("course_type", inputs.courseType.toLowerCase());
@@ -620,13 +659,20 @@ export default function createCoursePage() {
     const content = {
       chapters: modifiedChapters,
     };
+    //console.log("content: ", content);
     formData.append("content", JSON.stringify(content));
     // Append files
     Object.entries(inputs.files).forEach(([key, file]) => {
       formData.append("files", file as Blob);
     });
     // Call API
-    postCourse(formData);
+    if (courseToEdit) {
+      //console.log("updated course data: ", formData);
+      updateCourse(formData);
+    } else {
+      //console.log("course created: ", formData);
+      postCourse(formData);
+    }
   }
 
   async function postCourse(formData: FormData): Promise<void> {
@@ -640,12 +686,18 @@ export default function createCoursePage() {
     }
   }
 
-  function sentenceCaseHelper(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
+  // function sentenceCaseHelper(str: string): string {
+  //   return str.charAt(0).toUpperCase() + str.slice(1);
+  // }
 
-  function updateCourse(): () => void {
-    throw new Error("Function not implemented.");
+  async function updateCourse(formData: FormData): Promise<void> {
+    //console.log("Updating.......");
+    const response = await editCourse(formData);
+    if (response.message.includes("success")) {
+      alert(textConstants.courseUpdatedAlert);
+      AsyncStorage.removeItem("courseData");
+      router.push(INSTRUCTOR_HOME);
+    }
   }
 
   // useEffect(() => {
@@ -748,6 +800,8 @@ export default function createCoursePage() {
                   onChangeText={(text) => {
                     handleChange(text, "courseInfo");
                   }}
+                  multiline={true}
+                  maxLength={500}
                 />
                 <InputField // Duration
                   inputTitle={textConstants.courseDuration}
@@ -1035,7 +1089,11 @@ export default function createCoursePage() {
                   <InputField
                     inputTitle={textConstants.video}
                     placeholder={textConstants.video_placeholder}
-                    value={selectedLesson.video_key}
+                    value={
+                      selectedLesson.video_url
+                        ? textConstants.videoUploadedAlert
+                        : selectedLesson.video_key
+                    }
                     editable={false} // Prevent manual text editing
                   />
                 </TouchableOpacity>
@@ -1053,7 +1111,11 @@ export default function createCoursePage() {
                   <InputField
                     inputTitle={textConstants.homework}
                     placeholder={textConstants.homework_placeholder}
-                    value={selectedLesson.homework_key}
+                    value={
+                      selectedLesson.homework_url
+                        ? textConstants.pdfUploadedAlert
+                        : selectedLesson.homework_key
+                    }
                     editable={false} // Prevent manual text editing
                   />
                 </TouchableOpacity>
@@ -1074,11 +1136,7 @@ export default function createCoursePage() {
             style={validated ? styles.registerButton : styles.disabledButton}
             onPress={() => {
               if (validated) {
-                if (courseToEdit) {
-                  updateCourse();
-                } else {
-                  registerCourse();
-                }
+                registerCourse();
               } else {
                 validateChapters(inputs.chapters, 0);
                 alert(textConstants.fillAllFieldsAlert);
