@@ -617,6 +617,7 @@ class ProfessionalCourse(Course):
             'difficulty': self.difficulty,
             'skills': self.skills.split(', ') if self.skills else [],
             'department': self.department,
+            'expertise': self.expertise,
             'created': self.created.isoformat() if self.created else None,
             'updated': self.updated.isoformat() if self.updated else None,
             'status': self.status

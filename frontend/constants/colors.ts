@@ -30,4 +30,7 @@ export const Colors = {
   Gray: "#808080",
   darkGray: "#181818",
   warningRed: "#FF0000",
+  bronze: "#CD7F32",
+  silver: "#A9A9A9",
+  gold: "#DAA520",
 };

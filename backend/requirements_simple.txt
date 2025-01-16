@@ -11,3 +11,7 @@ psycopg2==2.9.9
 boto3==1.35.82
 flask-socketio==5.4.1
 stripe==11.4.1
+pandas==2.2.3
+nltk==3.9.1
+gensim==4.3.3
+scikit-learn==1.6.1
