@@ -19,6 +19,7 @@ import icons from "@/constants/icons";
 import useAuthStore from "@/store/authStore";
 import useAppStore from "@/store/appStore";
 import BackButton from "@/components/BackButton";
+import FavouriteButton from "@/components/FavouriteButton"
 
 const CourseDetails = () => {
   // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
@@ -67,7 +68,8 @@ const CourseDetails = () => {
     <SafeAreaView style={styles.container}>
         {/* AppBar */}
         <View style={styles.appBarContainer}>
-                <BackButton />
+          <BackButton />
+          <FavouriteButton course_id={courseId.toString()}/>
         </View>
       <ScrollView style={styles.body}>
         {/* if picture is not available, show loading */}
@@ -196,9 +198,10 @@ const styles = StyleSheet.create({
   },
   appBarContainer: {
       flexDirection: "row",
-      marginTop: 20,
-      marginBottom: 20,
+      marginTop: 13,
+      marginBottom: 13,
       alignItems: "center",
+      justifyContent: "space-between"
   },
   header: {
     flexDirection: "row",

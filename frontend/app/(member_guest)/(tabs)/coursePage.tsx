@@ -23,20 +23,25 @@ const CoursePage = () => {
     const enrolledCourses = useAppStore((state) => state.enrolled_courses);
     const getEnrolledCourses = useAppStore((state) => state.getEnrolledCourses);
     const handleSelectCourse = useAppStore((state) => state.handleSelectCourse);
+    const favouriteCourses = useAppStore((state) => state.favourite_courses);
+    const getFavouriteCourses = useAppStore((state) => state.getFavouriteCourses);
     const [enrolledData, setEnrolledData] = useState<Course[]>([]);
+    const [favouriteData, setFavouriteData] = useState<Course[]>([]);
     useEffect(() => {
         const fetchCourses = async () => {
             await getEnrolledCourses();
+            await getFavouriteCourses();
         }
         fetchCourses();
     }, []);
-
     useEffect(() => {
         if (enrolledCourses && enrolledCourses.length > 0) {
             setEnrolledData(enrolledCourses);
+        } 
+        if (favouriteCourses && favouriteCourses.length > 0) {
+            setFavouriteData(favouriteCourses);
         }
-    }, [enrolledCourses]);
-    // console.log(enrolledCourses);
+    }, [enrolledCourses, favouriteCourses]);
     // selectedSection: 0 for Saved, 1 for In Progress, 2 for Completed
     const [selectedSection, setSelectedSection] = useState(0);
     const [courses, setCourses] = useState<{
@@ -51,11 +56,9 @@ const CoursePage = () => {
 
     // FILTER AND SET COURSES BASED ON COMPLETION RATE
     useEffect(() => {
-        const savedCourses = enrolledData.filter(
-            (course) => course.completion_rate === 0
-        );
+        const savedCourses = favouriteData;
         const inProgressCourses = enrolledData.filter(
-            (course) => course.completion_rate > 0 && course.completion_rate < 1
+            (course) => course.completion_rate < 1
         );
         const completedCourses = enrolledData.filter(
             (course) => course.completion_rate === 1
@@ -66,7 +69,7 @@ const CoursePage = () => {
             inProgressCourses,
             completedCourses,
         });
-    }, [enrolledData]);
+    }, [enrolledData, favouriteData]);
 
     const getCoursesToDisplay = (section: number) => {
         switch (section) {
