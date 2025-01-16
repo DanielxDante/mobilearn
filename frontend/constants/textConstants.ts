@@ -445,6 +445,7 @@ export const courseContentConstants = {
   lesson: "Lesson",
   tick: require("@/assets/images/icons/tick.png"),
   noLessonsAvailable: "No lessons available",
+  backButton: require("@/assets/images/notifications/backButton.png"),
 };
 
 export const instructorHomePageConstants = {

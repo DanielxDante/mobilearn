@@ -59,11 +59,9 @@ const CourseContent = () => {
                 () => {
                     // Get the current route
                     const currentRoute = segments[segments.length - 1];
-                    // If we're on the member home page, go to hardware home
-                    console.log(currentRoute)
                     if (currentRoute === COURSE_CONTENT_PAGE) {
                         
-                        router.push("/(member_guest)/(tabs)") // Exit the app
+                        router.push("/(member_guest)/(tabs)") // Return to homepage
                         return true;
                     }
     
@@ -156,6 +154,19 @@ const CourseContent = () => {
 
     return (
         <SafeAreaView style={styles.container}>
+            {/* AppBar */}
+            <View style={styles.appBarContainer}>
+                <TouchableOpacity
+                    onPress={() => {
+                        router.push("/(member_guest)/(tabs)")
+                    }}
+                >
+                    <Image
+                        source={Constants.backButton}
+                        style={styles.backButton}
+                    />
+                </TouchableOpacity>
+                </View>
             {course && (
                 <ScrollView>
                 {course_image ? (
@@ -253,6 +264,17 @@ const CourseContent = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    appBarContainer: {
+        flexDirection: "row",
+        marginVertical: 15,
+        alignItems: "center",
+    },
+    backButton: {
+        height: 25,
+        width: 25,
+        marginLeft: 25,
+        padding: 5,
     },
     courseImage: {
         width: "100%",
