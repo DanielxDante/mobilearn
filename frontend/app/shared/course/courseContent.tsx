@@ -7,14 +7,16 @@ import {
     Image,
     ActivityIndicator,
     Dimensions,
+    BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import RNPickerSelect from "react-native-picker-select";
-import { router } from "expo-router";
+import { router, useSegments } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import Course from "@/types/shared/Course/Course";
 import { Colors } from "@/constants/colors";
+import { COURSE_CONTENT_PAGE } from "@/constants/pages";
 import { courseContentConstants as Constants } from "@/constants/textConstants";
 import Lesson from "@/types/shared/Course/Lesson";
 import useAppStore from "@/store/appStore";
@@ -50,6 +52,27 @@ const CourseContent = () => {
             })
     }
     }, [course_image])
+    const segments = useSegments();
+        useEffect(() => {
+            const backHandler = BackHandler.addEventListener(
+                "hardwareBackPress",
+                () => {
+                    // Get the current route
+                    const currentRoute = segments[segments.length - 1];
+                    // If we're on the member home page, go to hardware home
+                    console.log(currentRoute)
+                    if (currentRoute === COURSE_CONTENT_PAGE) {
+                        
+                        router.push("/(member_guest)/(tabs)") // Exit the app
+                        return true;
+                    }
+    
+                    return false;
+                }
+            );
+    
+            return () => backHandler.remove();
+        }, [router, segments]);
 
     // Ensure that course is available before continuing
     if (loading) {
