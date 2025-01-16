@@ -77,7 +77,7 @@ const InstructorLayout = () => {
                         ),
                     }}
                 />
-                <Tabs.Screen
+                {/* <Tabs.Screen
                     name="chatPage"
                     options={{
                         title: "Chat",
@@ -91,7 +91,7 @@ const InstructorLayout = () => {
                             />
                         ),
                     }}
-                />
+                /> */}
                 <Tabs.Screen
                     name="profilePage"
                     options={{

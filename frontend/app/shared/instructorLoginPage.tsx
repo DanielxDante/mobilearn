@@ -118,7 +118,13 @@ export default function LoginPage() {
             marginTop: 16,
           }}
         >
-          <Text>{Constants.dontHaveAccountText}</Text>
+          <Text
+            style={{
+              paddingRight: 3,
+            }}
+          >
+            {Constants.dontHaveAccountText}
+          </Text>
           <Link
             style={{ color: Colors.darkerBlue }}
             href={{ pathname: INSTRUCTOR_SIGNUP_PAGE }}

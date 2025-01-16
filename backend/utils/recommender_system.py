@@ -24,14 +24,25 @@
 # Novelty
 # Popularity Bias
 
-
+import nltk
 import pandas as pd
 import numpy as np
+from collections import defaultdict
 from sqlalchemy import Integer, String, Float, Column
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from gensim.models import Word2Vec
+from nltk.tokenize import word_tokenize
 
 from app import api
 from database import session_scope, create_session
 from models.course import Course
+
+# Download required NLTK data
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+from nltk.stem import WordNetLemmatizer
 
 class CourseRecommender:
     def __init__(self):
@@ -92,12 +103,37 @@ class CourseRecommender:
                 'expertise': getattr(course, 'expertise', None),
                 'subject': getattr(course, 'subject', None),
                 'platform': getattr(course, 'platform', None),
-
             }
             for course in courses
         ])
 
+        # handle nulls in numeric columns
+        numeric_columns = []
+        for column in numeric_columns:
+            self.current_column = column
+            self.courses_df[column] = self.courses_df[column].apply(
+                lambda x: self._handle_null_numeric(x, default_strategy='zero')
+            )
+
+        # handle nulls in categorical columns
+        categorical_columns = [
+            'school_name', 'program_type', 'field', 'major', 'department',
+            'expertise', 'subject', 'platform'
+        ]
+        for column in categorical_columns:
+            self.current_column = column
+            self.courses_df[column] = self.courses_df[column].apply(
+                lambda x: self._handle_null_categorical(x, default_strategy='unknown')
+            )
+
         self.session.close()
+    
+    def prepare_features(self):
+        """ Prepare features for content-based filtering """
+        # TF-IDF Vectorizer for course description
+        tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+        tfidf_matrix = tfidf_vectorizer.fit_transform(self.courses_df['description'])
+        self.similarity_matrix = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
 if __name__ == '__main__':
     recommender = CourseRecommender()

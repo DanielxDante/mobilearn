@@ -300,9 +300,14 @@ export const memberGuestProfilePage = {
   appBarTitle: "My Profile",
   editIcon: require("@/assets/images/icons/edit.png"),
   paymentMethodTitle: "Payment Method",
+  settingsTitle: "Settings",
   donateTitle: "Donate",
   logOutTitle: "Logout",
   default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+  normalDisplayName: "Learner",
+  memberDisplayName: "Member",
+  coreMemberDisplayName: "Senior",
+
 };
 
 export const memberGuestEditProfilePage = {

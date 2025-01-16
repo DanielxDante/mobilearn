@@ -75,7 +75,7 @@ def load_channel():
     with session_scope() as session:
         Channel.add_channel(
             session,
-            name='Public',
+            name='MobiLearn Public',
             description='MobiLearn public channel for all users',
             invite_code='mobilearn',
             channel_picture_url='https://d20shsb24t3qaz.cloudfront.net/icon.png'

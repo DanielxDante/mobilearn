@@ -14,6 +14,7 @@ import { CAROUSEL_PAGE, DONATION_PAGE } from "@/constants/pages";
 const Profile = () => {
     const username = useAuthStore((state) => state.username);
     const email = useAuthStore((state) => state.email);
+    const membership = useAuthStore((state) => state.membership);
     const profile_picture_url = useAuthStore(
         (state) => state.profile_picture_url
     );
@@ -26,7 +27,6 @@ const Profile = () => {
 
     const handleLogout = async () => {
         if (username != "") {
-            // console.log("Attempting logout");
             await logout();
         }
         router.push(CAROUSEL_PAGE);
@@ -39,6 +39,39 @@ const Profile = () => {
             <View style={styles.appBarContainer}>
                 <Text style={styles.myCoursesHeader}>
                     {Constants.appBarTitle}
+                </Text>
+                <Text 
+                    style={[
+                        styles.membership,
+                        {
+                            color: (() => {
+                                switch (membership) {
+                                    case "normal":
+                                        return Colors.bronze;
+                                    case "member":
+                                        return Colors.silver;
+                                    case "core_member":
+                                        return Colors.gold;
+                                    default:
+                                        return Colors.defaultBlue;
+                                }
+                            })(),
+                        },
+                    ]}
+                    numberOfLines={1}
+                >
+                    {(() => {
+                        switch (membership) {
+                            case "normal":
+                                return Constants.normalDisplayName;
+                            case "member":
+                                return Constants.memberDisplayName;
+                            case "core_member":
+                                return Constants.coreMemberDisplayName;
+                            default:
+                                return "";
+                        }
+                    })()}
                 </Text>
             </View>
             {/* Profile details */}
@@ -77,14 +110,15 @@ const Profile = () => {
             </View>
             {/* Options Area */}
             <View style={styles.optionsContainer}>
-                {/* TODO: replace payment method with changing language */}
+                {/* TODO: replace payment method with settings */}
                 <IconTextButton
                     icon={icons.card}
-                    text={Constants.paymentMethodTitle}
+                    text={Constants.settingsTitle}
                     onPress={() => {
-                        router.push(
-                            "/(member_guest)/profile/userPaymentMethod"
-                        );
+                        // router.push(
+                        //     "/(member_guest)/profile/userPaymentMethod"
+                        // );
+                        console.log("(User) Entering settings page")
                     }}
                     style={styles.iconTextButton}
                 />
@@ -153,6 +187,12 @@ const styles = StyleSheet.create({
     },
     profileText: {
         flexDirection: "column",
+    },
+    membership: {
+        fontFamily: "Inter-SemiBold",
+        fontSize: 16,
+        letterSpacing: 0.3,
+        paddingRight: 15
     },
     name: {
         fontFamily: "Inter-SemiBold",

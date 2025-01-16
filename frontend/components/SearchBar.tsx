@@ -21,7 +21,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
       // Filter the course data based on the query
       const filteredCourses = courseListData.filter((course) =>
-        course.title.toLowerCase().includes(text.toLowerCase())
+        course.course_name.toLowerCase().includes(text.toLowerCase())
       );
 
       // Notify the parent about the filtered courses
