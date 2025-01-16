@@ -9,6 +9,7 @@ from flask_jwt_extended import (
 from app import api
 from database import session_scope, create_session
 from services.course_services import CourseService
+from utils.recommender_system import CourseRecommender
 
 class GetRecommendedCoursesEndpoint(Resource):
     @api.doc(
