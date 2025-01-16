@@ -668,11 +668,6 @@ class EditCourseEndpoint(Resource):
 
         instructor_email = get_jwt_identity()
 
-        # delete chapter (NOT IMPLEMENTED)
-        # add new lesson
-        # edit/reorder lesson -> detach all lessons from chapter first
-        # delete lesson -> delete lesson completions and homework submissions first
-
         with session_scope() as session:
             try:
                 instructor = Instructor.get_instructor_by_email(session, instructor_email)
@@ -681,7 +676,7 @@ class EditCourseEndpoint(Resource):
                         json.dumps({"error": "Instructor not found"}),
                         status=400, mimetype='application/json'
                     )
-                
+
                 course = Course.admin_get_course_by_id(session, course_id)
                 if not course:
                     return Response(
@@ -696,18 +691,14 @@ class EditCourseEndpoint(Resource):
                     )
                 
                 course_image = request.files.get('course_image')
-                if not course_image or not allowed_file(course_image.filename):
-                    return Response(
-                        json.dumps({"error": "Invalid or missing course image file"}),
-                        status=400, mimetype='application/json'
-                    )
-                course_image_url = upload_file(course_image, f"course_{str(course.id)}")
-                
+                if course_image and allowed_file(course_image.filename):
+                    course_image_url = upload_file(course_image, f"course_{str(course.id)}")
+                    Course.change_image_url(session, course.id, course_image_url)
+
                 # Edit course details
                 Course.change_name(session, course.id, name)
                 Course.change_description(session, course.id, description)
                 Course.change_duration(session, course.id, optional_course_data['duration'])
-                Course.change_image_url(session, course.id, course_image_url)
                 Course.change_price(session, course.id, optional_course_data['price'])
                 Course.change_difficulty(session, course.id, optional_course_data['difficulty'])
                 Course.change_skills(session, course.id, optional_course_data['skills'])
@@ -756,29 +747,29 @@ class EditCourseEndpoint(Resource):
                                 lesson_type=lesson_data['lesson_type'],
                             )
                         
-                        # if lesson.lesson_type == LESSON.TEXT:
-                        #     content = lesson_data['content']
-                        #     lesson.content = content
-                        if lesson.lesson_type == LESSON.VIDEO:
+                        if lesson.lesson_type == LESSON.TEXT:
+                            content = lesson_data['content']
+                            lesson.content = content
+                        elif lesson.lesson_type == LESSON.VIDEO:
                             video_file = filemap.get(lesson_data['video_key'])
                             if video_file:
                                 video_url = upload_file(video_file, f"lesson_{str(lesson.id)}")
                                 lesson.video_url = video_url
-                            else:
-                                return Response(
-                                    json.dumps({"message": f"File {lesson_data['video_key']} not found"}),
-                                    status=400, mimetype='application/json'
-                                )
+                            # else:
+                            #     return Response(
+                            #         json.dumps({"message": f"File {lesson_data['video_key']} not found"}),
+                            #         status=400, mimetype='application/json'
+                            #     )
                         elif lesson.lesson_type == LESSON.HOMEWORK:
                             homework_file = filemap.get(lesson_data['homework_key'])
                             if homework_file:
                                 homework_url = upload_file(homework_file, f"lesson_{str(lesson.id)}")
                                 lesson.homework_url = homework_url
-                            else:
-                                return Response(
-                                    json.dumps({"message": f"File {lesson_data['homework_key']} not found"}),
-                                    status=400, mimetype='application/json'
-                                )
+                            # else:
+                            #     return Response(
+                            #         json.dumps({"message": f"File {lesson_data['homework_key']} not found"}),
+                            #         status=400, mimetype='application/json'
+                            #     )
                         
                         ChapterService.attach_lesson(session, chapter.id, lesson.id, lesson_data['order'])
                     

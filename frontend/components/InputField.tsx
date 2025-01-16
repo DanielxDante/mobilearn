@@ -30,8 +30,6 @@ const InputField: React.FC<InputFieldProps> = ({
           fontSize: 18,
           borderRadius: 8,
         }}
-        multiline={true}
-        maxLength={1000}
         {...rest}
       />
     </View>

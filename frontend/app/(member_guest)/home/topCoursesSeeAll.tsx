@@ -22,6 +22,7 @@ const TopCoursesSeeAll = () => {
     const [page, setPage] = useState(2);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const handleSelectCourse = useAppStore((state) => state.handleSelectCourse);
     const topEnrolledCourses = useAppStore(
         (state) => state.top_enrolled_courses
     );
@@ -32,17 +33,13 @@ const TopCoursesSeeAll = () => {
     const [topCourseData, setTopCourseData] =
         useState<Course[]>(topEnrolledCourses);
 
-    const handleSelectCourse = (id: string) => {
-        // TODO: INCLUDE COURSE NAVIGATION
-        console.log("Course " + id + " Selected");
-    };
-
     const fetchCourses = async () => {
         if (loading || !hasMore) return;
         setLoading(true);
         const nextFiveCourses = await getTopEnrolledCourses(
             page.toString(),
-            "5"
+            "5",
+            true,
         );
         setTopCourseData((prevData) => [...prevData, ...nextFiveCourses]);
         setLoading(false);
@@ -91,7 +88,7 @@ const TopCoursesSeeAll = () => {
                         <CourseListItem
                             key={course.course_id}
                             item={course}
-                            onSelect={handleSelectCourse}
+                            onSelect={() => {handleSelectCourse(course.course_id)}}
                         />
                     ))}
                     {loading && (
