@@ -5,16 +5,17 @@ import Icons from "@/constants/icons";
 import { useFonts } from "expo-font";
 import { Colors } from "@/constants/colors";
 import { TimeAgo } from "./TimeAgo";
+import notification from "@/types/shared/notification";
 
-export interface AppNotification {
-  type: "success" | "failure" | "completed";
-  title: string;
-  subtitle: string;
-  timestamp: string;
-}
+// export interface AppNotification {
+//   type: "success" | "failure" | "completed";
+//   title: string;
+//   subtitle: string;
+//   timestamp: string;
+// }
 
 interface NotificationItemProps {
-  notification: AppNotification;
+  notification: notification;
 }
 
 const NotificationItem: React.FC<NotificationItemProps> = ({
@@ -24,16 +25,16 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   let iconBackground;
   let redBackgroundSize = { width: 50, height: 50 };
   let blueBackgroundSize = { width: 60, height: 60 };
-  switch (notification.type) {
+  switch (notification.notification_type) {
     case "success":
       icon = Icons.successIcon;
       iconBackground = Icons.blueBackground;
       break;
-    case "failure":
+    case "warning":
       icon = Icons.failureIcon;
       iconBackground = Icons.redBackground;
       break;
-    case "completed":
+    case "info":
       icon = Icons.completedIcon;
       iconBackground = Icons.blueBackground;
       break;
@@ -65,7 +66,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
             {TimeAgo(notification.timestamp)}
           </Text>
           <Text style={styles.subtitle} numberOfLines={1}>
-            {notification.subtitle}
+            {notification.body}
           </Text>
         </View>
       </View>

@@ -1,6 +1,7 @@
 export default interface notification {
-  type: "success" | "failure" | "completed";
+  notification_type: "success" | "info" | "warning";
   title: string;
-  subtitle: string;
   timestamp: string;
+  body: string;
+  id: number;
 }

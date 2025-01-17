@@ -792,6 +792,7 @@ export const useAppStore = create<AppState>()(
             }
           );
           const responseData = response.data;
+          console.log("Raw User Notifications: ", responseData);
           const notifications: notification[] = responseData.notifications.map(
             (notification: any) => ({
               type: notification.type,
@@ -817,16 +818,17 @@ export const useAppStore = create<AppState>()(
             }
           );
           const responseData = response.data;
-          const notifications: notification[] = responseData.notifications.map(
-            (notification: any) => ({
-              type: notification.type,
-              title: notification.title,
-              subtitle: notification.subtitle,
-              timestamp: notification.timestamp,
-            })
-          );
+          //console.log("RAW Notifications: ", responseData);
+          // const notifications: notification[] = responseData.notifications.map(
+          //   (notification: any) => ({
+          //     type: notification.type,
+          //     title: notification.title,
+          //     subtitle: notification.subtitle,
+          //     timestamp: notification.timestamp,
+          //   })
+          // );
           set({
-            notifications: notifications,
+            notifications: responseData.notifications,
           });
         } catch (error: any) {
           console.error(error);

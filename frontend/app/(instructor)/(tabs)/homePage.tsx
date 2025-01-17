@@ -21,6 +21,11 @@ import LatestNews from "@/components/LatestNews";
 import { instructorHomePageConstants as textConstants } from "@/constants/textConstants";
 import useAppStore from "@/store/appStore";
 import Course from "@/types/shared/Course/Course";
+import {
+  NOTIFICATION_PAGE,
+  COURSE_DETAILS_PAGE,
+  TOP_COURSES_SEE_ALL,
+} from "@/constants/pages";
 
 const statsData = [
   { label: "Your Course", value: "23", description: "Lesson" },
@@ -54,10 +59,10 @@ const Home = () => {
   const getTopEnrolledCourses = useAppStore(
     (state) => state.getTopCoursesInstructor
   );
+  const notifications = useAppStore((state) => state.notifications);
   const getNotifications = useAppStore(
     (state) => state.getNotificationsInstructor
   );
-  const notifications = useAppStore((state) => state.notifications);
 
   const [page, setPage] = useState(1);
   const [topCourseData, setTopCourseData] = useState<Course[]>(() => {
@@ -86,7 +91,7 @@ const Home = () => {
     const fetchData = async () => {
       setLoading(true);
       await getTopEnrolledCourses("1", "5");
-      //await getNotifications();
+      await getNotifications();
     };
     fetchData();
   }, []);
@@ -97,15 +102,17 @@ const Home = () => {
     }
   }, [topEnrolledCourses]);
 
+  useEffect(() => {
+    //console.log("Notifications in homepage: ", notifications);
+  }, [notifications]);
+
   const handleSelectCourse = (id: number) => {
     // TODO: INCLUDE COURSE NAVIGATION
-    console.log("Course " + id + " Selected");
     const courseSelected = topCourseData.find(
       (course) => course.course_id === id
     );
-    console.log("Course selected:", courseSelected);
     router.push({
-      pathname: "../../shared/course/courseDetails",
+      pathname: COURSE_DETAILS_PAGE,
       params: {
         courseId: id.toString(),
       },
@@ -122,9 +129,8 @@ const Home = () => {
           style={styles.notificationButton}
           onPress={() => {
             // add params to pass to notification page
-            //router.push("/shared/notification");
             router.push({
-              pathname: "/shared/notification",
+              pathname: NOTIFICATION_PAGE,
               params: {
                 notifications: JSON.stringify(notifications),
               },
@@ -149,7 +155,7 @@ const Home = () => {
             <TouchableOpacity
               onPress={() => {
                 router.push({
-                  pathname: "/(instructor)/home/topCoursesSeeAll",
+                  pathname: TOP_COURSES_SEE_ALL,
                   params: {
                     suggestions: JSON.stringify(topCourseData),
                   },
