@@ -1,11 +1,11 @@
 import {
-    View,
-    Text,
-    TouchableOpacity,
-    Image,
-    ScrollView,
-    StyleSheet,
-    BackHandler,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  StyleSheet,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,199 +23,203 @@ import useAppStore from "@/store/appStore";
 import Course from "@/types/shared/Course/Course";
 
 const statsData = [
-    { label: "Your Course", value: "23", description: "Lesson" },
-    { label: "Your Audience", value: "10,458", change: "-23.47%" },
-    { label: "Avg. Watch Time", value: "35 min", change: "+23.47%" },
-    { label: "Reviews", value: "20,254", change: "+23.47%" },
+  { label: "Your Course", value: "23", description: "Lesson" },
+  { label: "Your Audience", value: "10,458", change: "-23.47%" },
+  { label: "Avg. Watch Time", value: "35 min", change: "+23.47%" },
+  { label: "Reviews", value: "20,254", change: "+23.47%" },
 ];
 
 const newsData = [
-    {
-        title: "The Effects of Temperature on Enzyme Activity and Biology",
-        category: "Biology",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    },
-    {
-        title: "Advances in Quantum Computing",
-        category: "Technology",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    },
-    {
-        title: "Global Warming and Its Impact on Agriculture",
-        category: "Environment",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    },
+  {
+    title: "The Effects of Temperature on Enzyme Activity and Biology",
+    category: "Biology",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  },
+  {
+    title: "Advances in Quantum Computing",
+    category: "Technology",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  },
+  {
+    title: "Global Warming and Its Impact on Agriculture",
+    category: "Environment",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  },
 ];
 
 const Home = () => {
-    const segments = useSegments();
-    const [loading, setLoading] = useState(false);
-    const topEnrolledCourses = useAppStore(
-        (state) => state.top_enrolled_courses
-    );
-    const getTopEnrolledCourses = useAppStore(
-        (state) => state.getTopCoursesInstructor
-    );
+  const segments = useSegments();
+  const [loading, setLoading] = useState(false);
+  const topEnrolledCourses = useAppStore((state) => state.top_enrolled_courses);
+  const getTopEnrolledCourses = useAppStore(
+    (state) => state.getTopCoursesInstructor
+  );
+  const getNotifications = useAppStore(
+    (state) => state.getNotificationsInstructor
+  );
+  const notifications = useAppStore((state) => state.notifications);
 
-    const [page, setPage] = useState(1);
-    const [topCourseData, setTopCourseData] = useState<Course[]>(() => {
-        return topEnrolledCourses.slice(0, 5);
-    });
+  const [page, setPage] = useState(1);
+  const [topCourseData, setTopCourseData] = useState<Course[]>(() => {
+    return topEnrolledCourses.slice(0, 5);
+  });
 
-    useEffect(() => {
-        const backHandler = BackHandler.addEventListener(
-            "hardwareBackPress",
-            () => {
-                // Get the current route
-                const currentRoute = segments[segments.length - 1];
-                // If we're on the member home page, go to hardware home
-                if (currentRoute === MEMBER_GUEST_TABS) {
-                    BackHandler.exitApp(); // Exit the app
-                    return true;
-                }
-
-                return false;
-            }
-        );
-        return () => backHandler.remove();
-    }, [router, segments]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            await getTopEnrolledCourses("1", "5");
-        };
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        if (topEnrolledCourses.length > 0) {
-            setTopCourseData(topEnrolledCourses.slice(0, 5));
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        // Get the current route
+        const currentRoute = segments[segments.length - 1];
+        // If we're on the member home page, go to hardware home
+        if (currentRoute === MEMBER_GUEST_TABS) {
+          BackHandler.exitApp(); // Exit the app
+          return true;
         }
-    }, [topEnrolledCourses]);
 
-    const handleSelectCourse = (id: number) => {
-        // TODO: INCLUDE COURSE NAVIGATION
-        console.log("Course " + id + " Selected");
-        const courseSelected = topCourseData.find(
-            (course) => course.course_id === id
-        );
-        console.log("Course selected:", courseSelected);
-        router.push({
-            pathname: "../../shared/course/courseDetails",
-            params: {
-                courseId: id.toString(),
-            },
-        });
-    };
-
-    return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.appBarContainer}>
-                {/* App bar for Home and notifications*/}
-                <Text style={styles.homePageHeader}>
-                    {textConstants.pageTitle}
-                </Text>
-                {/* Notification bell icon */}
-                <TouchableOpacity
-                    style={styles.notificationButton}
-                    onPress={() => {
-                        router.push("/shared/notification");
-                    }}
-                >
-                    <Image
-                        source={Constants.notifBellButton}
-                        style={styles.notificationIcon}
-                    />
-                </TouchableOpacity>
-            </View>
-            <ScrollView>
-                {/* Statistics */}
-                <Statistics stats={statsData} />
-                {/* Top Courses */}
-                <View>
-                    <View style={styles.topCoursesHeader}>
-                        <Text style={styles.topCoursesTitle}>
-                            {Constants.topCoursesSubHeader}
-                        </Text>
-                        <TouchableOpacity
-                            onPress={() => {
-                                router.push({
-                                    pathname:
-                                        "/(instructor)/home/topCoursesSeeAll",
-                                    params: {
-                                        suggestions:
-                                            JSON.stringify(topCourseData),
-                                    },
-                                });
-                            }}
-                        >
-                            <Text style={styles.seeAllText}>
-                                {Constants.seeAllText}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <TopCourses
-                        courseData={topCourseData}
-                        onSelect={handleSelectCourse}
-                    />
-                </View>
-                {/* News */}
-                <LatestNews news={newsData} />
-            </ScrollView>
-        </SafeAreaView>
+        return false;
+      }
     );
+    return () => backHandler.remove();
+  }, [router, segments]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      await getTopEnrolledCourses("1", "5");
+      //await getNotifications();
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (topEnrolledCourses.length > 0) {
+      setTopCourseData(topEnrolledCourses.slice(0, 5));
+    }
+  }, [topEnrolledCourses]);
+
+  const handleSelectCourse = (id: number) => {
+    // TODO: INCLUDE COURSE NAVIGATION
+    console.log("Course " + id + " Selected");
+    const courseSelected = topCourseData.find(
+      (course) => course.course_id === id
+    );
+    console.log("Course selected:", courseSelected);
+    router.push({
+      pathname: "../../shared/course/courseDetails",
+      params: {
+        courseId: id.toString(),
+      },
+    });
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.appBarContainer}>
+        {/* App bar for Home and notifications*/}
+        <Text style={styles.homePageHeader}>{textConstants.pageTitle}</Text>
+        {/* Notification bell icon */}
+        <TouchableOpacity
+          style={styles.notificationButton}
+          onPress={() => {
+            // add params to pass to notification page
+            //router.push("/shared/notification");
+            router.push({
+              pathname: "/shared/notification",
+              params: {
+                notifications: JSON.stringify(notifications),
+              },
+            });
+          }}
+        >
+          <Image
+            source={Constants.notifBellButton}
+            style={styles.notificationIcon}
+          />
+        </TouchableOpacity>
+      </View>
+      <ScrollView>
+        {/* Statistics */}
+        <Statistics stats={statsData} />
+        {/* Top Courses */}
+        <View>
+          <View style={styles.topCoursesHeader}>
+            <Text style={styles.topCoursesTitle}>
+              {Constants.topCoursesSubHeader}
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                router.push({
+                  pathname: "/(instructor)/home/topCoursesSeeAll",
+                  params: {
+                    suggestions: JSON.stringify(topCourseData),
+                  },
+                });
+              }}
+            >
+              <Text style={styles.seeAllText}>{Constants.seeAllText}</Text>
+            </TouchableOpacity>
+          </View>
+          <TopCourses
+            courseData={topCourseData}
+            onSelect={handleSelectCourse}
+          />
+        </View>
+        {/* News */}
+        <LatestNews news={newsData} />
+      </ScrollView>
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "white",
-    },
-    header: {
-        flexDirection: "row",
-    },
-    appBarContainer: {
-        flexDirection: "row",
-        marginTop: 10,
-        alignItems: "center",
-        justifyContent: "space-between",
-    },
-    homePageHeader: {
-        color: Colors.defaultBlue,
-        fontFamily: "Inter-Regular",
-        marginLeft: 25,
-        paddingBottom: 2,
-        fontSize: 22,
-        fontWeight: "bold",
-    },
-    notificationButton: {
-        padding: 12,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    notificationIcon: {
-        height: 32,
-        width: 32,
-    },
-    seeAllText: {
-        color: "#6C6C6C",
-        fontSize: 12,
-        textDecorationLine: "underline",
-        marginRight: 12,
-    },
-    topCoursesHeader: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: 5,
-    },
-    topCoursesTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: Colors.defaultBlue, // Adjust to your theme color
-        marginHorizontal: 20,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  header: {
+    flexDirection: "row",
+  },
+  appBarContainer: {
+    flexDirection: "row",
+    marginTop: 10,
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  homePageHeader: {
+    color: Colors.defaultBlue,
+    fontFamily: "Inter-Regular",
+    marginLeft: 25,
+    paddingBottom: 2,
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+  notificationButton: {
+    padding: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  notificationIcon: {
+    height: 32,
+    width: 32,
+  },
+  seeAllText: {
+    color: "#6C6C6C",
+    fontSize: 12,
+    textDecorationLine: "underline",
+    marginRight: 12,
+  },
+  topCoursesHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 5,
+  },
+  topCoursesTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: Colors.defaultBlue, // Adjust to your theme color
+    marginHorizontal: 20,
+  },
 });
 
 export default Home;

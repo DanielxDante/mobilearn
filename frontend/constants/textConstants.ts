@@ -244,7 +244,7 @@ export const waitingPageInstructor = {
 };
 
 export const notificationsConstants = {
-  pageTitle: "Notification",
+  pageTitle: "Notifications",
 };
 
 export const memberGuestHomeConstants = {
@@ -307,7 +307,6 @@ export const memberGuestProfilePage = {
   normalDisplayName: "Learner",
   memberDisplayName: "Member",
   coreMemberDisplayName: "Senior",
-
 };
 
 export const memberGuestEditProfilePage = {
