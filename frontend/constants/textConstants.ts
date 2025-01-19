@@ -678,3 +678,9 @@ export const communityPage = {
   instructors: "Instructors",
   default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
 };
+
+export const reviewPageConstants = {
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  title: "Leave a Review",
+  submit: "Submit"
+}

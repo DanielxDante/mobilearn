@@ -21,6 +21,7 @@ import { courseContentConstants as Constants } from "@/constants/textConstants";
 import Lesson from "@/types/shared/Course/Lesson";
 import useAppStore from "@/store/appStore";
 import FavouriteButton from "@/components/FavouriteButton";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const CourseContent = () => {
     const { courseId } = useLocalSearchParams();
@@ -167,8 +168,20 @@ const CourseContent = () => {
                         style={styles.backButton}
                     />
                 </TouchableOpacity>
-                <FavouriteButton course_id={courseId.toString()}/>
+                <View style={styles.appBarRight}>
+                    <TouchableOpacity onPress={() => {
+                        router.push({
+                            pathname: "/shared/course/review",
+                            params: {
+                                courseId: courseId.toString(),
+                            }
+                        })
+                    }}>
+                        <Icon name={'comment-o'} color={'gray'} size={25}/>
+                    </TouchableOpacity>
+                    <FavouriteButton course_id={courseId.toString()}/>
                 </View>
+            </View>
             {course && (
                 <ScrollView>
                 {course_image ? (
@@ -272,6 +285,10 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         alignItems: "center",
         justifyContent: "space-between"
+    },
+    appBarRight: {
+        flexDirection: 'row',
+        gap: 20,
     },
     backButton: {
         height: 25,
