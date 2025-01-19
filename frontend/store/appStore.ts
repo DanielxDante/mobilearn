@@ -44,7 +44,6 @@ export interface AppState {
   enrolled_courses?: Course[]; // List of user's enrolled courses
   recommended_courses: Course[]; // List of user's recommended courses
   top_enrolled_courses: Course[];
-  review?: Review; // Not sure if review or reviews should be stored
   instructor_courses: Course[];
   selectedCourse?: Course;
   instructorPreviewedLesson?: Lesson;
@@ -86,7 +85,7 @@ export interface AppState {
     per_page?: string,
     pagination?: boolean,
   ) => Promise<Course[]>;
-  getReview: (course_id: number) => Promise<void>;
+  getReview: (course_id: number) => Promise<Review|false>;
   getTopEnrolledCoursesUser: (
     page?: string,
     per_page?: string,
@@ -97,7 +96,7 @@ export interface AppState {
     course_id: number,
     rating: number,
     review_text: string
-  ) => Promise<void>;
+  ) => Promise<Boolean>;
   withdrawCourse: (course_id: number) => Promise<void>;
   handleSelectCourse: (course_id: number) => Promise<void>;
   getCommunities: () => Promise<any[]>;
@@ -144,7 +143,6 @@ export const useAppStore = create<AppState>()(
             enrolled_courses: [],
             recommended_courses: [],
             top_enrolled_courses: [],
-            review: undefined,
             instructor_courses: [],
             selectedCourse: undefined,
             instructorPreviewedLesson: undefined,
@@ -578,18 +576,22 @@ export const useAppStore = create<AppState>()(
             }
           );
           const responseData = response.data;
-          const reviewData: Review = {
-            course_id: course_id,
-            rating: responseData.rating,
-            review_text: responseData.review_text,
-          };
-          // Assuming only 1 review is stored at a time in store
-          set({
-            review: reviewData,
-          });
+          if (response.status === 200) {
+            const reviewData: Review = {
+              course_id: course_id,
+              rating: responseData.rating,
+              review_text: responseData.review_text,
+            };
+            return reviewData;
+          } else {
+            return false;
+          }
+          
+          
           // Tentatively returns nothing for successful API request
         } catch (error: any) {
           console.error(error);
+          return false;
         }
       },
       getTopEnrolledCoursesUser: async (page?, per_page?, pagination = false) => {
@@ -653,24 +655,20 @@ export const useAppStore = create<AppState>()(
       saveReview: async (course_id, rating, review_text) => {
         console.log("(Store) Save Review for course: " + course_id);
         try {
-          const response = await axios.post(`${COURSE_USER_SAVE_REVIEW_URL}`, {
-            params: { course_id, rating, review_text },
-            headers: { "Content-Type": "application/json" },
-          });
-          const review: Review = {
-            course_id: course_id,
-            rating: rating,
-            review_text: review_text,
-          };
-          if (response.status === 200) {
-            // Set saved review into store
-            set({
-              review: review,
+          const response = await axios.post(`${COURSE_USER_SAVE_REVIEW_URL}`,
+            { course_id, rating, review_text, },
+            {
+              headers: { "Content-Type": "application/json" },
             });
+          if (response.status === 200) {
+            return true
+          } else {
+            return false
           }
           // Tentatively returns nothing for successful API request
         } catch (error: any) {
           console.error(error);
+          return false;
         }
       },
       withdrawCourse: async (course_id) => {
