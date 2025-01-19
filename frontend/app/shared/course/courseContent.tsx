@@ -20,6 +20,7 @@ import { COURSE_CONTENT_PAGE } from "@/constants/pages";
 import { courseContentConstants as Constants } from "@/constants/textConstants";
 import Lesson from "@/types/shared/Course/Lesson";
 import useAppStore from "@/store/appStore";
+import FavouriteButton from "@/components/FavouriteButton";
 
 const CourseContent = () => {
     const { courseId } = useLocalSearchParams();
@@ -166,6 +167,7 @@ const CourseContent = () => {
                         style={styles.backButton}
                     />
                 </TouchableOpacity>
+                <FavouriteButton course_id={courseId.toString()}/>
                 </View>
             {course && (
                 <ScrollView>
@@ -269,6 +271,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         marginVertical: 15,
         alignItems: "center",
+        justifyContent: "space-between"
     },
     backButton: {
         height: 25,

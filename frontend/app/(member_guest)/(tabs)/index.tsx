@@ -17,33 +17,13 @@ import ContinueWatching from "@/app/(member_guest)/home/continueWatching";
 import TopCourses from "@/app/(member_guest)/home/topCourses";
 import { MEMBER_GUEST_TABS } from "@/constants/pages";
 import useAppStore from "@/store/appStore";
-import Course from "@/types/shared/Course/Course";
 
 import { AutocompleteDropdownContextProvider } from "react-native-autocomplete-dropdown";
 import { Colors } from "@/constants/colors";
 import { memberGuestHomeConstants as Constants } from "@/constants/textConstants";
 
 const Home = () => {
-    const enrolledCourses = useAppStore((state) => state.enrolled_courses);
-    const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse);
-    const getEnrolledCourses = useAppStore((state) => state.getEnrolledCourses);
     const handleSelectCourse = useAppStore((state) => state.handleSelectCourse);
-
-    // DO NOT REMOVE
-    const [enrolledData, setEnrolledData] = useState<Course[]>([]);
-    useEffect(() => {
-        const fetchCourses = async () => {
-            await getEnrolledCourses();
-        }
-        fetchCourses();
-    }, []);
-
-    useEffect(() => {
-        if (enrolledCourses && enrolledCourses.length > 0) {
-            setEnrolledData(enrolledCourses.slice(0, 2));
-        }
-    }, [enrolledCourses]);
-    // DO NOT REMOVE
 
     const segments = useSegments();
     useEffect(() => {

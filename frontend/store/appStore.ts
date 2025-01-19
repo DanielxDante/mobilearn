@@ -426,6 +426,9 @@ export const useAppStore = create<AppState>()(
             { course_id },
             { headers: { "Content-Type": "application/json" } }
           );
+          if (response.status == 200) {
+            get().getFavouriteCourses();
+          }
           // Tentatively returns nothing for successful API request
           // Response is {"message": "Course successfully added to favourites"}
         } catch (error: any) {
@@ -498,14 +501,15 @@ export const useAppStore = create<AppState>()(
             }
           );
           const responseData = response.data;
+          // console.log("responseData: " + JSON.stringify(responseData))
           // MAP API response to FE Course type
-          const mappedCourses = responseData.courses.map((course: any) => ({
+          const mappedCourses = responseData.map((course: any) => ({
             course_id: course.id,
             community_id: undefined,
             course_image: course.course_image,
             course_name: course.course_name,
             community_name: course.community_name,
-            description: undefined,
+            description: course.description,
             instructors: undefined,
             chapters: undefined,
             rating: course.rating,
@@ -695,7 +699,6 @@ export const useAppStore = create<AppState>()(
           (course) => course.course_id === course_id
         );
         if (courseSelected) { // IF COURSE IS ALREADY ENROLLED
-          console.log("Hereeee!");
           router.push({
               pathname: "/shared/course/courseContent",
               params: {
@@ -703,7 +706,6 @@ export const useAppStore = create<AppState>()(
               },
           });
         } else { // COURSE NOT YET ENROLLED
-          console.log("Here!");
           const unenrolledCourse = await get().getUnenrolledCourse(course_id);
           if (unenrolledCourse) {
               router.push({

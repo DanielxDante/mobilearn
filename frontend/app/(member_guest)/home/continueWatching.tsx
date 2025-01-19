@@ -6,6 +6,8 @@ import { Colors } from "@/constants/colors";
 import { memberGuestContinueWatchingConstants as Constants } from "@/constants/textConstants";
 import Course from "@/types/shared/Course/Course";
 import useAppStore from "@/store/appStore";
+import { useSegments } from "expo-router";
+import { MEMBER_GUEST_TABS } from "@/constants/pages";
 
 interface ContinueWatchingProps {
     onSelect: (id: number) => void;
@@ -18,11 +20,16 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
     const getEnrolledCourses = useAppStore((state) => state.getEnrolledCourses);
     const [courses, setCourses] = useState<Course[]>([]);
 
+    const segments = useSegments();
     useEffect(() => {
         const fetchCourses = async () => {
             await getEnrolledCourses();
         }
-        fetchCourses();
+        const currentRoute = segments[segments.length - 1]
+        console.log(currentRoute)
+        if (currentRoute === MEMBER_GUEST_TABS) {
+            fetchCourses();
+        }
     }, []);
 
     useEffect(() => {
