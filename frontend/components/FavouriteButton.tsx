@@ -12,6 +12,7 @@ const FavouriteButton: React.FC<FavouriteButtonProps> = ({course_id}) => {
     const removeFavouriteCourses = useAppStore((state) => state.removeFavouriteCourse);
     const getFavouriteCourses = useAppStore((state) => state.getFavouriteCourses);
     const favouriteCourses = useAppStore((state) => state.favourite_courses)
+    const channel_id = useAppStore((state) => state.channel_id)
     const [isPressed, setIsPressed] = useState(false);
 
     useEffect(() => {
@@ -22,13 +23,14 @@ const FavouriteButton: React.FC<FavouriteButtonProps> = ({course_id}) => {
                 setIsPressed(true);
             }
     }, [])
-    console.log(favouriteCourses)
+    // console.log("Favourite Courses: " + favouriteCourses)
     useEffect(() => {
         const checkFavourite = async () => {
-            await getFavouriteCourses(course_id);
+            await getFavouriteCourses(channel_id.toString());
         }
         checkFavourite();
-    }, [])
+
+    }, [channel_id])
 
     const handleIsPressed = async () => {
         setIsPressed(prevState => !prevState)

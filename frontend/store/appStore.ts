@@ -501,6 +501,7 @@ export const useAppStore = create<AppState>()(
             }
           );
           const responseData = response.data;
+          // console.log("responseData: " + JSON.stringify(responseData))
           // MAP API response to FE Course type
           const mappedCourses = responseData.map((course: any) => ({
             course_id: course.id,

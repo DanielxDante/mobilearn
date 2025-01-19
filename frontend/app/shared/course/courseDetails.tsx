@@ -198,8 +198,7 @@ const styles = StyleSheet.create({
   },
   appBarContainer: {
       flexDirection: "row",
-      marginTop: 13,
-      marginBottom: 13,
+      marginVertical: 13,
       alignItems: "center",
       justifyContent: "space-between"
   },

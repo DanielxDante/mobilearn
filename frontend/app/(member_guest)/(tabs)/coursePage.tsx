@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useSegments } from "expo-router";
 
 import { Colors } from "@/constants/colors";
 import { memberGuestCoursePage as Constants } from "@/constants/textConstants";
@@ -27,18 +27,23 @@ const CoursePage = () => {
     const getFavouriteCourses = useAppStore((state) => state.getFavouriteCourses);
     const [enrolledData, setEnrolledData] = useState<Course[]>([]);
     const [favouriteData, setFavouriteData] = useState<Course[]>([]);
+
+    const segments = useSegments();
     useEffect(() => {
         const fetchCourses = async () => {
             await getEnrolledCourses();
             await getFavouriteCourses();
         }
-        fetchCourses();
-    }, []);
+        const currentRoute = segments[segments.length - 1]
+        if (currentRoute === "coursePage") {
+            fetchCourses();
+        }
+    }, [segments]);
     useEffect(() => {
-        if (enrolledCourses && enrolledCourses.length > 0) {
+        if (enrolledCourses) {
             setEnrolledData(enrolledCourses);
         } 
-        if (favouriteCourses && favouriteCourses.length > 0) {
+        if (favouriteCourses) {
             setFavouriteData(favouriteCourses);
         }
     }, [enrolledCourses, favouriteCourses]);
