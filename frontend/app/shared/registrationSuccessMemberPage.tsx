@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Text, View, Image, Dimensions } from "react-native";
+import { Text, View, Image, Dimensions, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 
-import SignInButton from "@/components/Button";
+import Button from "../../components/LargeButton";
 import InputField from "@/components/InputField";
 import mobilearnHat from "@/assets/images/MobilearnHat.png";
 import useAuthStore from "@/store/authStore";
@@ -93,21 +93,36 @@ export default function LoginPage() {
         >
           {Constants.subTitle}
         </Text>
-        <Link
-          href={MEMBER_CHANNEL_REGISTRATION}
-          style={{
-            fontSize: 18,
-            color: "#356FC5",
-            textAlign: "center",
-            marginTop: 32,
-            marginBottom: 16,
-            maxWidth: 0.8 * width,
-            textDecorationLine: "underline",
-          }}
-        >
-          {Constants.linkText}
-        </Link>
+        <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                router.push(MEMBER_CHANNEL_REGISTRATION);
+              }}
+            >
+              <Text style={styles.buttonText}>
+                {Constants.linkText}
+              </Text>
+            </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
+
+
+const styles = StyleSheet.create({
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 125,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "#356FC5",
+    alignItems: "center",
+    marginBottom: 16,
+    backgroundColor: "#356FC5",
+  },
+  buttonText: {
+    fontWeight: "500",
+    color: "#FFFFFF",
+    fontSize: 16,
+  }
+})
