@@ -22,7 +22,7 @@
         "backgroundColor": "#356FC5"
       },
       "package": "com.musketeers.mobilearn",
-      "googleServicesFile": "./android/app/google-services.json",
+      "googleServicesFile": "./google-services.json",
       "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
