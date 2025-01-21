@@ -244,7 +244,7 @@ export const waitingPageInstructor = {
 };
 
 export const notificationsConstants = {
-  pageTitle: "Notification",
+  pageTitle: "Notifications",
 };
 
 export const memberGuestHomeConstants = {
@@ -307,7 +307,6 @@ export const memberGuestProfilePage = {
   normalDisplayName: "Learner",
   memberDisplayName: "Member",
   coreMemberDisplayName: "Senior",
-
 };
 
 export const memberGuestEditProfilePage = {
@@ -406,6 +405,14 @@ export const paymentOverviewConstants = {
   currency: "$",
   merchantDisplayName: "MobiLearn, Inc.",
   free: "Free",
+  paymentCancelled: "Payment cancelled, You have cancelled payment.",
+  courseEnrollmentNotificationTitle: "Course enrollment completed.",
+  courseEnrollmentNotificationSubTitle:
+    "You have successfully enrolled in a course!",
+  error: "Error",
+  storeError: "An error occured in the store.",
+  donationError:
+    "An error occurred while processing your donation. Please try again later.",
 };
 
 export const paymentMethodConstants = {
@@ -654,6 +661,13 @@ export const memberDonatePage = {
   donateText2: "Thank you for your support!",
   donateButtonText: "Donate",
   merchantDisplayName: "MobiLearn, Inc.",
+  paymentCancelledAlert: "Payment cancelled. You have cancelled the donation.",
+  paymentSuccessAlert: "Payment successful. Thank you for your donation!",
+  donationSuccessful: "Donation successful.",
+  yourDonationMessage: "You have donated $",
+  error: "Error",
+  donationErrorMessage:
+    "An error occurred while processing your donation. Please try again later.",
 };
 
 export const chat = {
@@ -682,5 +696,12 @@ export const communityPage = {
 export const reviewPageConstants = {
   backButton: require("@/assets/images/notifications/backButton.png"),
   title: "Leave a Review",
-  submit: "Submit"
-}
+  submit: "Submit",
+};
+
+export const notificationUtility = {
+  pushTokenRequiredError: "Expo Push Token is required to send notifications.",
+  failedSendNotification: "Failed to send notification: ",
+  notificationSuccess: "Notification sent successfully!",
+  errorSendingNotification: "Error sending notification:",
+};
