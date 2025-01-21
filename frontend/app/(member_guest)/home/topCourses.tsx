@@ -14,6 +14,8 @@ import { memberGuestTopCoursesSectionConstants as Constants } from "@/constants/
 import Course from "@/types/shared/Course/Course";
 import useAppStore from "@/store/appStore";
 import { topCourseData } from "@/constants/temporaryCourseData";
+import { useSegments } from "expo-router";
+import { MEMBER_GUEST_TABS } from "@/constants/pages";
 
 interface ContinueWatchingProps {
     data: "Suggestions" | "Top Courses";
@@ -36,6 +38,7 @@ const TopCourses: React.FC<ContinueWatchingProps> = ({
         (state) => state.getRecommendedCourses
     );
 
+    const segments = useSegments();
     const [courses, setCourses] = useState<Course[]>([]);
     useEffect(() => {
         const fetchCourses = async () => {
@@ -45,8 +48,11 @@ const TopCourses: React.FC<ContinueWatchingProps> = ({
                 await getTopEnrolledCourses("1", "5", false);
             }
             }
+        const currentRoute = segments[segments.length - 1]
+        if (currentRoute === MEMBER_GUEST_TABS) {
             fetchCourses();
-        }, []);
+        }
+        }, [segments]);
 
     useEffect(() => {
         if (data === "Suggestions" && recommendedCourses && recommendedCourses.length>0) {
