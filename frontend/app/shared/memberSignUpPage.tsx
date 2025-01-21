@@ -80,7 +80,7 @@ export default function signUpPage() {
         "normal"
       );
       //immediately login the user
-      const response = await login(inputs.email, inputs.password);
+      const response = await login(inputs.email.toLowerCase(), inputs.password);
       console.log(response);
       if (response === "normal") {
         router.push(MEMBER_REGISTRATION_SUCCESS);
