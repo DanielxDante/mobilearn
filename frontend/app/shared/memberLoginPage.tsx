@@ -29,7 +29,7 @@ export default function LoginPage() {
       alert(Constants.inputsEmptyAlert);
     } else {
       try {
-        const response = await login(email, password);
+        const response = await login(email.toLowerCase(), password);
 
         if (response === "normal") {
           router.push(MEMBER_CHANNEL_REGISTRATION);

@@ -123,7 +123,7 @@ export default function signUpPage() {
     try {
       await signup(
         inputs.name,
-        inputs.email,
+        inputs.email.toLowerCase(),
         inputs.password,
         inputs.gender.toLowerCase(),
         inputs.combinedPhoneNumber,
