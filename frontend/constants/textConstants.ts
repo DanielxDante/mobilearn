@@ -697,6 +697,7 @@ export const reviewPageConstants = {
   backButton: require("@/assets/images/notifications/backButton.png"),
   title: "Leave a Review",
   submit: "Submit",
+  placeholder: "Leave a review"
 };
 
 export const notificationUtility = {
