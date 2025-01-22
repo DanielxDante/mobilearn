@@ -23,8 +23,12 @@ export const MEMBER_REGISTRATION_SUCCESS =
 export const DONATION_PAGE = "/shared/profile/donate" as Href<string>;
 export const MEMBER_CHANNEL_REGISTRATION =
   `/shared/memberChannelSignUpPage` as Href<string>;
+export const NOTIFICATION_PAGE = "/shared/notification" as Href<string>;
+
 // COURSE PAGES
 export const COURSE_CONTENT_PAGE = `courseContent` as Href<string>;
+export const COURSE_DETAILS_PAGE =
+  `shared/course/courseDetails` as Href<string>;
 
 // MEMBER/GUEST PAGES
 export const MEMBER_GUEST_NAMESPACE = "(member_guest)";
@@ -49,6 +53,9 @@ export const INSTRUCTOR_COURSECONTENT =
   `/shared/course/instructorCourseContent` as Href<string>;
 export const INSTRUCTOR_CREATE_COURSE =
   `/shared/course/createCoursePage` as Href<string>;
+export const TOP_COURSES_SEE_ALL =
+  `/(instructor)/home/topCoursesSeeAll` as Href<string>;
+
 // ADMIN PAGES
 export const ADMIN_NAMESPACE = "(admin)";
 export const ADMIN_HOME = `/${ADMIN_NAMESPACE}` as Href<string>;

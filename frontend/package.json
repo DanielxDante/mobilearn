@@ -26,7 +26,7 @@
     "debounce": "^2.2.0",
     "expo": "~52.0.17",
     "expo-av": "~15.0.1",
-    "expo-constants": "~17.0.3",
+    "expo-constants": "~17.0.4",
     "expo-document-picker": "^13.0.1",
     "expo-file-system": "^18.0.6",
     "expo-font": "~13.0.1",
@@ -60,7 +60,9 @@
     "react-native-web": "~0.19.13",
     "react-native-webview": "^13.12.5",
     "use-debounce": "^10.0.4",
-    "zustand": "^5.0.0-rc.2"
+    "zustand": "^5.0.0-rc.2",
+    "expo-notifications": "~0.29.12",
+    "expo-device": "~7.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
