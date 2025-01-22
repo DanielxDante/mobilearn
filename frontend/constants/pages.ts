@@ -23,6 +23,8 @@ export const MEMBER_REGISTRATION_SUCCESS =
 export const DONATION_PAGE = "/shared/profile/donate" as Href<string>;
 export const MEMBER_CHANNEL_REGISTRATION =
   `/shared/memberChannelSignUpPage` as Href<string>;
+// COURSE PAGES
+export const COURSE_CONTENT_PAGE = `courseContent` as Href<string>;
 
 // MEMBER/GUEST PAGES
 export const MEMBER_GUEST_NAMESPACE = "(member_guest)";

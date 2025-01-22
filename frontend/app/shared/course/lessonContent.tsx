@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     borderRadius: 12,
     overflow: "hidden",
-    backgroundColor: Colors.lightGray,
+    backgroundColor: "#808080",
     elevation: 4, // Shadow for Android
     shadowColor: "#000", // Shadow for iOS
     shadowOffset: { width: 0, height: 2 },

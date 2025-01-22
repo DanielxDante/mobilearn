@@ -7,17 +7,21 @@ import {
     Image,
     ActivityIndicator,
     Dimensions,
+    BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import RNPickerSelect from "react-native-picker-select";
-import { router } from "expo-router";
+import { router, useSegments } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import Course from "@/types/shared/Course/Course";
 import { Colors } from "@/constants/colors";
+import { COURSE_CONTENT_PAGE } from "@/constants/pages";
 import { courseContentConstants as Constants } from "@/constants/textConstants";
 import Lesson from "@/types/shared/Course/Lesson";
 import useAppStore from "@/store/appStore";
+import FavouriteButton from "@/components/FavouriteButton";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const CourseContent = () => {
     const { courseId } = useLocalSearchParams();
@@ -50,6 +54,25 @@ const CourseContent = () => {
             })
     }
     }, [course_image])
+    const segments = useSegments();
+        useEffect(() => {
+            const backHandler = BackHandler.addEventListener(
+                "hardwareBackPress",
+                () => {
+                    // Get the current route
+                    const currentRoute = segments[segments.length - 1];
+                    if (currentRoute === COURSE_CONTENT_PAGE) {
+                        
+                        router.push("/(member_guest)/(tabs)") // Return to homepage
+                        return true;
+                    }
+    
+                    return false;
+                }
+            );
+    
+            return () => backHandler.remove();
+        }, [router, segments]);
 
     // Ensure that course is available before continuing
     if (loading) {
@@ -133,6 +156,32 @@ const CourseContent = () => {
 
     return (
         <SafeAreaView style={styles.container}>
+            {/* AppBar */}
+            <View style={styles.appBarContainer}>
+                <TouchableOpacity
+                    onPress={() => {
+                        router.push("/(member_guest)/(tabs)")
+                    }}
+                >
+                    <Image
+                        source={Constants.backButton}
+                        style={styles.backButton}
+                    />
+                </TouchableOpacity>
+                <View style={styles.appBarRight}>
+                    <TouchableOpacity onPress={() => {
+                        router.push({
+                            pathname: "/shared/course/review",
+                            params: {
+                                courseId: courseId.toString(),
+                            }
+                        })
+                    }}>
+                        <Icon name={'comment-o'} color={'gray'} size={25}/>
+                    </TouchableOpacity>
+                    <FavouriteButton course_id={courseId.toString()}/>
+                </View>
+            </View>
             {course && (
                 <ScrollView>
                 {course_image ? (
@@ -230,6 +279,22 @@ const CourseContent = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    appBarContainer: {
+        flexDirection: "row",
+        marginVertical: 15,
+        alignItems: "center",
+        justifyContent: "space-between"
+    },
+    appBarRight: {
+        flexDirection: 'row',
+        gap: 20,
+    },
+    backButton: {
+        height: 25,
+        width: 25,
+        marginLeft: 25,
+        padding: 5,
     },
     courseImage: {
         width: "100%",
