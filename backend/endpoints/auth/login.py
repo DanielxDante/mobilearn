@@ -80,6 +80,8 @@ class UserLoginEndpoint(Resource):
                     status=200, mimetype='application/json'
                 )
 
+                # TODO: add user device token
+
                 return response
             except ValueError as ee:
                 return Response(
@@ -162,6 +164,8 @@ class InstructorLoginEndpoint(Resource):
                     }),
                     status=200, mimetype='application/json'
                 )
+
+                # TODO: add instructor device token
                 
                 return response
             except ValueError as ee:

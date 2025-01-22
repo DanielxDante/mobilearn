@@ -65,6 +65,10 @@ class GetUserUnreadNotificationsEndpoint(Resource):
                 status=500, mimetype='application/json'
             )
 
+# class UserAddNotificationEndpoint(Resource):
+
+# class InstructorAddNotificationEndpoint(Resource):
+
 class GetInstructorUnreadNotificationsEndpoint(Resource):
     @api.doc(
         responses={
