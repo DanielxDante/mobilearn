@@ -108,6 +108,8 @@ class User(Base):
         session.add(user)
         session.flush()
 
+        return user
+
     @staticmethod
     def change_name(session, email, new_name):
         user = User.get_user_by_email(session, email)
