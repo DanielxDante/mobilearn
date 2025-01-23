@@ -771,7 +771,9 @@ export default function createCoursePage() {
             />
           </TouchableOpacity>
           <Text style={styles.homePageHeader}>
-            {internalPage === 4
+            {internalPage === 5
+              ? textConstants.editLessonTitle
+              : internalPage === 4
               ? textConstants.chapterPageTitle
               : course
               ? textConstants.editCoursePageTitle
