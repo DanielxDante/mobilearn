@@ -707,3 +707,7 @@ export const notificationUtility = {
   notificationSuccess: "Notification sent successfully!",
   errorSendingNotification: "Error sending notification:",
 };
+
+export const lessonContentConstants = {
+  complete: "COMPLETE",
+}

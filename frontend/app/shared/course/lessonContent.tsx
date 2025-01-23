@@ -8,7 +8,7 @@ import {
   ScrollView,
   Linking,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 
@@ -19,9 +19,15 @@ import useAppStore from "@/store/appStore";
 import LessonTextContent from "@/components/dom-components/LessonTextContent";
 import icons from "@/constants/icons";
 import { lessonContentPage } from "@/constants/textConstants";
+import useAuthStore from "@/store/authStore";
+import { lessonContentConstants as Constants } from "@/constants/textConstants";
 
 const LessonContent = () => {
   const getLesson = useAppStore((state) => state.getInstructorPreviewedLesson);
+  const completeLesson = useAppStore((state) => state.completeLesson);
+  const submitHomework = useAppStore((state) => state.submitHomework);
+  const membership = useAuthStore((state) => state.membership);
+  const membership_types = ["normal", "member", "core_member"];
   const { lessonSelected } = useLocalSearchParams();
   // const lesson: Lesson =
   //   typeof lessonParam === "string" ? JSON.parse(lessonParam) : lessonParam;
@@ -78,6 +84,10 @@ const LessonContent = () => {
     },
   };
 
+  const [homeworkUploaded, setHomeworkUploaded] = useState(
+    lesson.lesson_type === "homework" ? false : lesson.lesson_type === "text" || lesson.lesson_type === "video" ? true: false
+  )
+
   const handleDownload = async () => {
     if (lesson.homework_url) {
       const supported = await Linking.canOpenURL(lesson.homework_url);
@@ -90,6 +100,14 @@ const LessonContent = () => {
       console.error("Homework URL is undefined");
     }
   };
+
+  const handleLessonComplete = async () => {
+    if (lesson.lesson_type === "text" || lesson.lesson_type === "video") {
+      const response = await completeLesson(Number(lesson.lesson_id));
+    } else if (lesson.lesson_type === "homework") {
+      // const response = await submitHomework()
+    }
+  }
 
   return (
     lesson && (
@@ -105,47 +123,59 @@ const LessonContent = () => {
         </View>
 
         <View style={styles.contentContainer}>
-          <Text style={styles.title}>{lesson.lesson_name}</Text>
-
-          {/* Render video */}
-          {lesson.lesson_type === "video" && lesson.video_url && (
-            <View style={styles.videoContainer}>
-              <VideoPlayer uri={lesson.video_url} />
-            </View>
-          )}
-
-          {/* Render text-based lesson content */}
-          {lesson.lesson_type === "text" && (
-            <View style={styles.container}>
-              {lesson.content && (
-                <LessonTextContent initialState={lesson.content} />
-              )}
-            </View>
-          )}
-
-          {/* Render downloadable homework */}
-          {lesson.lesson_type === "homework" && (
-            <View style={styles.homeworkContainer}>
-              <TouchableOpacity
-                style={styles.iconWrapper}
-                onPress={handleDownload}
-              >
-                {/* Placeholder for the download icon */}
-                <View>
-                  <Image
-                    source={icons.download}
-                    style={styles.iconPlaceholder}
-                  />
-                </View>
-              </TouchableOpacity>
-              <Text style={styles.fileName}>{lessonContentPage.homework}</Text>
-              <TouchableOpacity onPress={handleDownload}>
-                <Text style={styles.downloadText}>
-                  {lessonContentPage.download}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          <View style={styles.content}>
+            <Text style={styles.title}>{lesson.lesson_name}</Text>
+            {/* Render video */}
+            {lesson.lesson_type === "video" && lesson.video_url && (
+              <View style={styles.videoContainer}>
+                <VideoPlayer uri={lesson.video_url} />
+              </View>
+            )}
+            {/* Render text-based lesson content */}
+            {lesson.lesson_type === "text" && (
+              <View style={styles.container}>
+                {lesson.content && (
+                  <LessonTextContent initialState={lesson.content} />
+                )}
+              </View>
+            )}
+            {/* Render downloadable homework */}
+            {lesson.lesson_type === "homework" && (
+              <View style={styles.homeworkContainer}>
+                <TouchableOpacity
+                  style={styles.iconWrapper}
+                  onPress={handleDownload}
+                >
+                  {/* Placeholder for the download icon */}
+                  <View>
+                    <Image
+                      source={icons.download}
+                      style={styles.iconPlaceholder}
+                    />
+                  </View>
+                </TouchableOpacity>
+                <Text style={styles.fileName}>{lessonContentPage.homework}</Text>
+                <TouchableOpacity onPress={handleDownload}>
+                  <Text style={styles.downloadText}>
+                    {lessonContentPage.download}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+          {/* Complete Lesson button */}
+          {
+            membership && membership_types.includes(membership) && (
+              <View>
+                <TouchableOpacity 
+                  style={[styles.completeButton, homeworkUploaded ? {backgroundColor: Colors.defaultBlue,} : {backgroundColor: "#B0B0B0"}]} 
+                  onPress={handleLessonComplete} 
+                  disabled={!homeworkUploaded}>
+                  <Text style={styles.completeText}>{Constants.complete}</Text>
+                </TouchableOpacity>
+              </View>
+            )
+          }
         </View>
       </SafeAreaView>
     )
@@ -183,7 +213,11 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    padding: 16,
+    justifyContent: "space-between"
+  },
+  content: {
+    flex: 1,
+    padding: 16
   },
   title: {
     color: Colors.defaultBlue,
@@ -254,6 +288,18 @@ const styles = StyleSheet.create({
     color: Colors.defaultBlue,
     fontFamily: "Inter-Bold",
   },
+  completeButton: {
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginBottom: 10,
+  },
+  completeText: {
+    fontSize: 16,
+    color: "#FFFFFF",
+    fontFamily: "Inter-Regular"
+  }
 });
 
 export default LessonContent;
