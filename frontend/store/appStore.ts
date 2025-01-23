@@ -105,7 +105,6 @@ export interface AppState {
     review_text: string
   ) => Promise<Boolean>;
   submitHomework: (
-    homework_lesson_id: number, 
     homework_submission_file: any,
   ) => Promise<Boolean>;
   withdrawCourse: (course_id: number) => Promise<void>;
@@ -710,12 +709,15 @@ export const useAppStore = create<AppState>()(
           return false;
         }
       },
-      submitHomework: async (homework_lesson_id: number, homework_submission_file: any) => {
-        console.log("(Store) Submit Homework: " + homework_lesson_id);
+      submitHomework: async (homework_submission_file: any) => {
+        console.log("(Store) Submit Homework");
+        homework_submission_file.forEach((value: any, key: any) => {
+          console.log("test: " + key, value);
+        });
         try {
           const response = await axios.post(
             COURSE_USER_SUBMIT_HOMEWORK_URL,
-            { homework_lesson_id, homework_submission_file },
+            { homework_submission_file },
             { headers: { "Content-Type": "multipart/form-data" } }
           );
           if (response.status == 200) {
@@ -723,7 +725,7 @@ export const useAppStore = create<AppState>()(
           }
           return false;
         } catch (error: any) {
-          console.error(error);
+          console.error(error.request);
           return false;
         }
       },

@@ -11,6 +11,7 @@ import {
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
+import * as DocumentPicker from "expo-document-picker";
 
 import VideoPlayer from "@/components/VideoPlayer";
 import Lesson from "@/types/shared/Course/Lesson";
@@ -33,7 +34,7 @@ const LessonContent = () => {
   //   typeof lessonParam === "string" ? JSON.parse(lessonParam) : lessonParam;
   const lesson: Lesson =
     typeof lessonSelected == "string" ? JSON.parse(lessonSelected) : [];
-  console.log(lesson.content);
+  console.log(lesson.lesson_id);
 
   // for testing
   const test_lesson = {
@@ -87,6 +88,7 @@ const LessonContent = () => {
   const [homeworkUploaded, setHomeworkUploaded] = useState(
     lesson.lesson_type === "homework" ? false : lesson.lesson_type === "text" || lesson.lesson_type === "video" ? true: false
   )
+  const [homework, setHomework] = useState<any>()
 
   const handleDownload = async () => {
     if (lesson.homework_url) {
@@ -101,11 +103,66 @@ const LessonContent = () => {
     }
   };
 
+  const handleUpload = async () => {
+    try {
+      let result = await DocumentPicker.getDocumentAsync({
+        type: "application/pdf", // Restrict to PDFs
+      });
+
+      if (result.canceled) {
+        return;
+      }
+
+      if (result.assets && result.assets.length > 0) {
+        const uri = result.assets[0].uri; // Access uri from assets array
+        const file_name = result.assets[0].name; // Access file name from assets array
+
+        // Check if uri is valid before using it
+        if (!uri) {
+          console.error(Constants.noUriReturnedError);
+          return;
+        }
+
+        // Extract filename only if uri is valid
+        const filename = uri.split("/").pop();
+        const type = "application/pdf";
+        const formData = new FormData();
+        formData.append("homework_submission_file", {
+          uri: uri,
+          name: filename ?? "homework_submission.pdf",
+          type: type,
+        } as any);
+        formData.append("homework_lesson_id", lesson.lesson_id.valueOf());
+
+        setHomework(formData);
+        setHomeworkUploaded(true);
+        alert(Constants.pdfUploadedAlert);
+      } else {
+        console.error(Constants.noFileSelectedError);
+      }
+    } catch (error) {
+      console.error(Constants.handleUploadPdfError, error);
+    }
+  }
+
+
   const handleLessonComplete = async () => {
     if (lesson.lesson_type === "text" || lesson.lesson_type === "video") {
       const response = await completeLesson(Number(lesson.lesson_id));
+      if (response === true) {
+        router.back();
+      }
     } else if (lesson.lesson_type === "homework") {
-      // const response = await submitHomework()
+      if (homework) {
+        const response = await submitHomework(homework)
+        console.log("response is " + response);
+        if (response === true) {
+          router.back();
+        }
+      }
+    }
+    else {
+      alert("Unknown lesson")
     }
   }
 
@@ -160,6 +217,20 @@ const LessonContent = () => {
                     {lessonContentPage.download}
                   </Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.uploadWrapper}
+                  onPress={() => {
+                    handleUpload();
+                  }}
+                >
+                  <View>
+                    <Image 
+                      source={icons.upload}
+                      style={styles.uploadIcon}
+                    />
+                  </View>
+                </TouchableOpacity>
+                <Text style={styles.fileName}>{lessonContentPage.upload}</Text>
               </View>
             )}
           </View>
@@ -299,6 +370,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#FFFFFF",
     fontFamily: "Inter-Regular"
+  },
+  uploadWrapper: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    // backgroundColor: Colors.Gray,
+    borderColor: Colors.defaultBlue,
+    borderWidth: 2,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
+    marginTop: 70,
+  },
+  uploadIcon: {
+    width: 45,
+    height: 45,
+    // backgroundColor: Colors.darkGray,
+    borderRadius: 4,
+    marginLeft: 6,
   }
 });
 
