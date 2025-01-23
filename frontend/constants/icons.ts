@@ -27,6 +27,7 @@ import tick from "@/assets/images/icons/tick.png";
 import logout from "@/assets/images/icons/logout.png";
 import cross from "@/assets/images/icons/cross.png";
 import download from "@/assets/images/icons/download.png";
+import upload from "@/assets/images/icons/upload.png";
 
 export default {
   home,
@@ -58,4 +59,5 @@ export default {
   logout,
   cross,
   download,
+  upload,
 };
