@@ -67,7 +67,6 @@ class GetUserUnreadNotificationsEndpoint(Resource):
 
 # class UserAddNotificationEndpoint(Resource):
 
-# class InstructorAddNotificationEndpoint(Resource):
 
 class GetInstructorUnreadNotificationsEndpoint(Resource):
     @api.doc(

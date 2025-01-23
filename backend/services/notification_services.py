@@ -3,7 +3,7 @@ from sqlalchemy import or_, not_, func
 from models.notification import Notification, NOTIFICATION, RECIPIENT
 from models.user import User
 from models.instructor import Instructor
-from utils.push_notifications import android_send_push_notification, ios_send_push_notification
+from utils.expo_push_notifications import android_send_push_notification, ios_send_push_notification
 
 class NotificationServiceError(Exception):
     pass
