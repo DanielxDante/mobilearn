@@ -3,8 +3,7 @@ from sqlalchemy import or_, not_, func
 from models.notification import Notification, NOTIFICATION, RECIPIENT
 from models.user import User
 from models.instructor import Instructor
-from utils.push_notifications import android_send_push_notification, ios_send_push_notification
-
+from utils.expo_push_notifications import send_push_notification
 class NotificationServiceError(Exception):
     pass
 
@@ -49,7 +48,7 @@ class NotificationService:
         
         if recipient_type not in RECIPIENT.values():
             raise ValueError("Invalid recipient type")
-        
+
         notification = Notification.add_notification(
             session,
             title=title,
@@ -58,30 +57,18 @@ class NotificationService:
             recipient_id=recipient_id,
             recipient_type=recipient_type
         )
-        
-        # TODO: Implement push notifications
-        # recipient = notification.recipient
-        # if recipient_type == "user":
-        #     android_send_push_notification(
-        #         recipient.device_token,
-        #         title,
-        #         body
-        #     )
-        #     ios_send_push_notification(
-        #         recipient.device_token,
-        #         title,
-        #         body
-        #     )
-        # elif recipient_type == "instructor":
-        #     android_send_push_notification(
-        #         recipient.device_token,
-        #         title,
-        #         body
-        #     )
-        #     ios_send_push_notification(
-        #         recipient.device_token,
-        #         title,
-        #         body
-        #     )
+
+        if recipient_type == RECIPIENT.USER:
+            recipient = User.get_user_by_id(session, recipient_id)
+        elif recipient_type == RECIPIENT.INSTRUCTOR:
+            recipient = Instructor.get_instructor_by_id(session, recipient_id)
+        if recipient.device_token:
+            send_push_notification(
+                expo_token=recipient.device_token,
+                title=title,
+                body=body
+            )
+        else:
+            print("Recipient device token not registered. Skipping push notification.")
 
         return notification

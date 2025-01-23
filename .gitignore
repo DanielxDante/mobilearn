@@ -254,3 +254,8 @@ Desktop.ini
 
 # Linux users
 *~
+
+# Expo
+google-services.json
+/android
+/ios

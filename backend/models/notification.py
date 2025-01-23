@@ -42,13 +42,13 @@ class Notification(Base):
         
         if recipient_type not in RECIPIENT.values():
             raise ValueError("Invalid recipient type")
-        if recipient_type == RECIPIENT.user:
+        if recipient_type == RECIPIENT.USER:
             if not User.get_user_by_id(session, recipient_id):
                 raise ValueError("User not found")
-        elif recipient_type == RECIPIENT.instructor:
+        elif recipient_type == RECIPIENT.INSTRUCTOR:
             if not Instructor.get_instructor_by_id(session, recipient_id):
                 raise ValueError("Instructor not found")
-        
+
         notification = Notification(
             title=title,
             body=body,

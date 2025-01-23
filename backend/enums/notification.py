@@ -2,8 +2,9 @@ from enum import Enum
 
 class NOTIFICATION(str, Enum):
     INFO = "info"
-    WARNING = "warning"
-    SUCCESS = "success"
+    PAYMENT = "payment"
+    COURSE = "course"
+    CHAT = "chat"
 
     def __str__(self):
         return self.value

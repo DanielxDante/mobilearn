@@ -8,6 +8,7 @@ from models.user import User, GENDER, MEMBERSHIP
 from models.instructor import Instructor
 from models.community import Community
 from services.community_services import CommunityService
+from services.notification_services import NotificationService
 
 userSignupParser = api.parser()
 userSignupParser.add_argument('name', type=str, help='Full Name', location='json', required=True)
@@ -15,6 +16,7 @@ userSignupParser.add_argument('password', type=str, help='Password', location='j
 userSignupParser.add_argument('email', type=str, help='Email', location='json', required=True)
 userSignupParser.add_argument('gender', type=str, help='Gender', location='json', required=True, choices=GENDER)
 userSignupParser.add_argument('membership', type=str, help='Membership', location='json', required=False, choices=MEMBERSHIP)
+userSignupParser.add_argument('device_token', type=str, help='Device Token', location='json', required=False)
 
 class UserSignupEndpoint(Resource):
     @api.doc(
@@ -31,7 +33,8 @@ class UserSignupEndpoint(Resource):
             "name": "foo",
             "password": "bar",
             "email": "foobar@gmail.com",
-            "gender": "male"
+            "gender": "male",
+            "device_token": "xxx" // optional for push notifications
         }
         """
     )
@@ -44,10 +47,23 @@ class UserSignupEndpoint(Resource):
         email = data.get('email')
         gender = data.get('gender')
         membership = data.get('membership') if 'membership' in data else MEMBERSHIP.NORMAL
+        device_token = data.get('device_token', None)
 
         with session_scope() as session:
             try:
-                User.add_user(session, name, password, email, gender, membership)
+                user = User.add_user(session, name, password, email, gender, membership)
+                if device_token:
+                    user.device_token = device_token
+
+                # send a welcome notification
+                NotificationService.add_notification(
+                    session,
+                    title="Welcome!",
+                    body="Start learning with MobiLearn today!",
+                    notification_type="info",
+                    recipient_id=user.id,
+                    recipient_type='user'
+                )
             except ValueError as ee:
                 return Response(
                     json.dumps({'message': str(ee)}),
@@ -72,6 +88,7 @@ instructorSignupParser.add_argument('gender', type=str, help='Gender', location=
 instructorSignupParser.add_argument('phone_number', type=str, help='Phone Number', location='json', required=True)
 instructorSignupParser.add_argument('company', type=str, help='Company', location='json', required=True)
 instructorSignupParser.add_argument('position', type=str, help='Position', location='json', required=True)
+instructorSignupParser.add_argument('device_token', type=str, help='Device Token', location='json', required=False)
 
 class InstructorSignupEndpoint(Resource):
     @api.doc(
@@ -92,7 +109,8 @@ class InstructorSignupEndpoint(Resource):
             "gender": "male",
             "phone_number": "12345678",
             "company": "MobiLearn Network",
-            "position": "Lecturer"
+            "position": "Lecturer",
+            "device_token": "xxx" // optional for push notifications
         }
         """
     )
@@ -107,6 +125,7 @@ class InstructorSignupEndpoint(Resource):
         phone_number = data.get('phone_number')
         company = data.get('company')
         position = data.get('position')
+        device_token = data.get('device_token', None)
 
         with session_scope() as session:
             try:
@@ -123,9 +142,21 @@ class InstructorSignupEndpoint(Resource):
                     gender
                 )
                 CommunityService.attach_instructor(session, community.id, instructor.id)
+                if device_token:
+                    instructor.device_token = device_token
 
                 # Send a notification to the admin for approval
                 # This can be done through a messaging service or email e.g., MailTrap
+
+                # send a welcome notification
+                NotificationService.add_notification(
+                    session,
+                    title="Welcome!",
+                    body="Start creating courses with MobiLearn today!",
+                    notification_type="info",
+                    recipient_id=instructor.id,
+                    recipient_type='instructor'
+                )
 
                 return Response(
                     json.dumps({'message': 'Instructor signup successful'}),
