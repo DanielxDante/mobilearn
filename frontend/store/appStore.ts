@@ -29,6 +29,8 @@ import {
   COMMUNITY_GET_COMMUNITIES_URL,
   COMMUNITY_GET_INSTRUCTOR_DETAILS_URL,
   COMMUNITY_GET_INSTRUCTORS_URL,
+  ACCOUNT_USER_GET_NOTIFICATIONS_URL,
+  ACCOUNT_INSTRUCTOR_GET_NOTIFICATIONS_URL,
 } from "@/constants/routes";
 import Channel from "@/types/shared/Channel";
 import Course from "@/types/shared/Course/Course";
@@ -36,6 +38,7 @@ import Review from "@/types/shared/Course/Review";
 import Lesson from "@/types/shared/Course/Lesson";
 import Instructor from "@/types/shared/Course/Instructor";
 import { router } from "expo-router";
+import notification from "@/types/shared/notification";
 
 export interface AppState {
   channels: Channel[]; // List of Channels that user has access to
@@ -47,6 +50,7 @@ export interface AppState {
   instructor_courses: Course[];
   selectedCourse?: Course;
   instructorPreviewedLesson?: Lesson;
+  notifications?: notification[];
   fetchPaymentSheet: (
     amount: string,
     currency: string
@@ -83,9 +87,9 @@ export interface AppState {
   getRecommendedCourses: (
     page?: string,
     per_page?: string,
-    pagination?: boolean,
+    pagination?: boolean
   ) => Promise<Course[]>;
-  getReview: (course_id: number) => Promise<Review|false>;
+  getReview: (course_id: number) => Promise<Review | false>;
   getTopEnrolledCoursesUser: (
     page?: string,
     per_page?: string,
@@ -102,6 +106,8 @@ export interface AppState {
   getCommunities: () => Promise<any[]>;
   getInstructorDetails: (instructor_id: string) => Promise<Instructor>;
   getInstructors: (community_id: string) => Promise<Instructor[] | undefined>;
+  getNotificationsUser: () => Promise<void>;
+  getNotificationsInstructor: () => Promise<void>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -550,13 +556,15 @@ export const useAppStore = create<AppState>()(
             set({
               recommended_courses: mappedCourses,
             });
-          } else if (get().recommended_courses.length > 0 && pagination == false) {
+          } else if (
+            get().recommended_courses.length > 0 &&
+            pagination == false
+          ) {
             // ANOTHER API CALL TO REFRESH RECOMMENDED_COURSES
             set({
               recommended_courses: mappedCourses,
             });
-          }
-          else {
+          } else {
             //  RETURN NEXT 5 COURSES TO COMPONENT (suggestionsSeeAll)
             return mappedCourses;
           }
@@ -586,15 +594,18 @@ export const useAppStore = create<AppState>()(
           } else {
             return false;
           }
-          
-          
+
           // Tentatively returns nothing for successful API request
         } catch (error: any) {
           console.error(error);
           return false;
         }
       },
-      getTopEnrolledCoursesUser: async (page?, per_page?, pagination = false) => {
+      getTopEnrolledCoursesUser: async (
+        page?,
+        per_page?,
+        pagination = false
+      ) => {
         console.log("(Store) Get Top Enrolled Courses");
         try {
           const response = await axios.get(
@@ -621,11 +632,13 @@ export const useAppStore = create<AppState>()(
           if (get().top_enrolled_courses.length === 0) {
             // ONLY SET FIRST 5 COURSES IN TOP_ENROLLED_COURSES
             set({ top_enrolled_courses: mappedCourses });
-          } else if (get().top_enrolled_courses.length > 0 && pagination == false) {
+          } else if (
+            get().top_enrolled_courses.length > 0 &&
+            pagination == false
+          ) {
             // ANOTHER API CALL TO REFRESH TOP ENROLLED COURSES
             set({ top_enrolled_courses: mappedCourses });
-          }
-          else {
+          } else {
             //  RETURN NEXT 5 COURSES TO COMPONENT (topCoursesSeeAll)
             return mappedCourses;
           }
@@ -655,15 +668,17 @@ export const useAppStore = create<AppState>()(
       saveReview: async (course_id, rating, review_text) => {
         console.log("(Store) Save Review for course: " + course_id);
         try {
-          const response = await axios.post(`${COURSE_USER_SAVE_REVIEW_URL}`,
-            { course_id, rating, review_text, },
+          const response = await axios.post(
+            `${COURSE_USER_SAVE_REVIEW_URL}`,
+            { course_id, rating, review_text },
             {
               headers: { "Content-Type": "application/json" },
-            });
+            }
+          );
           if (response.status === 200) {
-            return true
+            return true;
           } else {
-            return false
+            return false;
           }
           // Tentatively returns nothing for successful API request
         } catch (error: any) {
@@ -696,22 +711,24 @@ export const useAppStore = create<AppState>()(
         const courseSelected = get().enrolled_courses?.find(
           (course) => course.course_id === course_id
         );
-        if (courseSelected) { // IF COURSE IS ALREADY ENROLLED
+        if (courseSelected) {
+          // IF COURSE IS ALREADY ENROLLED
           router.push({
-              pathname: "/shared/course/courseContent",
-              params: {
-                  courseId: courseSelected.course_id,
-              },
+            pathname: "/shared/course/courseContent",
+            params: {
+              courseId: courseSelected.course_id,
+            },
           });
-        } else { // COURSE NOT YET ENROLLED
+        } else {
+          // COURSE NOT YET ENROLLED
           const unenrolledCourse = await get().getUnenrolledCourse(course_id);
           if (unenrolledCourse) {
-              router.push({
-                  pathname: "/shared/course/courseDetails",
-                  params: {
-                      courseId: unenrolledCourse.course_id,
-                  },
-              });
+            router.push({
+              pathname: "/shared/course/courseDetails",
+              params: {
+                courseId: unenrolledCourse.course_id,
+              },
+            });
           }
         }
       },
@@ -762,6 +779,58 @@ export const useAppStore = create<AppState>()(
             })
           );
           return instructors;
+        } catch (error: any) {
+          console.error(error);
+        }
+      },
+      getNotificationsUser: async () => {
+        console.log("(Store) Get Notifications");
+        try {
+          const response = await axios.get(
+            `${ACCOUNT_USER_GET_NOTIFICATIONS_URL}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          console.log("Raw User Notifications: ", responseData);
+          const notifications: notification[] = responseData.notifications.map(
+            (notification: any) => ({
+              type: notification.type,
+              title: notification.title,
+              subtitle: notification.subtitle,
+              timestamp: notification.timestamp,
+            })
+          );
+          set({
+            notifications: notifications,
+          });
+        } catch (error: any) {
+          console.error(error);
+        }
+      },
+      getNotificationsInstructor: async () => {
+        console.log("(Store) Get Notifications");
+        try {
+          const response = await axios.get(
+            `${ACCOUNT_INSTRUCTOR_GET_NOTIFICATIONS_URL}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          //console.log("RAW Notifications: ", responseData);
+          // const notifications: notification[] = responseData.notifications.map(
+          //   (notification: any) => ({
+          //     type: notification.type,
+          //     title: notification.title,
+          //     subtitle: notification.subtitle,
+          //     timestamp: notification.timestamp,
+          //   })
+          // );
+          set({
+            notifications: responseData.notifications,
+          });
         } catch (error: any) {
           console.error(error);
         }

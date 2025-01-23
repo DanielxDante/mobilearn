@@ -94,6 +94,7 @@ const Review = () => {
                     onChangeText={setFeedback}
                     style={styles.feedbackInput}
                     value={feedback}
+                    placeholder={Constants.placeholder}
                 />
             </View>
             <View>

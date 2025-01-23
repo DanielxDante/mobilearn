@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,7 +19,7 @@ import icons from "@/constants/icons";
 import useAuthStore from "@/store/authStore";
 import useAppStore from "@/store/appStore";
 import BackButton from "@/components/BackButton";
-import FavouriteButton from "@/components/FavouriteButton"
+import FavouriteButton from "@/components/FavouriteButton";
 
 const CourseDetails = () => {
   // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
@@ -37,46 +37,49 @@ const CourseDetails = () => {
         communityId: courseData?.community_id,
         communityName: courseData?.community_name,
       },
-    })
-  }
+    });
+  };
 
   const [courseData, setCourseData] = useState<Course | null>(null);
-  const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse)
-  const company = useAuthStore((state) => state.company);
+  const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse);
+  const membership = useAuthStore((state) => state.membership);
   const [course_image, setCourseImage] = useState<string>("");
+
+  const membership_types = ["normal", "member", "core_member"];
 
   useEffect(() => {
     const fetchCourseData = async () => {
-        const data = await getUnenrolledCourse(Number(courseId));
-        setCourseData(data);
-        setCourseImage(data.course_image);
-      };
+      const data = await getUnenrolledCourse(Number(courseId));
+      setCourseData(data);
+      setCourseImage(data.course_image);
+    };
     fetchCourseData();
   }, [courseId]);
-  const { width: screenWidth } = Dimensions.get('window')
-  const [imageHeight, setImageHeight] = useState(0)
+  const { width: screenWidth } = Dimensions.get("window");
+  const [imageHeight, setImageHeight] = useState(0);
   useEffect(() => {
     if (course_image) {
       Image.getSize(course_image, (width, height) => {
-        const aspectRatio = width/height;
-        const calculatedHeight = screenWidth/aspectRatio;
+        const aspectRatio = width / height;
+        const calculatedHeight = screenWidth / aspectRatio;
         setImageHeight(calculatedHeight);
-      })
+      });
     }
-  }, [course_image])
+  }, [course_image]);
+
   return (
     <SafeAreaView style={styles.container}>
-        {/* AppBar */}
-        <View style={styles.appBarContainer}>
-          <BackButton />
-          <FavouriteButton course_id={courseId.toString()}/>
-        </View>
+      {/* AppBar */}
+      <View style={styles.appBarContainer}>
+        <BackButton />
+        <FavouriteButton course_id={courseId.toString()} />
+      </View>
       <ScrollView style={styles.body}>
         {/* if picture is not available, show loading */}
         {course_image ? (
           <Image
             source={{ uri: course_image }}
-            style={[styles.courseImage, {height: imageHeight}]}
+            style={[styles.courseImage, { height: imageHeight }]}
             resizeMode="cover"
           />
         ) : (
@@ -87,7 +90,7 @@ const CourseDetails = () => {
           <View style={styles.courseDetails}>
             <Text style={styles.title}>{courseData.course_name}</Text>
             <TouchableOpacity onPress={handleCommunitySelect}>
-            <Text style={styles.school}>{courseData.community_name}</Text>
+              <Text style={styles.school}>{courseData.community_name}</Text>
             </TouchableOpacity>
             <View style={styles.enrolledCountContainer}>
               <Image
@@ -165,7 +168,7 @@ const CourseDetails = () => {
               </View>
             </View>
             {/* Enroll now button */}
-            {!company && (
+            {membership && membership_types.includes(membership) && (
               <View>
                 <TouchableOpacity
                   style={styles.enrollNowButton}
@@ -195,12 +198,13 @@ const CourseDetails = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#FFFFFF",
   },
   appBarContainer: {
-      flexDirection: "row",
-      marginVertical: 13,
-      alignItems: "center",
-      justifyContent: "space-between"
+    flexDirection: "row",
+    marginVertical: 13,
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   header: {
     flexDirection: "row",
