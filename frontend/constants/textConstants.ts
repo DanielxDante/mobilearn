@@ -514,6 +514,7 @@ export const instructorCreateCoursePageConstants = {
   chapter_placeholder: "Chapter",
   chapterPageTitle: "Edit Chapter",
   editChapterTitle: "Chapter Title",
+  editLessonTitle: "Edit Lesson",
   chapterInfo: "Chapter Information",
   manageLessons: "Manage Lessons",
   lesson_options: [
@@ -697,7 +698,7 @@ export const reviewPageConstants = {
   backButton: require("@/assets/images/notifications/backButton.png"),
   title: "Leave a Review",
   submit: "Submit",
-  placeholder: "Leave a review"
+  placeholder: "Leave a review",
 };
 
 export const notificationUtility = {
