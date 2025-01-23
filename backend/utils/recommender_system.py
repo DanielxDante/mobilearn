@@ -24,25 +24,24 @@
 # Novelty
 # Popularity Bias
 
-import nltk
+# Additional ways to improve recommendation systems
+# 1. Use of hybrid models # TODO
+# 2. Use of reinforcement learning
+# 3. Use of cold start strategies # TODO
+## Complete Cold Start
+## Warm Start
+# 4. Keyword extraction/Stop word removal # TODO
+
 import pandas as pd
 import numpy as np
-from collections import defaultdict
 from sqlalchemy import Integer, String, Float, Column
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from gensim.models import Word2Vec
-from nltk.tokenize import word_tokenize
 
 from app import api
 from database import session_scope, create_session
 from models.course import Course
-
-# Download required NLTK data
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('wordnet')
-from nltk.stem import WordNetLemmatizer
+from utils.skill_processor import SkillProcessor
 
 class CourseRecommender:
     def __init__(self):
@@ -50,6 +49,7 @@ class CourseRecommender:
         self.session = create_session()
         self.courses_df = None
         self.similarity_matrix = None
+        self.skill_processor = SkillProcessor()
     
     def _handle_null_numeric(self, value, default_strategy='zero'):
         """ Handle null numeric values """
@@ -71,6 +71,18 @@ class CourseRecommender:
                 return self.courses_df[self.current_column].mode()[0]
         return value
     
+    def _get_course_skill_vector(self, skills):
+        """Create an averaged vector representation of course skills"""
+        vectors = []
+        for skill in skills:
+            vector = self.skill_processor.get_skill_vector(skill)
+            if vector is not None:
+                vectors.append(vector)
+        
+        if vectors:
+            return np.mean(vectors, axis=0)
+        return np.zeros(100)  # Default vector size
+    
     def load_data(self):
         """ Load data from the database """
         self.load_courses()
@@ -84,15 +96,15 @@ class CourseRecommender:
         self.courses_df = pd.DataFrame([
             {
                 # Common course fields
-                'course_id': course.id,
-                'name': course.name,
-                'description': course.description,
-                'course_type': course.type,
+                'course_id': course.id, # primary key
+                'name': course.name, # embeddings
+                'description': course.description, # embeddings
+                'course_type': course.type, # one-hot encoded
                 'duration': float(course.duration),
                 'rating': float(course.rating),
                 'price': float(course.price),
-                'difficulty': course.difficulty,
-                'skills': course.skills,
+                'difficulty': course.difficulty, # one-hot encoded
+                'skills': course.skills, # embeddings
 
                 # Course-type specific features
                 'school_name': getattr(course, 'school_name', None),
@@ -106,6 +118,22 @@ class CourseRecommender:
             }
             for course in courses
         ])
+
+        # process skills
+        self.courses_df['processed_skills'] = self.courses_df['skills'].apply(
+            lambda x: self.skill_processor.preprocess_skills(x)
+        )
+
+         # Train skill embeddings
+        all_skills = ' '.join(
+            self.courses_df['processed_skills'].apply(lambda x: ' '.join(x))
+        )
+        self.skill_processor.train_skill_embeddings([all_skills])
+        
+        # Create skill vectors for each course
+        self.courses_df['skill_vectors'] = self.courses_df['processed_skills'].apply(
+            self._get_course_skill_vector
+        )
 
         # handle nulls in numeric columns
         numeric_columns = []
@@ -134,22 +162,39 @@ class CourseRecommender:
         tfidf_vectorizer = TfidfVectorizer(stop_words='english')
         tfidf_matrix = tfidf_vectorizer.fit_transform(self.courses_df['description'])
         self.similarity_matrix = cosine_similarity(tfidf_matrix, tfidf_matrix)
+    
+    def get_content_based_recommendations(
+        self,
+        latest_enrolled_course_id,
+        top_n=5,
+        same_type_weight=0.3,
+        min_similarity=0.1    
+    ):
+        pass
+
+    def get_collaborative_based_recommendations(
+        self,
+        user_enroll_history, 
+        top_n=5
+    ):
+        pass
 
 if __name__ == '__main__':
+    # TODO: Add inference model persistence
     recommender = CourseRecommender()
 
     # load data and prepare features
     recommender.load_data()
 
     # Get recommendations for a specific course (Content Filtering)
-    course_recommendations = recommender.get_course_recommendations(
+    course_recommendations = recommender.get_content_based_recommendations(
         course_id=1
     )
     print("Content Filtering: ", course_recommendations)
 
     # Get recommendations based on user history (Collaborative Filtering)
     user_enroll_history = [1, 3, 5]
-    personalized_recommendations = recommender.get_personalized_recommendations(
+    personalized_recommendations = recommender.get_collaborative_based_recommendations(
         user_enroll_history=user_enroll_history
     )
     print("Collaborative Filtering: ", personalized_recommendations)

@@ -113,7 +113,9 @@ def init_account_endpoints():
     )
     from endpoints.account.notification import (
         GetUserUnreadNotificationsEndpoint,
-        GetInstructorUnreadNotificationsEndpoint
+        UserAddNotificationEndpoint,
+        GetInstructorUnreadNotificationsEndpoint,
+        InstructorAddNotificationEndpoint
     )
 
     get_user_name_path = f"/{VERSION}/user/profile/getName"
@@ -142,6 +144,9 @@ def init_account_endpoints():
 
     get_user_unread_notifications_path = f"/{VERSION}/user/notification/getUnread"
     ns_account.add_resource(GetUserUnreadNotificationsEndpoint, get_user_unread_notifications_path)
+
+    add_user_notification_path = f"/{VERSION}/user/notification/add"
+    ns_account.add_resource(UserAddNotificationEndpoint, add_user_notification_path)
 
     #####################################################################################
 
@@ -186,6 +191,9 @@ def init_account_endpoints():
 
     get_instructor_unread_notifications_path = f"/{VERSION}/instructor/notification/getUnread"
     ns_account.add_resource(GetInstructorUnreadNotificationsEndpoint, get_instructor_unread_notifications_path)
+
+    add_instructor_notification_path = f"/{VERSION}/instructor/notification/add"
+    ns_account.add_resource(InstructorAddNotificationEndpoint, add_instructor_notification_path)
 
 def init_channel_endpoints():
     from endpoints.channel.channel import (
