@@ -717,7 +717,7 @@ export const useAppStore = create<AppState>()(
         try {
           const response = await axios.post(
             COURSE_USER_SUBMIT_HOMEWORK_URL,
-            { homework_submission_file },
+            homework_submission_file,
             { headers: { "Content-Type": "multipart/form-data" } }
           );
           if (response.status == 200) {
@@ -725,8 +725,8 @@ export const useAppStore = create<AppState>()(
           }
           return false;
         } catch (error: any) {
-          console.error(error.request);
-          return false;
+            console.error(error.response);
+            return false;
         }
       },
       withdrawCourse: async (course_id) => {

@@ -34,7 +34,7 @@ const LessonContent = () => {
   //   typeof lessonParam === "string" ? JSON.parse(lessonParam) : lessonParam;
   const lesson: Lesson =
     typeof lessonSelected == "string" ? JSON.parse(lessonSelected) : [];
-  console.log(lesson.lesson_id);
+  // console.log(lesson.lesson_id);
 
   // for testing
   const test_lesson = {
