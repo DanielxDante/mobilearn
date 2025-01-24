@@ -63,10 +63,10 @@ const CoursePage = () => {
     useEffect(() => {
         const savedCourses = favouriteData;
         const inProgressCourses = enrolledData.filter(
-            (course) => course.completion_rate < 1
+            (course) => course.completion_rate < 100
         );
         const completedCourses = enrolledData.filter(
-            (course) => course.completion_rate === 1
+            (course) => course.completion_rate === 100
         );
 
         setCourses({

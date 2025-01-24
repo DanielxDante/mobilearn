@@ -22,6 +22,7 @@ import Lesson from "@/types/shared/Course/Lesson";
 import useAppStore from "@/store/appStore";
 import FavouriteButton from "@/components/FavouriteButton";
 import Icon from "react-native-vector-icons/FontAwesome";
+import useAuthStore from "@/store/authStore";
 
 const CourseContent = () => {
     const { courseId } = useLocalSearchParams();
@@ -31,6 +32,9 @@ const CourseContent = () => {
     const [course_image, setCourseImage] = useState<string>("");
     const [selectedChapterId, setSelectedChapterId] = useState<string|null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const membership = useAuthStore((state) => state.membership);
+    const membership_types = ["normal", "member", "core_member"];
+    
     useEffect(() => {
     const fetchCourseData = async () => {
         setLoading(true);
@@ -176,7 +180,9 @@ const CourseContent = () => {
                     }}>
                         <Icon name={'comment-o'} color={'gray'} size={25}/>
                     </TouchableOpacity>
+                    {membership && membership_types.includes(membership) && (
                     <FavouriteButton course_id={courseId.toString()}/>
+                    )}
                 </View>
             </View>
             {course && (

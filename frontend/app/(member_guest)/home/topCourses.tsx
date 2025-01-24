@@ -13,7 +13,6 @@ import { Colors } from "@/constants/colors";
 import { memberGuestTopCoursesSectionConstants as Constants } from "@/constants/textConstants";
 import Course from "@/types/shared/Course/Course";
 import useAppStore from "@/store/appStore";
-import { topCourseData } from "@/constants/temporaryCourseData";
 import { useSegments } from "expo-router";
 import { MEMBER_GUEST_TABS } from "@/constants/pages";
 
