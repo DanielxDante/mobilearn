@@ -782,7 +782,6 @@ class EditCourseEndpoint(Resource):
                 )
 
             except ValueError as ee:
-                print(str(ee))
                 return Response(
                     json.dumps({"error": str(ee)}),
                     status=400, mimetype='application/json'
