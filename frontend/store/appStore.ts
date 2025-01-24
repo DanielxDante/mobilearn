@@ -12,6 +12,7 @@ import {
   COURSE_GET_TOP_COURSES_INSTRUCTOR,
   COURSE_SEARCH_URL,
   COURSE_USER_ADD_FAVOURITE_COURSE_URL,
+  COURSE_USER_COMPLETE_LESSON_URL,
   COURSE_USER_ENROLL_COURSE_URL,
   COURSE_USER_GET_FAVOURITE_COURSES_URL,
   COURSE_USER_GET_ENROLLED_COURSES_URL,
@@ -20,6 +21,7 @@ import {
   COURSE_USER_GET_TOP_ENROLLED_COURSES_URL,
   COURSE_USER_REMOVE_FAVOURITE_COURSE_URL,
   COURSE_USER_SAVE_REVIEW_URL,
+  COURSE_USER_SUBMIT_HOMEWORK_URL,
   COURSE_USER_WITHDRAW_COURSE_URL,
   COURSE_GET_ALL_INSTRUCTOR_COURSES,
   COURSE_CREATE_COURSE,
@@ -80,6 +82,7 @@ export interface AppState {
     per_page?: string
   ) => Promise<any[]>;
   addFavouriteCourse: (course_id: number) => Promise<void>;
+  completeLesson: (lesson_id: number) => Promise<Boolean>;
   enrollCourse: (course_id: number) => Promise<number>;
   getEnrolledCourses: (page?: string, per_page?: string) => Promise<void>;
   getCourseDetails: (course_id: string) => Promise<void>;
@@ -100,6 +103,9 @@ export interface AppState {
     course_id: number,
     rating: number,
     review_text: string
+  ) => Promise<Boolean>;
+  submitHomework: (
+    homework_submission_file: any,
   ) => Promise<Boolean>;
   withdrawCourse: (course_id: number) => Promise<void>;
   handleSelectCourse: (course_id: number) => Promise<void>;
@@ -439,6 +445,23 @@ export const useAppStore = create<AppState>()(
           console.error(error);
         }
       },
+      completeLesson: async (lesson_id: number) => {
+        console.log("(Store) Complete Lesson: " + lesson_id);
+        try {
+          const response = await axios.post(
+            COURSE_USER_COMPLETE_LESSON_URL,
+            { lesson_id },
+            { headers: { "Content-Type": "application/json" } }
+          );
+          if (response.status == 200) {
+            return true;
+          }
+          return false;
+        } catch (error: any) {
+          console.error(error);
+          return false;
+        }
+      },
       enrollCourse: async (course_id) => {
         console.log("(Store) Enroll Course: " + course_id);
         try {
@@ -684,6 +707,26 @@ export const useAppStore = create<AppState>()(
         } catch (error: any) {
           console.error(error);
           return false;
+        }
+      },
+      submitHomework: async (homework_submission_file: any) => {
+        console.log("(Store) Submit Homework");
+        homework_submission_file.forEach((value: any, key: any) => {
+          console.log("test: " + key, value);
+        });
+        try {
+          const response = await axios.post(
+            COURSE_USER_SUBMIT_HOMEWORK_URL,
+            homework_submission_file,
+            { headers: { "Content-Type": "multipart/form-data" } }
+          );
+          if (response.status == 200) {
+            return true;
+          }
+          return false;
+        } catch (error: any) {
+            console.error(error.response);
+            return false;
         }
       },
       withdrawCourse: async (course_id) => {

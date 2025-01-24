@@ -687,6 +687,7 @@ export const lessonContentPage = {
   pageHeader: "Lesson Content",
   homework: "Homework",
   download: "Click to Download",
+  upload: "Submit Homework"
 };
 
 export const communityPage = {
@@ -707,3 +708,11 @@ export const notificationUtility = {
   notificationSuccess: "Notification sent successfully!",
   errorSendingNotification: "Error sending notification:",
 };
+
+export const lessonContentConstants = {
+  complete: "COMPLETE",
+  noUriReturnedError: "No uri returned from document picker.",
+  pdfUploadedAlert: "PDF has been uploaded.",
+  noFileSelectedError: "No file selected.",
+  handleUploadPdfError: "Error in handleUploadPDF:",
+}
