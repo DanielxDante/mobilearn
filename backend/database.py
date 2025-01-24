@@ -60,13 +60,16 @@ def session_scope():
 
 def load_initial_data():
     """ Load initial data into database """
-    print("Loading initial data into the database. This process may take a while. Please be patient...")
+    print("Loading initial data into the database. This process may take a while...")
+
     load_channel()
     load_communities()
     load_instructors()
     load_courses()
     load_chapters()
     load_lessons()
+
+    print("Initial data loaded successfully")
 
 def load_channel():
     """ Create a default public channel """
