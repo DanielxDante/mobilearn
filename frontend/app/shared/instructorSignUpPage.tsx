@@ -19,6 +19,7 @@ import PhoneNumberInputField from "@/components/PhoneNumberInputField";
 import { COMMUNITIES_GET_ALL } from "@/constants/routes";
 import axios from "axios";
 import { validateEmail } from "@/constants/regex";
+import { usePushNotifications } from "@/hooks/usePushNotificationState";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
@@ -26,6 +27,7 @@ export default function signUpPage() {
   const signup = useAuthStore((state) => state.signupInstructor);
   const [internalPage, setInternalPage] = useState(1); // 1 for first page, 2 for second page
   const [communities, setCommunities] = useState([]);
+  const { expoPushToken, notification } = usePushNotifications();
   //use state for all inputs
   const [inputs, setInputs] = useState({
     name: "",
@@ -128,7 +130,8 @@ export default function signUpPage() {
         inputs.gender.toLowerCase(),
         inputs.combinedPhoneNumber,
         inputs.company,
-        inputs.position
+        inputs.position,
+        expoPushToken?.data
       );
       router.push(INSTRUCTOR_REGISTRATION_SUCCESS);
     } catch (error) {
