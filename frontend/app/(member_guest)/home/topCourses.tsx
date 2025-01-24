@@ -39,6 +39,7 @@ const TopCourses: React.FC<ContinueWatchingProps> = ({
     );
 
     const segments = useSegments();
+    const currentRoute = segments[segments.length - 1]
     const [courses, setCourses] = useState<Course[]>([]);
     useEffect(() => {
         const fetchCourses = async () => {
@@ -48,11 +49,10 @@ const TopCourses: React.FC<ContinueWatchingProps> = ({
                 await getTopEnrolledCourses("1", "5", false);
             }
             }
-        const currentRoute = segments[segments.length - 1]
         if (currentRoute === MEMBER_GUEST_TABS) {
             fetchCourses();
         }
-        }, [segments]);
+        }, [currentRoute]);
 
     useEffect(() => {
         if (data === "Suggestions" && recommendedCourses && recommendedCourses.length>0) {

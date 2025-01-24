@@ -106,20 +106,6 @@ const CoursePage = () => {
         outputRange: [0, -width, -2 * width],
     });
 
-    // const handleSelectCourse = (id: string) => {
-    //     // TODO: INCLUDE COURSE NAVIGATION
-    //     // console.log("Course " + id + " Selected");
-    //     const courseSelected = enrolledData.find(
-    //         (course) => course.course_id.toString() === id
-    //     );
-    //     router.push({
-    //         pathname: "../../shared/course/courseContent",
-    //         params: {
-    //             courseId: id,
-    //         },
-    //     });
-    // };
-
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
