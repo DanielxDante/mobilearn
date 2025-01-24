@@ -23,7 +23,9 @@
       },
       "package": "com.musketeers.mobilearn",
       "googleServicesFile": "./google-services.json",
-      "permissions": ["android.permission.RECORD_AUDIO"]
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -35,7 +37,9 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/PlusJakartaSans.ttf"]
+          "fonts": [
+            "./assets/fonts/PlusJakartaSans.ttf"
+          ]
         }
       ],
       [
@@ -61,7 +65,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "80ed566e-9c83-4c1a-a3df-41b923027641"
+        "projectId": "67827e0d-64a8-4e04-a83a-53c8d9694290"
       }
     }
   }
