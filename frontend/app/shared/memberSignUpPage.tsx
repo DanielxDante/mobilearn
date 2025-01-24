@@ -17,12 +17,15 @@ import {
   MEMBER_GUEST_HOME,
   MEMBER_REGISTRATION_SUCCESS,
 } from "@/constants/pages";
+import { usePushNotifications } from "@/hooks/usePushNotificationState";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function signUpPage() {
   const signup = useAuthStore((state) => state.signupUser);
   const login = useAuthStore((state) => state.loginUser);
+  const { expoPushToken, notification } = usePushNotifications();
+
   const [inputs, setInputs] = useState({
     name: "",
     email: "",
@@ -77,7 +80,8 @@ export default function signUpPage() {
         inputs.email.toLowerCase(),
         inputs.password,
         inputs.gender.toLowerCase(),
-        "normal"
+        "normal",
+        expoPushToken?.data
       );
       //immediately login the user
       const response = await login(inputs.email.toLowerCase(), inputs.password);
