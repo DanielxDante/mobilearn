@@ -424,12 +424,13 @@ export default function createCoursePage() {
                     delete lesson.content;
                     delete lesson.video_key;
                     delete lesson.homework_key;
-                  } else if (key === "lesson_type") {
-                    delete lesson.content;
-                    delete lesson.video_url;
-                    delete lesson.homework_url;
-                    setEditorState(null);
                   }
+                  // else if (key === "lesson_type") {
+                  //   delete lesson.content;
+                  //   delete lesson.video_url;
+                  //   delete lesson.homework_url;
+                  //   setEditorState(null);
+                  // }
                   const updatedLesson = { ...lesson, [key]: value };
                   return updatedLesson;
                 }
