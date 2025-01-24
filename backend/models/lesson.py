@@ -264,7 +264,7 @@ class VideoLesson(Lesson):
     __tablename__ = 'video_lessons'
 
     id = Column(Integer, ForeignKey('lessons.id'), primary_key=True)
-    video_url = Column(String, nullable=False, default="")
+    video_url = Column(String, nullable=True, default="")
     
     __mapper_args__ = {
         'polymorphic_identity': LESSON.VIDEO
@@ -300,7 +300,7 @@ class HomeworkLesson(Lesson):
     __tablename__ = 'homework_lessons'
 
     id = Column(Integer, ForeignKey('lessons.id'), primary_key=True)
-    homework_url = Column(String, nullable=False, default="")
+    homework_url = Column(String, nullable=True, default="")
 
     # Many-to-many relationship with User
     submissions = relationship('User', secondary="homework_submissions", back_populates='homework_submissions')

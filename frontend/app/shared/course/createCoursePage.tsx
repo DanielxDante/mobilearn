@@ -209,7 +209,7 @@ export default function createCoursePage() {
           chapters[i].lessons[j].video_key ||
           chapters[i].lessons[j].homework_key
         ) {
-          lessonIdarray.push(chapters[i].lessons[j].lesson_id);
+          lessonIdarray.push(chapters[i].lessons[j].lesson_id.toString());
         }
       }
     }
