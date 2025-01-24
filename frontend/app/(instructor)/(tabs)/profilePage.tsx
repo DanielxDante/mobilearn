@@ -29,7 +29,7 @@ const Profile = () => {
       console.log("Attempting logout");
       await logout();
     }
-    router.push(CAROUSEL_PAGE);
+    router.replace(CAROUSEL_PAGE);
     console.log("Member logout");
   };
 

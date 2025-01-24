@@ -21,16 +21,16 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
     const [courses, setCourses] = useState<Course[]>([]);
 
     const segments = useSegments();
+    const currentRoute = segments[segments.length - 1]
     useEffect(() => {
         const fetchCourses = async () => {
             await getEnrolledCourses();
         }
         const currentRoute = segments[segments.length - 1]
-        console.log(currentRoute)
         if (currentRoute === MEMBER_GUEST_TABS) {
             fetchCourses();
         }
-    }, []);
+    }, [currentRoute]);
 
     useEffect(() => {
         if (enrolledCourses && enrolledCourses.length > 0) {
@@ -64,7 +64,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
                     {(item.completion_rate != undefined) ? (
                         <View style={styles.progressContainer}>
                             <Progress.Bar
-                                progress={item.completion_rate}
+                                progress={item.completion_rate / 100}
                                 color="#356FC5"
                                 borderColor="#D9D9D9"
                                 unfilledColor="#D9D9D9"
@@ -72,7 +72,7 @@ const ContinueWatching: React.FC<ContinueWatchingProps> = ({
                             />
                             <View style={styles.progressTextContainer}>
                                 <Text style={styles.progressText}>
-                                    {item.completion_rate * 100}
+                                    {item.completion_rate.toPrecision(3)}
                                     {Constants.completionRateText}
                                 </Text>
                             </View>

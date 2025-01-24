@@ -37,19 +37,13 @@ const CourseContent = () => {
   };
 
   const handleLessonSelect = async (lessonId: string) => {
-    console.log("Lesson id: " + lessonId);
-    const lessonSelected = course?.chapters
-      .map((chapter) => chapter.lessons)
-      .flat()
-      .find((lesson) => lesson.lesson_id === lessonId);
-    // const lessonSelected = await getLesson(lessonId);
+    // console.log("Lesson id: " + lessonId);
 
-    console.log("Lesson selected: ", lessonSelected);
     router.push({
-      pathname: "./lessonContent",
+      pathname: "./lessonContentInstructor/[lessonId]",
       params: {
-        lessonSelected: JSON.stringify(lessonSelected),
-      },
+        lessonId: lessonId,
+    },
     });
   };
 

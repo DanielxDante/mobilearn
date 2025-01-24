@@ -29,7 +29,7 @@ const Profile = () => {
         if (username != "") {
             await logout();
         }
-        router.push(CAROUSEL_PAGE);
+        router.replace(CAROUSEL_PAGE);
         console.log("Member logout");
     };
 

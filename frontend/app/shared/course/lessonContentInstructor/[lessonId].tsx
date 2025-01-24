@@ -7,10 +7,12 @@ import {
   Image,
   ScrollView,
   Linking,
+  Alert,
+  BackHandler,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useSegments } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 
 import VideoPlayer from "@/components/VideoPlayer";
@@ -24,74 +26,40 @@ import useAuthStore from "@/store/authStore";
 import { lessonContentConstants as Constants } from "@/constants/textConstants";
 
 const LessonContent = () => {
-  const getLesson = useAppStore((state) => state.getInstructorPreviewedLesson);
   const completeLesson = useAppStore((state) => state.completeLesson);
   const submitHomework = useAppStore((state) => state.submitHomework);
+  const selectedCourse = useAppStore((state) => state.selectedCourse);
   const membership = useAuthStore((state) => state.membership);
   const membership_types = ["normal", "member", "core_member"];
-  const { lessonSelected } = useLocalSearchParams();
-  // const lesson: Lesson =
-  //   typeof lessonParam === "string" ? JSON.parse(lessonParam) : lessonParam;
-  const lesson: Lesson =
-    typeof lessonSelected == "string" ? JSON.parse(lessonSelected) : [];
-  // console.log(lesson.lesson_id);
+  const { lessonId } = useLocalSearchParams();
+  const [lesson, setLesson] = useState<Lesson>();
 
-  // for testing
-  const test_lesson = {
-    lesson_id: 1,
-    lesson_name: "Test Lesson",
-    lesson_type: "homework",
-    video_key: "https://d20shsb24t3qaz.cloudfront.net/lesson_1277.mp4",
-    homework_key: "https://d20shsb24t3qaz.cloudfront.net/lesson_1262.pdf",
-    content: {
-      root: {
-        children: [
+  useEffect(() => {
+    if (selectedCourse && lessonId) {
+      const allLessons = selectedCourse?.chapters
+        .map((chapter) => chapter.lessons)
+        .flat()
+      const lesson = allLessons.find((lesson) => lesson.lesson_id.toString() === lessonId);
+      if (lesson) {
+        setLesson(lesson);
+      } else {
+        Alert.alert("Error", "Lesson not found!", [
           {
-            children: [
-              {
-                detail: 0,
-                format: 0,
-                mode: "normal",
-                style: "",
-                text: "Test this test hoooooola bu la lu. this is a long message.",
-                type: "text",
-                version: 1,
-              },
-              {
-                detail: 0,
-                format: 1,
-                mode: "normal",
-                style: "",
-                text: "thet",
-                type: "text",
-                version: 1,
-              },
-            ],
-            direction: "ltr",
-            format: "",
-            indent: 0,
-            type: "paragraph",
-            version: 1,
-            textFormat: 0,
-            textStyle: "",
+              text: "Ok",
+              onPress: () => router.back(),
           },
-        ],
-        direction: "ltr",
-        format: "",
-        indent: 0,
-        type: "root",
-        version: 1,
-      },
-    },
-  };
-
-  const [homeworkUploaded, setHomeworkUploaded] = useState(
-    lesson.lesson_type === "homework" ? false : lesson.lesson_type === "text" || lesson.lesson_type === "video" ? true: false
-  )
+          
+      ], {cancelable: false}
+  );
+      }
+    }
+  }, [lessonId, selectedCourse])
+  
   const [homework, setHomework] = useState<any>()
-
+  const [homeworkName, setHomeworkName] = useState<any>()
+          
   const handleDownload = async () => {
-    if (lesson.homework_url) {
+    if (lesson?.homework_url) {
       const supported = await Linking.canOpenURL(lesson.homework_url);
       if (supported) {
         Linking.openURL(lesson.homework_url);
@@ -132,10 +100,11 @@ const LessonContent = () => {
           name: filename ?? "homework_submission.pdf",
           type: type,
         } as any);
+        if (lesson)
         formData.append("homework_lesson_id", lesson.lesson_id.valueOf());
 
         setHomework(formData);
-        setHomeworkUploaded(true);
+        setHomeworkName(filename);
         alert(Constants.pdfUploadedAlert);
       } else {
         console.error(Constants.noFileSelectedError);
@@ -145,43 +114,27 @@ const LessonContent = () => {
     }
   }
 
-
-  const handleLessonComplete = async () => {
-    if (lesson.lesson_type === "text" || lesson.lesson_type === "video") {
-      const response = await completeLesson(Number(lesson.lesson_id));
-      if (response === true) {
-        router.back();
-      }
-    } else if (lesson.lesson_type === "homework") {
-      if (homework) {
-        const response = await submitHomework(homework)
-        console.log("response is " + response);
-        if (response === true) {
-          router.back();
-        }
-      }
-    }
-    else {
-      alert("Unknown lesson")
-    }
-  }
-
   return (
     lesson && (
       <SafeAreaView style={styles.container}>
         <View style={styles.appBarContainer}>
           <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.iconOpacity}
+            onPress={() => {
+              router.replace({
+                pathname: "/shared/course/courseContent",
+                params: {
+                  courseId: selectedCourse?.course_id,
+                },
+              })
+            }} // Return to courseContent}
           >
             <Image source={icons.backButton} style={styles.iconStyle} />
           </TouchableOpacity>
-          <Text style={styles.pageHeader}>{lessonContentPage.pageHeader}</Text>
+          <Text style={styles.pageHeader}>{lesson.lesson_name}</Text>
         </View>
 
         <View style={styles.contentContainer}>
           <View style={styles.content}>
-            <Text style={styles.title}>{lesson.lesson_name}</Text>
             {/* Render video */}
             {lesson.lesson_type === "video" && lesson.video_url && (
               <View style={styles.videoContainer}>
@@ -230,23 +183,10 @@ const LessonContent = () => {
                     />
                   </View>
                 </TouchableOpacity>
-                <Text style={styles.fileName}>{lessonContentPage.upload}</Text>
+                <Text style={styles.fileName}>{homeworkName ?? lessonContentPage.upload}</Text>
               </View>
             )}
           </View>
-          {/* Complete Lesson button */}
-          {
-            membership && membership_types.includes(membership) && (
-              <View>
-                <TouchableOpacity 
-                  style={[styles.completeButton, homeworkUploaded ? {backgroundColor: Colors.defaultBlue,} : {backgroundColor: "#B0B0B0"}]} 
-                  onPress={handleLessonComplete} 
-                  disabled={!homeworkUploaded}>
-                  <Text style={styles.completeText}>{Constants.complete}</Text>
-                </TouchableOpacity>
-              </View>
-            )
-          }
         </View>
       </SafeAreaView>
     )
@@ -256,30 +196,22 @@ const LessonContent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
-  },
-  iconOpacity: {
-    marginBottom: 16,
-    alignSelf: "flex-start",
+    backgroundColor: "#FFFFFF",
   },
   iconStyle: {
-    width: 24,
-    height: 24,
-    marginRight: 12,
-    tintColor: Colors.darkGray,
+    width: 25,
+    height: 25,
+    marginLeft: 25,
+    marginRight: 20,
   },
   appBarContainer: {
     flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 4,
-    backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.defaultBlue,
+    marginVertical: 15,
+    alignItems: "center",
   },
   pageHeader: {
     fontSize: 20,
-    color: Colors.darkGray,
+    color: Colors.defaultBlue,
     fontWeight: "bold",
   },
   contentContainer: {
@@ -296,9 +228,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     // marginBottom: 12,
     paddingHorizontal: 16,
+    marginTop: 10,
   },
   videoContainer: {
-    marginVertical: 16,
     borderRadius: 12,
     overflow: "hidden",
     backgroundColor: "#808080",
@@ -352,6 +284,7 @@ const styles = StyleSheet.create({
     color: Colors.darkGray,
     marginVertical: 4,
     fontFamily: "Inter-Regular",
+    marginHorizontal: 75,
   },
   downloadText: {
     fontSize: 14,
