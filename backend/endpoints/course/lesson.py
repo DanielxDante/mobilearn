@@ -231,7 +231,7 @@ class SubmitHomeworkEndpoint(Resource):
         homework_submission_file = request.files.get('homework_submission_file')
         if not homework_submission_file or not allowed_file(homework_submission_file.filename):
             return Response(
-                json.dumps({"error": "Invalid homework submission file"}),
+                json.dumps({"error": "Empty or Invalid homework submission file"}),
                 status=400, mimetype='application/json'
             )
 
@@ -246,7 +246,7 @@ class SubmitHomeworkEndpoint(Resource):
                     raise ValueError("Lesson is not a homework lesson")
                 
                 homework_submission_file_url = upload_file(homework_submission_file, f'homework_{str(lesson.id)}')
-
+                
                 LessonService.submit_homework(
                     session,
                     user_email=user_email,

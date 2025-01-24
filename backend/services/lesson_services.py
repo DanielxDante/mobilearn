@@ -19,6 +19,10 @@ class LessonService:
         if not lesson:
             raise LessonServiceError("Lesson not found")
         
+        if lesson in user.lesson_completions:
+            print("Lesson already completed")
+            return
+        
         user.lesson_completions.append(lesson)
         session.flush()
     
@@ -55,14 +59,25 @@ class LessonService:
         if not lesson:
             raise LessonServiceError("Lesson not found")
         
-        homework_submission = HomeworkSubmission(
-            user_id=user.id,
-            homework_lesson_id=lesson.id,
-            homework_submission_file_url=homework_submission_file_url
+        homework_submission = (
+            session.query(HomeworkSubmission)
+            .filter(
+                HomeworkSubmission.user_id == user.id,
+                HomeworkSubmission.homework_lesson_id == lesson_id
+            )
+            .first()
         )
-        session.add(homework_submission)
+        if homework_submission:
+            homework_submission.homework_submission_file_url = homework_submission_file_url
+        else:
+            homework_submission = HomeworkSubmission(
+                user_id=user.id,
+                homework_lesson_id=lesson.id,
+                homework_submission_file_url=homework_submission_file_url
+            )
+            session.add(homework_submission)
         session.flush()
 
         # and also complete the lesson
-        user.lesson_completions.append(lesson)
+        LessonService.complete_lesson(session, user_email, lesson_id)
     

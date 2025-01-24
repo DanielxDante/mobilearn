@@ -746,30 +746,25 @@ class EditCourseEndpoint(Resource):
                                 name=lesson_data['lesson_name'],
                                 lesson_type=lesson_data['lesson_type'],
                             )
-                        
-                        if lesson.lesson_type == LESSON.TEXT:
+
+                        if lesson_data["lesson_type"] == LESSON.TEXT:
                             content = lesson_data['content']
                             lesson.content = content
-                        elif lesson.lesson_type == LESSON.VIDEO:
+                        elif lesson_data["lesson_type"] == LESSON.VIDEO:
                             video_file = filemap.get(lesson_data['video_key'])
                             if video_file:
                                 video_url = upload_file(video_file, f"lesson_{str(lesson.id)}")
                                 lesson.video_url = video_url
-                            # else:
-                            #     return Response(
-                            #         json.dumps({"message": f"File {lesson_data['video_key']} not found"}),
-                            #         status=400, mimetype='application/json'
-                            #     )
-                        elif lesson.lesson_type == LESSON.HOMEWORK:
+                        elif lesson_data["lesson_type"] == LESSON.HOMEWORK:
                             homework_file = filemap.get(lesson_data['homework_key'])
                             if homework_file:
                                 homework_url = upload_file(homework_file, f"lesson_{str(lesson.id)}")
                                 lesson.homework_url = homework_url
-                            # else:
-                            #     return Response(
-                            #         json.dumps({"message": f"File {lesson_data['homework_key']} not found"}),
-                            #         status=400, mimetype='application/json'
-                            #     )
+                        else:
+                            return Response(
+                                json.dumps({"message": "Invalid lesson type"}),
+                                status=400, mimetype='application/json'
+                            )
                         
                         ChapterService.attach_lesson(session, chapter.id, lesson.id, lesson_data['order'])
                     
