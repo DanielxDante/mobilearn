@@ -246,7 +246,7 @@ class SubmitHomeworkEndpoint(Resource):
                     raise ValueError("Lesson is not a homework lesson")
                 
                 homework_submission_file_url = upload_file(homework_submission_file, f'homework_{str(lesson.id)}')
-
+                # TODO: check if there is an existing submission and update it
                 LessonService.submit_homework(
                     session,
                     user_email=user_email,

@@ -30,7 +30,13 @@
 # 3. Use of cold start strategies # TODO
 ## Complete Cold Start
 ## Warm Start
-# 4. Keyword extraction/Stop word removal # TODO
+# 4. Keyword extraction/Stop word removal
+
+# Strategies to optimize textual data
+# 1. Lemmatize words
+# 2. Remove stop words and add importance using TF-IDF through frequency
+# 3. Tokenize phrases
+# 4. Use of word embeddings
 
 import pandas as pd
 import numpy as np
@@ -41,7 +47,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from app import api
 from database import session_scope, create_session
 from models.course import Course
-from utils.skill_processor import SkillProcessor
+from utils.text_processor import TextProcessor
 
 class CourseRecommender:
     def __init__(self):
@@ -119,22 +125,6 @@ class CourseRecommender:
             for course in courses
         ])
 
-        # process skills
-        self.courses_df['processed_skills'] = self.courses_df['skills'].apply(
-            lambda x: self.skill_processor.preprocess_skills(x)
-        )
-
-         # Train skill embeddings
-        all_skills = ' '.join(
-            self.courses_df['processed_skills'].apply(lambda x: ' '.join(x))
-        )
-        self.skill_processor.train_skill_embeddings([all_skills])
-        
-        # Create skill vectors for each course
-        self.courses_df['skill_vectors'] = self.courses_df['processed_skills'].apply(
-            self._get_course_skill_vector
-        )
-
         # handle nulls in numeric columns
         numeric_columns = []
         for column in numeric_columns:
@@ -153,6 +143,24 @@ class CourseRecommender:
             self.courses_df[column] = self.courses_df[column].apply(
                 lambda x: self._handle_null_categorical(x, default_strategy='unknown')
             )
+        
+        
+
+        # process skills
+        self.courses_df['processed_skills'] = self.courses_df['skills'].apply(
+            lambda x: self.skill_processor.preprocess_skills(x)
+        )
+
+         # Train skill embeddings
+        all_skills = ' '.join(
+            self.courses_df['processed_skills'].apply(lambda x: ' '.join(x))
+        )
+        self.skill_processor.train_skill_embeddings([all_skills])
+        
+        # Create skill vectors for each course
+        self.courses_df['skill_vectors'] = self.courses_df['processed_skills'].apply(
+            self._get_course_skill_vector
+        )
 
         self.session.close()
     

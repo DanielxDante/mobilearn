@@ -1,21 +1,24 @@
 # Skills from the database is comma delimited
 # Skills are very diverse, almost no common skills between courses
-# There is a need to tokenize them, make them more meaningful
+# There is a need to tokenize, then lemmatize them to make them more meaningful
 # Example result from tokenization -> 'programming' & 'coding' -> 'program'
+# Embeddings from skills are used to find similar skills; generate relationship between skills
 
 import nltk
+import pandas as pd
 from collections import defaultdict
 from gensim.models import Word2Vec
 from nltk.tokenize import word_tokenize
 
-# Download required NLTK data
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('wordnet')
-from nltk.stem import WordNetLemmatizer
-
-class SkillProcessor:
+class TextProcessor:
     def __init__(self):
+        # Download required NLTK data
+        nltk.download('punkt')
+        nltk.download('averaged_perceptron_tagger')
+        nltk.download('wordnet')
+
+        from nltk.stem import WordNetLemmatizer
+
         self.lemmatizer = WordNetLemmatizer()
         self.skill_embeddings = None
         self.skill_vectors = {}

@@ -173,10 +173,10 @@ class Lesson(Base):
         old_lesson = Lesson.get_lesson_by_id(session, id)
         if not old_lesson:
             raise ValueError("Lesson not found")
-        
+
         if old_lesson.lesson_type == new_lesson_type:
             return
-        
+
         # delete old polymorphic lesson record
         delete_old_lesson_command = text(f"DELETE FROM {old_lesson.__tablename__} WHERE id = :id")
         session.execute(delete_old_lesson_command, {'id': old_lesson.id})
