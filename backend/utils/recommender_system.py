@@ -32,12 +32,6 @@
 ## Warm Start
 # 4. Keyword extraction/Stop word removal
 
-# Strategies to optimize textual data
-# 1. Lemmatize words
-# 2. Remove stop words and add importance using TF-IDF through frequency
-# 3. Tokenize phrases
-# 4. Use of word embeddings
-
 import pandas as pd
 import numpy as np
 from sqlalchemy import Integer, String, Float, Column
@@ -47,7 +41,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from app import api
 from database import session_scope, create_session
 from models.course import Course
-from utils.text_processor import TextProcessor
+from utils.field_processor import FieldProcessor
 
 class CourseRecommender:
     def __init__(self):
@@ -55,7 +49,7 @@ class CourseRecommender:
         self.session = create_session()
         self.courses_df = None
         self.similarity_matrix = None
-        self.skill_processor = SkillProcessor()
+        self.field_processor = FieldProcessor()
     
     def _handle_null_numeric(self, value, default_strategy='zero'):
         """ Handle null numeric values """
@@ -77,21 +71,23 @@ class CourseRecommender:
                 return self.courses_df[self.current_column].mode()[0]
         return value
     
-    def _get_course_skill_vector(self, skills):
-        """Create an averaged vector representation of course skills"""
-        vectors = []
-        for skill in skills:
-            vector = self.skill_processor.get_skill_vector(skill)
-            if vector is not None:
-                vectors.append(vector)
+    # def _get_course_skill_vector(self, skills):
+    #     """Create an averaged vector representation of course skills"""
+    #     vectors = []
+    #     for skill in skills:
+    #         vector = self.skill_processor.get_skill_vector(skill)
+    #         if vector is not None:
+    #             vectors.append(vector)
         
-        if vectors:
-            return np.mean(vectors, axis=0)
-        return np.zeros(100)  # Default vector size
+    #     if vectors:
+    #         return np.mean(vectors, axis=0)
+    #     return np.zeros(100)  # Default vector size
     
     def load_data(self):
         """ Load data from the database """
         self.load_courses()
+        # self.load_users()
+        # self.load_enrollments()
     
     def load_courses(self):
         """ Load courses into pandas DataFrame """
@@ -106,9 +102,9 @@ class CourseRecommender:
                 'name': course.name, # embeddings
                 'description': course.description, # embeddings
                 'course_type': course.type, # one-hot encoded
-                'duration': float(course.duration),
-                'rating': float(course.rating),
-                'price': float(course.price),
+                'duration': float(course.duration), # scaled
+                'rating': float(course.rating), # scaled
+                'price': float(course.price), # scaled
                 'difficulty': course.difficulty, # one-hot encoded
                 'skills': course.skills, # embeddings
 
@@ -133,7 +129,7 @@ class CourseRecommender:
                 lambda x: self._handle_null_numeric(x, default_strategy='zero')
             )
 
-        # handle nulls in categorical columns
+        # handle nulls in optional categorical columns
         categorical_columns = [
             'school_name', 'program_type', 'field', 'major', 'department',
             'expertise', 'subject', 'platform'
@@ -144,23 +140,33 @@ class CourseRecommender:
                 lambda x: self._handle_null_categorical(x, default_strategy='unknown')
             )
         
-        
-
-        # process skills
-        self.courses_df['processed_skills'] = self.courses_df['skills'].apply(
-            lambda x: self.skill_processor.preprocess_skills(x)
+        preprocessing_result = self.field_processor.create_comprehensive_preprocessing_pipeline(
+            df=self.courses_df,
+            numeric_columns=['duration', 'rating', 'price'],
+            categorical_columns=[
+                'course_type', 'difficulty', 
+                'school_name', 'program_type', 
+                'field', 'major', 'department', 
+                'expertise', 'subject', 'platform'
+            ],
+            text_columns=['name', 'description', 'skills']
         )
 
-         # Train skill embeddings
-        all_skills = ' '.join(
-            self.courses_df['processed_skills'].apply(lambda x: ' '.join(x))
-        )
-        self.skill_processor.train_skill_embeddings([all_skills])
+        # # process skills
+        # self.courses_df['processed_skills'] = self.courses_df['skills'].apply(
+        #     lambda x: self.skill_processor.preprocess_skills(x)
+        # )
+
+        #  # Train skill embeddings
+        # all_skills = ' '.join(
+        #     self.courses_df['processed_skills'].apply(lambda x: ' '.join(x))
+        # )
+        # self.skill_processor.train_skill_embeddings([all_skills])
         
-        # Create skill vectors for each course
-        self.courses_df['skill_vectors'] = self.courses_df['processed_skills'].apply(
-            self._get_course_skill_vector
-        )
+        # # Create skill vectors for each course
+        # self.courses_df['skill_vectors'] = self.courses_df['processed_skills'].apply(
+        #     self._get_course_skill_vector
+        # )
 
         self.session.close()
     
@@ -171,7 +177,7 @@ class CourseRecommender:
         tfidf_matrix = tfidf_vectorizer.fit_transform(self.courses_df['description'])
         self.similarity_matrix = cosine_similarity(tfidf_matrix, tfidf_matrix)
     
-    def get_content_based_recommendations(
+    def get_item_to_item_recommendations(
         self,
         latest_enrolled_course_id,
         top_n=5,
@@ -195,7 +201,7 @@ if __name__ == '__main__':
     recommender.load_data()
 
     # Get recommendations for a specific course (Content Filtering)
-    course_recommendations = recommender.get_content_based_recommendations(
+    course_recommendations = recommender.get_item_to_item_recommendations(
         course_id=1
     )
     print("Content Filtering: ", course_recommendations)
