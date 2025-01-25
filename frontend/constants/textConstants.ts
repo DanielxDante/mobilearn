@@ -286,6 +286,8 @@ export const memberGuestSuggestionsSeeAll = {
 export const memberGuestTopCoursesSeeAll = {
   backButton: require("@/assets/images/notifications/backButton.png"),
   appBarTitle: "Top Courses",
+  loading: "Loading...",
+  endText: "No more courses available",
 };
 
 export const memberGuestCoursePage = {
@@ -687,7 +689,7 @@ export const lessonContentPage = {
   pageHeader: "Lesson Content",
   homework: "Homework",
   download: "Click to Download",
-  upload: "Submit Homework"
+  upload: "Submit Homework",
 };
 
 export const communityPage = {
@@ -715,4 +717,4 @@ export const lessonContentConstants = {
   pdfUploadedAlert: "PDF has been uploaded.",
   noFileSelectedError: "No file selected.",
   handleUploadPdfError: "Error in handleUploadPDF:",
-}
+};

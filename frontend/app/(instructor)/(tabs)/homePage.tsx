@@ -122,7 +122,7 @@ const Home = () => {
             </Text>
             <TouchableOpacity
               onPress={() => {
-                router.push("/(instructor)/home/topCoursesSeeAll");
+                router.push(TOP_COURSES_SEE_ALL);
               }}
             >
               <Text style={styles.seeAllText}>{Constants.seeAllText}</Text>
