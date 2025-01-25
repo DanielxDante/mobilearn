@@ -41,6 +41,7 @@ import Lesson from "@/types/shared/Course/Lesson";
 import Instructor from "@/types/shared/Course/Instructor";
 import { router } from "expo-router";
 import notification from "@/types/shared/notification";
+import { INSTRUCTOR_COURSE_DETAILS } from "@/constants/pages";
 
 export interface AppState {
   channels: Channel[]; // List of Channels that user has access to
@@ -104,11 +105,10 @@ export interface AppState {
     rating: number,
     review_text: string
   ) => Promise<Boolean>;
-  submitHomework: (
-    homework_submission_file: any,
-  ) => Promise<Boolean>;
+  submitHomework: (homework_submission_file: any) => Promise<Boolean>;
   withdrawCourse: (course_id: number) => Promise<void>;
   handleSelectCourse: (course_id: number) => Promise<void>;
+  handleInstructorSelectCourse: (course_id: number) => Promise<void>;
   getCommunities: () => Promise<any[]>;
   getInstructorDetails: (instructor_id: string) => Promise<Instructor>;
   getInstructors: (community_id: string) => Promise<Instructor[] | undefined>;
@@ -725,8 +725,8 @@ export const useAppStore = create<AppState>()(
           }
           return false;
         } catch (error: any) {
-            console.error(error.response);
-            return false;
+          console.error(error.response);
+          return false;
         }
       },
       withdrawCourse: async (course_id) => {
@@ -773,6 +773,17 @@ export const useAppStore = create<AppState>()(
               },
             });
           }
+        }
+      },
+      handleInstructorSelectCourse: async (course_id: number) => {
+        const unenrolledCourse = await get().getUnenrolledCourse(course_id);
+        if (unenrolledCourse) {
+          router.push({
+            pathname: INSTRUCTOR_COURSE_DETAILS,
+            params: {
+              courseId: unenrolledCourse.course_id,
+            },
+          });
         }
       },
       getCommunities: async () => {

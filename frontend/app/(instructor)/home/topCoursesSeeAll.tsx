@@ -15,7 +15,7 @@ import CourseListItem from "@/components/InstructorCourseListItem";
 import Course from "@/types/shared/Course/Course";
 import { memberGuestTopCoursesSeeAll as Constants } from "@/constants/textConstants";
 import useAppStore from "@/store/appStore";
-import { COURSE_DETAILS_PAGE } from "@/constants/pages";
+import { INSTRUCTOR_COURSE_DETAILS } from "@/constants/pages";
 
 const LIMIT = 20; // Set the maximum number of courses to fetch
 
@@ -61,7 +61,7 @@ const TopCoursesSeeAll = () => {
     );
     console.log("Course selected:", courseSelected);
     router.push({
-      pathname: COURSE_DETAILS_PAGE,
+      pathname: INSTRUCTOR_COURSE_DETAILS,
       params: {
         courseId: id.toString(),
       },
