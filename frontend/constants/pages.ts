@@ -55,6 +55,8 @@ export const INSTRUCTOR_CREATE_COURSE =
   `/shared/course/createCoursePage` as Href<string>;
 export const TOP_COURSES_SEE_ALL =
   `/(instructor)/home/topCoursesSeeAll` as Href<string>;
+export const INSTRUCTOR_COURSE_DETAILS =
+  `/shared/course/instructorCourseDetails` as Href<string>;
 
 // ADMIN PAGES
 export const ADMIN_NAMESPACE = "(admin)";

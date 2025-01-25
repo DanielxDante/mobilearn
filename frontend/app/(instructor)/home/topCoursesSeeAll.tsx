@@ -15,7 +15,6 @@ import CourseListItem from "@/components/InstructorCourseListItem";
 import Course from "@/types/shared/Course/Course";
 import { memberGuestTopCoursesSeeAll as Constants } from "@/constants/textConstants";
 import useAppStore from "@/store/appStore";
-import { COURSE_DETAILS_PAGE } from "@/constants/pages";
 
 const LIMIT = 20; // Set the maximum number of courses to fetch
 
@@ -26,6 +25,9 @@ const TopCoursesSeeAll = () => {
   const topEnrolledCourses = useAppStore((state) => state.top_enrolled_courses);
   const getTopEnrolledCourses = useAppStore(
     (state) => state.getTopCoursesInstructor
+  );
+  const handleInstructorSelectCourse = useAppStore(
+    (state) => state.handleInstructorSelectCourse
   );
 
   const [topCourseData, setTopCourseData] =
@@ -55,17 +57,7 @@ const TopCoursesSeeAll = () => {
   };
 
   const handleSelectCourse = (id: string) => {
-    console.log("Course " + id + " Selected");
-    const courseSelected = topCourseData.find(
-      (course) => course.course_id.toString() === id
-    );
-    console.log("Course selected:", courseSelected);
-    router.push({
-      pathname: COURSE_DETAILS_PAGE,
-      params: {
-        courseId: id.toString(),
-      },
-    });
+    handleInstructorSelectCourse(Number(id));
   };
 
   return (
@@ -93,10 +85,10 @@ const TopCoursesSeeAll = () => {
               onSelect={handleSelectCourse}
             />
           ))}
-          {loading && <Text style={styles.loadingText}>Loading...</Text>}
-          {!hasMore && (
-            <Text style={styles.endText}>No more courses available</Text>
+          {loading && (
+            <Text style={styles.loadingText}>{Constants.loading}</Text>
           )}
+          {!hasMore && <Text style={styles.endText}>{Constants.endText}</Text>}
         </ScrollView>
       </View>
     </SafeAreaView>

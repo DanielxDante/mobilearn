@@ -61,7 +61,9 @@ const Home = () => {
     (state) => state.getNotificationsInstructor
   );
 
-  const handleSelectCourse = useAppStore((state) => state.handleSelectCourse);
+  const handleSelectCourse = useAppStore(
+    (state) => state.handleInstructorSelectCourse
+  );
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -84,7 +86,6 @@ const Home = () => {
   useEffect(() => {
     //console.log("Notifications in homepage: ", notifications);
   }, [notifications]);
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -121,15 +122,13 @@ const Home = () => {
             </Text>
             <TouchableOpacity
               onPress={() => {
-                router.push("/(instructor)/home/topCoursesSeeAll");
+                router.push(TOP_COURSES_SEE_ALL);
               }}
             >
               <Text style={styles.seeAllText}>{Constants.seeAllText}</Text>
             </TouchableOpacity>
           </View>
-          <TopCourses
-            onSelect={handleSelectCourse}
-          />
+          <TopCourses onSelect={handleSelectCourse} />
         </View>
         {/* News */}
         <LatestNews news={newsData} />
