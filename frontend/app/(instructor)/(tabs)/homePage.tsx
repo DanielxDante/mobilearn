@@ -55,19 +55,13 @@ const newsData = [
 const Home = () => {
   const segments = useSegments();
   const [loading, setLoading] = useState(false);
-  const topEnrolledCourses = useAppStore((state) => state.top_enrolled_courses);
-  const getTopEnrolledCourses = useAppStore(
-    (state) => state.getTopCoursesInstructor
-  );
+
   const notifications = useAppStore((state) => state.notifications);
   const getNotifications = useAppStore(
     (state) => state.getNotificationsInstructor
   );
 
-  const [page, setPage] = useState(1);
-  const [topCourseData, setTopCourseData] = useState<Course[]>(() => {
-    return topEnrolledCourses.slice(0, 5);
-  });
+  const handleSelectCourse = useAppStore((state) => state.handleSelectCourse);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -88,36 +82,9 @@ const Home = () => {
   }, [router, segments]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      await getTopEnrolledCourses("1", "5");
-      await getNotifications();
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (topEnrolledCourses.length > 0) {
-      setTopCourseData(topEnrolledCourses.slice(0, 5));
-    }
-  }, [topEnrolledCourses]);
-
-  useEffect(() => {
     //console.log("Notifications in homepage: ", notifications);
   }, [notifications]);
 
-  const handleSelectCourse = (id: number) => {
-    // TODO: INCLUDE COURSE NAVIGATION
-    const courseSelected = topCourseData.find(
-      (course) => course.course_id === id
-    );
-    router.push({
-      pathname: COURSE_DETAILS_PAGE,
-      params: {
-        courseId: id.toString(),
-      },
-    });
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -154,19 +121,13 @@ const Home = () => {
             </Text>
             <TouchableOpacity
               onPress={() => {
-                router.push({
-                  pathname: TOP_COURSES_SEE_ALL,
-                  params: {
-                    suggestions: JSON.stringify(topCourseData),
-                  },
-                });
+                router.push("/(instructor)/home/topCoursesSeeAll");
               }}
             >
               <Text style={styles.seeAllText}>{Constants.seeAllText}</Text>
             </TouchableOpacity>
           </View>
           <TopCourses
-            courseData={topCourseData}
             onSelect={handleSelectCourse}
           />
         </View>

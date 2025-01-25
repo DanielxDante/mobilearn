@@ -7,21 +7,44 @@ import {
     StyleSheet,
     Dimensions,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Colors } from "@/constants/colors";
 import { memberGuestTopCoursesSectionConstants as Constants } from "@/constants/textConstants";
 import Course from "@/types/shared/Course/Course";
+import useAppStore from "@/store/appStore";
+import { useSegments } from "expo-router";
 
 interface ContinueWatchingProps {
-    courseData: Course[];
     onSelect: (id: number) => void;
 }
 
 const TopCourses: React.FC<ContinueWatchingProps> = ({
-    courseData,
     onSelect,
 }) => {
+    const topEnrolledCourses = useAppStore(
+            (state) => state.top_enrolled_courses
+    );
+    const getTopEnrolledCourses = useAppStore(
+            (state) => state.getTopCoursesInstructor
+    );
+
+    const segments = useSegments();
+    const currentRoute = segments[segments.length - 1]
+    const [courses, setCourses] = useState<Course[]>([]);
+    useEffect(() => {
+        const fetchCourses = async () => {
+            await getTopEnrolledCourses("1", "5");
+        }
+        if (currentRoute === "homePage") {
+            fetchCourses();
+        }
+        }, [currentRoute]);
+
+    useEffect(() => {
+        setCourses(topEnrolledCourses.slice(0, 5))
+    }, [topEnrolledCourses])
+
     const renderItem = ({ item }: { item: Course }) => (
         <TouchableOpacity
             style={styles.courseContainer}
@@ -57,7 +80,7 @@ const TopCourses: React.FC<ContinueWatchingProps> = ({
         <View>
             <View style={styles.listContainer}>
                 <FlatList
-                    data={courseData}
+                    data={courses}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.course_id.toString()}
                     horizontal

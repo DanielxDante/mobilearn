@@ -72,7 +72,9 @@ const CourseDetails = () => {
       {/* AppBar */}
       <View style={styles.appBarContainer}>
         <BackButton />
+        {membership && membership_types.includes(membership) && (
         <FavouriteButton course_id={courseId.toString()} />
+        )}
       </View>
       <ScrollView style={styles.body}>
         {/* if picture is not available, show loading */}

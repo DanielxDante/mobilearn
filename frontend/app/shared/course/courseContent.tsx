@@ -22,15 +22,19 @@ import Lesson from "@/types/shared/Course/Lesson";
 import useAppStore from "@/store/appStore";
 import FavouriteButton from "@/components/FavouriteButton";
 import Icon from "react-native-vector-icons/FontAwesome";
+import useAuthStore from "@/store/authStore";
 
 const CourseContent = () => {
     const { courseId } = useLocalSearchParams();
     const [course, setCourse] = useState<Course>();
     const getEnrolledCourse = useAppStore((state) => state.getEnrolledCourse)
+    const selectedCourse = useAppStore((state) => state.selectedCourse);
     const [course_image, setCourseImage] = useState<string>("");
     const [selectedChapterId, setSelectedChapterId] = useState<string|null>(null);
     const [loading, setLoading] = useState<boolean>(true);
-
+    const membership = useAuthStore((state) => state.membership);
+    const membership_types = ["normal", "member", "core_member"];
+    
     useEffect(() => {
     const fetchCourseData = async () => {
         setLoading(true);
@@ -42,7 +46,6 @@ const CourseContent = () => {
         };
     fetchCourseData();
     }, [courseId]);
-
     const { width: screenWidth } = Dimensions.get('window')
     const [imageHeight, setImageHeight] = useState(0)
     useEffect(() => {
@@ -54,6 +57,7 @@ const CourseContent = () => {
             })
     }
     }, [course_image])
+
     const segments = useSegments();
         useEffect(() => {
             const backHandler = BackHandler.addEventListener(
@@ -62,8 +66,7 @@ const CourseContent = () => {
                     // Get the current route
                     const currentRoute = segments[segments.length - 1];
                     if (currentRoute === COURSE_CONTENT_PAGE) {
-                        
-                        router.push("/(member_guest)/(tabs)") // Return to homepage
+                        router.navigate("/(member_guest)/(tabs)") // Return to homepage
                         return true;
                     }
     
@@ -87,25 +90,23 @@ const CourseContent = () => {
     const selectedChapter = course?.chapters.find(
         (chapter) => chapter.chapter_id === selectedChapterId
     );
-
+    // console.log(course?.chapters);
     const handleChapterSelect = (chapterId: string) => {
         setSelectedChapterId(chapterId);
-        console.log("Chapter: " + chapterId);
+        // console.log("Chapter: " + chapterId);
     };
 
     const handleLessonSelect = (lessonId: string) => {
-        console.log("Lesson id: " + lessonId);
-        const lessonSelected = course?.chapters
-            .map((chapter) => chapter.lessons)
-            .flat()
-            .find((lesson) => lesson.lesson_id === lessonId);
+        // console.log("Lesson id: " + lessonId);
+        // console.log(lessonId)
         router.push({
-            pathname: "./lessonContent",
+            pathname: "./lessonContent/[lessonId]",
             params: {
-                lessonSelected: JSON.stringify(lessonSelected),
+                lessonId: lessonId,
             },
         });
     };
+    // console.log(selectedCourse)
     const handleCommunitySelect = () => {
         router.push({
           pathname: "../communityPage",
@@ -116,7 +117,7 @@ const CourseContent = () => {
         })
       }
 
-    const renderLectureItem = (lesson: Lesson) => (
+    const renderLectureItem = (lesson: Lesson, order: number) => (
         <View style={styles.lessonItemContainer}>
             
             <View style={styles.lessonContainer}>
@@ -126,7 +127,7 @@ const CourseContent = () => {
                 >
                     {/* Lesson title */}
                     <Text style={styles.lessonTitle} numberOfLines={1}>
-                        {Constants.lesson} {lesson.lesson_id}: {lesson.lesson_name}
+                        {Constants.lesson} {order}: {lesson.lesson_name}
                     </Text>
                     {/* For lesson description if there will be any */}
                     {/* <View style={styles.lessonContainerDescription}>
@@ -160,7 +161,7 @@ const CourseContent = () => {
             <View style={styles.appBarContainer}>
                 <TouchableOpacity
                     onPress={() => {
-                        router.push("/(member_guest)/(tabs)")
+                        router.replace("/(member_guest)/(tabs)")
                     }}
                 >
                     <Image
@@ -179,7 +180,9 @@ const CourseContent = () => {
                     }}>
                         <Icon name={'comment-o'} color={'gray'} size={25}/>
                     </TouchableOpacity>
+                    {membership && membership_types.includes(membership) && (
                     <FavouriteButton course_id={courseId.toString()}/>
+                    )}
                 </View>
             </View>
             {course && (
@@ -200,7 +203,7 @@ const CourseContent = () => {
                 </TouchableOpacity>
                 {/* Chapter buttons */}
                 <View style={styles.chapterButtonContainer}>
-                    {course.chapters.length <=2 ? (
+                    {course.chapters.length <=3 ? (
                         // Render up to 4 chapter buttons if there are 3 or fewer chapters
                         course.chapters
                             .sort((a, b) => a.order - b.order) // Sorting chapters by order
@@ -260,11 +263,11 @@ const CourseContent = () => {
                     )}
                 </View>
                 <Text style={styles.courseContentsTitle}>
-                    {Constants.courseContents}
+                    {selectedChapter?.chapter_title}
                 </Text>
                 {selectedChapter && selectedChapter.lessons.length > 0 ? (
-                    selectedChapter.lessons.map((lesson: Lesson) => (
-                        <View key={lesson.lesson_id}>{renderLectureItem(lesson)}</View>
+                    selectedChapter.lessons.map((lesson: Lesson, index: number) => (
+                        <View key={lesson.lesson_id}>{renderLectureItem(lesson, index+1)}</View>
                     ))
                 ) : (
                     <Text>{Constants.noLessonsAvailable}</Text> // Fallback if no lectures

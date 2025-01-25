@@ -24,7 +24,6 @@ import { memberGuestHomeConstants as Constants } from "@/constants/textConstants
 
 const Home = () => {
     const handleSelectCourse = useAppStore((state) => state.handleSelectCourse);
-
     const segments = useSegments();
     useEffect(() => {
         const backHandler = BackHandler.addEventListener(

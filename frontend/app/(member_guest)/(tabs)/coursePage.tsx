@@ -63,10 +63,10 @@ const CoursePage = () => {
     useEffect(() => {
         const savedCourses = favouriteData;
         const inProgressCourses = enrolledData.filter(
-            (course) => course.completion_rate < 1
+            (course) => course.completion_rate < 100
         );
         const completedCourses = enrolledData.filter(
-            (course) => course.completion_rate === 1
+            (course) => course.completion_rate === 100
         );
 
         setCourses({
@@ -105,20 +105,6 @@ const CoursePage = () => {
         inputRange: [0, 1, 2],
         outputRange: [0, -width, -2 * width],
     });
-
-    // const handleSelectCourse = (id: string) => {
-    //     // TODO: INCLUDE COURSE NAVIGATION
-    //     // console.log("Course " + id + " Selected");
-    //     const courseSelected = enrolledData.find(
-    //         (course) => course.course_id.toString() === id
-    //     );
-    //     router.push({
-    //         pathname: "../../shared/course/courseContent",
-    //         params: {
-    //             courseId: id,
-    //         },
-    //     });
-    // };
 
     return (
         <SafeAreaView style={styles.container}>
