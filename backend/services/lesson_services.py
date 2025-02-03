@@ -25,6 +25,9 @@ class LessonService:
         
         user.lesson_completions.append(lesson)
         session.flush()
+
+        # TODO: check if all lessons in the course are completed
+        # send notification if it is
     
     @staticmethod
     def get_homework_submission(session, user_email, homework_lesson_id):

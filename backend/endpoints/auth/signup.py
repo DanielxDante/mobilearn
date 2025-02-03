@@ -152,7 +152,7 @@ class InstructorSignupEndpoint(Resource):
                 NotificationService.add_notification(
                     session,
                     title="Welcome!",
-                    body="Start creating courses with MobiLearn today!",
+                    body="We love to have you on board! Your account is pending approval.",
                     notification_type="info",
                     recipient_id=instructor.id,
                     recipient_type='instructor'
