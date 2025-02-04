@@ -34,11 +34,9 @@
 
 import pandas as pd
 import numpy as np
-from sqlalchemy import Integer, String, Float, Column
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from app import api
 from database import session_scope, create_session
 from models.course import Course
 from utils.field_processor import FieldProcessor
@@ -140,7 +138,8 @@ class CourseRecommender:
                 lambda x: self._handle_null_categorical(x, default_strategy='unknown')
             )
         
-        preprocessing_result = self.field_processor.create_comprehensive_preprocessing_pipeline(
+        # preprocess fields
+        preprocessed_df = self.field_processor.execute_field_processing_pipeline(
             df=self.courses_df,
             numeric_columns=['duration', 'rating', 'price'],
             categorical_columns=[
@@ -152,16 +151,8 @@ class CourseRecommender:
             text_columns=['name', 'description', 'skills']
         )
 
-        # # process skills
-        # self.courses_df['processed_skills'] = self.courses_df['skills'].apply(
-        #     lambda x: self.skill_processor.preprocess_skills(x)
-        # )
-
-        #  # Train skill embeddings
-        # all_skills = ' '.join(
-        #     self.courses_df['processed_skills'].apply(lambda x: ' '.join(x))
-        # )
-        # self.skill_processor.train_skill_embeddings([all_skills])
+        # train text embeddings
+        self.field_processor.train_text_embeddings(preprocessed_df)
         
         # # Create skill vectors for each course
         # self.courses_df['skill_vectors'] = self.courses_df['processed_skills'].apply(
@@ -170,12 +161,24 @@ class CourseRecommender:
 
         self.session.close()
     
+    def _get_text_embedding(self, text, embedding_type, embedding_model):
+        """ Get embeddings for text """
+        if embedding_type == 'name':
+            return embedding_model.get_name_embedding(text)
+        elif embedding_type == 'description':
+            return embedding_model.get_description_embedding(text)
+        elif embedding_type == 'skills':
+            return embedding_model.get_skills_embedding(text)
+        return None
+
     def prepare_features(self):
-        """ Prepare features for content-based filtering """
+        """ Prepare features for item-to-item recommendations """
         # TF-IDF Vectorizer for course description
-        tfidf_vectorizer = TfidfVectorizer(stop_words='english')
-        tfidf_matrix = tfidf_vectorizer.fit_transform(self.courses_df['description'])
-        self.similarity_matrix = cosine_similarity(tfidf_matrix, tfidf_matrix)
+        # tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+        # tfidf_matrix = tfidf_vectorizer.fit_transform(self.courses_df['description'])
+        # self.similarity_matrix = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+        # 
     
     def get_item_to_item_recommendations(
         self,
@@ -199,6 +202,10 @@ if __name__ == '__main__':
 
     # load data and prepare features
     recommender.load_data()
+
+    # test field processor
+    # preprocessor.train_text_embeddings(processed_df)
+    # similar_skills = preprocessor.find_similar_words('python', embedding_type='skill')
 
     # Get recommendations for a specific course (Content Filtering)
     course_recommendations = recommender.get_item_to_item_recommendations(

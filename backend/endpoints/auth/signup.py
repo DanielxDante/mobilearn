@@ -16,7 +16,7 @@ userSignupParser.add_argument('password', type=str, help='Password', location='j
 userSignupParser.add_argument('email', type=str, help='Email', location='json', required=True)
 userSignupParser.add_argument('gender', type=str, help='Gender', location='json', required=True, choices=GENDER)
 userSignupParser.add_argument('membership', type=str, help='Membership', location='json', required=False, choices=MEMBERSHIP)
-userSignupParser.add_argument('device_token', type=str, help='Device Token', location='json', required=False)
+userSignupParser.add_argument('push_token', type=str, help='Push Token', location='json', required=False)
 
 class UserSignupEndpoint(Resource):
     @api.doc(
@@ -34,7 +34,7 @@ class UserSignupEndpoint(Resource):
             "password": "bar",
             "email": "foobar@gmail.com",
             "gender": "male",
-            "device_token": "xxx" // optional for push notifications
+            "push_token": "xxx" // optional for push notifications
         }
         """
     )
@@ -47,7 +47,13 @@ class UserSignupEndpoint(Resource):
         email = data.get('email')
         gender = data.get('gender')
         membership = data.get('membership') if 'membership' in data else MEMBERSHIP.NORMAL
-        device_token = data.get('device_token', None)
+        device_token = data.get('push_token', None)
+
+        if "admin" in name.lower():
+            return Response(
+                json.dumps({'message': 'Invalid name: name cannot contain the word "admin"'}), 
+                status=400, mimetype='application/json'
+            )
 
         with session_scope() as session:
             try:
@@ -88,7 +94,7 @@ instructorSignupParser.add_argument('gender', type=str, help='Gender', location=
 instructorSignupParser.add_argument('phone_number', type=str, help='Phone Number', location='json', required=True)
 instructorSignupParser.add_argument('company', type=str, help='Company', location='json', required=True)
 instructorSignupParser.add_argument('position', type=str, help='Position', location='json', required=True)
-instructorSignupParser.add_argument('device_token', type=str, help='Device Token', location='json', required=False)
+instructorSignupParser.add_argument('push_token', type=str, help='Push Token', location='json', required=False)
 
 class InstructorSignupEndpoint(Resource):
     @api.doc(
@@ -110,7 +116,7 @@ class InstructorSignupEndpoint(Resource):
             "phone_number": "12345678",
             "company": "MobiLearn Network",
             "position": "Lecturer",
-            "device_token": "xxx" // optional for push notifications
+            "push_token": "xxx" // optional for push notifications
         }
         """
     )
@@ -125,7 +131,13 @@ class InstructorSignupEndpoint(Resource):
         phone_number = data.get('phone_number')
         company = data.get('company')
         position = data.get('position')
-        device_token = data.get('device_token', None)
+        device_token = data.get('push_token', None)
+
+        if "admin" in name.lower():
+            return Response(
+                json.dumps({'message': 'Invalid name: name cannot contain the word "admin"'}), 
+                status=400, mimetype='application/json'
+            )
 
         with session_scope() as session:
             try:
@@ -152,7 +164,7 @@ class InstructorSignupEndpoint(Resource):
                 NotificationService.add_notification(
                     session,
                     title="Welcome!",
-                    body="Start creating courses with MobiLearn today!",
+                    body="We love to have you on board! Your account is pending approval.",
                     notification_type="info",
                     recipient_id=instructor.id,
                     recipient_type='instructor'

@@ -4,7 +4,7 @@ from models.course import Course, STATUS as COURSE_STATUS
 from models.channel import Channel
 from models.community import Community
 from models.channel_community import ChannelCommunity
-from models.user import User
+from models.user import User, STATUS as USER_STATUS
 from models.user_channel import UserChannel
 from models.enrollment import Enrollment
 from models.instructor import Instructor, STATUS as INSTRUCTOR_STATUS
@@ -13,6 +13,7 @@ from models.chapter import Chapter
 from models.lesson import Lesson
 from models.chapter_lesson import ChapterLesson
 from models.lesson_completion import LessonCompletion
+from models.review import Review
 
 class CourseServiceError(Exception):
     pass
@@ -129,12 +130,6 @@ class CourseService:
         
         return paginated_courses
 
-    # @staticmethod
-    # def attach_instructor
-
-    # @staticmethod
-    # def detach_instructor
-
     @staticmethod
     def calculate_course_progress(session, user_email, course_id):
         """ Calculate course progress for the user """
@@ -198,3 +193,79 @@ class CourseService:
 
         return progress_query.progress if progress_query else 0.0
     
+    @staticmethod
+    def check_course_completion(session, user_id, completed_lesson_id):
+        """
+        Check if completing this lesson results in completing a course.
+        Return all course_ids that the user has completed as a result.
+        """
+        lesson = Lesson.get_lesson_by_id(session, completed_lesson_id)
+        if not lesson:
+            raise ValueError("Lesson not found")
+
+        courses = (
+            session.query(Course)
+            .join(Chapter)
+            .join(ChapterLesson)
+            .join(Lesson)
+            .filter(Lesson.id == completed_lesson_id)
+            .all()
+        )
+
+        newly_completed_course_ids = []
+
+        for course in courses:
+            enrollment = (
+                session.query(Enrollment)
+                .filter(
+                    Enrollment.user_id == user_id,
+                    Enrollment.course_id == course.id
+                )
+                .first()
+            )
+            if not enrollment:
+                continue
+
+            course_lesson_ids = (
+                session.query(Lesson.id)
+                .join(ChapterLesson)
+                .join(Chapter)
+                .join(Course)
+                .filter(Course.id == course.id)
+                .all()
+            )
+            course_lesson_ids = [lid[0] for lid in course_lesson_ids if lid]
+
+            completed_lesson_ids = (
+                session.query(LessonCompletion.lesson_id)
+                .filter(
+                    LessonCompletion.user_id == user_id,
+                    LessonCompletion.lesson_id.in_(course_lesson_ids)
+                )
+                .all()
+            )
+            completed_lesson_ids = [lid[0] for lid in completed_lesson_ids if lid]
+
+            if set(course_lesson_ids).issubset(set(completed_lesson_ids)):
+                newly_completed_course_ids.append(course.id)
+            
+        return newly_completed_course_ids
+    
+    @staticmethod
+    def get_course_reviews(session, course_id):
+        """ Get course reviews """
+        course = Course.get_course_by_id(session, course_id)
+        if not course:
+            raise ValueError("Course not found")
+        
+        reviews = (
+            session.query(Review)
+            .filter(
+                Review.course_id == course_id,
+                User.status == USER_STATUS.ACTIVE
+            )
+            .order_by(Review.updated.desc())
+            .all()
+        )
+
+        return reviews if reviews else []

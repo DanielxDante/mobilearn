@@ -32,6 +32,8 @@ class User(Base):
     updated = Column(DateTime(timezone=True), nullable=False, default=func.now())
     latest_login = Column(DateTime(timezone=True), nullable=False, default=func.now())
     status = Column(Enum(STATUS, name="status_enum"), nullable=False, default=STATUS.ACTIVE)
+    reset_token = Column(String, nullable=True)
+    reset_token_expiry = Column(DateTime(timezone=True), nullable=True)
 
     # Many-to-many relationship with Chat
     chats = relationship("Chat", secondary="user_chats", back_populates="users")
@@ -83,6 +85,10 @@ class User(Base):
     @staticmethod
     def get_users_by_membership(session, membership):
         return session.query(User).filter_by(membership=membership, status=STATUS.ACTIVE).all()
+    
+    @staticmethod
+    def get_user_by_reset_token(session, reset_token):
+        return session.query(User).filter_by(reset_token=reset_token).first()
 
     @staticmethod
     def add_user(

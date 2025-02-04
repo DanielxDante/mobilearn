@@ -28,6 +28,8 @@ class Instructor(Base):
     updated = Column(DateTime(timezone=True), nullable=False, default=func.now())
     latest_login = Column(DateTime(timezone=True), nullable=False, default=func.now())
     status = Column(Enum(STATUS, name="status_enum"), nullable=False, default=STATUS.NOT_APPROVED)
+    reset_token = Column(String, nullable=True)
+    reset_token_expiry = Column(DateTime(timezone=True), nullable=True)
 
     # Many-to-many relationship with Course
     courses = relationship("Course", secondary="offers", back_populates="instructors")
@@ -76,6 +78,14 @@ class Instructor(Base):
     @staticmethod
     def admin_get_instructor_by_email(session, email):
         return session.query(Instructor).filter_by(email=email).first()
+    
+    @staticmethod
+    def get_instructor_by_reset_token(session, reset_token):
+        return (
+            session.query(Instructor)
+            .filter_by(reset_token=reset_token)
+            .first()
+        )
 
     @staticmethod
     def add_instructor(

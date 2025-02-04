@@ -7,6 +7,7 @@ from flask_restx import Api, Namespace
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO
+from flask_mail import Mail
 
 from database import db, init_db, check_db, create_tables, load_initial_data
 from models.token import TokenBlocklist
@@ -42,6 +43,8 @@ POSTGRES_DB = os.getenv('POSTGRES_DB')
 POSTGRES_USER = os.getenv('POSTGRES_USER')
 POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 POSTGRES_PORT = os.getenv('POSTGRES_PORT')
+MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
 
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=30)
@@ -49,7 +52,14 @@ app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:{POSTGRES_PORT}/{POSTGRES_DB}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["ADMIN_API_KEY"] = os.getenv('ADMIN_API_KEY')
+app.config["MAIL_SERVER"] = 'smtp.gmail.com'
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USE_SSL"] = False
+app.config["MAIL_USERNAME"] = MAIL_USERNAME
+app.config["MAIL_PASSWORD"] = MAIL_PASSWORD
 
+mail = Mail(app)
 init_db(app)
 
 def setup_environment():
@@ -74,7 +84,10 @@ def setup_environment():
 
 def init_auth_endpoints():
     from endpoints.auth.signup import UserSignupEndpoint, InstructorSignupEndpoint
-    from endpoints.auth.login import UserLoginEndpoint, InstructorLoginEndpoint
+    from endpoints.auth.login import (
+        UserLoginEndpoint, InstructorLoginEndpoint,
+        UserForgetPasswordEndpoint, UserResetPasswordEndpoint
+    )
     from endpoints.auth.logout import RefreshTokenEndpoint, LogoutEndpoint
 
     user_signup_path = f"/{VERSION}/user/signup"
@@ -85,6 +98,12 @@ def init_auth_endpoints():
 
     user_login_path = f"/{VERSION}/user/login"
     ns_auth.add_resource(UserLoginEndpoint, user_login_path)
+
+    user_forget_password_path = f"/{VERSION}/user/forgetPassword"
+    ns_auth.add_resource(UserForgetPasswordEndpoint, user_forget_password_path)
+
+    user_reset_password_path = f"/{VERSION}/user/resetPassword"
+    ns_auth.add_resource(UserResetPasswordEndpoint, user_reset_password_path)
 
     instructor_login_path = f"/{VERSION}/instructor/login"
     ns_auth.add_resource(InstructorLoginEndpoint, instructor_login_path)
@@ -233,7 +252,7 @@ def init_course_endpoints():
         RetrieveCourseDetailsEndpoint,
         EditCourseEndpoint
     )
-    from endpoints.course.review import GetUserCourseReviewEndpoint, SaveReviewEndpoint
+    from endpoints.course.review import GetUserCourseReviewEndpoint, SaveReviewEndpoint, GetReviewsEndpoint
     from endpoints.course.enroll import (
         GetUserEnrolledCoursesEndpoint,
         GetUserTopEnrolledCoursesEndpoint,
@@ -280,6 +299,9 @@ def init_course_endpoints():
 
     save_course_review_path = f"/{VERSION}/user/saveReview"
     ns_course.add_resource(SaveReviewEndpoint, save_course_review_path)
+
+    get_reviews_path = f"/{VERSION}/instructor/getReviews/<string:course_id>"
+    ns_course.add_resource(GetReviewsEndpoint, get_reviews_path)
 
     get_user_enrolled_courses_path = f"/{VERSION}/user/getEnrolledCourses/<string:channel_id>"
     ns_course.add_resource(GetUserEnrolledCoursesEndpoint, get_user_enrolled_courses_path)
