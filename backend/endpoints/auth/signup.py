@@ -49,6 +49,12 @@ class UserSignupEndpoint(Resource):
         membership = data.get('membership') if 'membership' in data else MEMBERSHIP.NORMAL
         device_token = data.get('push_token', None)
 
+        if "admin" in name.lower():
+            return Response(
+                json.dumps({'message': 'Invalid name: name cannot contain the word "admin"'}), 
+                status=400, mimetype='application/json'
+            )
+
         with session_scope() as session:
             try:
                 user = User.add_user(session, name, password, email, gender, membership)
@@ -126,6 +132,12 @@ class InstructorSignupEndpoint(Resource):
         company = data.get('company')
         position = data.get('position')
         device_token = data.get('push_token', None)
+
+        if "admin" in name.lower():
+            return Response(
+                json.dumps({'message': 'Invalid name: name cannot contain the word "admin"'}), 
+                status=400, mimetype='application/json'
+            )
 
         with session_scope() as session:
             try:

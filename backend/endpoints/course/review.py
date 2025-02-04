@@ -8,7 +8,9 @@ from flask_jwt_extended import (
 
 from app import api
 from database import session_scope, create_session
+from models.user import User
 from services.user_services import UserService
+from services.course_services import CourseService
 
 class GetUserCourseReviewEndpoint(Resource):
     @api.doc(
@@ -131,3 +133,60 @@ class SaveReviewEndpoint(Resource):
                     json.dumps({"error": str(ee)}),
                     status=500, mimetype='application/json'
                 )
+            
+class GetReviewsEndpoint(Resource):
+    @api.doc(
+        responses={
+            200: 'Ok',
+            401: 'Unauthorized',
+            404: 'Resource not found',
+            500: 'Internal Server Error'
+        },
+        params={
+            'Authorization': {
+                'in': 'header',
+                'description': 'Bearer token',
+                'required': True
+            }
+        },
+    )
+    @jwt_required()
+    def get(self, course_id):
+        """ Get all reviews for the course """
+        current_email = get_jwt_identity()
+
+        session = create_session()
+
+        try:
+            reviews = CourseService.get_course_reviews(session, course_id)
+
+            response_reviews = []
+            for review in reviews:
+                user = User.get_user_by_id(session, review.user_id)
+                if not user:
+                    continue
+                
+                response_reviews.append({
+                    'user_name': user.name,
+                    'user_profile_picture_url': user.profile_picture_url,
+                    'rating': float(review.rating),
+                    'review_text': review.review_text,
+                    'timestamp': review.updated.isoformat()
+                })
+
+            return Response(
+                json.dumps({'reviews': response_reviews}),
+                status=200, mimetype='application/json'
+            )
+        except ValueError as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=404, mimetype='application/json'
+            )
+        except Exception as ee:
+            return Response(
+                json.dumps({"error": str(ee)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
