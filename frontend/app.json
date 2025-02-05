@@ -25,6 +25,16 @@
       "googleServicesFile": "./google-services.json",
       "permissions": [
         "android.permission.RECORD_AUDIO"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "mobilearn",
+            "host": "reset-password"
+          },
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
       ]
     },
     "web": {

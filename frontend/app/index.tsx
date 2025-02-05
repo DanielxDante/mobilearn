@@ -8,38 +8,55 @@ export default function Index() {
     // console.log("Index page");
 
     useEffect(() => {
-        // Check for deep link on app load
-        const handleDeepLink = ({ url }: { url: string }) => {
-          try {
-            const { pathname, searchParams } = new URL(url);  // Use URL constructor to handle deep link
-            if (pathname === "/reset-password") {
-              const token = searchParams.get("token");
-              if (token) {
-                router.push({
-                  pathname: "/shared/newPassword",
-                  params: { token: token },
-                });
-              }
-            }
-          } catch (error) {
-            console.log("Error handling deep link:", error);
+      const SCHEME = "mobilearn";
+      
+      const handleDeepLink = ({ url }: { url: string }) => {
+        try {
+          const parsedUrl = new URL(url);
+          
+          // Validate scheme
+          if (parsedUrl.protocol !== `${SCHEME}:`) {
+            throw new Error(`Invalid URL scheme. Expected ${SCHEME}://`);
           }
-        };
+          
+          // Remove leading slash if present
+          const path = parsedUrl.pathname.replace(/^\/+/, '');
+          
+          if (path === "reset-password") {
+            const token = parsedUrl.searchParams.get("token");
+            
+            if (!token) {
+              throw new Error("Reset password token is missing");
+            }
+            
+            router.push({
+              pathname: "/shared/newPassword",
+              params: { token }
+            });
+          }
+        } catch (error) {
+          console.error("Deep link error:", error);
+          // Add appropriate error handling (e.g., show toast/alert)
+        }
+      };
     
-        const linkListener = Linking.addEventListener("url", handleDeepLink);
-    
-        // Check if the app was opened via a deep link
-        Linking.getInitialURL().then((url) => {
+      const handleInitialURL = async () => {
+        try {
+          const url = await Linking.getInitialURL();
           if (url) {
-            console.log(url)
+            console.log("Initial URL:", url);
             handleDeepLink({ url });
           }
-        });
+        } catch (error) {
+          console.error("Initial URL error:", error);
+        }
+      };
     
-        return () => {
-          linkListener.remove();
-        };
-      }, [router]);
+      handleInitialURL();
+      const linkListener = Linking.addEventListener("url", handleDeepLink);
+      
+      return () => linkListener.remove();
+    }, [router]);
 
     useEffect(() => {
         setTimeout(() => {
