@@ -29,10 +29,13 @@
       "intentFilters": [
         {
           "action": "VIEW",
-          "data": {
+          "data": [
+          {
             "scheme": "mobilearn",
-            "host": "reset-password"
-          },
+            "host": "reset-password",
+            "pathPrefix": "/"
+          }
+          ],
           "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
