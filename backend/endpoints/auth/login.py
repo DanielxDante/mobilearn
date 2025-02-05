@@ -207,28 +207,31 @@ class UserForgetPasswordEndpoint(Resource):
         with session_scope() as session:
             try:
                 user = User.get_user_by_email(session, email)
-                if not user:
-                    return Response(
-                        json.dumps({'message': 'User not found'}),
-                        status=400, mimetype='application/json'
-                    )
+                # if not user:
+                #     return Response(
+                #         json.dumps({'message': 'User not found'}),
+                #         status=400, mimetype='application/json'
+                #     )
                 
                 reset_token = secrets.token_urlsafe(32)
-                user.reset_token = reset_token
-                user.reset_token_expiry = func.now() + timedelta(hours=1)
+                if user:
+                    user.reset_token = reset_token
+                    user.reset_token_expiry = func.now() + timedelta(hours=1)
 
                 # deep link using expo app scheme
                 # com.musketeers.mobilearn
                 reset_url = f"mobilearn://reset-password?token={reset_token}"
 
-                qr_code_base64 = generate_qr_code(reset_url)
+                qr_code_io = generate_qr_code(reset_url)
 
                 msg = Message(
                     subject="Reset Password",
                     sender=MAIL_USERNAME,
                     recipients=[email],
-                    html=generate_reset_email_html(reset_url, qr_code_base64)
+                    html=generate_reset_email_html(reset_url)
                 )
+
+                msg.attach("qr.png", "image/png", qr_code_io.read(), "inline", {"Content-ID": "<qr_code>"})
                 mail.send(msg)
 
                 return Response(
@@ -269,6 +272,7 @@ class UserResetPasswordEndpoint(Resource):
     )
     @api.expect(userForgetPasswordParser)
     def post(self):
+        """ Resets the password for a user """
         data = request.get_json()
         reset_token = data.get('reset_token')
         new_password = data.get('new_password')
@@ -328,35 +332,38 @@ class InstructorForgetPasswordEndpoint(Resource):
     )
     @api.expect(instructorForgetPasswordParser)
     def post(self):
-        """ Initiates the password reset process for a user """
+        """ Initiates the password reset process for an instructor """
         data = request.get_json()
         email = data.get('email')
         
         with session_scope() as session:
             try:
                 instructor = Instructor.get_user_by_email(session, email)
-                if not instructor:
-                    return Response(
-                        json.dumps({'message': 'Instructor not found'}),
-                        status=400, mimetype='application/json'
-                    )
+                # if not instructor:
+                #     return Response(
+                #         json.dumps({'message': 'Instructor not found'}),
+                #         status=400, mimetype='application/json'
+                #     )
                 
                 reset_token = secrets.token_urlsafe(32)
-                instructor.reset_token = reset_token
-                instructor.reset_token_expiry = func.now() + timedelta(hours=1)
+                if instructor:
+                    instructor.reset_token = reset_token
+                    instructor.reset_token_expiry = func.now() + timedelta(hours=1)
 
                 # deep link using expo app scheme
                 # com.musketeers.mobilearn
                 reset_url = f"mobilearn://reset-password?token={reset_token}"
 
-                qr_code_base64 = generate_qr_code(reset_url)
+                qr_code_io = generate_qr_code(reset_url)
 
                 msg = Message(
                     subject="Reset Password",
                     sender=MAIL_USERNAME,
                     recipients=[email],
-                    html=generate_reset_email_html(reset_url, qr_code_base64)
+                    html=generate_reset_email_html(reset_url)
                 )
+
+                msg.attach("qr.png", "image/png", qr_code_io.read(), "inline", {"Content-ID": "<qr_code>"})
                 mail.send(msg)
 
                 return Response(
@@ -397,6 +404,7 @@ class InstructorResetPasswordEndpoint(Resource):
     )
     @api.expect(instructorForgetPasswordParser)
     def post(self):
+        """ Resets the password for an instructor """
         data = request.get_json()
         reset_token = data.get('reset_token')
         new_password = data.get('new_password')

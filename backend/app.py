@@ -89,7 +89,8 @@ def init_auth_endpoints():
     from endpoints.auth.signup import UserSignupEndpoint, InstructorSignupEndpoint
     from endpoints.auth.login import (
         UserLoginEndpoint, InstructorLoginEndpoint,
-        UserForgetPasswordEndpoint, UserResetPasswordEndpoint
+        UserForgetPasswordEndpoint, UserResetPasswordEndpoint,
+        InstructorForgetPasswordEndpoint, InstructorResetPasswordEndpoint
     )
     from endpoints.auth.logout import RefreshTokenEndpoint, LogoutEndpoint
 
@@ -110,6 +111,12 @@ def init_auth_endpoints():
 
     instructor_login_path = f"/{VERSION}/instructor/login"
     ns_auth.add_resource(InstructorLoginEndpoint, instructor_login_path)
+
+    instructor_forget_password_path = f"/{VERSION}/instructor/forgetPassword"
+    ns_auth.add_resource(InstructorForgetPasswordEndpoint, instructor_forget_password_path)
+
+    instructor_reset_password_path = f"/{VERSION}/instructor/resetPassword"
+    ns_auth.add_resource(InstructorResetPasswordEndpoint, instructor_reset_password_path)
 
     refresh_token_path = f"/{VERSION}/refresh"
     ns_auth.add_resource(RefreshTokenEndpoint, refresh_token_path)
