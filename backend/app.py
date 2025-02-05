@@ -39,6 +39,7 @@ ns_payment = Namespace(name='payment', description='Payment operations')
 ns_admin = Namespace(name='admin', description='Admin operations')
 ns_internal = Namespace(name='internal', description='Internal operations')
 
+POSTGRES_HOST = os.getenv('POSTGRES_HOST')
 POSTGRES_DB = os.getenv('POSTGRES_DB')
 POSTGRES_USER = os.getenv('POSTGRES_USER')
 POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
@@ -49,7 +50,7 @@ MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=30)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
-app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:{POSTGRES_PORT}/{POSTGRES_DB}"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["ADMIN_API_KEY"] = os.getenv('ADMIN_API_KEY')
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
@@ -64,6 +65,8 @@ init_db(app)
 
 def setup_environment():
     """ Setup flask app environment """
+    print(f"Setting up environment on {POSTGRES_HOST}...")
+
     with app.app_context():
         # do not import association tables
         from models import token
@@ -78,15 +81,16 @@ def setup_environment():
         from models import lesson
         from models import notification
 
-        create_tables()
         check_db()
+        create_tables()
         load_initial_data()
 
 def init_auth_endpoints():
     from endpoints.auth.signup import UserSignupEndpoint, InstructorSignupEndpoint
     from endpoints.auth.login import (
         UserLoginEndpoint, InstructorLoginEndpoint,
-        UserForgetPasswordEndpoint, UserResetPasswordEndpoint
+        UserForgetPasswordEndpoint, UserResetPasswordEndpoint,
+        InstructorForgetPasswordEndpoint, InstructorResetPasswordEndpoint
     )
     from endpoints.auth.logout import RefreshTokenEndpoint, LogoutEndpoint
 
@@ -107,6 +111,12 @@ def init_auth_endpoints():
 
     instructor_login_path = f"/{VERSION}/instructor/login"
     ns_auth.add_resource(InstructorLoginEndpoint, instructor_login_path)
+
+    instructor_forget_password_path = f"/{VERSION}/instructor/forgetPassword"
+    ns_auth.add_resource(InstructorForgetPasswordEndpoint, instructor_forget_password_path)
+
+    instructor_reset_password_path = f"/{VERSION}/instructor/resetPassword"
+    ns_auth.add_resource(InstructorResetPasswordEndpoint, instructor_reset_password_path)
 
     refresh_token_path = f"/{VERSION}/refresh"
     ns_auth.add_resource(RefreshTokenEndpoint, refresh_token_path)
@@ -492,4 +502,5 @@ def handle_preflight():
         return "", 200
 
 if __name__ == '__main__':
-    socketio.run(init(), host="0.0.0.0", port=8080, debug=True)
+    # consider changing to using gunicorn runtime server for production
+    socketio.run(init(), host="0.0.0.0", port=8080, debug=True, allow_unsafe_werkzeug=True)
