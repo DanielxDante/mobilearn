@@ -12,6 +12,8 @@ import {
   AUTH_USER_SIGNUP_URL,
   AUTH_REFRESH_TOKEN_URL,
   AUTH_LOGOUT_URL,
+  AUTH_USER_FORGET_PASSWORD_URL,
+  AUTH_USER_RESET_PASSWORD_URL,
   ACCOUNT_INSTRUCTOR_EDIT_GENDER_URL,
   ACCOUNT_INSTRUCTOR_EDIT_NAME_URL,
   ACCOUNT_INSTRUCTOR_EDIT_PHONENUMBER_URL,
@@ -71,6 +73,8 @@ export interface AuthState {
   refreshAccessToken: () => Promise<string>;
   setupAxiosInterceptors: () => void;
   logout: () => Promise<void>;
+  forgetPasswordUser: (email: string) => Promise<string>;
+  resetPasswordUser: (reset_token: string, new_password: string) => Promise<string>;
   // Account operations
   editGenderInstructor: (new_gender: string) => Promise<void>;
   editNameInstructor: (new_name: string) => Promise<string>;
@@ -214,7 +218,7 @@ const useAuthStore = create<AuthState>()(
             });
 
             get().setupAxiosInterceptors();
-
+            
             return responseData.membership;
           } else {
             return responseData.message;
@@ -392,6 +396,35 @@ const useAuthStore = create<AuthState>()(
         } catch (error) {
           console.error("Error logging out:", error);
           throw new Error("An unexpected error occurred while logging out.");
+        }
+      },
+      forgetPasswordUser: async (email: string) => {
+        console.log("(Store) Forget Password: " + email);
+        try {
+          const response = await axios.post(
+            AUTH_USER_FORGET_PASSWORD_URL,
+            { email },
+            { headers: { "Content-Type": "application/json" } }
+          )
+          const responseData = response.data;
+          if (responseData) {
+            return responseData.message;
+          }
+        } catch (error) {
+          console.error(error);
+        }
+        
+      },
+      resetPasswordUser: async (reset_token, new_password) => {
+        console.log("(Store) Reset Password");
+        const response = await axios.post(
+          AUTH_USER_RESET_PASSWORD_URL,
+          { reset_token, new_password },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        const responseData = response.data;
+        if (responseData) {
+          return responseData.message;
         }
       },
       editGenderInstructor: async (new_gender) => {
@@ -634,7 +667,7 @@ const useAuthStore = create<AuthState>()(
       editPasswordInstructor: async (old_password, new_password) => {
         console.log("(Store) Edit User password");
         const response = await axios.post(
-          ACCOUNT_USER_EDIT_PASSWORD_URL,
+          ACCOUNT_INSTRUCTOR_EDIT_PASSWORD_URL,
           { old_password: old_password, new_password: new_password },
           { headers: { "Content-Type": "application/json" } }
         );

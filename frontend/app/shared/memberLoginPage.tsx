@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, Image, Dimensions } from "react-native";
+import { Text, View, Image, Dimensions, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 
@@ -12,6 +12,7 @@ import {
   ADMIN_HOME,
   MEMBER_SIGNUP_PAGE,
   MEMBER_CHANNEL_REGISTRATION,
+  MEMBER_RESET_PASSWORD_PAGE,
 } from "@/constants/pages";
 import InputDropDownField from "@/components/InputDropDownField";
 import { Colors } from "@/constants/colors";
@@ -31,7 +32,7 @@ export default function LoginPage() {
       try {
         const response = await login(email.toLowerCase(), password);
 
-        if (response === "normal") {
+        if (response === "normal" || response === "core_member") {
           router.push(MEMBER_CHANNEL_REGISTRATION);
         } else if (response === "User disabled") {
           alert(Constants.accountDisabledAlert);
@@ -109,6 +110,19 @@ export default function LoginPage() {
           value={password}
           onChangeText={setPassword}
         />
+        <View style={{
+          marginTop: -10,
+          marginBottom: 15,
+        }}>
+          <TouchableOpacity 
+            onPress = {() => router.push("/shared/resetPasswordPage")}
+          >
+            <Text style={{ color: Colors.defaultBlue, fontFamily: "Inter-Regular" }}>
+              {Constants.forgotPassword}
+            </Text>
+            
+          </TouchableOpacity>
+        </View>
         <SignInButton
           text={Constants.signInButtonText}
           onPress={handleSignIn}

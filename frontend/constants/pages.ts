@@ -14,6 +14,7 @@ export const INSTRUCTOR_SIGNUP_PAGE =
   "/shared/instructorSignUpPage" as Href<string>;
 export const MEMBER_LOGIN_PAGE = "/shared/memberLoginPage" as Href<string>;
 export const MEMBER_SIGNUP_PAGE = "/shared/memberSignUpPage" as Href<string>;
+export const MEMBER_RESET_PASSWORD_PAGE = "/shared/resetPasswordPage" as Href<string>;
 export const INSTRUCTOR_REGISTRATION_SUCCESS =
   "/shared/registrationSuccessInstructorPage" as Href<string>;
 export const INSTRUCTOR_WAITING_PAGE =
