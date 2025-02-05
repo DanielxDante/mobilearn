@@ -32,6 +32,10 @@ def check_db():
             conn.close()
     except OperationalError as e:
         raise RuntimeError(f"PostgreSQL database connection failed: {e}")
+    
+def clear_db():
+    """ Clear PostgreSQL database tables """
+    Base.metadata.drop_all(bind=db.engine)
 
 def create_tables():
     """ Initialise PostgreSQL database tables """

@@ -1,9 +1,11 @@
 export const VERSION = process.env.EXPO_PUBLIC_VERSION
   ? `/${process.env.EXPO_PUBLIC_VERSION}`
   : "/1.0";
+
 export const BACKEND_BASE_URL =
-  process.env.BACKEND_BASE_URL ??
-  `http://${process.env.EXPO_PUBLIC_LOCAL_IP_ADDR}:8080`;
+  process.env.EXPO_PUBLIC_ENVIRONMENT == "local" 
+  ? `http://${process.env.EXPO_PUBLIC_LOCAL_IP_ADDR}:8080`
+  : `${process.env.EXPO_PUBLIC_BACKEND_PUBLIC_URL}:8080`;
 
 // AUTH NAMESPACE
 const AUTH_NAMESPACE = "/auth";

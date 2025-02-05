@@ -307,6 +307,130 @@ class UserResetPasswordEndpoint(Resource):
                     status=500, mimetype='application/json'
                 )
 
-# class InstructorForgetPasswordEndpoint(Resource):
+instructorForgetPasswordParser = api.parser()
+instructorForgetPasswordParser.add_argument('email', type=str, help='Email', location='json', required=True)
 
-# class InstructorResetPasswordEndpoint(Resource):
+class InstructorForgetPasswordEndpoint(Resource):
+    @api.doc(
+        responses={
+            200: 'Ok',
+            400: 'Bad request',
+            404: 'Resource not found',
+            500: 'Internal Server Error'
+        },
+        description="""
+        Example request JSON:
+
+        {
+            "email": "foobar@gmail.com"
+        }
+        """
+    )
+    @api.expect(instructorForgetPasswordParser)
+    def post(self):
+        """ Initiates the password reset process for a user """
+        data = request.get_json()
+        email = data.get('email')
+        
+        with session_scope() as session:
+            try:
+                instructor = Instructor.get_user_by_email(session, email)
+                if not instructor:
+                    return Response(
+                        json.dumps({'message': 'Instructor not found'}),
+                        status=400, mimetype='application/json'
+                    )
+                
+                reset_token = secrets.token_urlsafe(32)
+                instructor.reset_token = reset_token
+                instructor.reset_token_expiry = func.now() + timedelta(hours=1)
+
+                # deep link using expo app scheme
+                # com.musketeers.mobilearn
+                reset_url = f"mobilearn://reset-password?token={reset_token}"
+
+                qr_code_base64 = generate_qr_code(reset_url)
+
+                msg = Message(
+                    subject="Reset Password",
+                    sender=MAIL_USERNAME,
+                    recipients=[email],
+                    html=generate_reset_email_html(reset_url, qr_code_base64)
+                )
+                mail.send(msg)
+
+                return Response(
+                    json.dumps({'message': 'Password reset email sent'}),
+                    status=200, mimetype='application/json'
+                )
+            except ValueError as ee:
+                return Response(
+                    json.dumps({'message': str(ee)}),
+                    status=400, mimetype='application/json'
+                )
+            except Exception as ee:
+                return Response(
+                    json.dumps({'message': str(ee)}),
+                    status=500, mimetype='application/json'
+                )
+
+instructorForgetPasswordParser = api.parser()
+instructorForgetPasswordParser.add_argument('reset_token', type=str, help='Reset token', location='json', required=True)
+instructorForgetPasswordParser.add_argument('new_password', type=str, help='New password', location='json', required=True)
+
+class InstructorResetPasswordEndpoint(Resource):
+    @api.doc(
+        responses={
+            200: 'Ok',
+            400: 'Bad request',
+            404: 'Resource not found',
+            500: 'Internal Server Error'
+        },
+        description="""
+        Example request JSON:
+
+        {
+            "reset_token": "scott_piper@edu.com",
+            "new_password": "Scott_Piper2"
+        }
+        """
+    )
+    @api.expect(instructorForgetPasswordParser)
+    def post(self):
+        data = request.get_json()
+        reset_token = data.get('reset_token')
+        new_password = data.get('new_password')
+
+        with session_scope() as session:
+            try:
+                instructor = Instructor.get_instructor_by_reset_token(session, reset_token)
+                if not instructor:
+                    return Response(
+                        json.dumps({'message': 'Invalid reset token'}),
+                        status=400, mimetype='application/json'
+                    )
+
+                if instructor.reset_token_expiry < datetime.now(timezone.utc):
+                    return Response(
+                        json.dumps({'message': 'Reset token expired'}),
+                        status=400, mimetype='application/json'
+                    )
+
+                instructor.password = new_password
+                instructor.reset_token = None
+                instructor.reset_token_expiry = None
+
+                return Response(
+                    json.dumps({'message': 'Password successfully reset'}),
+                    status=200, mimetype='application/json'
+                )
+            except ValueError as ee:
+                return Response(
+                    json.dumps({'message': str(ee)}),
+                    status=400, mimetype='application/json'
+                )
+            except Exception as ee:
+                return Response(
+                    json.dumps({'message': str(ee)}),
+                    status=500, mimetype='application/json'
+                )
