@@ -220,7 +220,7 @@ class UserForgetPasswordEndpoint(Resource):
 
                 # deep link using expo app scheme
                 # com.musketeers.mobilearn
-                reset_url = f"mobilearn://reset-password?token={reset_token}"
+                reset_url = f"mobilearn://shared/newPassword?token={reset_token}"
 
                 qr_code_io = generate_qr_code(reset_url)
 
