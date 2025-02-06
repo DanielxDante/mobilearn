@@ -417,15 +417,20 @@ const useAuthStore = create<AuthState>()(
       },
       resetPasswordUser: async (reset_token, new_password) => {
         console.log("(Store) Reset Password");
-        const response = await axios.post(
-          AUTH_USER_RESET_PASSWORD_URL,
-          { reset_token, new_password },
-          { headers: { "Content-Type": "application/json" } }
-        )
-        const responseData = response.data;
-        if (responseData) {
-          return responseData.message;
+        try {
+          const response = await axios.post(
+            AUTH_USER_RESET_PASSWORD_URL,
+            { reset_token, new_password },
+            { headers: { "Content-Type": "application/json" } }
+          )
+          const responseData = response.data;
+          if (responseData) {
+            return responseData.message;
+          }
+        } catch (error: any) {
+          return error.message
         }
+        
       },
       editGenderInstructor: async (new_gender) => {
         console.log("(Store) Edit Instructor gender");

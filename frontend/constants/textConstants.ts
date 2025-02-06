@@ -736,3 +736,13 @@ export const resetPasswordAwait = {
   subtitle1: "Please check the email address ",
   subtitle2: " for instructions to reset your password.",
 };
+
+export const newPasswordPage = {
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  emptyPassword: "Please enter a password",
+  differentPassword: "Passwords do not match",
+  title: "Reset Password",
+  placeholder1: "New Password",
+  placeholder2: "Confirm Password",
+  submitButton: "Reset Password",
+}
