@@ -32,6 +32,10 @@ class FieldProcessor:
         self.stop_words = set(stopwords.words('english'))
 
         # embedding models
+        self.vector_size = 100
+        self.window = 5
+        self.min_count = 1
+        self.workers = 4
         self.name_embeddings = None
         self.description_embeddings = None
         self.skill_embeddings = None
@@ -113,9 +117,9 @@ class FieldProcessor:
     def preprocess_description(self, description):
         """ 
         Preprocess course descriptions
-        - Light preprocessing
         - Remove stop words
-        - Lemmatize words
+        - Lemmatize
+        - Tokenize
         """
         # lowercase and remove special characters
         description = re.sub(r'[^a-zA-Z0-9\s]', '', description.lower())
@@ -124,13 +128,41 @@ class FieldProcessor:
         tokens = word_tokenize(description)
 
         # remove stop words and lemmatize
-        lemmatized_tokens = [
-            self.lemmatizer.lemmatize(token)
-            for token in tokens
-            if token not in self.stop_words
-        ]
+        lemmatized_tokens = []
+        for token in tokens:
+            if (len(token) > 1 and 
+                token not in self.stop_words and
+                token.isalpha()
+            ):
+                lemmatized_tokens.append(self.lemmatizer.lemmatize(token))
 
         return ' '.join(lemmatized_tokens)
+
+    def preprocess_skills(self, skills_string):
+        """
+        Preprocess a comma-separated skills string
+        - Split comma-separated skills
+        - Lemmatize
+        - Preserve multi-word skills
+        """ 
+        # split and clean skills
+        skills = [s.strip().lower() for s in skills_string.split(',')]
+
+        processed_skills = []
+        for skill in skills:
+            # tokenize multi-word skills
+            tokens = word_tokenize(skill)
+
+            # lemmatize each token
+            lemmatized_skill = [self.lemmatizer.lemmatize(token) for token in tokens]
+
+            # rejoin multi-word skills
+            processed_skill = ' '.join(lemmatized_skill)
+
+            if processed_skill:
+                processed_skills.append(processed_skill)
+
+        return processed_skills
     
     def preprocess_text_fields(self, df, columns):
         """ Preprocess text fields """
@@ -143,12 +175,12 @@ class FieldProcessor:
                 preprocessed_df[column] = preprocessed_df[column].apply(self.preprocess_description)
             elif 'skills' in column.lower():
                 preprocessed_df[column] = preprocessed_df[column].apply(self.preprocess_skills)
-            else:
+            else: # default to description preprocessing
                 preprocessed_df[column] = preprocessed_df[column].apply(self.preprocess_description)
 
         return preprocessed_df
 
-    def create_preprocessing_pipeline(
+    def execute_field_processing_pipeline(
         self,
         df,
         numerical_columns=None,
@@ -163,65 +195,99 @@ class FieldProcessor:
         # encode categorical fields
         if categorical_columns:
             df = self.encode_categorical_fields(df, categorical_columns)
+        
+        # preprocess text fields
+        if text_columns:
+            df = self.preprocess_text_fields(df, text_columns)
 
         return df
-        
-    # def preprocess_skills(self, skills_string):
-    #     """Preprocess a comma-separated skills string"""
-    #     if not skills_string or pd.isna(skills_string):
-    #         return []
-            
-    #     # Split and clean skills
-    #     skills = [s.strip().lower() for s in skills_string.split(',')]
-        
-    #     # Lemmatize each skill (convert variations to base form)
-    #     skills = [self._process_skill(skill) for skill in skills]
-        
-    #     return [s for s in skills if s]  # Remove empty strings
-        
-    # def _process_skill(self, skill):
-    #     """Process individual skill with lemmatization and cleanup"""
-    #     # Tokenize multi-word skills
-    #     tokens = word_tokenize(skill)
-        
-    #     # Lemmatize each token
-    #     lemmatized = [self.lemmatizer.lemmatize(token) for token in tokens]
-        
-    #     # Rejoin multi-word skills
-    #     return ' '.join(lemmatized)
-        
-    # def train_skill_embeddings(self, all_skills_lists):
-    #     """Train Word2Vec model on skill sequences"""
-    #     # Prepare sentences for Word2Vec (each skill list is a sentence)
-    #     sentences = [skills.split() for skills in all_skills_lists if skills]
-        
-    #     # Train Word2Vec model
-    #     model = Word2Vec(sentences=sentences, 
-    #                     vector_size=100,  # Embedding dimension
-    #                     window=5,         # Context window
-    #                     min_count=1,      # Keep all skills
-    #                     workers=4)        # Number of threads
-        
-    #     self.skill_embeddings = model.wv
-        
-    # def get_skill_vector(self, skill):
-    #     """Get vector representation of a skill"""
-    #     if skill in self.skill_vectors:
-    #         return self.skill_vectors[skill]
-            
-    #     try:
-    #         return self.skill_embeddings[skill]
-    #     except KeyError:
-    #         return None
-            
-    # def find_similar_skills(self, skill, top_n=5):
-    #     """Find similar skills using trained embeddings"""
-    #     if skill in self.similar_skills_cache:
-    #         return self.similar_skills_cache[skill]
-            
-    #     try:
-    #         similar_skills = self.skill_embeddings.most_similar(skill, topn=top_n)
-    #         self.similar_skills_cache[skill] = similar_skills
-    #         return similar_skills
-    #     except KeyError:
-    #         return []
+    
+    def train_text_embeddings(
+            self,
+            df,
+            name_col='name',
+            description_col='description',
+            skills_col='skills',
+            preprocessed=True
+        ):
+        """ Train word embeddings on text fields """
+        # prepare sentences for Word2Vec
+        if preprocessed:
+            name_sentences = [
+                word_tokenize(name)
+                for name in df[name_col] if isinstance(name, str) 
+            ]
+
+            description_sentences = [
+                word_tokenize(description)
+                for description in df[description_col] if isinstance(description, str)
+            ]
+
+            skill_sentences = [
+                skill.split()
+                for skills in df[skills_col]
+                for skill in skills if isinstance(skills, list)
+            ]
+        else:
+            name_sentences = [
+                word_tokenize(self.preprocess_name(name))
+                for name in df[name_col] if name
+            ]
+
+            description_sentences = [
+                word_tokenize(self.preprocess_description(description))
+                for description in df[description_col] if description
+            ]
+
+            skill_sentences = [
+                skill 
+                for skills in df[skills_col].apply(self.preprocess_skills) 
+                for skill in skills
+            ]
+
+        # train Word2Vec models
+        name_model = Word2Vec(
+            sentences=name_sentences,
+            vector_size=self.vector_size,
+            window=self.window,
+            min_count=self.min_count,
+            workers=self.workers
+        )
+
+        description_model = Word2Vec(
+            sentences=description_sentences,
+            vector_size=self.vector_size,
+            window=self.window,
+            min_count=self.min_count,
+            workers=self.workers
+        )
+
+        skill_model = Word2Vec(
+            sentences=skill_sentences,
+            vector_size=self.vector_size,
+            window=self.window,
+            min_count=self.min_count,
+            workers=self.workers
+        )
+
+        # store embeddings
+        self.name_embeddings = name_model.wv
+        self.description_embeddings = description_model.wv
+        self.skill_embeddings = skill_model.wv
+
+    def find_similar_words(self, word, embedding_type='skill', top_n=5):
+        """ Find similar words to a given word """
+        try:
+            if embedding_type == 'name':
+                embeddings = self.name_embeddings
+            elif embedding_type == 'description':
+                embeddings = self.description_embeddings
+            elif embedding_type == 'skill':
+                embeddings = self.skill_embeddings
+            else:
+                raise ValueError("Invalid embedding type. Choose from 'name', 'description', or 'skill'")
+
+            return embeddings.most_similar(word, topn=top_n)
+        except KeyError:
+            return []
+    

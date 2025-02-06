@@ -21,7 +21,7 @@ import useAppStore from "@/store/appStore";
 import BackButton from "@/components/BackButton";
 import FavouriteButton from "@/components/FavouriteButton";
 
-const CourseDetails = () => {
+const InstructorCourseDetails = () => {
   // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
   const certicationType = "Online Certification";
 
@@ -42,10 +42,7 @@ const CourseDetails = () => {
 
   const [courseData, setCourseData] = useState<Course | null>(null);
   const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse);
-  const membership = useAuthStore((state) => state.membership);
   const [course_image, setCourseImage] = useState<string>("");
-
-  const membership_types = ["normal", "member", "core_member"];
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -72,8 +69,6 @@ const CourseDetails = () => {
       {/* AppBar */}
       <View style={styles.appBarContainer}>
         <BackButton />
-
-        <FavouriteButton course_id={courseId.toString()} />
       </View>
       <ScrollView style={styles.body}>
         {/* if picture is not available, show loading */}
@@ -167,24 +162,6 @@ const CourseDetails = () => {
                   </TouchableOpacity>
                 ))}
               </View>
-            </View>
-            {/* Enroll now button */}
-            <View>
-              <TouchableOpacity
-                style={styles.enrollNowButton}
-                onPress={() =>
-                  router.push({
-                    pathname: "./paymentOverview",
-                    params: {
-                      courseId: courseData.course_id,
-                    },
-                  })
-                }
-              >
-                <Text style={styles.enrollNowButtonText}>
-                  {Constants.enrollNowButton}
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
         )}
@@ -336,4 +313,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CourseDetails;
+export default InstructorCourseDetails;

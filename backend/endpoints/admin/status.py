@@ -9,6 +9,7 @@ from models.instructor import Instructor, STATUS as INSTRUCTOR_STATUS
 from models.channel import Channel, STATUS as CHANNEL_STATUS
 from models.course import Course, STATUS as COURSE_STATUS
 from utils.admin_decorator import require_admin_key
+from services.notification_services import NotificationService
 
 change_user_status_parser = api.parser()
 change_user_status_parser.add_argument('user_email', type=str, help='User Email', location='json', required=True)
@@ -119,7 +120,21 @@ class ChangeInstructorStatusEndpoint(Resource):
         
         with session_scope() as session:
             try:
+                instructor = Instructor.admin_get_instructor_by_email(session, email)
+                if not instructor:
+                    raise ValueError("Instructor with the email does not exist.")
+                
                 Instructor.change_status(session, email, new_status)
+                
+                if new_status == 'active':
+                    NotificationService.add_notification(
+                        session,
+                        title="Congratulations!",
+                        body="Your account has been approved. Start creating courses with MobiLearn today!",
+                        notification_type="info",
+                        recipient_id=instructor.id,
+                        recipient_type='instructor'
+                    )
             except ValueError as ee:
                 return Response(
                     json.dumps({'message': str(ee)}),
@@ -247,6 +262,15 @@ class ChangeCourseStatusEndpoint(Resource):
             try:
                 Course.change_status(session, course_id, new_status)
 
+                # if new_status == 'active':
+                #     NotificationService.add_notification(
+                #         session,
+                #         title="Congratulations!",
+                #         body="Your account has been approved. Start creating courses with MobiLearn today!",
+                #         notification_type="info",
+                #         recipient_id=instructor.id,
+                #         recipient_type='instructor'
+                #     )
                 return Response(
                     json.dumps({'message': '(Admin) Course status changed successfully'}),
                     status=200, mimetype='application/json'

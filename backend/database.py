@@ -32,6 +32,10 @@ def check_db():
             conn.close()
     except OperationalError as e:
         raise RuntimeError(f"PostgreSQL database connection failed: {e}")
+    
+def clear_db():
+    """ Clear PostgreSQL database tables """
+    Base.metadata.drop_all(bind=db.engine)
 
 def create_tables():
     """ Initialise PostgreSQL database tables """
@@ -64,6 +68,7 @@ def load_initial_data():
 
     load_channel()
     load_communities()
+    load_admin_users()
     load_instructors()
     load_courses()
     load_chapters()
@@ -117,6 +122,41 @@ def load_communities():
                     community_logo_url=row['Logo Url']
                 )
                 ChannelService.attach_community(session, public_channel.id, new_community.id)
+
+def load_admin_users():
+    """ Load initial admin users """
+    from models.user import User
+
+    with session_scope() as session:
+        User.add_user(
+            session,
+            name='Admin Daniel',
+            password='admin',
+            email='mobilearn_daniel@gmail.com',
+            gender='male',
+            membership='core_member',
+            status='active'
+        )
+
+        User.add_user(
+            session,
+            name='Admin Gerard',
+            password='admin',
+            email='mobilearn_gerard@gmail.com',
+            gender='male',
+            membership='core_member',
+            status='active'
+        )
+
+        User.add_user(
+            session,
+            name='Admin Matthew',
+            password='admin',
+            email='mobilearn_matthew@gmail.com',
+            gender='male',
+            membership='core_member',
+            status='active'
+        )
 
 def load_instructors():
     """ Load initial instructors """

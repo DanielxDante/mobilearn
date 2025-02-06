@@ -2,7 +2,10 @@ from sqlalchemy import or_, not_, func
 
 from models.user import User
 from models.lesson import Lesson
+from models.course import Course
 from models.homework_submission import HomeworkSubmission
+from services.course_services import CourseService
+from services.notification_services import NotificationService
 
 class LessonServiceError(Exception):
     pass
@@ -25,7 +28,25 @@ class LessonService:
         
         user.lesson_completions.append(lesson)
         session.flush()
-    
+
+        # check if completing this lesson results in completing a course
+        newly_completed_course_ids = CourseService.check_course_completion(
+            session,
+            user.id,
+            lesson_id
+        )
+        
+        for course_id in newly_completed_course_ids:
+            course = Course.get_course_by_id(session, course_id)
+            NotificationService.add_notification(
+                session,
+                title="Congratulations! 🎉",
+                body=f"You have completed all lessons in {course.name}. Explore more courses by {course.community.name}.",
+                notification_type="course",
+                recipient_id=user.id,
+                recipient_type='user'
+            )
+
     @staticmethod
     def get_homework_submission(session, user_email, homework_lesson_id):
         """ Get homework submission by a user """

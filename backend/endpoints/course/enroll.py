@@ -8,9 +8,12 @@ from flask_jwt_extended import (
 
 from app import api
 from database import session_scope, create_session
+from models.user import User
+from models.course import Course
 from services.user_services import UserService
 from services.instructor_services import InstructorService
 from services.course_services import CourseService
+from services.notification_services import NotificationService
 
 class GetUserEnrolledCoursesEndpoint(Resource):
     @api.doc(
@@ -193,7 +196,25 @@ class EnrollUserEndpoint(Resource):
 
         with session_scope() as session:
             try:
+                user = User.get_user_by_email(session, current_email)
+                if not user:
+                    raise ValueError("User not found")
+                
+                course = Course.get_course_by_id(session, course_id)
+                if not course:
+                    raise ValueError("Course not found")
+                
                 UserService.enroll_user(session, current_email, course_id)
+
+                NotificationService.add_notification(
+                    session,
+                    title=f"Welcome to {course.name}! 🎉",
+                    body="Get started with your first lesson now, we hope you enjoy the course!",
+                    notification_type="course",
+                    recipient_id=user.id,
+                    recipient_type='user'
+                )
+
                 return Response(
                     json.dumps({"message": "User successfully enrolled"}),
                     status=200, mimetype='application/json'
