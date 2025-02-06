@@ -9,7 +9,7 @@ const RootLayout = () => {
       <FontLoader>
         <ExpoStripeProvider>
           <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="index" />
           </Stack>
         </ExpoStripeProvider>
       </FontLoader>

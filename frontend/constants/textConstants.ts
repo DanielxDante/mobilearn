@@ -1,3 +1,4 @@
+import ResetPasswordPage from "@/app/shared/resetPasswordPage";
 import PhoneNumberInputField from "@/components/PhoneNumberInputField";
 import icons from "@/constants/icons";
 import { add, update } from "lodash";
@@ -87,9 +88,10 @@ export const memberLoginPageConstants = {
   errorSigningUpAlert: "An error occurred while signing up.",
   unexpectedErrorAlert: "An unexpected error occurred.",
   accountDisabledAlert: "Your account has been disabled.",
-  dontHaveAccountText: "Don't have an account?",
-  signUpText: "Sign Up here",
+  dontHaveAccountText: "New to MobiLearn? ",
+  signUpText: "Sign Up",
   inputsEmptyAlert: "Please fill in all fields.",
+  forgotPassword: "Forgot password?"
 };
 
 export const instructorLoginPageConstants = {
@@ -718,3 +720,29 @@ export const lessonContentConstants = {
   noFileSelectedError: "No file selected.",
   handleUploadPdfError: "Error in handleUploadPDF:",
 };
+
+export const resetPasswordPage = {
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  title: "Forgot your password",
+  subtitle: "Enter the email associated with your account and we'll send you password reset instructions.",
+  emailFieldHeader: "Your email",
+  emailButton: "Send reset instructions",
+  invalidEmail: "Please enter a valid email."
+};
+
+export const resetPasswordAwait = {
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  title: "Check your email",
+  subtitle1: "Please check the email address ",
+  subtitle2: " for instructions to reset your password.",
+};
+
+export const newPasswordPage = {
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  emptyPassword: "Please enter a password",
+  differentPassword: "Passwords do not match",
+  title: "Reset Password",
+  placeholder1: "New Password",
+  placeholder2: "Confirm Password",
+  submitButton: "Reset Password",
+}
