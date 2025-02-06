@@ -1,6 +1,6 @@
-import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity, TextInput, Alert } from 'react-native'
-import React, { useState } from 'react'
-import {router, useLocalSearchParams} from "expo-router";
+import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity, TextInput, Alert, Linking, ActivityIndicator } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import {router} from "expo-router";
 
 import { newPasswordPage as Constants } from "@/constants/textConstants";
 import { Colors } from '@/constants/colors';
@@ -9,8 +9,38 @@ import useAuthStore from "@/store/authStore";
 const newPassword = () => {
     const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
-    const resetPassword = useAuthStore((state) => state.resetPasswordUser)
-    const { token } = useLocalSearchParams<{ token: string }>();
+	const [token, setToken] = useState("");
+	const [isLoading, setIsLoading] = useState(true);
+    const resetPassword = useAuthStore((state) => state.resetPasswordUser);
+
+	const handleDeepLink = ({ url }: { url: string }) => {
+		try {
+			const { pathname, searchParams } = new URL(url);
+
+			if (pathname === "/shared/newPassword") {
+			const linkToken = searchParams.get("token");
+			if (linkToken) {
+				setToken(linkToken);
+			}
+			if (!linkToken) throw new Error("Missing token");
+		}
+		} catch (error) {
+			console.error("Deep link error:", error);
+		}
+	};
+
+	useEffect(() => {
+		const getInitialUrl = async () => {
+			let initialUrl = await Linking.getInitialURL();
+			if (initialUrl) {
+				handleDeepLink({ url: initialUrl });
+			}
+			setIsLoading(false);
+			};
+		
+			getInitialUrl();
+		}, []);
+		
 
     const handlePasswordSubmit = async () => {
         if (password.length === 0) {
@@ -77,6 +107,11 @@ const newPassword = () => {
 }
 
 const styles = StyleSheet.create({
+	loadingContainer: {
+		flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
     container: {
         flex: 1,
         backgroundColor: "white",
