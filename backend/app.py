@@ -1,3 +1,5 @@
+# CREDITS: Daniel Tay Jin Hong
+
 import os
 import logging
 from datetime import timedelta
@@ -72,6 +74,7 @@ def setup_environment():
         from models import token
         from models import user
         from models import instructor
+        from models import chat_participant
         from models import chat
         from models import message
         from models import channel
@@ -354,26 +357,26 @@ def init_course_endpoints():
 
 def init_chat_endpoints():
     from endpoints.chat.chat import (
-        SearchUsersEndpoint,
-        GetUserChatsEndpoint,
+        SearchParticipantsEndpoint,
+        GetParticipantChatsEndpoint,
         GetChatDetailsEndpoint,
         CreatePrivateChatEndpoint,
         CreateGroupChatEndpoint,
         EditGroupChatNameEndpoint,
         EditGroupChatPictureEndpoint,
-        AddGroupChatMembersEndpoint,
-        RemoveGroupChatMemberEndpoint,
+        AddGroupChatParticipantsEndpoint,
+        RemoveGroupChatParticipantEndpoint,
         ElevateGroupChatAdminEndpoint
     )
     from endpoints.chat.message import GetChatMessagesEndpoint
 
-    search_users_path = f"/{VERSION}/searchUsers"
-    ns_chat.add_resource(SearchUsersEndpoint, search_users_path)
+    search_participants_path = f"/{VERSION}/searchParticipants"
+    ns_chat.add_resource(SearchParticipantsEndpoint, search_participants_path)
 
-    get_user_chats_path = f"/{VERSION}/getUserChats"
-    ns_chat.add_resource(GetUserChatsEndpoint, get_user_chats_path)
+    get_participant_chats_path = f"/{VERSION}/getParticipantChats/<string:participant_type>"
+    ns_chat.add_resource(GetParticipantChatsEndpoint, get_participant_chats_path)
 
-    get_chat_details_path = f"/{VERSION}/getChatDetails/<string:chat_id>"
+    get_chat_details_path = f"/{VERSION}/getChatDetails/<string:initiator_type>/<string:chat_id>"
     ns_chat.add_resource(GetChatDetailsEndpoint, get_chat_details_path)
 
     create_private_chat_path = f"/{VERSION}/createPrivateChat"
@@ -388,16 +391,16 @@ def init_chat_endpoints():
     edit_group_chat_picture_path = f"/{VERSION}/editGroupChatPicture"
     ns_chat.add_resource(EditGroupChatPictureEndpoint, edit_group_chat_picture_path)
 
-    add_group_chat_members_path = f"/{VERSION}/addGroupChatMembers"
-    ns_chat.add_resource(AddGroupChatMembersEndpoint, add_group_chat_members_path)
+    add_group_chat_participant_path = f"/{VERSION}/addGroupChatParticipants"
+    ns_chat.add_resource(AddGroupChatParticipantsEndpoint, add_group_chat_participant_path)
 
-    remove_group_chat_member_path = f"/{VERSION}/removeGroupChatMember"
-    ns_chat.add_resource(RemoveGroupChatMemberEndpoint, remove_group_chat_member_path)
+    remove_group_chat_participant_path = f"/{VERSION}/removeGroupChatParticipant"
+    ns_chat.add_resource(RemoveGroupChatParticipantEndpoint, remove_group_chat_participant_path)
 
-    elevate_group_chat_admin_path = f"/{VERSION}/elevateGroupChatAdmin"
+    elevate_group_chat_admin_path = f"/{VERSION}/elevateParticipantToAdmin"
     ns_chat.add_resource(ElevateGroupChatAdminEndpoint, elevate_group_chat_admin_path)
 
-    get_chat_messages_path = f"/{VERSION}/getChatMessages/<string:chat_id>"
+    get_chat_messages_path = f"/{VERSION}/getChatMessages/<string:chat_id>/<string:chat_participant_id>"
     ns_chat.add_resource(GetChatMessagesEndpoint, get_chat_messages_path)
 
 def init_analytics_endpoints():

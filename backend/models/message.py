@@ -9,12 +9,14 @@ class Message(Base):
 
     id = Column(Integer, primary_key=True)
     chat_id = Column(Integer, ForeignKey('chats.id'), nullable=False)
-    sender_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    sender_id = Column(Integer, ForeignKey('chat_participants.id'), nullable=False)
     content = Column(Text, nullable=False)
     timestamp = Column(DateTime(timezone=True), default=func.now(), nullable=False)
     
-    # Many-to-one relationship with User and Chat
-    sender = relationship("User", back_populates="sent_messages")
+    # Many-to-one relationship with ChatParticipant
+    sender = relationship("ChatParticipant", back_populates="sent_messages")
+
+    # Many-to-one relationship with Chat
     chat = relationship("Chat", back_populates="messages")
 
     @staticmethod

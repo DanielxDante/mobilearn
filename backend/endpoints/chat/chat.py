@@ -11,12 +11,12 @@ from flask_jwt_extended import (
 from app import api
 from database import session_scope, create_session
 from models.user import User
+from models.instructor import Instructor
 from models.chat import Chat
-from services.user_services import UserService
 from services.chat_services import ChatService
 from utils.s3 import upload_file
 
-class SearchUsersEndpoint(Resource):
+class SearchParticipantsEndpoint(Resource):
     @api.doc(
         responses={
             200: 'Ok',
@@ -30,9 +30,14 @@ class SearchUsersEndpoint(Resource):
                 'description': 'Bearer token',
                 'required': True
             },
+            'participant_type': {
+                'in': 'query',
+                'description': 'Search term for participants',
+                'required': True
+            },
             'search_term': {
                 'in': 'query',
-                'description': 'Search term for users',
+                'description': 'Search term for participants',
                 'required': True
             },
             'page': {
@@ -42,37 +47,42 @@ class SearchUsersEndpoint(Resource):
             },
             'per_page': {
                 'in': 'query',
-                'description': 'Number of users per page',
+                'description': 'Number of participants per page',
                 'required': False
             }
         },
     )
     @jwt_required()
     def get(self):
-        """ Search for users """
+        """ Search for participants """
         search_term = request.args.get('search_term', '')
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 5))
 
-        current_email = get_jwt_identity()
+        searcher_email = get_jwt_identity()
+        searcher_type = request.args.get('participant_type')
 
         session = create_session()
 
         try:
-            users = UserService.search_users(
+            participants = ChatService.search_participants(
                 session,
-                searcher_email=current_email,
+                searcher_email=searcher_email,
+                searcher_type=searcher_type,
                 search_term=search_term,
                 page=page,
                 per_page=per_page
             )
-            user_info = [{
-                'id': user.id,
-                'email': user.email,
-                'name': user.name
-            } for user in users]
+
+            participant_info = [{
+                'id': participant[0],
+                'email': participant[1],
+                'name': participant[2],
+                'profile_picture_url': participant[3],
+                'participant_type': participant[4]
+            } for participant in participants]
             return Response(
-                json.dumps({'users': user_info}),
+                json.dumps({'participants': participant_info}),
                 status=200, mimetype='application/json'
             )
         except ValueError as ee:
@@ -88,7 +98,7 @@ class SearchUsersEndpoint(Resource):
         finally:
             session.close()
     
-class GetUserChatsEndpoint(Resource):
+class GetParticipantChatsEndpoint(Resource):
     @api.doc(
         responses={
             200: 'Ok',
@@ -105,21 +115,24 @@ class GetUserChatsEndpoint(Resource):
         }
     )
     @jwt_required()
-    def get(self):
-        """ Get all chats for user """
-        current_email = get_jwt_identity()
+    def get(self, participant_type):
+        """ Get all chats for participant """
+        participant_email = get_jwt_identity()
 
         session = create_session()
 
         try:
-            user = User.get_user_by_email(session, current_email)
-            user_chats = ChatService.get_user_chats(session, user.email)
-            user_chats.sort(
+            participant_chats = ChatService.get_participant_chats(
+                session,
+                participant_email=participant_email,
+                participant_type=participant_type
+            )
+            participant_chats.sort(
                 key=lambda x: datetime.datetime.fromisoformat(x['last_message_timestamp']),
                 reverse=True
             )
             return Response(
-                json.dumps({'chats': user_chats}),
+                json.dumps({'chats': participant_chats}),
                 status=200, mimetype='application/json'
             )
         except ValueError as ee:
@@ -152,16 +165,17 @@ class GetChatDetailsEndpoint(Resource):
         }
     )
     @jwt_required()
-    def get(self, chat_id):
+    def get(self, initiator_type, chat_id):
         """ Get chat details """
-        current_email = get_jwt_identity()
+        initiator_email = get_jwt_identity()
 
         session = create_session()
 
         try:
             chat_info = ChatService.get_chat_details(
                 session,
-                initiator_email=current_email,
+                initiator_email=initiator_email,
+                initiator_type=initiator_type,
                 chat_id=chat_id
             )
             return Response(
@@ -182,7 +196,9 @@ class GetChatDetailsEndpoint(Resource):
             session.close()
 
 create_private_chat_parser = api.parser()
-create_private_chat_parser.add_argument('member_email', type=str, help='Member Email', location='json', required=True)
+create_private_chat_parser.add_argument('initiator_type', type=str, help='Initiator Type', location='json', required=True)
+create_private_chat_parser.add_argument('participant_email', type=str, help='Participant Email', location='json', required=True)
+create_private_chat_parser.add_argument('participant_type', type=str, help='Participant Type', location='json', required=True)
 
 class CreatePrivateChatEndpoint(Resource):
     @api.doc(
@@ -204,7 +220,9 @@ class CreatePrivateChatEndpoint(Resource):
             Example request JSON:
 
             {
-                "member_email": "foo2@gmail.com"
+                "initiator_type": "user",
+                "participant_email": "scott_piper@edu.com",
+                "participant_type": "instructor"
             }
             """
     )
@@ -213,16 +231,20 @@ class CreatePrivateChatEndpoint(Resource):
     def post(self):
         """ Create private chat between two users """
         data = request.get_json()
-        member_email = data.get('member_email')
+        initiator_type = data.get('initiator_type')
+        participant_email = data.get('participant_email')
+        participant_type = data.get('participant_type')
         
-        current_email = get_jwt_identity()
+        initiator_email = get_jwt_identity()
 
         with session_scope() as session:
             try:
                 private_chat = ChatService.create_private_chat(
                     session,
-                    initiator_email=current_email,
-                    member_email=member_email
+                    initiator_email=initiator_email,
+                    initiator_type=initiator_type,
+                    participant_email=participant_email,
+                    participant_type=participant_type
                 )
                 return Response(
                     json.dumps({
@@ -242,8 +264,16 @@ class CreatePrivateChatEndpoint(Resource):
                 )
         
 create_group_chat_parser = api.parser()
+create_group_chat_parser.add_argument('initiator_type', type=str, help='Initiator Type', location='json', required=True)
 create_group_chat_parser.add_argument('group_name', type=str, help='Group Name', location='json', required=True)
-create_group_chat_parser.add_argument('member_emails', type=str, location='json', required=True, action='append', help='Member Email(s)')
+create_group_chat_parser.add_argument(
+    'participant_info',
+    type=list,
+    action='append',
+    location='json',
+    required=True,
+    help='List of participant emails and types'
+)
 
 class CreateGroupChatEndpoint(Resource):
     @api.doc(
@@ -265,8 +295,18 @@ class CreateGroupChatEndpoint(Resource):
             Example request JSON:
 
             {
+                "initiator_type": "user",
                 "group_name": "The Three Musketeers",
-                "member_emails": ["foo2@gmail.com", "bar@gmail.com"]
+                "participant_info": [
+                    {
+                        "participant_email": "mobilearn_matthew@gmail.com",
+                        "participant_type": "user"
+                    },
+                    {
+                        "participant_email": "mobilearn_gerard@gmail.com",
+                        "participant_type": "user"
+                    }
+                ]
             }
             """
     )
@@ -275,18 +315,20 @@ class CreateGroupChatEndpoint(Resource):
     def post(self):
         """ Create group chat between one or more emails """
         data = request.get_json()
+        initiator_type = data.get('initiator_type')
         group_name = data.get('group_name')
-        member_emails = data.get('member_emails')
+        participant_info = data.get('participant_info', [])
         
-        current_email = get_jwt_identity()
+        initiator_email = get_jwt_identity()
 
         with session_scope() as session:
             try:
                 group_chat = ChatService.create_group_chat(
                     session,
                     group_name=group_name,
-                    initiator_email=current_email,
-                    member_emails=member_emails
+                    initiator_email=initiator_email,
+                    initiator_type=initiator_type,
+                    participant_info=participant_info
                 )
                 return Response(
                     json.dumps({
@@ -306,6 +348,7 @@ class CreateGroupChatEndpoint(Resource):
                 )
 
 edit_group_chat_name_parser = api.parser()
+edit_group_chat_name_parser.add_argument('participant_type', type=str, help='Participant Type', location='json', required=True)
 edit_group_chat_name_parser.add_argument('chat_id', type=int, help='Chat ID', location='json', required=True)
 edit_group_chat_name_parser.add_argument('new_group_name', type=str, help='New Group Name', location='json', required=True)
 
@@ -329,6 +372,7 @@ class EditGroupChatNameEndpoint(Resource):
             Example request JSON:
 
             {
+                "participant_type": "user",
                 "chat_id": 1,
                 "new_group_name": "The Three Slaves"
             }
@@ -339,16 +383,19 @@ class EditGroupChatNameEndpoint(Resource):
     def post(self):
         """ Edit group chat name """
         data = request.get_json()
+        participant_type = data.get('participant_type')
         chat_id = data.get('chat_id')
         new_group_name = data.get('new_group_name')
         
-        current_email = get_jwt_identity()
+        participant_email = get_jwt_identity()
 
         with session_scope() as session:
             try:
-                if not ChatService.check_admin(session, current_email, chat_id):
+                if not ChatService.check_admin(session, participant_email, participant_type, chat_id):
                     raise ValueError('You are not an admin of this chat')
+                
                 Chat.change_name(session, chat_id, new_group_name)
+                
                 return Response(
                     json.dumps({'message': 'Group chat name successfully updated'}),
                     status=200, mimetype='application/json'
@@ -365,6 +412,7 @@ class EditGroupChatNameEndpoint(Resource):
                 )
 
 edit_group_chat_picture_parser = api.parser()
+edit_group_chat_picture_parser.add_argument('participant_type', type=str, help='Participant Type', location='form', required=True)
 edit_group_chat_picture_parser.add_argument('chat_id', type=int, help='Chat ID', location='form', required=True)
 edit_group_chat_picture_parser.add_argument('new_picture', type=FileStorage, location='files', required=True)
 
@@ -389,19 +437,21 @@ class EditGroupChatPictureEndpoint(Resource):
     @jwt_required()
     def post(self):
         """ Edit group chat picture """
+        participant_type = request.form.get('participant_type')
         chat_id = request.form.get('chat_id')
         file = request.files.get('new_picture')
 
-        current_email = get_jwt_identity()
+        participant_email = get_jwt_identity()
 
         with session_scope() as session:
             try:
-                if not ChatService.check_admin(session, current_email, chat_id):
+                if not ChatService.check_admin(session, participant_email, participant_type, chat_id):
                     raise ValueError('You are not an admin of this chat')
                 
                 new_chat_picture_url = upload_file(file, f'chat_{chat_id}')
 
                 Chat.change_chat_picture(session, chat_id, new_chat_picture_url)
+
                 return Response(
                     json.dumps({'message': 'Group chat picture successfully updated'}),
                     status=200, mimetype='application/json'
@@ -417,18 +467,19 @@ class EditGroupChatPictureEndpoint(Resource):
                     status=500, mimetype='application/json'
                 )
 
-add_group_chat_member_parser = api.parser()
-add_group_chat_member_parser.add_argument('chat_id', type=int, help='Chat ID', location='json', required=True)
-add_group_chat_member_parser.add_argument(
-    'new_member_emails',
+add_group_chat_participant_parser = api.parser()
+add_group_chat_participant_parser.add_argument('initiator_type', type=str, help='Initiator Type', location='json', required=True)
+add_group_chat_participant_parser.add_argument('chat_id', type=int, help='Chat ID', location='json', required=True)
+add_group_chat_participant_parser.add_argument(
+    'new_participant_info',
     type=list,
     action='append',
-    help='New Member Emails',
+    help='New participant emails and types',
     location='json',
     required=True
 )
 
-class AddGroupChatMembersEndpoint(Resource):
+class AddGroupChatParticipantsEndpoint(Resource):
     @api.doc(
         responses={
             200: 'Ok',
@@ -448,33 +499,40 @@ class AddGroupChatMembersEndpoint(Resource):
             Example request JSON:
 
             {
+                "initiator_type": "user",
                 "chat_id": 1,
-                "new_member_emails": ["bar2@gmail.com"]
+                "new_participant_info": [
+                    {
+                        "participant_email": "scott_piper@edu.com",
+                        "participant_type": "instructor"
+                    }
+                ]
             }
             """
     )
-    @api.expect(add_group_chat_member_parser)
+    @api.expect(add_group_chat_participant_parser)
     @jwt_required()
     def post(self):
         """
-        Add member(s) to group chat
-        Only admins can add members
+        Add participant(s) to group chat
+        Only admins can add participants
         """
         data = request.get_json()
+        initiator_type = data.get('initiator_type')
         chat_id = data.get('chat_id')
-        new_member_emails = data.get('new_member_emails')
+        new_participant_info = data.get('new_participant_info', [])
         
-        current_email = get_jwt_identity()
+        initiator_email = get_jwt_identity()
 
         with session_scope() as session:
             try:
-                if not ChatService.check_admin(session, current_email, chat_id):
+                if not ChatService.check_admin(session, initiator_email, initiator_type, chat_id):
                     raise ValueError('You are not an admin of this chat')
                 
-                for member_email in new_member_emails:
-                    ChatService.add_user_to_chat(session, chat_id, member_email)
+                for participant in new_participant_info:
+                    ChatService.add_participant_to_chat(session, chat_id, participant['participant_email'], participant['participant_type'])
                 return Response(
-                    json.dumps({'message': 'Member(s) successfully added to group chat'}),
+                    json.dumps({'message': 'Participant(s) successfully added to group chat'}),
                     status=200, mimetype='application/json'
                 )
             except ValueError as ee:
@@ -488,11 +546,12 @@ class AddGroupChatMembersEndpoint(Resource):
                     status=500, mimetype='application/json'
                 )
 
-remove_group_chat_member_parser = api.parser()
-remove_group_chat_member_parser.add_argument('chat_id', type=int, help='Chat ID', location='json', required=True)
-remove_group_chat_member_parser.add_argument('member_id', type=int, help='Member ID', location='json', required=True)
+remove_group_chat_participant_parser = api.parser()
+remove_group_chat_participant_parser.add_argument('chat_id', type=int, help='Chat ID', location='json', required=True)
+remove_group_chat_participant_parser.add_argument('participant_email', type=str, help='Participant Email', location='json', required=True)
+remove_group_chat_participant_parser.add_argument('participant_type', type=str, help='Participant Type', location='json', required=True)
 
-class RemoveGroupChatMemberEndpoint(Resource):
+class RemoveGroupChatParticipantEndpoint(Resource):
     @api.doc(
         responses={
             200: 'Ok',
@@ -513,29 +572,32 @@ class RemoveGroupChatMemberEndpoint(Resource):
 
             {
                 "chat_id": 1,
-                "member_id": 1
+                "participant_email": "scott_piper@edu.com",
+                "participant_type": "instructor"
             }
             """
     )
-    @api.expect(remove_group_chat_member_parser)
+    @api.expect(remove_group_chat_participant_parser)
     @jwt_required()
     def post(self):
         """
-        Remove member from group chat
-        Admin can remove any member
+        Remove participant from group chat
+        Admin can remove any participant
         Anybody can remove themselves from a group chat
         """
         data = request.get_json()
         chat_id = data.get('chat_id')
-        member_id = data.get('member_id')
+        participant_email = data.get('participant_email')
+        participant_type = data.get('participant_type')
         
-        current_email = get_jwt_identity()
+        initiator_email = get_jwt_identity()
 
         with session_scope() as session:
             try:
-                ChatService.remove_user_from_chat(session, chat_id, member_id)
+                ChatService.remove_participant_from_chat(session, chat_id, participant_email, participant_type)
+
                 return Response(
-                    json.dumps({'message': 'Member successfully removed from group chat'}),
+                    json.dumps({'message': 'Participant successfully removed from group chat'}),
                     status=200, mimetype='application/json'
                 )
             except ValueError as ee:
@@ -550,8 +612,10 @@ class RemoveGroupChatMemberEndpoint(Resource):
                 )
 
 elevate_group_chat_admin_parser = api.parser()
+elevate_group_chat_admin_parser.add_argument('initiator_type', type=str, help='Initiator Type', location='json', required=True)
 elevate_group_chat_admin_parser.add_argument('chat_id', type=int, help='Chat ID', location='json', required=True)
-elevate_group_chat_admin_parser.add_argument('member_id', type=int, help='Member ID', location='json', required=True)
+elevate_group_chat_admin_parser.add_argument('participant_email', type=str, help='Participant Email', location='json', required=True)
+elevate_group_chat_admin_parser.add_argument('participant_type', type=str, help='Participant Type', location='json', required=True)
 
 class ElevateGroupChatAdminEndpoint(Resource):
     @api.doc(
@@ -573,8 +637,10 @@ class ElevateGroupChatAdminEndpoint(Resource):
             Example request JSON:
 
             {
+                "initiator_type": "user",
                 "chat_id": 1,
-                "member_id": 1
+                "participant_email": "mobilearn_gerard@gmail.com",
+                "participant_type": "user"
             }
             """
     )
@@ -582,23 +648,26 @@ class ElevateGroupChatAdminEndpoint(Resource):
     @jwt_required()
     def post(self):
         """
-        Elevate member to admin in group chat
-        Only admins can elevate members to admin
+        Elevate participant to admin in group chat
+        Only admins can elevate participants to admin
         """
         data = request.get_json()
+        initiator_type = data.get('initiator_type')
         chat_id = data.get('chat_id')
-        member_id = data.get('member_id')
+        participant_email = data.get('participant_email')
+        participant_type = data.get('participant_type')
         
-        current_email = get_jwt_identity()
+        initiator_email = get_jwt_identity()
 
         with session_scope() as session:
             try:
-                if not ChatService.check_admin(session, current_email, chat_id):
+                if not ChatService.check_admin(session, initiator_email, initiator_type, chat_id):
                     raise ValueError('You are not an admin of this chat')
                 
-                ChatService.elevate_member_to_admin(session, chat_id, member_id)
+                ChatService.elevate_participant_to_admin(session, chat_id, participant_email, participant_type)
+
                 return Response(
-                    json.dumps({'message': 'Member successfully elevated to admin in group chat'}),
+                    json.dumps({'message': 'Participant successfully elevated to admin in group chat'}),
                     status=200, mimetype='application/json'
                 )
             except ValueError as ee:

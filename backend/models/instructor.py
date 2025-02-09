@@ -9,6 +9,7 @@ from enums.gender import GENDER
 from enums.status import STATUS
 from models.offer import Offer
 from models.community import Community
+from models.chat_participant import ChatParticipant
 
 class Instructor(Base):
     __tablename__ = 'instructors'
