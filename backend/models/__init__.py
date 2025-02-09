@@ -1,6 +1,7 @@
 from .token import TokenBlocklist
 from .user import User
 from .instructor import Instructor
+from .chat_participant import ChatParticipant
 from .chat import Chat
 from .message import Message
 from .channel import Channel

@@ -14,7 +14,8 @@ from models.chat import Chat
 from models.message import Message
 from services.chat_services import ChatService
 
-active_users = {} # {chat_id: set(user_emails)}
+active_users = {} # {chat_id: set(chat_participant_id)}
+# Check for removed chat participants
 
 @socketio.on('connect')
 def handle_connect():
@@ -37,7 +38,7 @@ def handle_join_chat(data):
     active_users[chat_id].add(user_email)
 
     with session_scope() as session:
-        ChatService.update_last_read(session, user_email, chat_id)
+        ChatService.update_last_read(session, chat_id, chat_participant_id)
 
     emit('user_joined', {'user_email': user_email}, room=chat_id)
 
@@ -55,7 +56,7 @@ def handle_leave_chat(data):
             del active_users[chat_id]
     
     with session_scope() as session:
-        ChatService.update_last_read(session, user_email, chat_id)
+        ChatService.update_last_read(session, chat_id, chat_participant_id)
 
     # emit('user_left', {'user_email': user_email}, room=chat_id)
 
@@ -91,7 +92,7 @@ def handle_send_message(data):
         if chat_id in active_users:
             for email in active_users[chat_id]:
                 if email != user_email:
-                    ChatService.update_last_read(session, email, chat_id)
+                    ChatService.update_last_read(session, chat_id, chat_participant_id)
 
     emit('message_sent', {
         'message_id': new_message.id,
@@ -127,7 +128,7 @@ class GetChatMessagesEndpoint(Resource):
         }
     )
     @jwt_required()
-    def get(self, chat_id):
+    def get(self, chat_id, chat_participant_id):
         """ Get paginated chat messages """
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 50))
@@ -139,17 +140,19 @@ class GetChatMessagesEndpoint(Resource):
         try:
             messages = ChatService.get_chat_messages(
                 session,
-                initiator_email=current_email,
                 chat_id=chat_id,
                 page=page,
                 per_page=per_page
             )
+
+            ChatService.update_last_read(session, chat_id, chat_participant_id)
+
             return Response(
                 json.dumps({'messages': [{
-                    'id': message.id,
-                    'sender_id': message.sender_id,
+                    'message_id': message.id,
+                    'chat_participant_id': message.sender_id,
                     'content': message.content,
-                    'timestamp': message.timestamp
+                    'timestamp': message.timestamp.isoformat()
                 } for message in messages]}),
                 status=200, mimetype='application/json'
             )

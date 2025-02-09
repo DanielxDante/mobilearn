@@ -13,8 +13,7 @@ from models.enrollment import Enrollment
 from models.favourite import Favourite
 from models.lesson_completion import LessonCompletion
 from models.homework_submission import HomeworkSubmission
-from models.user_chat import UserChat
-from models.message import Message
+from models.chat_participant import ChatParticipant
 
 class User(Base):
     __tablename__ = 'users'
@@ -34,12 +33,6 @@ class User(Base):
     status = Column(Enum(STATUS, name="status_enum"), nullable=False, default=STATUS.ACTIVE)
     reset_token = Column(String, nullable=True)
     reset_token_expiry = Column(DateTime(timezone=True), nullable=True)
-
-    # Many-to-many relationship with Chat
-    chats = relationship("Chat", secondary="user_chats", back_populates="users")
-
-    # Many-to-one relationship with Message
-    sent_messages = relationship("Message", back_populates="sender", cascade="all, delete-orphan")
 
     # Many-to=many relationship with Channel
     channels = relationship("Channel", secondary="user_channels", back_populates="users")

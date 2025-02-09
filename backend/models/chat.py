@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, Boolean, String, DateTime, func
 from sqlalchemy.orm import relationship
+
 from database import Base
 
 class Chat(Base):
@@ -11,8 +12,8 @@ class Chat(Base):
     chat_picture_url = Column(String, nullable=True, default="") # null for private chats
     created = Column(DateTime(timezone=True), default=func.now(), nullable=False)
     
-    # Many-to-many relationship with User
-    users = relationship("User", secondary="user_chats", back_populates="chats")
+    # Many-to-many relationship with ChatParticipant
+    participants = relationship("ChatParticipant", back_populates="chat", cascade="all, delete-orphan")
 
     # Many-to-one relationship with Message
     messages = relationship("Message", back_populates="chat", cascade="all, delete-orphan")

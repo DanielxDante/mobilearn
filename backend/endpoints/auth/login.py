@@ -64,7 +64,7 @@ class UserLoginEndpoint(Resource):
                 # update latest_login
                 user.latest_login = func.now()
 
-                access_token = create_access_token(identity=email)
+                access_token = create_access_token(identity=email) # consider including more info in the token per industry standards
                 refresh_token = create_refresh_token(identity=email)
                 name = user.name
                 gender = user.gender
@@ -200,7 +200,10 @@ class UserForgetPasswordEndpoint(Resource):
     )
     @api.expect(userForgetPasswordParser)
     def post(self):
-        """ Initiates the password reset process for a user """
+        """ 
+        Initiates the password reset process for a user
+        NOTE: Only works for gmail accounts
+        """
         data = request.get_json()
         email = data.get('email')
         
@@ -332,7 +335,10 @@ class InstructorForgetPasswordEndpoint(Resource):
     )
     @api.expect(instructorForgetPasswordParser)
     def post(self):
-        """ Initiates the password reset process for an instructor """
+        """ 
+        Initiates the password reset process for an instructor
+        NOTE: Only works for gmail accounts
+        """
         data = request.get_json()
         email = data.get('email')
         
