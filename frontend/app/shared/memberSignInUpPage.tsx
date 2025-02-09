@@ -75,6 +75,13 @@ const SignUpPage = () => {
           }}
         ></Button>
       </View>
+      <Button
+          text="newPassword"
+          isBlue={false}
+          onPress={() => {
+            router.push("/shared/newPassword");
+          }}
+        ></Button>
     </View>
   );
 };
