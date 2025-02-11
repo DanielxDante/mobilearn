@@ -1,3 +1,4 @@
+from flask import current_app
 from sqlalchemy import or_, not_, func
 
 from models.course import Course, STATUS as COURSE_STATUS
@@ -14,6 +15,7 @@ from models.lesson import Lesson
 from models.chapter_lesson import ChapterLesson
 from models.lesson_completion import LessonCompletion
 from models.review import Review
+from utils.recommender_system import get_course_recommender
 
 class CourseServiceError(Exception):
     pass
@@ -82,9 +84,8 @@ class CourseService:
         return instructors
     
     @staticmethod
-    def get_recommended_courses(session, user_email, channel_id, page, per_page):
+    def get_recommended_courses(session, user_email, channel_id, page, per_page, recommendation_type='random'):
         """ Get recommended courses for the user """
-        # TODO: Implement a proper recommendation model and infer from it
         user = User.get_user_by_email(session, user_email)
         if not user:
             raise ValueError("User not found")
@@ -106,19 +107,58 @@ class CourseService:
                 Channel.id == channel_id,
                 Course.status == COURSE_STATUS.ACTIVE
             )
+            .order_by(Enrollment.enrolled.desc())
+            .all()
         )
 
-        courses = (
-            session.query(Course)
-            .join(Community)
-            .join(ChannelCommunity)
-            .join(Channel)
-            .filter(
-                Channel.id == channel_id,
-                not_(Course.id.in_([course.id for course in user_enrolled_courses])),
-                Course.status == COURSE_STATUS.ACTIVE,
+        if recommendation_type == 'random':
+            courses = (
+                session.query(Course)
+                .join(Community)
+                .join(ChannelCommunity)
+                .join(Channel)
+                .filter(
+                    Channel.id == channel_id,
+                    not_(Course.id.in_([course.id for course in user_enrolled_courses])),
+                    Course.status == COURSE_STATUS.ACTIVE,
+                )
             )
-        )
+        elif recommendation_type == 'content':
+            user_latest_enrolled_course_id = user_enrolled_courses[0].id if user_enrolled_courses else None
+
+            if user_latest_enrolled_course_id:
+                recommender = get_course_recommender()
+                recommended_course_ids = recommender.get_item_to_item_recommendations(
+                    user_latest_enrolled_course_id
+                )
+
+                courses = (
+                    session.query(Course)
+                    .join(Community)
+                    .join(ChannelCommunity)
+                    .join(Channel)
+                    .filter(
+                        Channel.id == channel_id,
+                        not_(Course.id.in_([course.id for course in user_enrolled_courses])),
+                        Course.status == COURSE_STATUS.ACTIVE,
+                    )
+                    .order_by(func.array_position(recommended_course_ids, Course.id))
+                )
+            else:
+                # cold start problem: fallback to random recommendation
+                courses = (
+                    session.query(Course)
+                    .join(Community)
+                    .join(ChannelCommunity)
+                    .join(Channel)
+                    .filter(
+                        Channel.id == channel_id,
+                        not_(Course.id.in_([course.id for course in user_enrolled_courses])),
+                        Course.status == COURSE_STATUS.ACTIVE,
+                    )
+                )
+        elif recommendation_type == 'collaborative':
+            pass
         
         paginated_courses = (
             courses

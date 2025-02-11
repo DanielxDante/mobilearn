@@ -70,6 +70,9 @@ class UserSignupEndpoint(Resource):
                     recipient_id=user.id,
                     recipient_type='user'
                 )
+
+                # TODO: add a default private chat between user and admin user
+
             except ValueError as ee:
                 return Response(
                     json.dumps({'message': str(ee)}),
@@ -169,6 +172,8 @@ class InstructorSignupEndpoint(Resource):
                     recipient_id=instructor.id,
                     recipient_type='instructor'
                 )
+
+                # TODO: add a default private chat between instructor and admin user
 
                 return Response(
                     json.dumps({'message': 'Instructor signup successful'}),

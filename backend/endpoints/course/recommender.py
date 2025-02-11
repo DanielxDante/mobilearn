@@ -9,7 +9,38 @@ from flask_jwt_extended import (
 from app import api
 from database import session_scope, create_session
 from services.course_services import CourseService
-from utils.recommender_system import CourseRecommender
+from utils.recommender_system import get_course_recommender
+        
+
+class RefreshRecommenderEndpoint(Resource):
+    @api.doc(
+        responses={
+            200: 'Ok',
+            401: 'Unauthorized',
+            500: 'Internal Server Error'
+        }
+    )
+    def get(self):
+        """ 
+        Refresh course recommender
+        If recommender is not trained, train it 
+        """
+        # TODO: create a ML pipeline to periodically train the recommender
+        session = create_session()
+
+        try:
+            _ = get_course_recommender()
+            return Response(
+                json.dumps({"message": "Recommender refreshed"}),
+                status=200, mimetype='application/json'
+            )
+        except Exception as e:
+            return Response(
+                json.dumps({"error": str(e)}),
+                status=500, mimetype='application/json'
+            )
+        finally:
+            session.close()
 
 class GetRecommendedCoursesEndpoint(Resource):
     @api.doc(
@@ -53,7 +84,8 @@ class GetRecommendedCoursesEndpoint(Resource):
                 user_email=current_email,
                 channel_id=channel_id,
                 page=page,
-                per_page=per_page
+                per_page=per_page,
+                recommendation_type='content'
             )
             course_info = [{
                 'id': course.id,
