@@ -11,8 +11,9 @@ from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO
 from flask_mail import Mail
 
-from database import db, init_db, check_db, create_tables, load_initial_data
+from database import db, init_db, check_db, create_tables, load_initial_data, create_session
 from models.token import TokenBlocklist
+
 
 logging = logging.getLogger(__name__)
 
@@ -67,7 +68,7 @@ init_db(app)
 
 def setup_environment():
     """ Setup flask app environment """
-    print(f"Setting up environment on {POSTGRES_HOST}...")
+    print(f"Setting up environment on {POSTGRES_HOST}.")
 
     with app.app_context():
         # do not import association tables
@@ -87,6 +88,9 @@ def setup_environment():
         check_db()
         create_tables()
         load_initial_data()
+
+        from utils.recommender_system import get_course_recommender
+        _ = get_course_recommender()
 
 def init_auth_endpoints():
     from endpoints.auth.signup import UserSignupEndpoint, InstructorSignupEndpoint
@@ -404,7 +408,24 @@ def init_chat_endpoints():
     ns_chat.add_resource(GetChatMessagesEndpoint, get_chat_messages_path)
 
 def init_analytics_endpoints():
-    pass
+    from endpoints.analytics.analytics import (
+        GetInstructorTotalLessons,
+        GetInstructorTotalEnrollments,
+        GetInstructorTotalReviews,
+        GetInstructorAverageCourseProgress
+    )
+
+    get_instructor_total_lessons_path = f"/{VERSION}/instructor/totalLessons"
+    ns_analytics.add_resource(GetInstructorTotalLessons, get_instructor_total_lessons_path)
+
+    get_instructor_total_enrollments_path = f"/{VERSION}/instructor/totalEnrollments/<string:time_range>"
+    ns_analytics.add_resource(GetInstructorTotalEnrollments, get_instructor_total_enrollments_path)
+
+    get_instructor_total_reviews_path = f"/{VERSION}/instructor/totalReviews/<string:time_range>"
+    ns_analytics.add_resource(GetInstructorTotalReviews, get_instructor_total_reviews_path)
+
+    get_instructor_average_course_progress_path = f"/{VERSION}/instructor/averageCourseProgress/<string:time_range>"
+    ns_analytics.add_resource(GetInstructorAverageCourseProgress, get_instructor_average_course_progress_path)
 
 def init_payment_endpoints():
     from endpoints.payment.stripe import FetchPaymentSheetEndpoint
@@ -488,7 +509,7 @@ def init():
 
     init_internal_endpoints()
     api.add_namespace(ns_internal)
-    
+
     return app
 
 @jwt.token_in_blocklist_loader
@@ -506,4 +527,4 @@ def handle_preflight():
 
 if __name__ == '__main__':
     # consider changing to using gunicorn runtime server for production
-    socketio.run(init(), host="0.0.0.0", port=8080, debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(init(), host="0.0.0.0", port=8080, debug=False, use_reloader=False, allow_unsafe_werkzeug=True)

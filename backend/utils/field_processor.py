@@ -24,6 +24,7 @@ class FieldProcessor:
     def __init__(self):
         # Download required NLTK data
         nltk.download('punkt')
+        nltk.download('punkt_tab')
         nltk.download('averaged_perceptron_tagger')
         nltk.download('wordnet')
 
@@ -64,10 +65,7 @@ class FieldProcessor:
     def encode_categorical_fields(self, df, columns):
         """ Encode categorical fields using OneHotEncoder """
         # create one-hot encoder
-        encoder = OneHotEncoder(
-            sparse=False,
-            handle_unknown='ignore'
-        )
+        encoder = OneHotEncoder(handle_unknown='ignore')
 
         # fit and transform data
         encoded_data = encoder.fit_transform(df[columns])
@@ -83,7 +81,7 @@ class FieldProcessor:
         encoded_df = pd.concat([
             encoded_df,
             pd.DataFrame(
-                encoded_data,
+                encoded_data.toarray(),
                 columns=feature_names
             )
         ], axis=1)

@@ -13,6 +13,7 @@ from models.user import User
 from models.chat import Chat
 from models.message import Message
 from services.chat_services import ChatService
+from services.notification_services import NotificationService
 
 active_users = {} # {chat_id: set(chat_participant_id)}
 # Check for removed chat participants

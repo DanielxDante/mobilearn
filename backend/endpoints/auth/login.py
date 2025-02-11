@@ -128,6 +128,12 @@ class InstructorLoginEndpoint(Resource):
             try:
                 instructor = Instructor.get_instructor_by_email(session, email)
 
+                if not instructor or not Bcrypt().check_password_hash(instructor.password_hash, password):
+                    return Response(
+                        json.dumps({'message': 'Invalid credentials'}),
+                        status=400, mimetype='application/json'
+                    )
+
                 if instructor.status == STATUS.DISABLED:
                     return Response(
                         json.dumps({'message': 'Instructor disabled'}),
