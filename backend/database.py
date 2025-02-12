@@ -49,7 +49,7 @@ def create_session():
 @contextmanager
 def session_scope():
     """ 
-    Provide a scope around a series of operations   
+    Provide a scope around a series of operations
     Used for POST requests
     """
     session = create_session()

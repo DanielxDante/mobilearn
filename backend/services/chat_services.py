@@ -245,7 +245,7 @@ class ChatService:
             other_participant = Instructor.get_instructor_by_email(session, participant_email)
         if not other_participant:
             raise ValueError(f'Chat participant with email {participant_email} not found')
-        
+
         existing_chat = (
             session.query(Chat)
             .join(ChatParticipant)
@@ -266,10 +266,10 @@ class ChatService:
             .having(func.count(ChatParticipant.participant_id) == 2)
             .first()
         )
-        
+
         if existing_chat:
             return existing_chat
-        
+
         new_chat = Chat.add_chat(
             session,
             is_group=False
@@ -288,7 +288,7 @@ class ChatService:
             is_admin=False
         )
         session.add_all([initiator_chat, other_participant_chat])
-        session.commit()
+        session.flush()
 
         return new_chat
 

@@ -5,7 +5,9 @@
 # Deep Learning to generate hash scores -> social media cases
 
 # Recommendation Models
-# Bert4Rec
+# implicit
+# spotlight
+# surprise
 
 # Predictive Quality Metrics
 # Precision
@@ -34,6 +36,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from scipy.sparse import csr_matrix
 
 from database import create_session
 from models.course import Course
@@ -275,6 +278,7 @@ class CourseRecommender:
             'categorical_features': categorical_features
         }
     
+    # Consider using difference distance metrics such as TF-IDF, Faiss, etc.
     def compute_item_similarity(self, feature_matrices, weights=None):
         """
         Compute item similarity matrix
@@ -289,7 +293,7 @@ class CourseRecommender:
                 'categorical': 0.15
             }
         
-        # Compute individual similarity matrices
+        # Compute individual similarity matrices through cosine similarity
         name_sim = cosine_similarity(feature_matrices['name_embeddings'])
         desc_sim = cosine_similarity(feature_matrices['description_embeddings'])
         skills_sim = cosine_similarity(feature_matrices['skills_embeddings'])
@@ -306,6 +310,10 @@ class CourseRecommender:
         )
         
         return weighted_sim
+    
+    def prepare_user_course_data(self):
+        """ Prepare user-course data for collaborative filtering """
+        pass
     
     def get_item_to_item_recommendations(
         self,
