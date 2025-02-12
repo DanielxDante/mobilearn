@@ -33,6 +33,17 @@ import {
   COMMUNITY_GET_INSTRUCTORS_URL,
   ACCOUNT_USER_GET_NOTIFICATIONS_URL,
   ACCOUNT_INSTRUCTOR_GET_NOTIFICATIONS_URL,
+  CHAT_ADD_GROUP_CHAT_PARTICIPANTS_URL,
+  CHAT_CREATE_GROUP_CHAT_URL,
+  CHAT_CREATE_PRIVATE_CHAT_URL,
+  CHAT_EDIT_GROUP_CHAT_NAME_URL,
+  CHAT_EDIT_GROUP_CHAT_PICTURE_URL,
+  CHAT_ELEVATE_PARTICIPANT_TO_ADMIN_URL,
+  CHAT_GET_CHAT_DETAILS_URL,
+  CHAT_GET_CHAT_MESSAGES_URL,
+  CHAT_GET_PARTICIPANT_CHATS_URL,
+  CHAT_REMOVE_GROUP_CHAT_PARTICIPANTS_URL,
+  CHAT_SEARCH_PARTICIPANTS_URL,
 } from "@/constants/routes";
 import Channel from "@/types/shared/Channel";
 import Course from "@/types/shared/Course/Course";
@@ -114,6 +125,66 @@ export interface AppState {
   getInstructors: (community_id: string) => Promise<Instructor[] | undefined>;
   getNotificationsUser: () => Promise<void>;
   getNotificationsInstructor: () => Promise<void>;
+  addGroupChatParticipants: (
+    initiator_type: string, 
+    chat_id: number, 
+    new_participant_info: {
+      participant_email: string,
+      participant_type: string,
+    }[]) => Promise<boolean | string>;
+  createGroupChat: (
+    initiator_type: string,
+    group_name: string,
+    participant_info: {
+      participant_email: string,
+      participant_type: string,
+    }[]
+  ) => Promise<string | number>;
+  createPrivateChat: (
+    initiator_type: string,
+    participant_email: string,
+    participant_type: string,
+  ) => Promise<string | number>;
+  editGroupChatName: (
+    participant_type: string,
+    chat_id: number,
+    new_group_name: string,
+  ) => Promise<boolean | string>;
+  editGroupChatPicture: (
+    participant_type: string,
+    chat_id: number,
+    new_picture: File,
+  ) => Promise<Boolean | string>;
+  elevateParticipantToAdmin: (
+    initiator_type: string,
+    chat_id: number,
+    participant_email: string,
+    participant_type: string,
+  ) => Promise<Boolean | string>;
+  getChatDetails: (
+    initiator_type: string,
+    chat_id: number,
+  ) => Promise<any>;
+  getChatMessages: (
+    chat_id: string,
+    chat_participant_id: string,
+    page?: string,
+    per_page?: string,
+  ) => Promise<string[]>;
+  getParticipantChats: (
+    participant_type: string,
+  ) => Promise<any>;
+  removeGroupChatParticipant: (
+    chat_id: number,
+    participant_email: string,
+    participant_type: string,
+  ) => Promise<string | boolean>;
+  searchParticipants: (
+    participant_type: string,
+    search_term: string,
+    page?: string,
+    per_page?: string,
+  ) => Promise<any>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -887,6 +958,278 @@ export const useAppStore = create<AppState>()(
           });
         } catch (error: any) {
           console.error(error);
+        }
+      },
+      addGroupChatParticipants: async(initiator_type, chat_id, new_participant_info) => {
+        console.log(`(Store) Add Group Chat Participant(s) into chat: ${chat_id}`);
+        try {
+          const response = await axios.post(
+            CHAT_ADD_GROUP_CHAT_PARTICIPANTS_URL,
+            {
+              initiator_type, chat_id, new_participant_info
+            },
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status == 200) {
+            return true;
+          }
+        } catch (error: any) {
+          if (error.status == 400) {
+            return error.message;
+          }
+          console.error(error);
+          // Return boolean false if any unknown error
+          return false;
+        }
+      },
+      createGroupChat: async(initiator_type, group_name, participant_info) => {
+        console.log(`(Store) Create group chat: ${group_name}`);
+        try {
+          const response = await axios.post(
+            CHAT_CREATE_GROUP_CHAT_URL,
+            {
+              initiator_type, group_name, participant_info
+            },
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status == 200) {
+            return responseData.chat_id;
+          }
+        } catch (error: any) {
+          if (error.status == 400) {
+            return error.message;
+          }
+          console.error(error);
+          // Return string if there is any error
+          return "Unknown Error";
+        }
+      },
+      createPrivateChat: async(initiator_type, participant_email, participant_type) => {
+        console.log(`(Store) Create Private chat with: ${participant_email}`);
+        try {
+          const response = await axios.post(
+            CHAT_CREATE_PRIVATE_CHAT_URL,
+            {
+              initiator_type, participant_email, participant_type
+            },
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status == 200) {
+            return responseData.chat_id;
+          }
+        } catch (error: any) {
+          if (error.status == 400) {
+            return error.message;
+          }
+          console.error(error);
+          // Return string if there is any error
+          return "Unknown Error";
+        }
+      },
+      editGroupChatName: async (participant_type, chat_id, new_group_name) => {
+        console.log(`(Store) Edit Group Chat Name to: ${new_group_name}`);
+        try {
+          const response = await axios.post(
+            CHAT_EDIT_GROUP_CHAT_NAME_URL,
+            {
+              participant_type, chat_id, new_group_name
+            },
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status == 200) {
+            return true;
+          }
+        } catch (error: any) {
+          if (error.status == 400) {
+            return error.message;
+          }
+          console.error(error);
+          // Return string if there is any error
+          return "Unknown Error";
+        }
+      },
+      editGroupChatPicture: async (participant_type, chat_id, new_picture) => {
+        console.log(`(Store) Edit Group Chat Picture`);
+        try {
+          const response = await axios.post(
+            CHAT_EDIT_GROUP_CHAT_PICTURE_URL,
+            {
+              participant_type, chat_id, new_picture
+            },
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status == 200) {
+            return true;
+          }
+        } catch (error: any) {
+          if (error.status == 400) {
+            return error.message;
+          }
+          console.error(error);
+          // Return string if there is any error
+          return "Unknown Error";
+        }
+      },
+      elevateParticipantToAdmin: async (initiator_type, chat_id, participant_email, participant_type) => {
+        console.log(`(Store) Elevate Participant to admin`);
+        try {
+          const response = await axios.post(
+            CHAT_ELEVATE_PARTICIPANT_TO_ADMIN_URL,
+            {
+              initiator_type, chat_id, participant_email, participant_type
+            },
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status == 200) {
+            return true;
+          }
+        } catch (error: any) {
+          if (error.status == 400) {
+            return error.message;
+          }
+          console.error(error);
+          // Return string if there is any error
+          return "Unknown Error";
+        }
+      },
+      getChatDetails: async (initiator_type, chat_id) => {
+        console.log(`(Store) Get Chat Details for id: ` + chat_id);
+        try {
+          const response = await axios.get(
+            `${CHAT_GET_CHAT_DETAILS_URL}/${initiator_type}/${chat_id}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status == 200) {
+            return responseData.chat_info;
+          }
+        } catch (error: any) {
+          if (error.status == 400) {
+            return error.message;
+          } else if (error.status == 404) {
+            return error.message;
+          }
+          console.error(error);
+          // Return string if there is any error
+          return "Unknown Error";
+        }
+      },
+      getChatMessages: async (chat_id, chat_participant_id, page?, per_page?) => {
+        console.log(`(Store) Get Chat Messages for chat_id: ` + chat_id);
+        try {
+          const response = await axios.get(
+            `${CHAT_GET_CHAT_MESSAGES_URL}/${chat_id}/${chat_participant_id}`,
+            {
+              params: { page, per_page, },
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status == 200) {
+            return responseData.messages;
+          }
+        } catch (error: any) {
+          if (error.status == 400) {
+            return error.message;
+          } else if (error.status == 404) {
+            return error.message;
+          }
+          console.error(error);
+          // Return string if there is any error
+          return "Unknown Error";
+        }
+      },
+      getParticipantChats: async (participant_type) => {
+        console.log(`(Store) Get Participant Chats`);
+        try {
+          const response = await axios.get(
+            `${CHAT_GET_PARTICIPANT_CHATS_URL}/${participant_type}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status == 200) {
+            return responseData.chats;
+          }
+        } catch (error: any) {
+          if (error.status == 400) {
+            return error.message;
+          } else if (error.status == 404) {
+            return error.message;
+          }
+          console.error(error);
+          // Return string if there is any error
+          return "Unknown Error";
+        }
+      },
+      removeGroupChatParticipant: async (chat_id, participant_email, participant_type) => {
+        console.log(`(Store) Remove Group Chat Participant`);
+        try {
+          const response = await axios.post(
+            `${CHAT_REMOVE_GROUP_CHAT_PARTICIPANTS_URL}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status == 200) {
+            return true;
+          }
+        } catch (error: any) {
+          if (error.status == 400) {
+            return error.message;
+          } else if (error.status == 404) {
+            return error.message;
+          }
+          console.error(error);
+          // Return string if there is any error
+          return "Unknown Error";
+        }
+      },
+      searchParticipants: async (participant_type, search_term, page?, per_page?) => {
+        console.log(`(Store) Search for all participants`);
+        try {
+          const response = await axios.get(
+            `${CHAT_SEARCH_PARTICIPANTS_URL}`,
+            {
+              params: { participant_type, search_term, page, per_page },
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status == 200) {
+            return responseData.participants;
+          }
+        } catch (error: any) {
+          if (error.status == 400) {
+            return error.message;
+          } else if (error.status == 404) {
+            return error.message;
+          }
+          console.error(error);
+          // Return string if there is any error
+          return "Unknown Error";
         }
       },
     }),
