@@ -5,14 +5,17 @@ import {
     Image,
     StyleSheet,
     ScrollView,
+    Alert,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { chat as Constants } from "@/constants/textConstants";
-import { router } from "expo-router";
+import { router, useSegments } from "expo-router";
 import { Colors } from "@/constants/colors";
 import { formatTime } from "@/components/DateFormatter";
+import useAppStore from "@/store/appStore";
+import useAuthStore from "@/store/authStore";
 
 interface ChatItemProps {
     name: string;
@@ -67,6 +70,37 @@ const handleOpenChat = () => {
 };
 
 const Chat = () => {
+    const getChats = useAppStore((state) => state.getParticipantChats);
+    const company = useAuthStore((state) => state.company); // Used to check if user or instructor
+    const [chats, setChats] = useState();
+
+    const segments = useSegments();
+    useEffect(() => {
+            const fetchChats = async () => {
+                try {
+                    let chatList
+                    if (company) {
+                        chatList = await getChats("instructor");
+                    } else {
+                        chatList = await getChats("user");
+                    }
+                    if (typeof(chatList) == 'string') {
+                        Alert.alert("Error", "Chats cannot be retrieved");
+                    } else {
+                        if (JSON.stringify(chatList) !== JSON.stringify(chats)) {
+                            setChats(chatList);
+                        }
+                    }
+                } catch (error: any) {
+                }
+                
+            }
+            const currentRoute = segments[segments.length - 1]
+            if (currentRoute === "chat") {
+                fetchChats();
+            }
+        }, [segments]);
+
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
