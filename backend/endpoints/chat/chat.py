@@ -128,7 +128,7 @@ class GetParticipantChatsEndpoint(Resource):
                 participant_type=participant_type
             )
             participant_chats.sort(
-                key=lambda x: datetime.datetime.fromisoformat(x['last_message_timestamp']),
+                key=lambda x: datetime.datetime.fromisoformat(x['latest_message_timestamp']) if x['latest_message_timestamp'] else datetime.datetime.min,
                 reverse=True
             )
             return Response(

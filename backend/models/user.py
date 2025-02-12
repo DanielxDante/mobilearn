@@ -1,6 +1,7 @@
 from sqlalchemy import Enum, Column, Integer, String, DateTime, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.exc import SQLAlchemyError
 from flask_bcrypt import Bcrypt
 
 from database import Base
@@ -68,8 +69,11 @@ class User(Base):
 
     @staticmethod
     def get_user_by_email(session, email):
-        return session.query(User).filter_by(email=email, status=STATUS.ACTIVE).first()
-    
+        try:
+            return session.query(User).filter_by(email=email, status=STATUS.ACTIVE).first()
+        except SQLAlchemyError:
+            return None
+
     @staticmethod
     def admin_get_user_by_email(session, email):
         """ Get user by email regardless of status """

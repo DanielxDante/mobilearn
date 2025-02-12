@@ -97,13 +97,17 @@ class ChatService:
         combined_chats_info.sort(key=lambda x: x['last_message_timestamp'], reverse=True)
 
         for chat in participant_chats:
+            chat_latest_message = ChatService.get_chat_latest_message(session, chat.id)
+
             if chat.is_group:
                 group_chats_info.append({
                     'chat_id': chat.id,
                     'is_group': True,
                     'chat_name': chat.name,
                     'chat_picture_url': chat.chat_picture_url,
-                    'last_message_timestamp': ChatService.get_chat_last_message_timestamp(session, chat.id),
+                    'latest_message_content': chat_latest_message.content if chat_latest_message else None,
+                    'latest_message_sender': chat_latest_message.sender.underlying_user.name if chat_latest_message else None,
+                    'latest_message_timestamp': chat_latest_message.timestamp.isoformat() if chat_latest_message else None,
                     'unread_count': ChatService.get_unread_count(session, participant.id, participant_type, chat.id)
                 })
             else:                
@@ -121,7 +125,9 @@ class ChatService:
                         'is_group': False,
                         'chat_name': other_participant.name,
                         'chat_picture_url': other_participant.profile_picture_url,
-                        'last_message_timestamp': ChatService.get_chat_last_message_timestamp(session, chat.id),
+                        'latest_message_content': chat_latest_message.content if chat_latest_message else None,
+                        'latest_message_sender': chat_latest_message.sender.underlying_user.name if chat_latest_message else None,
+                        'latest_message_timestamp': chat_latest_message.timestamp.isoformat() if chat_latest_message else None,
                         'unread_count': ChatService.get_unread_count(session, participant.id, participant_type, chat.id)
                     })
         
@@ -282,7 +288,7 @@ class ChatService:
             is_admin=False
         )
         session.add_all([initiator_chat, other_participant_chat])
-        session.flush()
+        session.commit()
 
         return new_chat
 
@@ -304,6 +310,7 @@ class ChatService:
             is_group=True,
             name=group_name
         )
+        session.flush()
 
         initiator_chat = ChatParticipant(
             chat_id=new_chat.id,
@@ -334,8 +341,9 @@ class ChatService:
                 participant_type=participant_type,
                 is_admin=False
             )
+
             session.add(other_participant_chat)
-        session.flush()
+            session.flush()
 
         return new_chat
 
@@ -467,20 +475,20 @@ class ChatService:
         return participant_chat
     
     @staticmethod
-    def get_chat_last_message_timestamp(session, chat_id):
-        """ Get the timestamp of the last message in a chat """
+    def get_chat_latest_message(session, chat_id):
+        """ Get the latest message in a chat """
         chat = Chat.get_chat_by_id(session, chat_id)
         if not chat:
             raise ValueError('Chat not found')
 
-        last_chat_message = (
+        lastest_chat_message = (
             session.query(Message)
             .filter_by(chat_id=chat.id)
             .order_by(Message.timestamp.desc())
             .first()
         )
 
-        return last_chat_message.timestamp.isoformat() if last_chat_message else chat.created.isoformat()
+        return lastest_chat_message if lastest_chat_message else None
     
     @staticmethod
     def get_unread_count(session, participant_id, participant_type, chat_id):

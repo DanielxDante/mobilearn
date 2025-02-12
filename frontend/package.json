@@ -1,7 +1,7 @@
 {
   "name": "mobilearn",
   "main": "expo-router/entry",
-  "description": "CREDITS: Gerard Sin, Matthew Ashok, Daniel Tay Jin Hong",
+  "description": "CREDITS: Gerard Sin, Matthew Ashok, Daniel Tay",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",

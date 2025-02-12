@@ -527,4 +527,4 @@ def handle_preflight():
 
 if __name__ == '__main__':
     # consider changing to using gunicorn runtime server for production
-    socketio.run(init(), host="0.0.0.0", port=8080, debug=False, use_reloader=False, allow_unsafe_werkzeug=True)
+    socketio.run(init(), host="0.0.0.0", port=8080, debug=False, use_reloader=True, allow_unsafe_werkzeug=True)

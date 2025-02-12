@@ -35,7 +35,6 @@ class Chat(Base):
         )
         
         session.add(new_chat)
-        session.flush()
 
         return new_chat
     
