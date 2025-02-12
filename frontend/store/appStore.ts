@@ -151,10 +151,8 @@ export interface AppState {
     new_group_name: string,
   ) => Promise<boolean | string>;
   editGroupChatPicture: (
-    participant_type: string,
-    chat_id: number,
-    new_picture: File,
-  ) => Promise<Boolean | string>;
+    new_picture: any,
+  ) => Promise<Boolean>;
   elevateParticipantToAdmin: (
     initiator_type: string,
     chat_id: number,
@@ -1060,29 +1058,25 @@ export const useAppStore = create<AppState>()(
           return "Unknown Error";
         }
       },
-      editGroupChatPicture: async (participant_type, chat_id, new_picture) => {
+      editGroupChatPicture: async (new_picture) => {
         console.log(`(Store) Edit Group Chat Picture`);
         try {
           const response = await axios.post(
             CHAT_EDIT_GROUP_CHAT_PICTURE_URL,
+            new_picture,
             {
-              participant_type, chat_id, new_picture
-            },
-            {
-              headers: { "Content-Type": "application/json" },
+              headers: { "Content-Type": "multipart/form-data" },
             }
           );
           const responseData = response.data;
           if (response.status == 200) {
             return true;
+          } else {
+            return false;
           }
         } catch (error: any) {
-          if (error.status == 400) {
-            return error.message;
-          }
-          console.error(error);
-          // Return string if there is any error
-          return "Unknown Error";
+          console.error(error.response);
+          return false;
         }
       },
       elevateParticipantToAdmin: async (initiator_type, chat_id, participant_email, participant_type) => {

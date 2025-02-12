@@ -1,4 +1,6 @@
-export const formatTime = (date: Date) => {
+export const formatTime = (dateString: string) => {
+
+    const date = new Date(dateString)
     const formatter = new Intl.DateTimeFormat("en-SG", {
         hour: "numeric",
         minute: "numeric",

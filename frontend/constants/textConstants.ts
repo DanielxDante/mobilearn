@@ -679,12 +679,15 @@ export const chat = {
   appBarTitle: "Chats",
   addChat: require("@/assets/images/addChat.png"),
   searchChat: require("@/assets/images/searchChat.png"),
+  noChatText: "No chats available. Start a conversation!",
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
 };
 
 export const chatChannel = {
   backButton: require("@/assets/images/notifications/backButton.png"),
   clipIcon: require("@/assets/images/icons/clipIcon.png"),
   msgInputPlaceholder: "Write a message...",
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
 };
 
 export const lessonContentPage = {
@@ -745,4 +748,11 @@ export const newPasswordPage = {
   placeholder1: "New Password",
   placeholder2: "Confirm Password",
   submitButton: "Reset Password",
+}
+
+export const privateChatDetails = {
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  email: 'Email: ',
+  editProfilePicture: require("@/assets/images/icons/editProfilePicture.png"),
 }

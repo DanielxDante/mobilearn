@@ -9,19 +9,20 @@ import {
     Dimensions,
     ImageBackground,
 } from "react-native";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/constants/colors";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView as RNScrollView } from "react-native";
 
 import { chatChannel as Constants } from "@/constants/textConstants";
 import { formatTime } from "@/components/DateFormatter";
+import useAppStore from "@/store/appStore";
 
 interface MsgProps {
     message: string;
     incoming: boolean; // if incoming==false, then msg is outgoing
-    date: Date;
+    date: string;
 }
 
 const MsgBubble: React.FC<MsgProps> = ({ message, incoming, date }) => {
@@ -41,16 +42,42 @@ const MsgBubble: React.FC<MsgProps> = ({ message, incoming, date }) => {
         </View>
     );
 };
-const ChatChannel = () => {
-    const name = "Ben Dover";
-    const profilePicture = require("@/assets/images/member_guest_images/blank_profile_pic.jpg");
+const PrivateChatChannel = () => {
+    const { chat_id } = useLocalSearchParams<{
+            chat_id: string,
+        }>();
+    const getChatDetails = useAppStore((state) => state.getChatDetails)
+    const [name, setName] = useState("");
+    const [profilePicture, setProfilePicture] = useState(Constants.default_profile_picture);
 
     const scrollViewRef = useRef<RNScrollView | null>(null);
+    useEffect(() => {
+        const fetchChatInfo = async () => {
+            const chat_info = await getChatDetails("user", Number(chat_id));
+            setName(chat_info.chat_name)
+            if (chat_info.chat_picture_url) {
+                setProfilePicture({uri: chat_info.chat_picture_url})
+            }
+            console.log(chat_info)
+        }
+        
+        fetchChatInfo();
+    }, [])
+
     useEffect(() => {
         setTimeout(() => {
             scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 1);
     }, []);
+
+    const openChatDetails = () => {
+        if (chat_id) {
+            router.push({
+                pathname: "/(member_guest)/chat/privateChatDetails",
+                params: {chat_id: chat_id}
+            })
+        }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -66,8 +93,10 @@ const ChatChannel = () => {
                         style={styles.backButton}
                     />
                 </TouchableOpacity>
-                <Image source={profilePicture} style={styles.profilePicture} />
-                <Text style={styles.name}>{name}</Text>
+                <TouchableOpacity onPress={openChatDetails} style={styles.chatChannelHeader}>
+                    <Image source={profilePicture} style={styles.profilePicture} />
+                    <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">{name}</Text>
+                </TouchableOpacity>
             </View>
             {/* Chat */}
             <View style={styles.chatBody}>
@@ -85,47 +114,47 @@ const ChatChannel = () => {
                         <MsgBubble
                             message="Hello! How are you?"
                             incoming={true}
-                            date={new Date(2025, 0, 4, 18, 34, 0, 0)}
+                            date={new Date(2025, 0, 4, 18, 34, 0, 0).toString()}
                         />
                         <MsgBubble
                             message="I'm great. How is your back?"
                             incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0)}
+                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
                         />
                         <MsgBubble
                             message="It's hurting real bad. I think I need to get it checked soon by a doctor. Maybe a chiropracter?"
                             incoming={true}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0)}
+                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
                         />
                         <MsgBubble
                             message="No worries, I am a licensed doctor, now just proceed to bend over."
                             incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0)}
+                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
                         />
                         <MsgBubble
                             message="test"
                             incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0)}
+                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
                         />
                         <MsgBubble
                             message="test"
                             incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0)}
+                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
                         />
                         <MsgBubble
                             message="test"
                             incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0)}
+                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
                         />
                         <MsgBubble
                             message="test"
                             incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0)}
+                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
                         />
                         <MsgBubble
                             message="test"
                             incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0)}
+                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
                         />
                     </ScrollView>
                 </ImageBackground>
@@ -179,6 +208,11 @@ const styles = StyleSheet.create({
         marginRight: 15,
         padding: 5,
     },
+    chatChannelHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        flex: 1,
+    },
     profilePicture: {
         height: 60,
         width: 60,
@@ -190,6 +224,8 @@ const styles = StyleSheet.create({
         marginLeft: 15,
         paddingBottom: 2,
         fontSize: 22,
+        flex: 1,
+        marginRight: 10,
     },
     chatBody: {
         flex: 1,
@@ -277,4 +313,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ChatChannel;
+export default PrivateChatChannel;
