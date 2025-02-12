@@ -2,6 +2,7 @@ from sqlalchemy import Enum, Column, Integer, String, DateTime, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.exc import SQLAlchemyError
 from flask_bcrypt import Bcrypt
 
 from database import Base
@@ -69,12 +70,15 @@ class Instructor(Base):
 
     @staticmethod
     def get_instructor_by_email(session, email):
-        return (
-            session.query(Instructor)
-            .filter_by(email=email)
-            .filter(Instructor.status.in_([STATUS.ACTIVE, STATUS.NOT_APPROVED]))
-            .first()
-        )
+        try:
+            return (
+                session.query(Instructor)
+                .filter_by(email=email)
+                .filter(Instructor.status.in_([STATUS.ACTIVE, STATUS.NOT_APPROVED]))
+                .first()
+            )
+        except SQLAlchemyError:
+            return None
     
     @staticmethod
     def admin_get_instructor_by_email(session, email):

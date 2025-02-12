@@ -43,7 +43,7 @@ def create_tables():
 
 def create_session():
     """ Create a session for apis """
-    session = sessionmaker(bind=db.engine)
+    session = sessionmaker(bind=db.engine) # use autoflush=False for more control and enable bulk operations with rollback
     return session()
 
 @contextmanager
@@ -56,7 +56,7 @@ def session_scope():
     try:
         yield session
         session.commit()
-    except:
+    except Exception:
         session.rollback()
         raise
     finally:
