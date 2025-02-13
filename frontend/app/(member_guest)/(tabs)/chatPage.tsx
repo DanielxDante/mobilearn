@@ -39,6 +39,19 @@ const ChatItem: React.FC<ChatItemProps> = ({
 }) => {
     const imageSource = profilePicture ?
     { uri: profilePicture } : Constants.default_profile_picture;
+    const handleOpenChat = (chat_id: number, isGroup: boolean) => {
+        if (isGroup) {
+            router.push({
+                pathname: "../chat/groupChatChannel",
+                params: {chat_id: chat_id.toString()}
+            });
+        } else {
+            router.push({
+                pathname: "../chat/privateChatChannel",
+                params: {chat_id: chat_id.toString()}
+            });
+        }
+    };
     return (
         <TouchableOpacity
             style={styles.chatItemContainer}
@@ -77,21 +90,6 @@ const ChatItem: React.FC<ChatItemProps> = ({
     );
 };
 
-const handleOpenChat = (chat_id: number, isGroup: boolean) => {
-    if (isGroup) {
-        router.push({
-            pathname: "../chat/groupChatChannel",
-            params: {chat_id: chat_id.toString()}
-        });
-    } else {
-        router.push({
-            pathname: "../chat/privateChatChannel",
-            params: {chat_id: chat_id.toString()}
-        });
-    }
-    
-};
-
 const ChatPage = () => {
     const getChats = useAppStore((state) => state.getParticipantChats);
     const company = useAuthStore((state) => state.company); // Used to check if user or instructor
@@ -123,7 +121,11 @@ const ChatPage = () => {
                 fetchChats();
             }
         }, [segments]);
-    console.log(chats);
+    
+    const handleSearchChat = () => {
+        router.push("/(member_guest)/chat/searchChat");
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
@@ -139,7 +141,7 @@ const ChatPage = () => {
                         style={styles.addChatButton}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.addChatContainer}>
+                <TouchableOpacity style={styles.addChatContainer} onPress={handleSearchChat}>
                     <Image
                         source={Constants.searchChat}
                         resizeMode="stretch"
