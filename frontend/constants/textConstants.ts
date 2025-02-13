@@ -756,3 +756,9 @@ export const privateChatDetails = {
   email: 'Email: ',
   editProfilePicture: require("@/assets/images/icons/editProfilePicture.png"),
 }
+
+export const searchChat = {
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  title: "Search",
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+}
