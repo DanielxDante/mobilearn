@@ -27,13 +27,6 @@ import {
   TOP_COURSES_SEE_ALL,
 } from "@/constants/pages";
 
-const statsData = [
-  { label: "Your Course", value: "23", description: "Lesson" },
-  { label: "Your Audience", value: "10,458", change: "-23.47%" },
-  { label: "Avg. Watch Time", value: "35 min", change: "+23.47%" },
-  { label: "Reviews", value: "20,254", change: "+23.47%" },
-];
-
 const newsData = [
   {
     title: "The Effects of Temperature on Enzyme Activity and Biology",
@@ -60,10 +53,22 @@ const Home = () => {
   const getNotifications = useAppStore(
     (state) => state.getNotificationsInstructor
   );
+  const statistics = useAppStore((state) => state.statistics) || {
+    total_lessons: 0,
+    total_enrollments: 0,
+    enrollments_percentage_change: 0,
+    average_course_progress: 0,
+    progress_percentage_change: 0,
+    total_reviews: 0,
+    reviews_percentage_change: 0,
+  };
+  const getStatistics = useAppStore((state) => state.getStatistics);
 
   const handleSelectCourse = useAppStore(
     (state) => state.handleInstructorSelectCourse
   );
+
+  const [timePeriod, setTimePeriod] = useState("week");
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -85,7 +90,8 @@ const Home = () => {
 
   useEffect(() => {
     //console.log("Notifications in homepage: ", notifications);
-  }, [notifications]);
+    getStatistics(timePeriod);
+  }, [notifications, timePeriod]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -113,7 +119,11 @@ const Home = () => {
       </View>
       <ScrollView>
         {/* Statistics */}
-        <Statistics stats={statsData} />
+        <Statistics
+          timePeriod={timePeriod}
+          setTimePeriod={setTimePeriod}
+          statistics={statistics}
+        />
         {/* Top Courses */}
         <View>
           <View style={styles.topCoursesHeader}>
@@ -154,13 +164,13 @@ const styles = StyleSheet.create({
   homePageHeader: {
     color: Colors.defaultBlue,
     fontFamily: "Inter-Regular",
-    marginLeft: 25,
+    marginLeft: 20,
     paddingBottom: 2,
     fontSize: 22,
     fontWeight: "bold",
   },
   notificationButton: {
-    padding: 12,
+    padding: 20,
     alignItems: "center",
     justifyContent: "center",
   },
