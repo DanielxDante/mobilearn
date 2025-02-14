@@ -28,6 +28,7 @@ import {
   COURSE_INSTRUCTOR_GET_PREVIEW_LESSON,
   COURSE_INSTRUCTOR_GET_COURSE_DETAILS,
   COURSE_INSTRUCTOR_EDIT_COURSE,
+  COURSE_INSTRUCTOR_COURSE_REVIEW,
   COMMUNITY_GET_COMMUNITIES_URL,
   COMMUNITY_GET_INSTRUCTOR_DETAILS_URL,
   COMMUNITY_GET_INSTRUCTORS_URL,
@@ -44,6 +45,10 @@ import {
   CHAT_GET_PARTICIPANT_CHATS_URL,
   CHAT_REMOVE_GROUP_CHAT_PARTICIPANTS_URL,
   CHAT_SEARCH_PARTICIPANTS_URL,
+  ANALYTICS_LESSONS,
+  ANALYTICS_ENROLLMENTS,
+  ANALYTICS_PROGRESS,
+  ANALYTICS_REVIEWS,
 } from "@/constants/routes";
 import Channel from "@/types/shared/Channel";
 import Course from "@/types/shared/Course/Course";
@@ -53,6 +58,7 @@ import Instructor from "@/types/shared/Course/Instructor";
 import { router } from "expo-router";
 import notification from "@/types/shared/notification";
 import { INSTRUCTOR_COURSE_DETAILS } from "@/constants/pages";
+import Statistics from "@/types/shared/statistics";
 
 export interface AppState {
   channels: Channel[]; // List of Channels that user has access to
@@ -65,6 +71,8 @@ export interface AppState {
   selectedCourse?: Course;
   instructorPreviewedLesson?: Lesson;
   notifications?: notification[];
+  statistics?: Statistics;
+  reviews?: any[];
   fetchPaymentSheet: (
     amount: string,
     currency: string
@@ -125,64 +133,60 @@ export interface AppState {
   getInstructors: (community_id: string) => Promise<Instructor[] | undefined>;
   getNotificationsUser: () => Promise<void>;
   getNotificationsInstructor: () => Promise<void>;
+  getCourseReview: (course_id: string) => Promise<void>;
   addGroupChatParticipants: (
-    initiator_type: string, 
-    chat_id: number, 
+    initiator_type: string,
+    chat_id: number,
     new_participant_info: {
-      participant_email: string,
-      participant_type: string,
-    }[]) => Promise<boolean | string>;
+      participant_email: string;
+      participant_type: string;
+    }[]
+  ) => Promise<boolean | string>;
   createGroupChat: (
     initiator_type: string,
     group_name: string,
     participant_info: {
-      participant_email: string,
-      participant_type: string,
+      participant_email: string;
+      participant_type: string;
     }[]
   ) => Promise<string | number>;
   createPrivateChat: (
     initiator_type: string,
     participant_email: string,
-    participant_type: string,
+    participant_type: string
   ) => Promise<string | number>;
   editGroupChatName: (
     participant_type: string,
     chat_id: number,
-    new_group_name: string,
+    new_group_name: string
   ) => Promise<boolean | string>;
-  editGroupChatPicture: (
-    new_picture: any,
-  ) => Promise<Boolean>;
+  editGroupChatPicture: (new_picture: any) => Promise<Boolean>;
   elevateParticipantToAdmin: (
     initiator_type: string,
     chat_id: number,
     participant_email: string,
-    participant_type: string,
+    participant_type: string
   ) => Promise<Boolean | string>;
-  getChatDetails: (
-    initiator_type: string,
-    chat_id: number,
-  ) => Promise<any>;
+  getChatDetails: (initiator_type: string, chat_id: number) => Promise<any>;
   getChatMessages: (
     chat_id: string,
     chat_participant_id: string,
     page?: string,
-    per_page?: string,
+    per_page?: string
   ) => Promise<string[]>;
-  getParticipantChats: (
-    participant_type: string,
-  ) => Promise<any>;
+  getParticipantChats: (participant_type: string) => Promise<any>;
   removeGroupChatParticipant: (
     chat_id: number,
     participant_email: string,
-    participant_type: string,
+    participant_type: string
   ) => Promise<string | boolean>;
   searchParticipants: (
     participant_type: string,
     search_term: string,
     page?: string,
-    per_page?: string,
+    per_page?: string
   ) => Promise<any>;
+  getStatistics: (time_period: string) => Promise<void>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -958,13 +962,21 @@ export const useAppStore = create<AppState>()(
           console.error(error);
         }
       },
-      addGroupChatParticipants: async(initiator_type, chat_id, new_participant_info) => {
-        console.log(`(Store) Add Group Chat Participant(s) into chat: ${chat_id}`);
+      addGroupChatParticipants: async (
+        initiator_type,
+        chat_id,
+        new_participant_info
+      ) => {
+        console.log(
+          `(Store) Add Group Chat Participant(s) into chat: ${chat_id}`
+        );
         try {
           const response = await axios.post(
             CHAT_ADD_GROUP_CHAT_PARTICIPANTS_URL,
             {
-              initiator_type, chat_id, new_participant_info
+              initiator_type,
+              chat_id,
+              new_participant_info,
             },
             {
               headers: { "Content-Type": "application/json" },
@@ -983,13 +995,15 @@ export const useAppStore = create<AppState>()(
           return false;
         }
       },
-      createGroupChat: async(initiator_type, group_name, participant_info) => {
+      createGroupChat: async (initiator_type, group_name, participant_info) => {
         console.log(`(Store) Create group chat: ${group_name}`);
         try {
           const response = await axios.post(
             CHAT_CREATE_GROUP_CHAT_URL,
             {
-              initiator_type, group_name, participant_info
+              initiator_type,
+              group_name,
+              participant_info,
             },
             {
               headers: { "Content-Type": "application/json" },
@@ -1008,13 +1022,19 @@ export const useAppStore = create<AppState>()(
           return "Unknown Error";
         }
       },
-      createPrivateChat: async(initiator_type, participant_email, participant_type) => {
+      createPrivateChat: async (
+        initiator_type,
+        participant_email,
+        participant_type
+      ) => {
         console.log(`(Store) Create Private chat with: ${participant_email}`);
         try {
           const response = await axios.post(
             CHAT_CREATE_PRIVATE_CHAT_URL,
             {
-              initiator_type, participant_email, participant_type
+              initiator_type,
+              participant_email,
+              participant_type,
             },
             {
               headers: { "Content-Type": "application/json" },
@@ -1039,7 +1059,9 @@ export const useAppStore = create<AppState>()(
           const response = await axios.post(
             CHAT_EDIT_GROUP_CHAT_NAME_URL,
             {
-              participant_type, chat_id, new_group_name
+              participant_type,
+              chat_id,
+              new_group_name,
             },
             {
               headers: { "Content-Type": "application/json" },
@@ -1079,13 +1101,21 @@ export const useAppStore = create<AppState>()(
           return false;
         }
       },
-      elevateParticipantToAdmin: async (initiator_type, chat_id, participant_email, participant_type) => {
+      elevateParticipantToAdmin: async (
+        initiator_type,
+        chat_id,
+        participant_email,
+        participant_type
+      ) => {
         console.log(`(Store) Elevate Participant to admin`);
         try {
           const response = await axios.post(
             CHAT_ELEVATE_PARTICIPANT_TO_ADMIN_URL,
             {
-              initiator_type, chat_id, participant_email, participant_type
+              initiator_type,
+              chat_id,
+              participant_email,
+              participant_type,
             },
             {
               headers: { "Content-Type": "application/json" },
@@ -1128,13 +1158,18 @@ export const useAppStore = create<AppState>()(
           return "Unknown Error";
         }
       },
-      getChatMessages: async (chat_id, chat_participant_id, page?, per_page?) => {
+      getChatMessages: async (
+        chat_id,
+        chat_participant_id,
+        page?,
+        per_page?
+      ) => {
         console.log(`(Store) Get Chat Messages for chat_id: ` + chat_id);
         try {
           const response = await axios.get(
             `${CHAT_GET_CHAT_MESSAGES_URL}/${chat_id}/${chat_participant_id}`,
             {
-              params: { page, per_page, },
+              params: { page, per_page },
               headers: { "Content-Type": "application/json" },
             }
           );
@@ -1177,7 +1212,11 @@ export const useAppStore = create<AppState>()(
           return "Unknown Error";
         }
       },
-      removeGroupChatParticipant: async (chat_id, participant_email, participant_type) => {
+      removeGroupChatParticipant: async (
+        chat_id,
+        participant_email,
+        participant_type
+      ) => {
         console.log(`(Store) Remove Group Chat Participant`);
         try {
           const response = await axios.post(
@@ -1201,16 +1240,18 @@ export const useAppStore = create<AppState>()(
           return "Unknown Error";
         }
       },
-      searchParticipants: async (participant_type, search_term, page?, per_page?) => {
+      searchParticipants: async (
+        participant_type,
+        search_term,
+        page?,
+        per_page?
+      ) => {
         console.log(`(Store) Search for all participants`);
         try {
-          const response = await axios.get(
-            `${CHAT_SEARCH_PARTICIPANTS_URL}`,
-            {
-              params: { participant_type, search_term, page, per_page },
-              headers: { "Content-Type": "application/json" },
-            }
-          );
+          const response = await axios.get(`${CHAT_SEARCH_PARTICIPANTS_URL}`, {
+            params: { participant_type, search_term, page, per_page },
+            headers: { "Content-Type": "application/json" },
+          });
           const responseData = response.data;
           if (response.status == 200) {
             return responseData.participants;
@@ -1224,6 +1265,79 @@ export const useAppStore = create<AppState>()(
           console.error(error);
           // Return string if there is any error
           return "Unknown Error";
+        }
+      },
+      getCourseReview: async (course_id) => {
+        console.log("(Store) Get Course Review for course: " + course_id);
+        try {
+          const response = await axios.get(
+            `${COURSE_INSTRUCTOR_COURSE_REVIEW}/${course_id}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = response.data;
+          if (response.status === 200) {
+            console.log("Course Review: ", responseData);
+            set({
+              reviews: responseData.reviews,
+            });
+            return responseData;
+          }
+        } catch (error: any) {
+          console.error(error.message);
+        }
+      },
+      getStatistics: async (timePeriod: string) => {
+        //console.log(`(Store) Get Statistics for ${timePeriod}`);
+        try {
+          // Construct API endpoints with timePeriod as a query parameter
+          const analyticsEndpoints = {
+            lessons: `${ANALYTICS_LESSONS}`,
+            enrollments: `${ANALYTICS_ENROLLMENTS}/${timePeriod}`,
+            progress: `${ANALYTICS_PROGRESS}/${timePeriod}`,
+            reviews: `${ANALYTICS_REVIEWS}/${timePeriod}`,
+          };
+          console.log("Analytics Endpoints: ", analyticsEndpoints);
+
+          // Fetch all statistics concurrently
+          const [lessonsRes, enrollmentsRes, progressRes, reviewsRes] =
+            await Promise.all([
+              axios.get(analyticsEndpoints.lessons, {
+                headers: { "Content-Type": "application/json" },
+              }),
+              axios.get(analyticsEndpoints.enrollments, {
+                headers: { "Content-Type": "application/json" },
+              }),
+              axios.get(analyticsEndpoints.progress, {
+                headers: { "Content-Type": "application/json" },
+              }),
+              axios.get(analyticsEndpoints.reviews, {
+                headers: { "Content-Type": "application/json" },
+              }),
+            ]);
+
+          // Construct statistics object
+          const statistics = {
+            average_course_progress:
+              progressRes?.data?.average_course_progress ?? 0,
+            progress_percentage_change:
+              progressRes?.data?.percentage_change ?? 0,
+            total_enrollments: enrollmentsRes?.data?.total_enrollments ?? 0,
+            enrollments_percentage_change:
+              enrollmentsRes?.data?.percentage_change ?? 0,
+            total_lessons: lessonsRes?.data?.total_lessons ?? 0,
+            total_reviews: reviewsRes?.data?.total_reviews ?? 0,
+            reviews_percentage_change: reviewsRes?.data?.percentage_change ?? 0,
+          };
+
+          // Update the store
+          set({ statistics });
+        } catch (error) {
+          console.error(
+            `Error fetching statistics for ${timePeriod}:`,
+            (error as any).message
+          );
         }
       },
     }),
