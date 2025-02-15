@@ -145,6 +145,7 @@ export const signUpPageConstants = {
   invalidCredentialsAlert:
     "Please check your email and password and try again.",
   errorSigningUpAlert: "An error occurred while signing up.",
+  emailInUseAlert: "The email is already in use.",
 };
 
 export const instructorSignUpPageConstants = {
@@ -211,7 +212,7 @@ export const instructorSignUpPageConstants = {
   ],
   inputsEmptyAlert: "Please fill in all fields.",
   passwordMismatchAlert: "Passwords do not match.",
-  errorSigningUpAlert: "An error occurred while signing up.",
+  errorSigningUpAlert: "The email is already in use.",
   regButtonText: "Register",
   accountDisabledAlert: "Your account has been disabled.",
   invalidCredentialsAlert:
