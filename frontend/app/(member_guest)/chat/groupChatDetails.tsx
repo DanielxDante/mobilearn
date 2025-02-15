@@ -1,24 +1,26 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 
 import useAppStore from '@/store/appStore';
-import { privateChatDetails as Constants } from "@/constants/textConstants";
+import { groupChatDetails as Constants } from "@/constants/textConstants";
 import { Colors } from '@/constants/colors';
 import Participant from '@/types/shared/Participant';
 
 const GroupChatDetails = () => {
     const getChatDetails = useAppStore((state) => state.getChatDetails);
     const editGroupChatPicture = useAppStore((state) => state.editGroupChatPicture);
+    const editGroupChatName = useAppStore((state) => state.editGroupChatName);
     const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
+    const [editingName, setEditingName] = useState(false);
     const [participants, setParticipants] = useState<Participant[]>();
     const [profilePicture, setProfilePicture] = useState(Constants.default_profile_picture);
     const { chat_id } = useLocalSearchParams<{
                 chat_id: string,
             }>();
+
     const fetchChatInfo = async () => {
         const chat_info = await getChatDetails("user", Number(chat_id));
         setName(chat_info.chat_name);
@@ -32,6 +34,13 @@ const GroupChatDetails = () => {
     useEffect(() => {
         fetchChatInfo();
     }, [])
+
+    const handleEditButton = async () => {
+        setEditingName((prev) => !prev);
+        if (editingName) {
+            await editGroupChatName("user", Number(chat_id), name);
+        }
+    }
 
     const handleEditProfilePicture = async () => {
         try {
@@ -137,21 +146,51 @@ const GroupChatDetails = () => {
                             />
                             </View>
                     </TouchableOpacity>
-                    <Text style={styles.name}>{name}</Text>
+                    <View style={styles.groupNameView}>
+                        {
+                            editingName ? 
+                            (<View>
+                                <TextInput 
+                                    value={name}
+                                    onChangeText={setName}
+                                    style={styles.editNameField}
+                                    autoCapitalize='none'
+                                    multiline={false}
+                                    maxLength={30}
+                                />
+                            </View>) 
+                            : (<Text style={styles.groupName}>{name}</Text>)
+                        }
+                        <TouchableOpacity 
+                            style={styles.editButton}
+                            onPress={handleEditButton}>
+                            {
+                                editingName ? 
+                                (<Text>{Constants.save}</Text>) 
+                                : (<Text>{Constants.edit}</Text>)
+                            }
+                        </TouchableOpacity>
+                    </View>
                     {
                         participants?.map((person) => (
                             <View style={styles.participantView} key={person.participant_id}>
-                                <View style={styles.profilePicContainer}>
-                                    {
-                                        (person.participant_profile_picture_url) ? (
-                                            <Image source={{uri: person.participant_profile_picture_url}} style={styles.profilePic}/>
-                                        ) : (
-                                            <Image source={Constants.default_profile_picture} style={styles.profilePic}/>
-                                        )
-                                    }
+                                <View style={styles.participantViewLeft}>
+                                    <View style={styles.profilePicContainer}>
+                                        {
+                                            (person.participant_profile_picture_url) ? (
+                                                <Image source={{uri: person.participant_profile_picture_url}} style={styles.profilePic}/>
+                                            ) : (
+                                                <Image source={Constants.default_profile_picture} style={styles.profilePic}/>
+                                            )
+                                        }
+                                    </View>
+                                    <View>
+                                        <Text style={styles.name}>{person.participant_name}</Text>
+                                        <Text style={styles.email}>{person.participant_email}</Text>
+                                    </View>
                                 </View>
-                                <View>
-                                    <Text>{person.participant_name}</Text>
+                                <View style={styles.participantViewRight}>
+                                    <Text>{person.participant_type.charAt(0).toUpperCase()}{person.participant_type.slice(1)}</Text>
                                 </View>
                             </View>
                         ))
@@ -161,6 +200,8 @@ const GroupChatDetails = () => {
         </SafeAreaView>
     )
 }
+
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
@@ -214,17 +255,46 @@ const styles = StyleSheet.create({
         width: 15,
         height: 15,
     },
-    name: {
+    groupNameView: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 30,
+    },
+    editNameField: {
+        borderWidth: 1,
+        borderRadius: 5,
+        lineHeight: 20,
+        padding: 0,
+        marginRight: 15,
+        width: width * 0.5,
+        height: 30,
+    },
+    groupName: {
         fontFamily: "Inter-Bold",
         fontSize: 18,
         color: Colors.defaultBlue,
-        marginBottom: 30,
+        marginRight: 15,
+    },
+    editButton: {
+        borderWidth: 0.5,
+        borderRadius: 3,
+        paddingHorizontal: 3,
     },
     participantView: {
         width: '100%',
         paddingVertical: 10,
         paddingHorizontal: 10,
         flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+    },
+    participantViewLeft: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    participantViewRight: {
+        alignItems: "center",
+        paddingRight: 5,
     },
     profilePicContainer: {
         marginRight: 10,
@@ -235,6 +305,15 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.defaultBlue,
         borderRadius: 3,
+    },
+    name: {
+        color: Colors.defaultBlue,
+        fontFamily: "Inter-Regular",
+        fontSize: 13,
+    },
+    email: {
+        fontFamily: "Inter-Regular",
+        fontSize: 12,
     }
 });
 

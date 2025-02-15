@@ -762,8 +762,15 @@ export const privateChatDetails = {
   default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
   backButton: require("@/assets/images/notifications/backButton.png"),
   email: "Email: ",
-  editProfilePicture: require("@/assets/images/icons/editProfilePicture.png"),
 };
+
+export const groupChatDetails = {
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  editProfilePicture: require("@/assets/images/icons/editProfilePicture.png"),
+  edit: "Edit",
+  save: "Save",
+}
 
 export const searchChat = {
   backButton: require("@/assets/images/notifications/backButton.png"),

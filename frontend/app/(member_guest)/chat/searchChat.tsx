@@ -37,15 +37,22 @@ const ChatItem: React.FC<ChatItemProps> = ({
             style={styles.chatItemContainer}
             onPress={() => handleOpenChat(id)}
         >
-            <View>
-                <Image
-                    source={imageSource}
-                    style={styles.profilePicture}
-                />
+            <View style={styles.chatItemContainerLeft}>
+                <View>
+                    <Image
+                        source={imageSource}
+                        style={styles.profilePicture}
+                    />
+                </View>
+                <View style={styles.nameContainer}>
+                    <Text style={styles.nameText}>{name}</Text>
+                    <Text style={styles.emailText}>{email}</Text>
+                </View>
             </View>
-            <View style={styles.nameContainer}>
-                <Text style={styles.nameText}>{name}</Text>
-                <Text style={styles.emailText}>{email}</Text>
+            <View style={styles.chatItemContainerRight}>
+                <View style={styles.nameContainer}>
+                    <Text style={styles.nameText}>{participant_type.charAt(0).toUpperCase()}{participant_type.slice(1)}</Text>
+                </View>
             </View>
         </TouchableOpacity>
     );
@@ -138,10 +145,18 @@ const styles = StyleSheet.create({
     },
     chatItemContainer: {
         flexDirection: "row",
-        paddingVertical: 10,
-        marginHorizontal: 10,
         borderBottomWidth: 1,
         borderColor: Colors.defaultBlue,
+        paddingVertical: 10,
+        marginHorizontal: 10,
+        justifyContent: "space-between",
+    },
+    chatItemContainerLeft: {
+        flexDirection: "row",
+    },
+    chatItemContainerRight: {
+        justifyContent: "center",
+        paddingRight: 7,
     },
     profilePicture: {
         height: 50,
