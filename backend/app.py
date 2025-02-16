@@ -14,7 +14,6 @@ from flask_mail import Mail
 from database import db, init_db, check_db, create_tables, load_initial_data, create_session
 from models.token import TokenBlocklist
 
-
 logging = logging.getLogger(__name__)
 
 load_dotenv()
@@ -50,6 +49,7 @@ POSTGRES_PORT = os.getenv('POSTGRES_PORT')
 MAIL_USERNAME = os.getenv('MAIL_USERNAME')
 MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
 
+# static configs
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=30)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
@@ -62,6 +62,9 @@ app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USE_SSL"] = False
 app.config["MAIL_USERNAME"] = MAIL_USERNAME
 app.config["MAIL_PASSWORD"] = MAIL_PASSWORD
+
+# runtime configs
+app.config["RECOMMENDATION_TYPE"] = "content"
 
 mail = Mail(app)
 init_db(app)
@@ -444,6 +447,7 @@ def init_admin_endpoints():
     from endpoints.admin.channel import CreateChannelEndpoint
     from endpoints.admin.community import CreateCommunityEndpoint, AttachCommunityToChannelEndpoint
     from endpoints.admin.course import EnrollUserEndpoint
+    from endpoints.admin.recommender import ChangeRecommendationTypeEndpoint
 
     change_user_status_path = f"/{VERSION}/user/editStatus"
     ns_admin.add_resource(ChangeUserStatusEndpoint, change_user_status_path)
@@ -472,8 +476,14 @@ def init_admin_endpoints():
     change_course_status_path = f"/{VERSION}/course/editStatus"
     ns_admin.add_resource(ChangeCourseStatusEndpoint, change_course_status_path)
 
+    change_recommendation_type_path = f"/{VERSION}/recommender/editType"
+    ns_admin.add_resource(ChangeRecommendationTypeEndpoint, change_recommendation_type_path)
+
 def init_internal_endpoints():
-    pass
+    from endpoints.internal.health import CheckBasicHealthEndpoint
+
+    check_basic_health_path = f"/{VERSION}/health/basic"
+    ns_internal.add_resource(CheckBasicHealthEndpoint, check_basic_health_path)
 
 def init():
     """ Startup local environment, API warmup, namespaces, etc """

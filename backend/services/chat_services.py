@@ -29,8 +29,7 @@ class ChatService:
                 User.id.label('id'),
                 User.email.label('email'),
                 User.name.label('name'),
-                User.profile_picture_url.label('profile_picture_url'),
-                bindparam('participant_type', 'user')
+                User.profile_picture_url.label('profile_picture_url')
             )
             .filter(
                 User.email.ilike(f'%{search_term}%'),
@@ -40,13 +39,15 @@ class ChatService:
         if searcher_type == 'user':
             users_query = users_query.filter(User.email != searcher_email)
 
+        user_type_param = bindparam('user_type', value='user')
+        users_query = users_query.add_columns(user_type_param.label('participant_type'))
+
         instructors_query = (
             session.query(
                 Instructor.id.label('id'),
                 Instructor.email.label('email'),
                 Instructor.name.label('name'),
-                Instructor.profile_picture_url.label('profile_picture_url'),
-                bindparam('participant_type', 'instructor')
+                Instructor.profile_picture_url.label('profile_picture_url')
             )
             .filter(
                 Instructor.email.ilike(f'%{search_term}%'),
@@ -55,6 +56,9 @@ class ChatService:
         )
         if searcher_type == 'instructor':
             instructors_query = instructors_query.filter(Instructor.email != searcher_email)
+        
+        instructor_type_param = bindparam('instructor_type', value='instructor')
+        instructors_query = instructors_query.add_columns(instructor_type_param.label('participant_type'))
 
         combined_query = union_all(users_query, instructors_query)
 

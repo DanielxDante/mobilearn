@@ -10,7 +10,7 @@ from models.lesson_completion import LessonCompletion
 from models.offer import Offer
 from models.enrollment import Enrollment
 from models.review import Review
-from utils.datetime import check_valid_time_range
+from utils.datetime_utils import check_valid_time_range
 
 class AnalyticsServiceError(Exception):
     pass
