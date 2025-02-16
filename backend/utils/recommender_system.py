@@ -1,5 +1,5 @@
 # Recommendation System Architectures
-# GNNs
+# GNNs or Transformers -> for graph-based recommendations
 # Two-Tower -> combining vectors from content and user interactions
 # Ranking -> for no user interactions; go for novelty
 # Deep Learning to generate hash scores -> social media cases
@@ -8,6 +8,7 @@
 # implicit
 # spotlight
 # surprise
+# lightfm
 
 # Predictive Quality Metrics
 # Precision
@@ -15,10 +16,12 @@
 # F1 Score
 
 # Ranking Quality Metrics
+# TODO: calculate these metrics for the open source systems by splitting the matrix into training and test sets
 # NDCG
 # MRR
 # MAP
 # Hit Rate
+# AUC
 
 # Behavioural Metrics
 # Diversity
@@ -27,20 +30,25 @@
 # Popularity Bias
 
 # Additional ways to improve recommendation systems
-# 1. Use of hybrid models # TODO
+# 1. Use of hybrid models
 # 2. Use of cold start strategies
 ## Complete Cold Start
 ## Warm Start
 # 4. Keyword extraction/Stop word removal
+# 5. Use of ranking (review ratings as user-course interaction data)
+# 6. Use of embedding store (like Faiss)
 
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse import csr_matrix
+from implicit.als import AlternatingLeastSquares
 
 from database import create_session
 from models.course import Course
+from models.enrollment import Enrollment
 from utils.field_processor import FieldProcessor
+from utils.generate_enrollments import generate_enrollments
 
 def get_course_recommender():
     if CourseRecommenderSingleton._instance is None:
@@ -57,11 +65,14 @@ class CourseRecommenderSingleton:
         return cls._instance
 
     def _initialize(self, session):
+        # HACK: initialize recommender system depending on type of recommendations
         if not hasattr(self, "recommender"):
             print("Initializing recommender system...")
             self.recommender = CourseRecommender(session)
             self.recommender.load_data()
             self.recommender.preprocess_courses()
+            self.recommender.prepare_user_course_data()
+            self.recommender.train_implicit_recommendation_model()
             print("Recommender system initialized.")
 
     def get_instance(self):
@@ -73,8 +84,15 @@ class CourseRecommender:
         self.session = session
 
         self.courses_df = None
+        self.enrollments_df = None
 
         self.similarity_matrix = None
+
+        self.interactions_matrix = None
+        self.user_mapping = None
+        self.course_mapping = None
+        self.model = None
+
         self.field_processor = FieldProcessor()
     
     def _handle_null_numeric(self, value, default_strategy='zero'):
@@ -100,10 +118,7 @@ class CourseRecommender:
     def load_data(self):
         """ Load data from the database """
         self.load_courses()
-        self.preprocess_courses()
-
-        # self.load_users()
-        # self.load_enrollments()
+        self.load_enrollments()
     
     def load_courses(self):
         """ Load courses into pandas DataFrame """
@@ -158,6 +173,28 @@ class CourseRecommender:
 
         self.session.close()
     
+    def load_enrollments(self):
+        """ 
+        Load user-course enrollments into pandas DataFrame
+        Interactions are binary (enrolled or not enrolled)
+        """
+        # Query all enrollments from database
+        # enrollments = self.session.query(Enrollment).all()
+
+        # Convert to DataFrame
+        # self.enrollments_df = pd.DataFrame([
+        #     {
+        #         'user_id': enrollment.user_id,
+        #         'course_id': enrollment.course_id,
+        #     }
+        #     for enrollment in enrollments
+        # ])
+
+        # HACK: use generated enrollments due to lack of user data
+        self.enrollments_df = generate_enrollments()
+
+        self.session.close()
+    
     def preprocess_courses(self):
         """ Preprocess course data """
         dummy_courses_df = self.courses_df.copy()
@@ -197,7 +234,6 @@ class CourseRecommender:
             'similarity_matrix': self.similarity_matrix
         }
 
-    
     def _get_text_embedding(self, text, embedding_type, embedding_model):
         """ Get embeddings for text """
         tokens = text.split() if isinstance(text, str) else text
@@ -278,7 +314,7 @@ class CourseRecommender:
             'categorical_features': categorical_features
         }
     
-    # Consider using difference distance metrics such as TF-IDF, Faiss, etc.
+    # HACK: Consider using difference distance metrics such as TF-IDF, BM25, etc.
     def compute_item_similarity(self, feature_matrices, weights=None):
         """
         Compute item similarity matrix
@@ -313,7 +349,43 @@ class CourseRecommender:
     
     def prepare_user_course_data(self):
         """ Prepare user-course data for collaborative filtering """
-        pass
+        # create unique mappings for user and course IDs
+        self.user_mapping = {user_id: idx + 1 for idx, user_id in enumerate(self.enrollments_df['user_id'].unique())}
+        self.course_mapping = {course_id: idx + 1 for idx, course_id in enumerate(self.enrollments_df['course_id'].unique())}
+
+        # map user and course IDs to integer indices
+        user_indices = [self.user_mapping[user_id] for user_id in self.enrollments_df['user_id']]
+        course_indices = [self.course_mapping[course_id] for course_id in self.enrollments_df['course_id']]
+
+        # create sparse matrix for user-course interactions
+        self.interactions_matrix = csr_matrix(
+            (np.ones(self.enrollments_df.shape[0]),
+             (user_indices, course_indices)),
+            shape=(len(self.user_mapping) + 1, len(self.course_mapping) + 1)
+        )
+
+        return self.interactions_matrix, self.user_mapping, self.course_mapping
+    
+    def train_implicit_recommendation_model(
+        self,
+        factors=50,
+        iterations=50,
+        confidence_multiplier=40
+    ):
+        """
+        Train recommendation model through implicit
+        implicit uses Alternating Least Squares
+        """
+        model = AlternatingLeastSquares(
+            factors=factors,
+            iterations=iterations,
+            alpha=confidence_multiplier
+        )
+        model.fit(confidence_multiplier * self.interactions_matrix)
+        
+        self.model = model
+
+        return self.model
     
     def get_item_to_item_recommendations(
         self,
@@ -345,30 +417,25 @@ class CourseRecommender:
 
     def get_user_to_item_recommendations(
         self,
-        user_enroll_history, 
-        top_n=5
+        user_id,
+        top_n=10
     ):
-        pass
+        """ Get user-to-item recommendations for a specific user """
+        user_idx = self.user_mapping[user_id]
+        user_items = self.interactions_matrix[user_idx]
 
-if __name__ == '__main__':
-    # TODO: Add inference model persistence
-    recommender = CourseRecommender()
+        recommended_course_indices, scores = self.model.recommend(
+            userid=user_idx,
+            user_items=user_items,
+            N=top_n,
+            filter_already_liked_items=True
+        )
 
-    # load data and prepare features
-    recommender.load_data()
+        reverse_course_mapping = {idx: course for course, idx in self.course_mapping.items()}
+        # recommended_courses = [
+        #     (reverse_course_mapping[course_id], float(score))
+        #     for course_id, score in zip(recommended_course_indices, scores)
+        # ]
+        top_n_course_ids = [int(reverse_course_mapping[course_id]) for course_id in recommended_course_indices]
 
-    # test field processor
-    # similar_skills = preprocessor.find_similar_words('python', embedding_type='skill')
-
-    # Get recommendations for a specific course (Content Filtering)
-    # course_recommendations = recommender.get_item_to_item_recommendations(
-    #     course_id=1
-    # )
-    # print("Content Filtering: ", course_recommendations)
-
-    # Get recommendations based on user history (Collaborative Filtering)
-    # user_enroll_history = [1, 3, 5]
-    # personalized_recommendations = recommender.get_collaborative_based_recommendations(
-    #     user_enroll_history=user_enroll_history
-    # )
-    # print("Collaborative Filtering: ", personalized_recommendations)
+        return top_n_course_ids

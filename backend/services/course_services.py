@@ -158,7 +158,23 @@ class CourseService:
                     )
                 )
         elif recommendation_type == 'collaborative':
-            pass
+            recommender = get_course_recommender()
+            recommended_course_ids = recommender.get_user_to_item_recommendations(
+                user.id
+            )
+
+            courses = (
+                session.query(Course)
+                .join(Community)
+                .join(ChannelCommunity)
+                .join(Channel)
+                .filter(
+                    Channel.id == channel_id,
+                    not_(Course.id.in_([course.id for course in user_enrolled_courses])),
+                    Course.status == COURSE_STATUS.ACTIVE,
+                )
+                .order_by(func.array_position(recommended_course_ids, Course.id))
+            )
         
         paginated_courses = (
             courses

@@ -28,6 +28,7 @@ greenlet==3.0.3
 h11==0.14.0
 httplib2==0.22.0
 idna==3.10
+implicit==0.7.2
 importlib-metadata==6.8.0
 importlib_resources==6.4.4
 ipykernel==6.26.0

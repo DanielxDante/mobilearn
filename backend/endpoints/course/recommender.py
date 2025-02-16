@@ -1,3 +1,4 @@
+import os
 import json
 from flask import Response, request
 from flask_restx import Resource
@@ -6,11 +7,10 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 
-from app import api
+from app import api, app
 from database import session_scope, create_session
 from services.course_services import CourseService
 from utils.recommender_system import get_course_recommender
-        
 
 class RefreshRecommenderEndpoint(Resource):
     @api.doc(
@@ -25,7 +25,7 @@ class RefreshRecommenderEndpoint(Resource):
         Refresh course recommender
         If recommender is not trained, train it 
         """
-        # TODO: create a ML pipeline to periodically train the recommender
+        # HACK: create a ML pipeline to periodically train the recommender
         session = create_session()
 
         try:
@@ -78,6 +78,8 @@ class GetRecommendedCoursesEndpoint(Resource):
 
         session = create_session()
 
+        RECOMMENDATION_TYPE = app.config.get('RECOMMENDATION_TYPE', 'content') # 'content' or 'collaborative'
+
         try:
             courses = CourseService.get_recommended_courses(
                 session,
@@ -85,7 +87,7 @@ class GetRecommendedCoursesEndpoint(Resource):
                 channel_id=channel_id,
                 page=page,
                 per_page=per_page,
-                recommendation_type='content'
+                recommendation_type=RECOMMENDATION_TYPE
             )
             course_info = [{
                 'id': course.id,

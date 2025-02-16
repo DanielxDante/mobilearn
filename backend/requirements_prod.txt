@@ -17,3 +17,4 @@ scikit-learn==1.6.1
 Flask-Mail==0.10.0
 pillow==11.1.0
 qrcode==8.0
+implicit==0.7.2
