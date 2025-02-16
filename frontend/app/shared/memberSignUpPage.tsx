@@ -75,7 +75,7 @@ export default function signUpPage() {
       return;
     }
     try {
-      await signup(
+      const response_signup = await signup(
         inputs.name,
         inputs.email.toLowerCase(),
         inputs.password,
@@ -84,6 +84,13 @@ export default function signUpPage() {
         expoPushToken?.data
       );
       //immediately login the user
+      if (
+        response_signup !== undefined &&
+        response_signup === "The email is already in use."
+      ) {
+        alert(signUpPageConstants.emailInUseAlert);
+        return;
+      }
       const response = await login(inputs.email.toLowerCase(), inputs.password);
       console.log(response);
       if (response === "normal") {

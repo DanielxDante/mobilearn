@@ -91,7 +91,7 @@ export const memberLoginPageConstants = {
   dontHaveAccountText: "New to MobiLearn? ",
   signUpText: "Sign Up",
   inputsEmptyAlert: "Please fill in all fields.",
-  forgotPassword: "Forgot password?"
+  forgotPassword: "Forgot password?",
 };
 
 export const instructorLoginPageConstants = {
@@ -145,6 +145,7 @@ export const signUpPageConstants = {
   invalidCredentialsAlert:
     "Please check your email and password and try again.",
   errorSigningUpAlert: "An error occurred while signing up.",
+  emailInUseAlert: "The email is already in use.",
 };
 
 export const instructorSignUpPageConstants = {
@@ -211,7 +212,7 @@ export const instructorSignUpPageConstants = {
   ],
   inputsEmptyAlert: "Please fill in all fields.",
   passwordMismatchAlert: "Passwords do not match.",
-  errorSigningUpAlert: "An error occurred while signing up.",
+  errorSigningUpAlert: "The email is already in use.",
   regButtonText: "Register",
   accountDisabledAlert: "Your account has been disabled.",
   invalidCredentialsAlert:
@@ -457,6 +458,8 @@ export const courseContentConstants = {
   tick: require("@/assets/images/icons/tick.png"),
   noLessonsAvailable: "No lessons available",
   backButton: require("@/assets/images/notifications/backButton.png"),
+  editCourseTitle: "Edit Course",
+  reviewButton: "Reviews",
 };
 
 export const instructorHomePageConstants = {
@@ -465,7 +468,11 @@ export const instructorHomePageConstants = {
 
 export const instructorStatisticsConstants = {
   pageTitle: "Statistics",
-  dropdown: ["Week", "Month", "Year"],
+  dropdown: ["Weekly", "Monthly", "Yearly"],
+  totalLessons: "Total Lessons",
+  totalEnrollments: "Total Enrollments",
+  averageCourseProgress: "Avg Course Progress",
+  totalReviews: "Total Reviews",
 };
 
 export const instructorNewsConstants = {
@@ -679,12 +686,15 @@ export const chat = {
   appBarTitle: "Chats",
   addChat: require("@/assets/images/addChat.png"),
   searchChat: require("@/assets/images/searchChat.png"),
+  noChatText: "No chats available. Start a conversation!",
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
 };
 
 export const chatChannel = {
   backButton: require("@/assets/images/notifications/backButton.png"),
   clipIcon: require("@/assets/images/icons/clipIcon.png"),
   msgInputPlaceholder: "Write a message...",
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
 };
 
 export const lessonContentPage = {
@@ -724,10 +734,11 @@ export const lessonContentConstants = {
 export const resetPasswordPage = {
   backButton: require("@/assets/images/notifications/backButton.png"),
   title: "Forgot your password",
-  subtitle: "Enter the email associated with your account and we'll send you password reset instructions.",
+  subtitle:
+    "Enter the email associated with your account and we'll send you password reset instructions.",
   emailFieldHeader: "Your email",
   emailButton: "Send reset instructions",
-  invalidEmail: "Please enter a valid email."
+  invalidEmail: "Please enter a valid email.",
 };
 
 export const resetPasswordAwait = {
@@ -745,4 +756,31 @@ export const newPasswordPage = {
   placeholder1: "New Password",
   placeholder2: "Confirm Password",
   submitButton: "Reset Password",
+};
+
+export const privateChatDetails = {
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  email: "Email: ",
+};
+
+export const groupChatDetails = {
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  editProfilePicture: require("@/assets/images/icons/editProfilePicture.png"),
+  edit: "Edit",
+  save: "Save",
 }
+
+export const searchChat = {
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  title: "Search",
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+};
+
+export const reviewsPageConstants = {
+  title: "Reviews",
+  noReviewsText: "No reviews",
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+  sorts: ["Recent", "5 stars", "4 stars", "3 stars", "2 stars", "1 star"],
+};

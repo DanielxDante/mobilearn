@@ -74,7 +74,10 @@ export interface AuthState {
   setupAxiosInterceptors: () => void;
   logout: () => Promise<void>;
   forgetPasswordUser: (email: string) => Promise<string>;
-  resetPasswordUser: (reset_token: string, new_password: string) => Promise<string>;
+  resetPasswordUser: (
+    reset_token: string,
+    new_password: string
+  ) => Promise<string>;
   // Account operations
   editGenderInstructor: (new_gender: string) => Promise<void>;
   editNameInstructor: (new_name: string) => Promise<string>;
@@ -136,10 +139,11 @@ const useAuthStore = create<AuthState>()(
             { name, password, email, gender, membership, push_token },
             { headers: { "Content-Type": "application/json" } }
           );
-          console.log("response is: " + JSON.stringify(response.data, null, 2));
+          //console.log("response is: " + JSON.stringify(response.data, null, 2));
           const responseData = response.data;
           if (response.status === 200) {
-            console.log(responseData.message);
+            //console.log(responseData.message);
+            return responseData.message;
           } else {
             console.error("Axios error: ");
             throw new Error(
@@ -149,7 +153,10 @@ const useAuthStore = create<AuthState>()(
         } catch (error) {
           const axiosError = error as AxiosError;
           if (axiosError.response) {
-            console.log("Error Response:", axiosError.response.data);
+            const responseData = axiosError.response.data as {
+              message: string;
+            };
+            return responseData.message;
           } else if (axiosError.request) {
             console.log(
               "No Response Received. Request was:",
@@ -218,7 +225,7 @@ const useAuthStore = create<AuthState>()(
             });
 
             get().setupAxiosInterceptors();
-            
+
             return responseData.membership;
           } else {
             return responseData.message;
@@ -405,7 +412,7 @@ const useAuthStore = create<AuthState>()(
             AUTH_USER_FORGET_PASSWORD_URL,
             { email },
             { headers: { "Content-Type": "application/json" } }
-          )
+          );
           const responseData = response.data;
           if (responseData) {
             return responseData.message;
@@ -413,7 +420,6 @@ const useAuthStore = create<AuthState>()(
         } catch (error) {
           console.error(error);
         }
-        
       },
       resetPasswordUser: async (reset_token, new_password) => {
         console.log("(Store) Reset Password");
@@ -422,15 +428,14 @@ const useAuthStore = create<AuthState>()(
             AUTH_USER_RESET_PASSWORD_URL,
             { reset_token, new_password },
             { headers: { "Content-Type": "application/json" } }
-          )
+          );
           const responseData = response.data;
           if (responseData) {
             return responseData.message;
           }
         } catch (error: any) {
-          return error.message
+          return error.message;
         }
-        
       },
       editGenderInstructor: async (new_gender) => {
         console.log("(Store) Edit Instructor gender");

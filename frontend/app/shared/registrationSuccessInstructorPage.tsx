@@ -1,19 +1,42 @@
-import React, { useState } from "react";
-import { Text, View, Image, Dimensions } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, View, Image, Dimensions, BackHandler } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, router } from "expo-router";
+import { Link, router, useSegments } from "expo-router";
 
 import SignInButton from "@/components/Button";
 import InputField from "@/components/InputField";
 import mobilearnHat from "@/assets/images/MobilearnHat.png";
 import useAuthStore from "@/store/authStore";
 import { registrationSuccessInstructor as Constants } from "@/constants/textConstants";
-import { INSTRUCTOR_LOGIN_PAGE, MEMBER_GUEST_HOME } from "@/constants/pages";
+import {
+  INSTRUCTOR_LOGIN_PAGE,
+  MEMBER_GUEST_HOME,
+  MEMBER_GUEST_TABS,
+} from "@/constants/pages";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
   //const login = useAuthStore((state) => state.login);
+  const segments = useSegments();
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        // Get the current route
+        const currentRoute = segments[segments.length - 1];
+        // If we're on the member home page, go to hardware home
+        if (currentRoute === MEMBER_GUEST_TABS) {
+          BackHandler.exitApp(); // Exit the app
+          return true;
+        }
+
+        return false;
+      }
+    );
+    return () => backHandler.remove();
+  }, [router, segments]);
 
   return (
     <SafeAreaView

@@ -79,7 +79,7 @@ const MemberGuestLayout = () => {
                     }}
                 />
                 <Tabs.Screen
-                    name="chat"
+                    name="chatPage"
                     options={{
                         title: "Chat",
                         headerShown: false,

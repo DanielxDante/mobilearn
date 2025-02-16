@@ -36,6 +36,9 @@ const CourseContent = () => {
     console.log("Chapter: " + chapterId);
   };
 
+  const getReviews = useAppStore((state) => state.getCourseReview);
+  //const reviews = course ? getReviews(course.course_id.toString()) : [];
+
   const handleLessonSelect = async (lessonId: string) => {
     // console.log("Lesson id: " + lessonId);
 
@@ -43,7 +46,7 @@ const CourseContent = () => {
       pathname: "./lessonContentInstructor/[lessonId]",
       params: {
         lessonId: lessonId,
-    },
+      },
     });
   };
 
@@ -74,18 +77,36 @@ const CourseContent = () => {
               }}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.editCourseButton}
-            onPress={() => {
-              console.log("Course to edit: ", course);
-              router.push({
-                pathname: "./createCoursePage",
-                params: { courseToEdit: JSON.stringify(course) },
-              });
-            }}
-          >
-            <Text style={styles.editCourseButtonText}>Edit Course</Text>
-          </TouchableOpacity>
+          <View style={styles.navButtonsContainer}>
+            <TouchableOpacity
+              style={styles.reviewsButton}
+              onPress={() => {
+                getReviews(course.course_id.toString());
+                router.push({
+                  pathname: "./reviewsPage",
+                  params: { reviews: JSON.stringify(course.course_id) },
+                });
+              }}
+            >
+              <Text style={styles.editCourseButtonText}>
+                {Constants.reviewButton}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.editCourseButton}
+              onPress={() => {
+                console.log("Course to edit: ", course);
+                router.push({
+                  pathname: "./createCoursePage",
+                  params: { courseToEdit: JSON.stringify(course) },
+                });
+              }}
+            >
+              <Text style={styles.editCourseButtonText}>
+                {Constants.editCourseTitle}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
         {/* if video is not available, show a placeholder image */}
 
@@ -174,7 +195,7 @@ const CourseContent = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <Text>No lessons available</Text> // Fallback if no lectures
+            <Text>{Constants.noLessonsAvailable}</Text> // Fallback if no lectures
           )}
           <View style={styles.spaceBelow}></View>
         </ScrollView>
@@ -204,6 +225,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.defaultBlue,
   },
+  navButtonsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    // to add space between the buttons
+  },
   videoContainer: {
     // marginTop: 10,
     marginHorizontal: 16,
@@ -218,6 +244,14 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     // marginTop: 5,
+  },
+  reviewsButton: {
+    padding: 5,
+    backgroundColor: Colors.tabsIconGray,
+    borderRadius: 5,
+    alignSelf: "flex-end",
+    marginBottom: 16,
+    marginRight: 10,
   },
   editCourseButton: {
     padding: 5,
