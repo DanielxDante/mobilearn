@@ -58,7 +58,7 @@ import Instructor from "@/types/shared/Course/Instructor";
 import { router } from "expo-router";
 import notification from "@/types/shared/notification";
 import { INSTRUCTOR_COURSE_DETAILS } from "@/constants/pages";
-import Statistics from "@/types/shared/statistics";
+import Statistics from "@/types/shared/Statistics";
 
 export interface AppState {
   channels: Channel[]; // List of Channels that user has access to
@@ -1221,6 +1221,9 @@ export const useAppStore = create<AppState>()(
         try {
           const response = await axios.post(
             `${CHAT_REMOVE_GROUP_CHAT_PARTICIPANTS_URL}`,
+            {
+              chat_id, participant_email, participant_type,
+            },
             {
               headers: { "Content-Type": "application/json" },
             }
