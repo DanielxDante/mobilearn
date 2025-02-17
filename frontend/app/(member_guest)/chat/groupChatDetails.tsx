@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, Dimensions, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
@@ -8,15 +8,21 @@ import useAppStore from '@/store/appStore';
 import { groupChatDetails as Constants } from "@/constants/textConstants";
 import { Colors } from '@/constants/colors';
 import Participant from '@/types/shared/Participant';
+import useAuthStore from '@/store/authStore';
+import ChatDetailsPopUp from './chatDetailsPopUp';
 
 const GroupChatDetails = () => {
     const getChatDetails = useAppStore((state) => state.getChatDetails);
     const editGroupChatPicture = useAppStore((state) => state.editGroupChatPicture);
     const editGroupChatName = useAppStore((state) => state.editGroupChatName);
+    const removeGroupChatParticipant = useAppStore((state) => state.removeGroupChatParticipant);
+    const email = useAuthStore((state) => state.email);
     const [name, setName] = useState("");
     const [editingName, setEditingName] = useState(false);
     const [participants, setParticipants] = useState<Participant[]>();
     const [profilePicture, setProfilePicture] = useState(Constants.default_profile_picture);
+    const [localModalVisible, setLocalModalVisible] = useState(false);
+    const [selectedParticipant, setSelectedParticipant] = useState<{participant_email: string, participant_type: string}|null>(null);
     const { chat_id } = useLocalSearchParams<{
                 chat_id: string,
             }>();
@@ -108,6 +114,35 @@ const GroupChatDetails = () => {
         }
     };
 
+    const handleExit = async () => {
+        Alert.alert("Delete group", "Are you sure you want to delete and leave the group?",
+            [
+                {
+                    text: "Cancel",
+                },
+                {
+                    text: "Delete Group",
+                    onPress: async () => {
+                        const response = await removeGroupChatParticipant(Number(chat_id), email, "user");
+                        router.replace("/(member_guest)/(tabs)/chatPage");
+                    },
+                }
+            ]
+        )
+    }
+
+    const participantPopUp = async () => {
+        setLocalModalVisible(!localModalVisible);
+    }
+
+    const openUserDetails = (participant_email: string, participant_type: string) => {
+        setSelectedParticipant({participant_email, participant_type})
+    }
+
+    const closeUserDetails = () => {
+        setSelectedParticipant(null);
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             {/* AppBar */}
@@ -173,30 +208,83 @@ const GroupChatDetails = () => {
                     </View>
                     {
                         participants?.map((person) => (
-                            <View style={styles.participantView} key={person.participant_id}>
-                                <View style={styles.participantViewLeft}>
-                                    <View style={styles.profilePicContainer}>
-                                        {
-                                            (person.participant_profile_picture_url) ? (
-                                                <Image source={{uri: person.participant_profile_picture_url}} style={styles.profilePic}/>
-                                            ) : (
-                                                <Image source={Constants.default_profile_picture} style={styles.profilePic}/>
-                                            )
-                                        }
-                                    </View>
-                                    <View>
-                                        <Text style={styles.name}>{person.participant_name}</Text>
-                                        <Text style={styles.email}>{person.participant_email}</Text>
-                                    </View>
-                                </View>
-                                <View style={styles.participantViewRight}>
-                                    <Text>{person.participant_type.charAt(0).toUpperCase()}{person.participant_type.slice(1)}</Text>
-                                </View>
+                            <View key={person.participant_id}>
+                                {person.participant_email === email ? (
+                                    <View
+                                        style={styles.participantView}
+                                        >
+                                        <View style={styles.participantViewLeft}>
+                                            <View style={styles.profilePicContainer}>
+                                                {
+                                                    (person.participant_profile_picture_url) ? (
+                                                        <Image source={{uri: person.participant_profile_picture_url}} style={styles.profilePic}/>
+                                                    ) : (
+                                                        <Image source={Constants.default_profile_picture} style={styles.profilePic}/>
+                                                    )
+                                                }
+                                            </View>
+                                            <View>
+                                                <Text style={styles.name}>{person.participant_name}</Text>
+                                                <Text style={styles.email}>{person.participant_email}</Text>
+                                            </View>
+                                        </View>
+                                        <View style={styles.participantViewRight}>
+                                            {
+                                                person.is_admin && (<Text style={styles.adminText}>{Constants.admin}</Text>)
+                                            }
+                                            <Text>{person.participant_type.charAt(0).toUpperCase()}{person.participant_type.slice(1)}</Text>
+                                        </View>
+                                    </View>) : (
+                                        <TouchableOpacity
+                                        style={styles.participantView}
+                                        onLongPress={() => {
+                                            openUserDetails(person.participant_email, person.participant_type);
+                                            participantPopUp();
+                                        }}
+                                        >
+                                        <View style={styles.participantViewLeft}>
+                                            <View style={styles.profilePicContainer}>
+                                                {
+                                                    (person.participant_profile_picture_url) ? (
+                                                        <Image source={{uri: person.participant_profile_picture_url}} style={styles.profilePic}/>
+                                                    ) : (
+                                                        <Image source={Constants.default_profile_picture} style={styles.profilePic}/>
+                                                    )
+                                                }
+                                            </View>
+                                            <View>
+                                                <Text style={styles.name}>{person.participant_name}</Text>
+                                                <Text style={styles.email}>{person.participant_email}</Text>
+                                            </View>
+                                        </View>
+                                        <View style={styles.participantViewRight}>
+                                            {
+                                                person.is_admin && (<Text style={styles.adminText}>{Constants.admin}</Text>)
+                                            }
+                                            <Text>{person.participant_type.charAt(0).toUpperCase()}{person.participant_type.slice(1)}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    )
+                                }
                             </View>
                         ))
                     }
+                    {
+                        localModalVisible && selectedParticipant && (
+                            <ChatDetailsPopUp 
+                                handleModal={participantPopUp}
+                                chat_id={chat_id}
+                                participant_email={selectedParticipant.participant_email}
+                                participant_type={selectedParticipant.participant_type}
+                                refreshData={fetchChatInfo}
+                            />
+                        )
+                    }
                 </View>
             </ScrollView>
+            <TouchableOpacity style={styles.leaveButton} onPress={handleExit}>
+                <Text style={styles.leaveText}>{Constants.leave}</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     )
 }
@@ -296,6 +384,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingRight: 5,
     },
+    adminText: {
+        color: Colors.defaultBlue,
+    },
     profilePicContainer: {
         marginRight: 10,
     },
@@ -314,6 +405,20 @@ const styles = StyleSheet.create({
     email: {
         fontFamily: "Inter-Regular",
         fontSize: 12,
+    },
+    leaveButton: {
+        paddingHorizontal: 30,
+        paddingVertical: 9,
+        backgroundColor: "#ff2c2c",
+        alignSelf: "center",
+        marginBottom: 15,
+        width: "40%",
+        alignItems: "center",
+        borderRadius: 7,
+    },
+    leaveText: {
+        color: "#FFFFFF",
+        fontSize: 16,
     }
 });
 

@@ -770,6 +770,8 @@ export const groupChatDetails = {
   editProfilePicture: require("@/assets/images/icons/editProfilePicture.png"),
   edit: "Edit",
   save: "Save",
+  leave: "EXIT GROUP",
+  admin: "Admin",
 }
 
 export const searchChat = {
@@ -784,3 +786,8 @@ export const reviewsPageConstants = {
   default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
   sorts: ["Recent", "5 stars", "4 stars", "3 stars", "2 stars", "1 star"],
 };
+
+export const chatDetailsPopUp = {
+  promote: "Promote To Admin",
+  remove: "Remove from group",
+}
