@@ -8,24 +8,23 @@ import {
     TextInput,
     Dimensions,
     ImageBackground,
+    KeyboardAvoidingView
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/constants/colors";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView as RNScrollView } from "react-native";
+import io, { Socket } from 'socket.io-client';
 
 import { chatChannel as Constants } from "@/constants/textConstants";
 import { formatTime } from "@/components/DateFormatter";
 import useAppStore from "@/store/appStore";
+import { BACKEND_BASE_URL } from "@/constants/routes";
+import Message from "@/types/shared/Message";
 
-interface MsgProps {
-    message: string;
-    incoming: boolean; // if incoming==false, then msg is outgoing
-    date: string;
-}
 
-const MsgBubble: React.FC<MsgProps> = ({ message, incoming, date }) => {
+const MsgBubble: React.FC<Message> = ({ message, incoming, date }) => {
     return (
         <View
             style={[
@@ -49,8 +48,12 @@ const PrivateChatChannel = () => {
     const getChatDetails = useAppStore((state) => state.getChatDetails)
     const [name, setName] = useState("");
     const [profilePicture, setProfilePicture] = useState(Constants.default_profile_picture);
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [message, setMessage] = useState<string>("");
 
     const scrollViewRef = useRef<RNScrollView | null>(null);
+
     useEffect(() => {
         const fetchChatInfo = async () => {
             const chat_info = await getChatDetails("user", Number(chat_id));
@@ -58,10 +61,31 @@ const PrivateChatChannel = () => {
             if (chat_info.chat_picture_url) {
                 setProfilePicture({uri: chat_info.chat_picture_url})
             }
-            console.log(chat_info)
         }
         
         fetchChatInfo();
+        const socketInstance = io(BACKEND_BASE_URL, {
+            transports: ['websocket'],
+            // Enable if you need to bypass SSL verification (development only)
+            // rejectUnauthorized: false
+        });
+        setSocket(socketInstance)
+
+        // Connect event handler
+        socketInstance.on('connect', () => {
+            console.log('Connected to server');
+            socketInstance.emit('client_connected', {message: 'Device is connected'});
+        });
+
+        //Handle custom events from server
+        socketInstance.on('server_response', (data) => {
+            setMessages((prevMessages) => [...prevMessages, data])
+        })
+
+        return () => {
+            socketInstance.disconnect();
+        };
+
     }, [])
 
     useEffect(() => {
@@ -76,6 +100,16 @@ const PrivateChatChannel = () => {
                 pathname: "/(member_guest)/chat/privateChatDetails",
                 params: {chat_id: chat_id}
             })
+        }
+    }
+
+    const sendMessage = () => {
+        if (message.trim() && socket) {
+            // Add message to UI first before emitting
+            const newMessage: Message = { message: message, incoming: false, date: new Date().toString()}
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+            socket.emit('message', { message });
+            setMessage('');
         }
     }
 
@@ -99,7 +133,7 @@ const PrivateChatChannel = () => {
                 </TouchableOpacity>
             </View>
             {/* Chat */}
-            <View style={styles.chatBody}>
+            <KeyboardAvoidingView style={styles.chatBody} behavior="padding">
                 <ImageBackground
                     source={require("@/assets/images/WAchatbackgroundEdited.jpg")}
                     style={styles.scrollViewBackground}
@@ -111,51 +145,15 @@ const PrivateChatChannel = () => {
                         style={styles.scrollView}
                         contentContainerStyle={styles.scrollContent}
                     >
-                        <MsgBubble
-                            message="Hello! How are you?"
-                            incoming={true}
-                            date={new Date(2025, 0, 4, 18, 34, 0, 0).toString()}
-                        />
-                        <MsgBubble
-                            message="I'm great. How is your back?"
-                            incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
-                        />
-                        <MsgBubble
-                            message="It's hurting real bad. I think I need to get it checked soon by a doctor. Maybe a chiropracter?"
-                            incoming={true}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
-                        />
-                        <MsgBubble
-                            message="No worries, I am a licensed doctor, now just proceed to bend over."
-                            incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
-                        />
-                        <MsgBubble
-                            message="test"
-                            incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
-                        />
-                        <MsgBubble
-                            message="test"
-                            incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
-                        />
-                        <MsgBubble
-                            message="test"
-                            incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
-                        />
-                        <MsgBubble
-                            message="test"
-                            incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
-                        />
-                        <MsgBubble
-                            message="test"
-                            incoming={false}
-                            date={new Date(2025, 0, 4, 18, 35, 0, 0).toString()}
-                        />
+                        {
+                            messages.map((message, index) => (
+                                <MsgBubble
+                                    message={message.message}
+                                    incoming={message.incoming}
+                                    date={message.date}
+                                />
+                            ))
+                        }
                     </ScrollView>
                 </ImageBackground>
                 {/* Chat input */}
@@ -172,12 +170,14 @@ const PrivateChatChannel = () => {
                         <TextInput
                             placeholder={Constants.msgInputPlaceholder}
                             numberOfLines={4}
+                            value={message}
+                            onChangeText={setMessage}
                             editable
                             multiline
                         />
                     </View>
                     <View style={styles.sendMsgButtonContainer}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={sendMessage}>
                             <Image
                                 source={require("@/assets/images/icons/sendMsgButton.png")}
                                 style={styles.sendMsgButton}
@@ -185,7 +185,7 @@ const PrivateChatChannel = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };
