@@ -114,6 +114,7 @@ export const instructorLoginPageConstants = {
   dontHaveAccountText: "Don't have an account?",
   signUpText: "Sign Up here",
   inputsEmptyAlert: "Please fill in all fields.",
+  forgotPassword: "Forgot password?",
 };
 
 export const signUpPageConstants = {
@@ -772,7 +773,7 @@ export const groupChatDetails = {
   save: "Save",
   leave: "EXIT GROUP",
   admin: "Admin",
-}
+};
 
 export const searchChat = {
   backButton: require("@/assets/images/notifications/backButton.png"),
@@ -790,4 +791,4 @@ export const reviewsPageConstants = {
 export const chatDetailsPopUp = {
   promote: "Promote To Admin",
   remove: "Remove from group",
-}
+};
