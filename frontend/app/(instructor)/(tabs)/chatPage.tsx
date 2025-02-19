@@ -114,11 +114,11 @@ const ChatPage = () => {
   }, [segments]);
 
   const handleSearchChat = () => {
-    router.push("/(member_guest)/chat/searchChat");
+    router.push("/(instructor)/chat/searchChat");
   };
 
   const handleGroupSearch = () => {
-    router.push("/(member_guest)/chat/groupSearchPage");
+    router.push("/(instructor)/chat/groupSearchPage");
   };
 
   return (
