@@ -66,6 +66,9 @@ const PrivateChatChannel = () => {
         fetchChatInfo();
         const socketInstance = io(BACKEND_BASE_URL, {
             transports: ['websocket'],
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
             // Enable if you need to bypass SSL verification (development only)
             // rejectUnauthorized: false
         });
@@ -81,6 +84,10 @@ const PrivateChatChannel = () => {
         socketInstance.on('server_response', (data) => {
             setMessages((prevMessages) => [...prevMessages, data])
         })
+
+        socketInstance.on('server_acknowledgment', (data) => {
+            console.log('Server acknowledgment:', data);
+        });
 
         return () => {
             socketInstance.disconnect();
