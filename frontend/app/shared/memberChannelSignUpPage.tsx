@@ -9,10 +9,12 @@ import { memberChannelSignUpPage as Constants } from "@/constants/textConstants"
 import { Colors } from "@/constants/colors";
 import useAppStore from "@/store/appStore";
 import { Dropdown } from "react-native-element-dropdown";
-import { channelData } from "@/constants/temporaryCourseData";
+import io, { Socket } from 'socket.io-client';
+import { BACKEND_BASE_URL } from "@/constants/routes";
 
 const memberChannelSignUpPage = () => {
     const channels = useAppStore((state) => state.channels);
+    const appStore = useAppStore();
     const setChannelIdStore = useAppStore((state) => state.setChannelId);
     const getUserChannels = useAppStore((state) => state.getUserChannels);
     const inviteUser = useAppStore((state) => state.inviteUser);
@@ -20,6 +22,7 @@ const memberChannelSignUpPage = () => {
 
     useEffect(() => {
         getUserChannels();
+        appStore.createSocket();
     }, []);
 
     const handleJoinChannel = async (
