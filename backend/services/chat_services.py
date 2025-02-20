@@ -116,12 +116,8 @@ class ChatService:
                 })
             else:                
                 for chat_participant in chat.participants:
-                    if chat_participant.participant_id != participant.id:
-                        if chat_participant.participant_type == 'user':
-                            other_participant = User.get_user_by_id(session, chat_participant.participant_id)
-                        elif chat_participant.participant_type == 'instructor':
-                            other_participant = Instructor.get_instructor_by_id(session, chat_participant.participant_id)
-                        break
+                    if participant != chat_participant.underlying_user:
+                        other_participant = chat_participant.underlying_user
 
                 if other_participant:
                     private_chats_info.append({

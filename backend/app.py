@@ -8,26 +8,28 @@ from dotenv import load_dotenv
 from flask_restx import Api, Namespace
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from flask_socketio import SocketIO
 from flask_mail import Mail
+from flask_socketio import SocketIO
 
-from database import db, init_db, check_db, create_tables, load_initial_data, create_session
+from database import db, init_db, check_db, create_tables, load_initial_data
 from models.token import TokenBlocklist
+from services.socket_events import register_socket_handlers
 
-logging = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
 APP_NAME = 'MobiLearn'
 VERSION = '1.0'
 app = Flask(__name__)
+
 api = Api(app, version=VERSION, title=APP_NAME, description=f"{APP_NAME} API")
 jwt = JWTManager(app)
 CORS(app, resources={r"/*": {
     "origins": "*",
     "allow_headers": ["Content-Type", "Authorization"],
 }})
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
 
 # api paths under namespaces automatically have name prepended 
 ns_auth = Namespace(name='auth', description='Authentication operations')
@@ -519,6 +521,8 @@ def init():
 
     init_internal_endpoints()
     api.add_namespace(ns_internal)
+
+    register_socket_handlers(socketio)
 
     return app
 
