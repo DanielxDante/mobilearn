@@ -118,7 +118,7 @@ class ChatService:
                 for chat_participant in chat.participants:
                     if participant != chat_participant.underlying_user:
                         other_participant = chat_participant.underlying_user
-
+            
                 if other_participant:
                     private_chats_info.append({
                         'chat_id': chat.id,

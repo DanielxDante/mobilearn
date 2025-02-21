@@ -9,7 +9,6 @@ from services.chat_services import ChatService
 from services.notification_services import NotificationService
 
 chat_rooms = {} # {chat_id: {chat_participant_id: sid}}
-# Check for removed chat participants
 
 def register_socket_handlers(socketio):
     @socketio.on('connect')
@@ -94,6 +93,7 @@ def register_socket_handlers(socketio):
             emit('error', {'message': 'Chat participant not in chat room'}, room=chat_id)
             return
 
+        message_data = None
         with session_scope() as session:
             sender = ChatParticipant.get_chat_participant_by_id(session, chat_participant_id)
             if not sender:
@@ -113,26 +113,29 @@ def register_socket_handlers(socketio):
                 content=content
             )
 
-        # send notification to everyone not in chat room
-        chat_participants = chat.participants
-        for chat_participant in chat_participants:
-            if chat_participant.id != chat_participant_id:
-                if chat_participant.id in chat_rooms[chat_id]:
-                    continue
+            # send notification to everyone not in chat room
+            chat_participants = chat.participants
+            for chat_participant in chat_participants:
+                if chat_participant.id != chat_participant_id:
+                    if chat_participant.id in chat_rooms[chat_id]:
+                        continue
 
-                NotificationService.add_notification(
-                    session,
-                    title=chat.name,
-                    body=f"{chat_participant.underlying_user.name}: {content}",
-                    notification_type="chat",
-                    recipient_id=chat_participant.participant_id,
-                    recipient_type=chat_participant.participant_type,
-                )
+                    NotificationService.add_notification(
+                        session,
+                        title=chat.name,
+                        body=f"{chat_participant.underlying_user.name}: {content}",
+                        notification_type="chat",
+                        recipient_id=chat_participant.participant_id,
+                        recipient_type=chat_participant.participant_type,
+                    )
+            
+            message_data = {
+                'message_id': new_message.id,
+                'sender_id': chat_participant_id,
+                'content': new_message.content,
+                'timestamp': new_message.timestamp.isoformat()
+            }
 
         # broadcast message to everyone in the chat room
-        emit('new_message', {
-            'message_id': new_message.id,
-            'sender_id': chat_participant_id,
-            'content': new_message.content,
-            'timestamp': new_message.timestamp.isoformat()
-        }, room=chat_id)
+        if message_data:
+            emit('new_message', message_data, room=chat_id)
