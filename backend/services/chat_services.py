@@ -114,7 +114,11 @@ class ChatService:
                     'latest_message_timestamp': chat_latest_message.timestamp.isoformat() if chat_latest_message else None,
                     'unread_count': ChatService.get_unread_count(session, participant.id, participant_type, chat.id)
                 })
-            else:                
+            else:
+                # do not display to user if private chat has no messages
+                if not chat.messages:
+                    continue
+
                 for chat_participant in chat.participants:
                     if participant != chat_participant.underlying_user:
                         other_participant = chat_participant.underlying_user
@@ -553,7 +557,7 @@ class ChatService:
         messages = (
             session.query(Message)
             .filter_by(chat_id=chat_id)
-            .order_by(Message.timestamp.desc())
+            .order_by(Message.timestamp.asc())
             .offset(offset)
             .limit(per_page)
             .all()
