@@ -93,12 +93,13 @@ const ChatPage = () => {
     const fetchChats = async () => {
       try {
         let chatList;
-        console.log(company)
-        if (company) {
-          chatList = await getChats("instructor");
-        } else {
-          chatList = await getChats("user");
-        }
+        // console.log(company)
+        // if (company) {
+        //   chatList = await getChats("instructor");
+        // } else {
+        //   chatList = await getChats("user");
+        // }
+        chatList = await getChats("user");
         if (typeof chatList == "string") {
           Alert.alert("Error", "Chats cannot be retrieved");
         } else {
