@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, Image, Dimensions } from "react-native";
+import { Text, View, Image, Dimensions, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 
@@ -107,6 +107,22 @@ export default function LoginPage() {
           value={password}
           onChangeText={setPassword}
         />
+        <View
+          style={{
+            marginTop: -10,
+            marginBottom: 15,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => router.push("/shared/resetPasswordPage")}
+          >
+            <Text
+              style={{ color: Colors.defaultBlue, fontFamily: "Inter-Regular" }}
+            >
+              {Constants.forgotPassword}
+            </Text>
+          </TouchableOpacity>
+        </View>
         <SignInButton
           text={Constants.signInButtonText}
           onPress={handleSignIn}

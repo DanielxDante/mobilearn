@@ -1,5 +1,6 @@
 export default interface Message {
-    message: string;
-    incoming: boolean; // if incoming==false, then msg is outgoing
-    date: string;
+    message_id?: number;
+    chat_participant_id: number;
+    content: string;
+    timestamp: string;
 }

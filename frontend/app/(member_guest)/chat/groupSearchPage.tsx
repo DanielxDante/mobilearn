@@ -50,13 +50,26 @@ const GroupSearchPage = () => {
     });
   };
 
+  function handleNextPress(): void {
+    console.log(selectedUsers);
+    router.push({
+      pathname: "../chat/groupCreationPage",
+      params: { data: JSON.stringify(selectedUsers) },
+    });
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.appBarContainer}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Image source={Constants.backButton} style={styles.backButton} />
+        <View style={styles.appBarContainer}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Image source={Constants.backButton} style={styles.backButton} />
+          </TouchableOpacity>
+          <Text style={styles.title}>{Constants.title}</Text>
+        </View>
+        <TouchableOpacity onPress={handleNextPress}>
+          <Image source={Constants.backButton} style={styles.nextButton} />
         </TouchableOpacity>
-        <Text style={styles.title}>{Constants.title}</Text>
       </View>
       <Searchbar
         placeholder="Search..."
@@ -68,16 +81,17 @@ const GroupSearchPage = () => {
         style={styles.searchBar}
       />
       <View style={styles.selectedUsersContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {selectedUsers.map((user) => (
-            <View key={user.id} style={styles.userBubble}>
-              <Text style={styles.userBubbleText}>{user.name}</Text>
-              <TouchableOpacity onPress={() => toggleUserSelection(user)}>
-                <Text style={styles.removeUser}>x</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
+        {selectedUsers.map((user) => (
+          <View key={user.id} style={styles.userBubble}>
+            <Text style={styles.userBubbleText}>{user.name}</Text>
+            <TouchableOpacity onPress={() => toggleUserSelection(user)}>
+              <Text style={styles.removeUser}>x</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+        {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          
+        </ScrollView> */}
       </View>
       <ScrollView>
         {data &&
@@ -117,6 +131,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 80,
     alignItems: "center",
+    justifyContent: "space-between",
   },
   backButton: {
     height: 25,
@@ -124,6 +139,14 @@ const styles = StyleSheet.create({
     marginLeft: 25,
     marginRight: 15,
     padding: 5,
+  },
+  nextButton: {
+    height: 25,
+    width: 25,
+    marginLeft: 25,
+    marginRight: 25,
+    padding: 5,
+    transform: [{ rotate: "180deg" }],
   },
   title: {
     fontFamily: "Inter-Regular",
@@ -140,6 +163,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 10,
     marginHorizontal: 10,
+    width: "90%",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+    //justifyContent: "space-between",
+    gap: 10,
   },
   userBubble: {
     flexDirection: "row",
