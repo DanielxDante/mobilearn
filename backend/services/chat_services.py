@@ -553,7 +553,7 @@ class ChatService:
         messages = (
             session.query(Message)
             .filter_by(chat_id=chat_id)
-            .order_by(Message.timestamp.desc())
+            .order_by(Message.timestamp.asc())
             .offset(offset)
             .limit(per_page)
             .all()
