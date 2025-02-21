@@ -93,6 +93,7 @@ const ChatPage = () => {
     const fetchChats = async () => {
       try {
         let chatList;
+        console.log(company)
         if (company) {
           chatList = await getChats("instructor");
         } else {
