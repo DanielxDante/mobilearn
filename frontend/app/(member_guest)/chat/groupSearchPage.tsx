@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     height: 25,
     width: 25,
     marginLeft: 25,
-    marginRight: 15,
+    marginRight: 25,
     padding: 5,
     transform: [{ rotate: "180deg" }],
   },

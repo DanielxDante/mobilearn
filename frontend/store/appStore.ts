@@ -61,6 +61,7 @@ import { router } from "expo-router";
 import notification from "@/types/shared/notification";
 import { INSTRUCTOR_COURSE_DETAILS } from "@/constants/pages";
 import Statistics from "@/types/shared/Statistics";
+import Message from "@/types/shared/Message";
 
 const socketSlice = (set: any, get: any) => ({
   isConnected: false,
@@ -87,7 +88,7 @@ const socketSlice = (set: any, get: any) => ({
     });
   },
   getSocket: () => {
-    console.log("(STORE) GETTING SOCKET " + get().chat_socket)
+    console.log("(Store) Get Socket()");
     return get().chat_socket;
   },
   disconnectSocket: () => {
@@ -213,11 +214,11 @@ export interface AppState {
   ) => Promise<Boolean | string>;
   getChatDetails: (initiator_type: string, chat_id: number) => Promise<any>;
   getChatMessages: (
-    chat_id: string,
+    chat_id: number,
     chat_participant_id: string,
     page?: string,
     per_page?: string
-  ) => Promise<string[]>;
+  ) => Promise<Message[]>;
   getParticipantChats: (participant_type: string) => Promise<any>;
   removeGroupChatParticipant: (
     chat_id: number,
@@ -1213,7 +1214,7 @@ export const useAppStore = create<AppState>()(
         console.log(`(Store) Get Chat Messages for chat_id: ` + chat_id);
         try {
           const response = await axios.get(
-            `${CHAT_GET_CHAT_MESSAGES_URL}/${chat_id}/${chat_participant_id}`,
+            `${CHAT_GET_CHAT_MESSAGES_URL}/${chat_id.toString()}/${chat_participant_id}`,
             {
               params: { page, per_page },
               headers: { "Content-Type": "application/json" },
@@ -1221,7 +1222,13 @@ export const useAppStore = create<AppState>()(
           );
           const responseData = response.data;
           if (response.status == 200) {
-            return responseData.messages;
+            const messages = responseData.messages.map((message: any) => ({
+              message_id: message.message_id,
+              chat_participant_id: message.chat_participant_id,
+              content: message.content,
+              timestamp: message.timestamp,
+            }))
+            return messages;
           }
         } catch (error: any) {
           if (error.status == 400) {
