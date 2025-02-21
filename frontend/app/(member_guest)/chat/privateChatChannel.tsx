@@ -22,6 +22,7 @@ import { formatTime } from "@/components/DateFormatter";
 import useAppStore from "@/store/appStore";
 import { BACKEND_BASE_URL } from "@/constants/routes";
 import Message from "@/types/shared/Message";
+import useAuthStore from "@/store/authStore";
 
 
 const MsgBubble: React.FC<Message> = ({ message, incoming, date }) => {
@@ -45,48 +46,57 @@ const PrivateChatChannel = () => {
     const { chat_id } = useLocalSearchParams<{
             chat_id: string,
         }>();
-    const getChatDetails = useAppStore((state) => state.getChatDetails)
+    const getChatDetails = useAppStore((state) => state.getChatDetails);
+    const getSocket = useAppStore((state) => state.getSocket);
+    const email = useAuthStore((state) => state.email);
     const [name, setName] = useState("");
+    const [chatParticipantId, setChatParticipantId] = useState("");
     const [profilePicture, setProfilePicture] = useState(Constants.default_profile_picture);
-    const [socket, setSocket] = useState<Socket | null>(null);
+    const [socket, setSocket] = useState<Socket | null>()
     const [messages, setMessages] = useState<Message[]>([]);
     const [message, setMessage] = useState<string>("");
-
+    
     const scrollViewRef = useRef<RNScrollView | null>(null);
 
     useEffect(() => {
         const fetchChatInfo = async () => {
             const chat_info = await getChatDetails("user", Number(chat_id));
             setName(chat_info.chat_name)
+            const participant = chat_info.participants.find((person: any) => person.participant_email === email);
+            if (participant) {
+                setChatParticipantId(participant.participant_id)
+            }
             if (chat_info.chat_picture_url) {
                 setProfilePicture({uri: chat_info.chat_picture_url})
             }
         }
         
         fetchChatInfo();
-        const socketInstance = io(BACKEND_BASE_URL, {
-            transports: ['websocket'],
-            // Enable if you need to bypass SSL verification (development only)
-            // rejectUnauthorized: false
-        });
-        setSocket(socketInstance)
+    }, [])
 
-        // Connect event handler
-        socketInstance.on('connect', () => {
-            console.log('Connected to server');
-            socketInstance.emit('client_connected', {message: 'Device is connected'});
-        });
+    useEffect(() => {
+        const socketInstance = getSocket();
+        setSocket(socketInstance);
 
-        //Handle custom events from server
-        socketInstance.on('server_response', (data) => {
-            setMessages((prevMessages) => [...prevMessages, data])
-        })
+        if (socketInstance && chatParticipantId) {
+            socketInstance.emit('join_chat', { 
+                chat_id: Number(chat_id),
+                chat_participant_id: chatParticipantId
+            });
+            console.log("JOIN CHAT EMITTED")
+            socketInstance.on('chat_participant_joined', () => {
+                console.log('Connected to server');
+            });
+        }
+        
 
         return () => {
-            socketInstance.disconnect();
+            if (socketInstance) {
+                socketInstance.emit('leave_chat');
+                socketInstance.off('chat_participant_joined');
+            }
         };
-
-    }, [])
+    }, [chatParticipantId])
 
     useEffect(() => {
         setTimeout(() => {
@@ -108,7 +118,11 @@ const PrivateChatChannel = () => {
             // Add message to UI first before emitting
             const newMessage: Message = { message: message, incoming: false, date: new Date().toString()}
             setMessages((prevMessages) => [...prevMessages, newMessage]);
-            socket.emit('message', { message });
+            socket.emit('send_message', { 
+                chat_id: Number(chat_id),
+                chat_participant_id: chatParticipantId,
+                content: message.trim(),
+            });
             setMessage('');
         }
     }
@@ -148,6 +162,7 @@ const PrivateChatChannel = () => {
                         {
                             messages.map((message, index) => (
                                 <MsgBubble
+                                    key={index}
                                     message={message.message}
                                     incoming={message.incoming}
                                     date={message.date}

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosError } from "axios";
+import io, { Socket } from 'socket.io-client';
 
 import {
   PAYMENT_STRIPE_FETCH_PAYMENT_SHEET_URL,
@@ -49,6 +50,7 @@ import {
   ANALYTICS_ENROLLMENTS,
   ANALYTICS_PROGRESS,
   ANALYTICS_REVIEWS,
+  BACKEND_BASE_URL,
 } from "@/constants/routes";
 import Channel from "@/types/shared/Channel";
 import Course from "@/types/shared/Course/Course";
@@ -59,6 +61,44 @@ import { router } from "expo-router";
 import notification from "@/types/shared/notification";
 import { INSTRUCTOR_COURSE_DETAILS } from "@/constants/pages";
 import Statistics from "@/types/shared/Statistics";
+
+const socketSlice = (set: any, get: any) => ({
+  isConnected: false,
+  chat_socket: null as Socket | null,
+
+  createSocket: () => {
+    const socketInstance = io(BACKEND_BASE_URL, {
+      transports: ['websocket'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      // Enable if you need to bypass SSL verification (development only)
+      // rejectUnauthorized: false
+    });
+    set({chat_socket: socketInstance});
+
+    socketInstance.on('connect', () => {
+      console.log("(Store) Socket is connected")
+      set({ isConnected: true });
+    });
+
+    socketInstance.on('disconnect', () => {
+      get().disconnectSocket();
+    });
+  },
+  getSocket: () => {
+    console.log("(STORE) GETTING SOCKET " + get().chat_socket)
+    return get().chat_socket;
+  },
+  disconnectSocket: () => {
+    const socketInstance = get().chat_socket;
+    if (socketInstance) {
+      socketInstance.emit("leave_chat");
+      socketInstance.disconnect();
+      set({ isConnected: false, socketInstance: null })
+    }
+  }
+})
 
 export interface AppState {
   channels: Channel[]; // List of Channels that user has access to
@@ -73,6 +113,10 @@ export interface AppState {
   notifications?: notification[];
   statistics?: Statistics;
   reviews?: any[];
+  isConnected: boolean;
+  createSocket: () => void;
+  getSocket: () => Socket | null;
+  disconnectSocket: () => void;
   fetchPaymentSheet: (
     amount: string,
     currency: string
@@ -197,6 +241,7 @@ export const useAppStore = create<AppState>()(
       recommended_courses: [],
       top_enrolled_courses: [],
       instructor_courses: [],
+      ...socketSlice(set, get),
       fetchPaymentSheet: async (amount, currency) => {
         console.log("Fetching donation payment sheet...");
         try {
@@ -232,6 +277,7 @@ export const useAppStore = create<AppState>()(
             selectedCourse: undefined,
             instructorPreviewedLesson: undefined,
           });
+          get().disconnectSocket();
         } catch (error) {
           console.error("Error logging out of AppStore:", error);
           throw new Error("An unexpected error occurred while logging out.");
@@ -1347,6 +1393,13 @@ export const useAppStore = create<AppState>()(
     {
       name: "app-store",
       storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        channels: state.channels,
+        channel_id: state.channel_id,
+        recommended_courses: state.recommended_courses,
+        top_enrolled_courses: state.top_enrolled_courses,
+        instructor_courses: state.instructor_courses,
+      })
     }
   )
 );

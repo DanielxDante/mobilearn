@@ -34,6 +34,10 @@ class ChatParticipant(Base):
             from models.instructor import Instructor
             return Instructor.get_instructor_by_id(session, self.participant_id)
 
+    @staticmethod
+    def get_chat_participant_by_id(session, id):
+        return session.query(ChatParticipant).filter_by(id=id).first()
+
     def __repr__(self):
         return f'<(ChatParticipant) Chat: {self.chat_id}, Participant: {self.participant_id}>, Participant Type: {self.participant_type}'
     
