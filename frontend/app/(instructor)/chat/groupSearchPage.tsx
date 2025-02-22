@@ -34,7 +34,7 @@ const GroupSearchPage = () => {
   const handleSearch = useCallback(
     debounce(async (query: string) => {
       if (!query.trim()) return;
-      const results = await searchParticipants("user", query, "1", "10");
+      const results = await searchParticipants("instructor", query, "1", "10");
       setData(results);
     }, 300),
     []

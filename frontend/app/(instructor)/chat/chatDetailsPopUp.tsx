@@ -37,7 +37,7 @@ const ChatDetailsPopUp: React.FC<ChatDetailsPopUpProps> = ({
   );
   const handleElevate = async () => {
     const response = await elevateParticipant(
-      "user",
+      "instructor",
       Number(chat_id),
       participant_email,
       participant_type
