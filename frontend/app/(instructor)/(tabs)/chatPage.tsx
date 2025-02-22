@@ -70,7 +70,7 @@ const ChatItem: React.FC<ChatItemProps> = ({
         </View>
       </View>
       <View style={styles.rightContainer}>
-        {numUnreadMessages !== 0 && (
+        {numUnreadMessages > 0 && (
           <View style={styles.numUnreadMessagesContainer}>
             <Text style={styles.numUnreadMessagesText}>
               {numUnreadMessages}
