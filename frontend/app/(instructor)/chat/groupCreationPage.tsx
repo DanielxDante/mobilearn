@@ -40,7 +40,11 @@ const GroupCreationPage = () => {
       //profile_picture_url: user.profilePicture || null,
     }));
 
-    const chatId = await createGroupChat("user", groupName, participantInfo);
+    const chatId = await createGroupChat(
+      "instructor",
+      groupName,
+      participantInfo
+    );
     if (chatId) {
       alert(Constants.groupChatCreated);
       router.push({

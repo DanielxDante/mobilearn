@@ -47,7 +47,7 @@ const GroupChatDetails = () => {
   }>();
 
   const fetchChatInfo = async () => {
-    const chat_info = await getChatDetails("user", Number(chat_id));
+    const chat_info = await getChatDetails("instructor", Number(chat_id));
     setName(chat_info.chat_name);
     if (chat_info.chat_picture_url) {
       setProfilePicture({ uri: chat_info.chat_picture_url });
@@ -63,7 +63,7 @@ const GroupChatDetails = () => {
   const handleEditButton = async () => {
     setEditingName((prev) => !prev);
     if (editingName) {
-      await editGroupChatName("user", Number(chat_id), name);
+      await editGroupChatName("instructor", Number(chat_id), name);
     }
   };
 
@@ -96,7 +96,7 @@ const GroupChatDetails = () => {
           type,
         } as any);
 
-        formData.append("participant_type", "user");
+        formData.append("participant_type", "instructor");
         formData.append("chat_id", String(chat_id));
         console.log("FormData: " + JSON.stringify(formData));
 
@@ -112,7 +112,7 @@ const GroupChatDetails = () => {
     }
   };
   const checkPermissions = async () => {
-    // Method to check if user has permissions to select image from gallery
+    // Method to check if instructor has permissions to select image from gallery
     try {
       const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
       if (status !== "granted") {
@@ -144,9 +144,9 @@ const GroupChatDetails = () => {
           const response = await removeGroupChatParticipant(
             Number(chat_id),
             email,
-            "user"
+            "instructor"
           );
-          router.replace("/(member_guest)/(tabs)/chatPage");
+          router.replace("/(instructor)/(tabs)/chatPage");
         },
       },
     ]);

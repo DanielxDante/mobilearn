@@ -696,6 +696,8 @@ export const chatChannel = {
   clipIcon: require("@/assets/images/icons/clipIcon.png"),
   msgInputPlaceholder: "Write a message...",
   default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+  WAchatBackgroundEdited: require("@/assets/images/WAchatbackgroundEdited.jpg"),
+  sendMsgButton: require("@/assets/images/icons/sendMsgButton.png"),
 };
 
 export const lessonContentPage = {
@@ -773,12 +775,22 @@ export const groupChatDetails = {
   save: "Save",
   leave: "EXIT GROUP",
   admin: "Admin",
+  undefinedFile: "File is undefined.",
+  handleEditProfilePictureError: "Error in handleEditProfilePicture:",
+  checkPermissionError: "Error in checking permission:",
+  requestPermissionFail:
+    "Sorry, we need camera roll permissions to make this work!",
+  deleteGroup: "Delete Group",
+  deleteGroupConfirmation: "Are you sure you want to delete this group?",
+  cancel: "Cancel",
+  loadImageError: "Error loading image: ",
 };
 
 export const searchChat = {
   backButton: require("@/assets/images/notifications/backButton.png"),
   title: "Search",
   default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+  searchBar: "Search...",
 };
 
 export const reviewsPageConstants = {
@@ -791,4 +803,21 @@ export const reviewsPageConstants = {
 export const chatDetailsPopUp = {
   promote: "Promote To Admin",
   remove: "Remove from group",
+  error: "Error",
+  participantNotElevated: "Participant not elevated to admin",
+  participantNotRemoved: "Participant not removed",
+  ok: "Ok",
+};
+
+export const groupCreationPage = {
+  createGroupAlertCheck: "Please enter a group name and select participants.",
+  groupChatCreated: "Group chat created successfully!",
+  failedGroupChatCreation: "Failed to create group chat.",
+  backButton: require("@/assets/images/notifications/backButton.png"),
+  createGroup: "Create Group",
+  groupNameInputTitle: "Group Name",
+  groupNamePlaceholder: "Enter Group Name",
+  default_profile_picture: require("@/assets/images/member_guest_images/blank_profile_pic.jpg"),
+  noUsersSelected: "No users selected",
+  done: "Done",
 };
