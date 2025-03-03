@@ -260,7 +260,7 @@ export const memberGuestHomeConstants = {
 
 export const memberGuestAppBarConstants = {
   hamburgerIcon: require("@/assets/images/member_guest_images/hamburger.png"),
-  dropDownPlaceholder: "Select item",
+  dropDownPlaceholder: "Switch Channel",
   searchPlaceholder: "Search...",
 };
 

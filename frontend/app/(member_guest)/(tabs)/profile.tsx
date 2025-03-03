@@ -110,7 +110,6 @@ const Profile = () => {
             </View>
             {/* Options Area */}
             <View style={styles.optionsContainer}>
-                {/* TODO: replace payment method with settings */}
                 <IconTextButton
                     icon={icons.card}
                     text={Constants.settingsTitle}
@@ -122,6 +121,7 @@ const Profile = () => {
                     }}
                     style={styles.iconTextButton}
                 />
+                {/* https://forms.gle/snCu4EmktxYqDqge6 */}
                 {/* TODO: add help center and privacy notice here */}
                 <IconTextButton
                     icon={icons.tele}

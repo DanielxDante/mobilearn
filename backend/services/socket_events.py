@@ -139,3 +139,13 @@ def register_socket_handlers(socketio):
         # broadcast message to everyone in the chat room
         if message_data:
             emit('new_message', message_data, room=chat_id)
+        
+            # also emit to people not in chat room
+            # this emits to all clients conneted, frontend needs to filter by chat_id
+            emit('update_chat', {
+                'chat_id': chat_id,
+                'message_id': message_data['message_id'],
+                'sender_id': message_data['sender_id'],
+                'content': message_data['content'],
+                'timestamp': message_data['timestamp']
+            })

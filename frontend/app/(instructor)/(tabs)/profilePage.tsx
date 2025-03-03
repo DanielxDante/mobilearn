@@ -69,15 +69,17 @@ const Profile = () => {
       </View>
       {/* Options Area */}
       <View style={styles.optionsContainer}>
-        {/* TODO: replace payment method with changing language */}
-        {/* <IconTextButton
-                    icon={icons.card}
-                    text={Constants.paymentMethodTitle}
-                    onPress={() => {
-                        router.push("/(member_guest)/userPaymentMethod");
-                    }}
-                    style={styles.iconTextButton}
-                /> */}
+        <IconTextButton
+          icon={icons.card}
+          text={Constants.settingsTitle}
+          onPress={() => {
+              // router.push(
+              //     "/(member_guest)/profile/userPaymentMethod"
+              // );
+              console.log("(Instructor) Entering settings page")
+          }}
+          style={styles.iconTextButton}
+        />
         {/* TODO: add help center and privacy notice here */}
         <IconTextButton
           icon={icons.tele}
