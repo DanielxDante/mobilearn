@@ -100,7 +100,7 @@ const GroupChatChannel = () => {
 
   useEffect(() => {
     const fetchChatInfo = async () => {
-      const chat_info = await getChatDetails("user", Number(chat_id));
+      const chat_info = await getChatDetails("instructor", Number(chat_id));
       // Set Chat name
       setName(chat_info.chat_name);
       // Identify own user
@@ -144,7 +144,7 @@ const GroupChatChannel = () => {
         chat_participant_id: chatParticipantId,
       });
       socketInstance.on("chat_participant_joined", () => {
-        console.log("(Group Chat) User has joined the chat");
+        console.log("(Group Chat) Instructor has joined the chat");
       });
     }
 
@@ -165,7 +165,7 @@ const GroupChatChannel = () => {
   const openChatDetails = () => {
     if (chat_id) {
       router.push({
-        pathname: "/(member_guest)/chat/groupChatDetails",
+        pathname: "/(instructor)/chat/groupChatDetails",
         params: { chat_id: chat_id },
       });
     }

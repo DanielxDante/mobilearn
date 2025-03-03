@@ -48,6 +48,7 @@ const newsData = [
 const Home = () => {
   const segments = useSegments();
   const [loading, setLoading] = useState(false);
+  const appStore = useAppStore();
 
   const notifications = useAppStore((state) => state.notifications);
   const getNotifications = useAppStore(
@@ -92,6 +93,10 @@ const Home = () => {
     //console.log("Notifications in homepage: ", notifications);
     getStatistics(timePeriod);
   }, [notifications, timePeriod]);
+
+  useEffect(() => {
+    appStore.createSocket();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -141,7 +146,7 @@ const Home = () => {
           <TopCourses onSelect={handleSelectCourse} />
         </View>
         {/* News */}
-        <LatestNews news={newsData} />
+        {/* <LatestNews news={newsData} /> */}
       </ScrollView>
     </SafeAreaView>
   );

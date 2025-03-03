@@ -70,9 +70,13 @@ const ChatItem: React.FC<ChatItemProps> = ({
         </View>
       </View>
       <View style={styles.rightContainer}>
-        <View style={styles.numUnreadMessagesContainer}>
-          <Text style={styles.numUnreadMessagesText}>{numUnreadMessages}</Text>
-        </View>
+        {numUnreadMessages > 0 && (
+          <View style={styles.numUnreadMessagesContainer}>
+            <Text style={styles.numUnreadMessagesText}>
+              {numUnreadMessages}
+            </Text>
+          </View>
+        )}
         {time && (
           <View>
             <Text style={styles.timeText}>{formatTime(time)}</Text>
@@ -93,11 +97,7 @@ const ChatPage = () => {
     const fetchChats = async () => {
       try {
         let chatList;
-        if (company) {
-          chatList = await getChats("instructor");
-        } else {
-          chatList = await getChats("user");
-        }
+        chatList = await getChats("instructor");
         if (typeof chatList == "string") {
           Alert.alert("Error", "Chats cannot be retrieved");
         } else {

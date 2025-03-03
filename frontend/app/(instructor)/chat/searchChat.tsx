@@ -32,19 +32,27 @@ const ChatItem: React.FC<ChatItemProps> = ({
   profilePicture,
   participant_type,
 }) => {
+  const createPrivateChat = useAppStore((state) => state.createPrivateChat);
   const imageSource = profilePicture
     ? { uri: profilePicture }
     : Constants.default_profile_picture;
-  const handleOpenChat = (chat_id: number) => {
+
+  const handleOpenChat = async (email: string, participant_type: string) => {
+    const private_chat_id = await createPrivateChat(
+      "instructor",
+      email,
+      participant_type
+    );
     router.push({
       pathname: "/(instructor)/chat/privateChatChannel",
-      params: { chat_id: chat_id.toString() },
+      params: { chat_id: private_chat_id },
     });
   };
+
   return (
     <TouchableOpacity
       style={styles.chatItemContainer}
-      onPress={() => handleOpenChat(id)}
+      onPress={() => handleOpenChat(email, participant_type)}
     >
       <View style={styles.chatItemContainerLeft}>
         <View>
@@ -95,7 +103,7 @@ const SearchChat = () => {
       </View>
       {/* Search bar */}
       <Searchbar
-        placeholder="Search..."
+        placeholder={Constants.searchBar}
         onChangeText={(text) => {
           setSearchQuery(text);
           handleSearch(text);
