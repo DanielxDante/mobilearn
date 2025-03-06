@@ -114,12 +114,17 @@ const PrivateChatChannel = () => {
       socketInstance.on("chat_participant_joined", () => {
         console.log("(Private Chat) User has joined the chat");
       });
+      socketInstance.on("new_message", (message_data: Message) => {
+          console.log("(Chat Channel) Received new_message");
+          setMessages((prevMessages) => [...prevMessages, message_data])
+      })
     }
 
     return () => {
       if (socketInstance) {
         socketInstance.emit("leave_chat");
         socketInstance.off("chat_participant_joined");
+        socketInstance.off("new_message");
       }
     };
   }, [chatParticipantId]);
@@ -128,7 +133,7 @@ const PrivateChatChannel = () => {
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }, 1);
-  }, []);
+  }, [messages]);
 
   const openChatDetails = () => {
     if (chat_id) {
