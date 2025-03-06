@@ -129,27 +129,6 @@ const CourseContent = () => {
                     <Text style={styles.lessonTitle} numberOfLines={1}>
                         {Constants.lesson} {order}: {lesson.lesson_name}
                     </Text>
-                    {/* For lesson description if there will be any */}
-                    {/* <View style={styles.lessonContainerDescription}>
-                        <Text
-                            style={styles.lessonDescription}
-                            numberOfLines={3}
-                        >
-                            {lesson.description}
-                        </Text>
-                        <View style={styles.lessonBar}></View>
-                    </View> */}
-                    {/* For lesson completionStatus if there will be any */}
-                    {/* {lesson.completionStatus ? (
-                        <View style={styles.lessonContainerTickDone}>
-                            <Image
-                                source={Constants.tick}
-                                style={styles.tickImage}
-                            />
-                        </View>
-                    ) : (
-                        <View style={styles.lessonContainerTick}></View>
-                    )} */}
                 </TouchableOpacity>
             </View>
         </View>
