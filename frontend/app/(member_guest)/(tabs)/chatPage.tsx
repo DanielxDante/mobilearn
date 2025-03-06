@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Socket } from "socket.io-client";
 
 import { chat, chat as Constants } from "@/constants/textConstants";
 import { router, useSegments } from "expo-router";
@@ -89,8 +90,9 @@ const ChatItem: React.FC<ChatItemProps> = ({
 
 const ChatPage = () => {
   const getChats = useAppStore((state) => state.getParticipantChats);
-  const company = useAuthStore((state) => state.company); // Used to check if user or instructor
+  const getSocket = useAppStore((state) => state.getSocket);
   const [chats, setChats] = useState<Chat[]>([]);
+  const [socket, setSocket] = useState<Socket | null>();
 
   const segments = useSegments();
   useEffect(() => {
@@ -98,7 +100,6 @@ const ChatPage = () => {
       try {
         let chatList;
         chatList = await getChats("user");
-        console.log(chatList);
         if (typeof chatList == "string") {
           Alert.alert("Error", "Chats cannot be retrieved");
         } else {
@@ -113,6 +114,44 @@ const ChatPage = () => {
       fetchChats();
     }
   }, [segments]);
+
+  useEffect(() => {
+    const socketInstance = getSocket();
+    setSocket(socketInstance);
+
+    if (socketInstance && chats) {
+      socketInstance.on("update_chat", (chatData) => {
+        const {
+          chat_id,
+          message_id,
+          sender_id,
+          content,
+          timestamp,
+        } = chatData;
+        console.log("(ChatPage) Received update chat");
+        setChats((prevChats) => {
+          return prevChats.map((chat) => {
+            if (chat.chat_id === chat_id) {
+              return {
+                ...chat,
+                latest_message_content: content,
+                latest_message_sender: sender_id,
+                latest_message_timestamp: timestamp,
+                unread_count: chat.unread_count + 1,
+              };
+            }
+            return chat;
+          })
+        })
+      })
+    }
+
+    return () => {
+      if (socketInstance) {
+        socketInstance.off("update_chat");
+      }
+    }
+  }, [])
 
   const handleSearchChat = () => {
     router.push("/(member_guest)/chat/searchChat");
