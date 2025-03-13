@@ -18,7 +18,7 @@ const BackButton = ({ style }: IBackButton) => {
         >
             <Image
                 source={icons.backButton}
-                style={[styles.backButton, style]}
+                style={[styles.backButton]}
             />
         </TouchableOpacity>
     );

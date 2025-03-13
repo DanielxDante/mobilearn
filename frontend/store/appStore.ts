@@ -876,7 +876,7 @@ export const useAppStore = create<AppState>()(
         );
         if (courseSelected) {
           // IF COURSE IS ALREADY ENROLLED
-          router.push({
+          router.replace({
             pathname: "/shared/course/courseContent",
             params: {
               courseId: courseSelected.course_id,
@@ -886,7 +886,7 @@ export const useAppStore = create<AppState>()(
           // COURSE NOT YET ENROLLED
           const unenrolledCourse = await get().getUnenrolledCourse(course_id);
           if (unenrolledCourse) {
-            router.push({
+            router.replace({
               pathname: "/shared/course/courseDetails",
               params: {
                 courseId: unenrolledCourse.course_id,

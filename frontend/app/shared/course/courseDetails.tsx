@@ -7,10 +7,11 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useSegments } from "expo-router";
 
 import Course from "@/types/shared/Course/Course";
 import { courseDetailsConstants as Constants } from "@/constants/textConstants";
@@ -26,6 +27,25 @@ const CourseDetails = () => {
   const certicationType = "Online Certification";
 
   const { courseId } = useLocalSearchParams();
+
+  const segments = useSegments();
+      useEffect(() => {
+          const backHandler = BackHandler.addEventListener(
+              "hardwareBackPress",
+              () => {
+                  // Get the current route
+                  const currentRoute = segments[segments.length - 1];
+                  if (currentRoute === `courseDetails`) {
+                      router.navigate("/(member_guest)/(tabs)") // Return to homepage
+                      return true;
+                  }
+  
+                  return false;
+              }
+          );
+  
+          return () => backHandler.remove();
+      }, [router, segments]);
 
   const handleSkillPress = (skill: string) => {
     console.log(skill);
@@ -66,12 +86,21 @@ const CourseDetails = () => {
       });
     }
   }, [course_image]);
-
+  
   return (
     <SafeAreaView style={styles.container}>
       {/* AppBar */}
       <View style={styles.appBarContainer}>
-        <BackButton />
+        <TouchableOpacity
+            onPress={() => {
+                router.replace("/(member_guest)/(tabs)")
+            }}
+        >
+            <Image
+                source={icons.backButton}
+                style={[styles.backButton]}
+            />
+        </TouchableOpacity>
 
         <FavouriteButton course_id={courseId.toString()} />
       </View>
@@ -211,6 +240,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 15,
   },
+  backButton: {
+    height: 20,
+    width: 20,
+    marginLeft: 20,
+    padding: 5,
+},
   body: {
     flex: 1,
   },
