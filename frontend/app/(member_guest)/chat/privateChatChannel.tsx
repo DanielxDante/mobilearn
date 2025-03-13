@@ -114,9 +114,11 @@ const PrivateChatChannel = () => {
       socketInstance.on("chat_participant_joined", () => {
         console.log("(Private Chat) User has joined the chat");
       });
-      socketInstance.on("new_message", (message_data: Message) => {
+      socketInstance.on("new_message", (message_data: any) => {
           console.log("(Chat Channel) Received new_message");
-          setMessages((prevMessages) => [...prevMessages, message_data])
+          if (message_data.sender_id.toString() != chatParticipantId) {
+            setMessages((prevMessages) => [...prevMessages, message_data])
+          }
       })
     }
 
