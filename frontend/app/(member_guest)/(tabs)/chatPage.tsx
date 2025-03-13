@@ -116,42 +116,47 @@ const ChatPage = () => {
   }, [segments]);
 
   useEffect(() => {
-    const socketInstance = getSocket();
-    setSocket(socketInstance);
+    const currentRoute = segments[segments.length - 1];
+    if (currentRoute === "chatPage") {
+      const socketInstance = getSocket();
+      setSocket(socketInstance);
 
-    if (socketInstance && chats) {
-      socketInstance.on("update_chat", (chatData) => {
-        const {
-          chat_id,
-          message_id,
-          sender_id,
-          content,
-          timestamp,
-        } = chatData;
-        console.log("(ChatPage) Received update chat");
-        setChats((prevChats) => {
-          return prevChats.map((chat) => {
-            if (chat.chat_id === chat_id) {
-              return {
-                ...chat,
-                latest_message_content: content,
-                latest_message_sender: sender_id,
-                latest_message_timestamp: timestamp,
-                unread_count: chat.unread_count + 1,
-              };
-            }
-            return chat;
+      if (socketInstance) {
+        console.log("THERE IS A SOCKET INSTANCE");
+        socketInstance.on("update_chat", (chatData) => {
+          const {
+            chat_id,
+            message_id,
+            sender_id,
+            content,
+            timestamp,
+          } = chatData;
+          console.log("(ChatPage) Received update chat");
+          setChats((prevChats) => {
+            return prevChats.map((chat) => {
+              if (chat.chat_id === chat_id) {
+                return {
+                  ...chat,
+                  latest_message_content: content,
+                  latest_message_sender: sender_id,
+                  latest_message_timestamp: timestamp,
+                  unread_count: chat.unread_count + 1,
+                };
+              }
+              return chat;
+            })
           })
         })
-      })
-    }
+      }
 
-    return () => {
-      if (socketInstance) {
-        socketInstance.off("update_chat");
+      return () => {
+        console.log("exiting chat");
+        if (socketInstance) {
+          socketInstance.off("update_chat");
+        }
       }
     }
-  }, [])
+  }, [segments])
 
   const handleSearchChat = () => {
     router.push("/(member_guest)/chat/searchChat");
