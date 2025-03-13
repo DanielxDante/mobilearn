@@ -149,3 +149,7 @@ def register_socket_handlers(socketio):
                 'content': message_data['content'],
                 'timestamp': message_data['timestamp']
             })
+
+            # not using the app and not looking at the chat tab
+            # looking at the chat tab - update_chat
+            # currently in a chat room - new_message
