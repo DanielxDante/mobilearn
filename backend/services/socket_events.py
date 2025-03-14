@@ -138,7 +138,7 @@ def register_socket_handlers(socketio):
 
         # broadcast message to everyone in the chat room
         if message_data:
-            emit('new_message', message_data, room=chat_id)
+            emit('new_message', message_data, room=chat_id) # see if i can filter out the person sending
         
             # also emit to people not in chat room
             # this emits to all clients conneted, frontend needs to filter by chat_id
