@@ -139,7 +139,7 @@ export default function LoginPage() {
 const styles = StyleSheet.create({
   button: {
     paddingVertical: 10,
-    paddingHorizontal: 125,
+    paddingHorizontal: 100,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: "#356FC5",
@@ -151,5 +151,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#FFFFFF",
     fontSize: 16,
+    textAlign: "center", 
   },
 });
