@@ -115,6 +115,7 @@ const GroupChatChannel = () => {
           participant.participant_id,
           "1"
         );
+        console.log(messagesResponse);
         setMessages(messagesResponse);
       }
       const participantList = chat_info.participants.map(
@@ -146,8 +147,18 @@ const GroupChatChannel = () => {
       socketInstance.on("chat_participant_joined", () => {
         console.log("(Group Chat) User has joined the chat");
       });
-      socketInstance.on("new_message", (message_data: Message) => {
-        setMessages((prevMessages) => [...prevMessages, message_data])
+      socketInstance.on("new_message", (message_data: any) => {
+        console.log("(Chat Channel) Received new_message");
+        console.log(message_data);
+          if (message_data.sender_id.toString() != chatParticipantId) {
+            const formattedMessage = {
+              chat_participant_id: message_data.sender_id,
+              content: message_data.content,
+              message_id: message_data.message_id,
+              timestamp: message_data.timestamp
+            }
+            setMessages((prevMessages) => [...prevMessages, formattedMessage])
+          }
       })
     }
 
