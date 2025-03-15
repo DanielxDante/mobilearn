@@ -16,8 +16,10 @@ import BackButton from "@/components/BackButton";
 import { memberGuestEditProfilePage as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
 import EditProfileFields from "@/components/EditProfileFields";
+import { useTranslation } from "react-i18next";
 
 const EditProfile = () => {
+  const { t } = useTranslation();
   const authStore = useAuthStore((state) => state);
   // console.log(authStore);
   const username = useAuthStore((state) => state.username);
@@ -46,11 +48,11 @@ const EditProfile = () => {
 
   const handleEditName = async (newName: string | undefined) => {
     if (newName === undefined) {
-      alert("Username is undefined");
+      alert(t("memberGuestEditProfilePage.usernameUndefined"));
       return;
     }
     if (newName.length == 0) {
-      alert("Username is empty");
+      alert(t("memberGuestEditProfilePage.usernameEmpty"));
     } else {
       try {
         const response = await editName(newName);
@@ -59,48 +61,48 @@ const EditProfile = () => {
         return { isValid: true, validatedValue: newName.trim() };
       } catch (error) {
         console.log(error);
-        alert("Username has not been changed");
+        alert(t("memberGuestEditProfilePage.usernameNotChanged"));
       }
     }
   };
   const handleEditEmail = async (newEmail: string | undefined) => {
     if (newEmail === undefined) {
-      alert("Username is undefined");
+      alert(t("memberGuestEditProfilePage.emailUndefined"));
       return;
     }
     if (newEmail.length == 0) {
-      alert("Email is empty");
+      alert(t("memberGuestEditProfilePage.emailEmpty"));
     }
     if (newEmail === email) {
-      alert("Email was not changed.");
+      alert(t("memberGuestEditProfilePage.emailNotChanged"));
     } else {
       try {
         const response = await editEmail(newEmail);
         setNewEmail(newEmail);
-        alert("Email has been updated.");
+        alert(t("memberGuestEditProfilePage.emailUpdated"));
         return { isValid: true, validatedValue: newEmail.trim() };
       } catch (error) {
         console.log(error);
-        alert("Email has not been changed");
+        alert(t("memberGuestEditProfilePage.emailNotChanged"));
       }
     }
   };
   const handleEditGender = async (newGender: string | undefined) => {
     if (newGender === undefined) {
-      alert("Gender is undefined");
+      alert(t("memberGuestEditProfilePage.genderUndefined"));
       return;
     }
     if (newGender.length == 0) {
-      alert("Gender is empty");
+      alert(t("memberGuestEditProfilePage.genderEmpty"));
     } else {
       try {
         const response = await editGender(newGender);
         setNewGender(newGender);
-        alert("Gender has been updated.");
+        alert(t("memberGuestEditProfilePage.genderUpdated"));
         return { isValid: true, validatedValue: newGender };
       } catch (error) {
         console.log(error);
-        alert("Gender has not been changed");
+        alert(t("memberGuestEditProfilePage.genderNotChanged"));
       }
     }
   };
@@ -109,19 +111,19 @@ const EditProfile = () => {
     newPassword: string | undefined
   ) => {
     if (oldPassword === undefined || newPassword === undefined) {
-      alert("Passwords are undefined");
+      alert(t("memberGuestEditProfilePage.passwordUndefined"));
       return;
     }
     if (newPassword.length == 0) {
-      alert("Password is empty");
+      alert(t("memberGuestEditProfilePage.passwordEmpty"));
     } else {
       try {
         const response = await editPassword(oldPassword, newPassword);
-        alert("Password has been updated.");
+        alert(t("memberGuestEditProfilePage.passwordUpdated"));
         return { isValid: true };
       } catch (error) {
         console.log(error);
-        alert("Password has not been changed");
+        alert(t("memberGuestEditProfilePage.passwordNotChanged"));
       }
     }
   };
@@ -156,8 +158,9 @@ const EditProfile = () => {
 
         const response = await editProfilePicture(formData);
         setNewPictureUrl(response);
+        alert(t("memberGuestEditProfilePage.updated"));
       } else {
-        alert("File is undefined!");
+        alert(t("memberGuestEditProfilePage.undefinedValue"));
       }
     } catch (error) {
       console.error("Error in handleEditProfilePicture:", error);
@@ -181,7 +184,7 @@ const EditProfile = () => {
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
+      alert(t("memberGuestEditProfilePage.cameraRollPermission"));
     }
   };
   return (
@@ -189,7 +192,9 @@ const EditProfile = () => {
       {/* AppBar */}
       <View style={styles.appBarContainer}>
         <BackButton />
-        <Text style={styles.header}>{Constants.appBarTitle}</Text>
+        <Text style={styles.header}>
+          {t("memberGuestEditProfilePage.appBarTitle")}
+        </Text>
       </View>
       {/* Page body */}
       <ScrollView>
@@ -223,51 +228,85 @@ const EditProfile = () => {
             {/* Edit fields */}
             <View style={styles.editFields}>
               {/* FYI: To reuse this component, ensure modalDetails structure is consistent */}
+              {/* Username Field */}
               <EditProfileFields
-                title={
-                  Constants.fields.find((field) => field.name)?.name
-                    ?.inputTitle ?? "Your username"
-                }
+                title={t("memberGuestEditProfilePage.fields.name.inputTitle")}
                 initialValue={newUsername}
-                modalDetails={
-                  Constants.fields.find((field) => field.name)?.name
-                    ?.modalDetails ?? "Error"
-                }
+                modalDetails={[
+                  {
+                    inputTitle: t(
+                      "memberGuestEditProfilePage.fields.name.modalDetails.0.inputTitle"
+                    ),
+                    placeholder: t(
+                      "memberGuestEditProfilePage.fields.name.modalDetails.0.placeholder"
+                    ),
+                  },
+                ]}
                 onSave={handleEditName}
               />
+
+              {/* Email Field */}
               <EditProfileFields
-                title={
-                  Constants.fields.find((field) => field.email)?.email
-                    ?.inputTitle ?? "Your email"
-                }
+                title={t("memberGuestEditProfilePage.fields.email.inputTitle")}
                 initialValue={newEmail}
-                modalDetails={
-                  Constants.fields.find((field) => field.email)?.email
-                    ?.modalDetails ?? "Error"
-                }
+                modalDetails={[
+                  {
+                    inputTitle: t(
+                      "memberGuestEditProfilePage.fields.email.modalDetails.0.inputTitle"
+                    ),
+                    placeholder: t(
+                      "memberGuestEditProfilePage.fields.email.modalDetails.0.placeholder"
+                    ),
+                  },
+                ]}
                 onSave={handleEditEmail}
               />
+
+              {/* Gender Field */}
               <EditProfileFields
-                title={
-                  Constants.fields.find((field) => field.gender)?.gender
-                    ?.inputTitle ?? "Your gender"
-                }
+                title={t("memberGuestEditProfilePage.fields.gender.inputTitle")}
                 initialValue={newGender}
-                modalDetails={
-                  Constants.fields.find((field) => field.gender)?.gender
-                    ?.modalDetails ?? "Error"
-                }
+                modalDetails={[
+                  {
+                    inputTitle: t(
+                      "memberGuestEditProfilePage.fields.gender.modalDetails.0.inputTitle"
+                    ),
+                    options: [
+                      t(
+                        "memberGuestEditProfilePage.fields.gender.modalDetails.0.options.0"
+                      ), // "男"
+                      t(
+                        "memberGuestEditProfilePage.fields.gender.modalDetails.0.options.1"
+                      ), // "女"
+                    ],
+                  },
+                ]}
                 onSave={handleEditGender}
               />
+
+              {/* Password Field */}
               <EditProfileFields
-                title={
-                  Constants.fields.find((field) => field.password)?.password
-                    ?.inputTitle ?? "Your password"
-                }
-                modalDetails={
-                  Constants.fields.find((field) => field.password)?.password
-                    ?.modalDetails ?? "Error"
-                }
+                title={t(
+                  "memberGuestEditProfilePage.fields.password.inputTitle"
+                )}
+                modalDetails={[
+                  {
+                    inputTitle: t(
+                      "memberGuestEditProfilePage.fields.password.modalDetails.0.inputTitle"
+                    ),
+                    placeholder: t(
+                      "memberGuestEditProfilePage.fields.password.modalDetails.0.placeholder"
+                    ),
+                  },
+                  {
+                    inputTitle: t(
+                      "memberGuestEditProfilePage.fields.password.modalDetails.1.inputTitle"
+                    ),
+                    placeholder: t(
+                      "memberGuestEditProfilePage.fields.password.modalDetails.1.placeholder"
+                    ),
+                  },
+                ]}
                 onSave={handleEditPassword}
               />
             </View>

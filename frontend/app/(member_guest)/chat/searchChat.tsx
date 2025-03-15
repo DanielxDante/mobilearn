@@ -16,6 +16,7 @@ import debounce from "lodash.debounce";
 import { searchChat as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
 import useAppStore from "@/store/appStore";
+import { useTranslation } from "react-i18next";
 
 interface ChatItemProps {
   id: number;
@@ -48,6 +49,7 @@ const ChatItem: React.FC<ChatItemProps> = ({
       params: { chat_id: private_chat_id },
     });
   };
+  const { t } = useTranslation();
 
   return (
     <TouchableOpacity
@@ -87,6 +89,7 @@ const SearchChat = () => {
     }, 300),
     []
   );
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -99,11 +102,11 @@ const SearchChat = () => {
         >
           <Image source={Constants.backButton} style={styles.backButton} />
         </TouchableOpacity>
-        <Text style={styles.title}>{Constants.title}</Text>
+        <Text style={styles.title}>{t("searchChat.title")}</Text>
       </View>
       {/* Search bar */}
       <Searchbar
-        placeholder={Constants.searchBar}
+        placeholder={t("searchChat.searchBar")}
         onChangeText={(text) => {
           setSearchQuery(text);
           handleSearch(text);

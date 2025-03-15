@@ -287,7 +287,9 @@
 
   "memberGuestSuggestionsSeeAll": {
     "backButton": "@/assets/images/notifications/backButton.png",
-    "appBarTitle": "为您推荐"
+    "appBarTitle": "为您推荐",
+    "loading": "加载中...",
+    "endText": "没有更多课程了"
   },
 
   "memberGuestTopCoursesSeeAll": {
@@ -319,60 +321,99 @@
   },
 
   "memberGuestEditProfilePage": {
-    "appBarTitle": "编辑资料",
-    "editProfilePicture": "@/assets/images/icons/editProfilePicture.png",
-    "fields": [
-      {
-        "name": {
-          "inputTitle": "您的用户名",
-          "modalDetails": [
-            {
-              "inputTitle": "用户名",
-              "placeholder": "请输入用户名"
-            }
-          ]
-        }
+    "fields": {
+      "name": {
+        "inputTitle": "您的用户名",
+        "modalDetails": [
+          {
+            "inputTitle": "用户名",
+            "placeholder": "请输入用户名"
+          }
+        ]
       },
-      {
-        "email": {
-          "inputTitle": "邮箱",
-          "modalDetails": [
-            {
-              "inputTitle": "邮箱",
-              "placeholder": "请输入邮箱"
-            }
-          ]
-        }
+      "email": {
+        "inputTitle": "邮箱",
+        "modalDetails": [
+          {
+            "inputTitle": "邮箱",
+            "placeholder": "请输入邮箱"
+          }
+        ]
       },
-      {
-        "gender": {
-          "inputTitle": "性别",
-          "modalDetails": [
-            {
-              "inputTitle": "性别",
-              "options": ["男", "女"]
-            }
-          ]
-        }
+      "gender": {
+        "inputTitle": "性别",
+        "modalDetails": [
+          {
+            "inputTitle": "性别",
+            "options": ["男", "女"]
+          }
+        ]
       },
-      {
-        "password": {
-          "inputTitle": "密码",
-          "modalDetails": [
-            {
-              "inputTitle": "旧密码",
-              "placeholder": "******"
-            },
-            {
-              "inputTitle": "新密码",
-              "placeholder": "******"
-            }
-          ]
-        }
+      "password": {
+        "inputTitle": "密码",
+        "modalDetails": [
+          {
+            "inputTitle": "旧密码",
+            "placeholder": "******"
+          },
+          {
+            "inputTitle": "新密码",
+            "placeholder": "******"
+          }
+        ]
+      },
+      "company": {
+        "inputTitle": "公司",
+        "modalDetails": [
+          {
+            "inputTitle": "公司"
+          }
+        ]
+      },
+      "position": {
+        "inputTitle": "职位",
+        "modalDetails": [
+          {
+            "inputTitle": "职位",
+            "placeholder": "请输入职位"
+          }
+        ]
+      },
+      "phone_number": {
+        "inputTitle": "电话号码",
+        "modalDetails": [
+          {
+            "inputTitle": "电话号码",
+            "placeholder": "+11234567890"
+          }
+        ]
       }
-    ],
+    },
     "saveChanges": "保存",
-    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg"
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg",
+    "usernameUndefined": "用户名未定义。",
+    "usernameEmpty": "用户名不能为空。",
+    "usernameNotChanged": "用户名未更改。",
+    "emailUndefined": "邮箱未定义。",
+    "emailEmpty": "邮箱不能为空。",
+    "emailNotChanged": "邮箱未更改。",
+    "emailUpdated": "邮箱已更新。",
+    "genderUndefined": "性别未定义。",
+    "genderEmpty": "性别不能为空。",
+    "genderUpdated": "性别已更新。",
+    "genderNotChanged": "性别未更改。",
+    "passwordUndefined": "密码未定义。",
+    "passwordEmpty": "密码不能为空。",
+    "passwordNotChanged": "密码未更改。",
+    "passwordUpdated": "密码已更新。",
+    "undefinedValue": "输入未定义。",
+    "emptyValue": "输入不能为空。",
+    "notChanged": "输入未更改。",
+    "updated": "此字段已更新。",
+    "phone_invalid": "电话号码无效。请检查区号和号码。",
+    "tryAgain": "请稍后重试。",
+    "cameraRollPermission": "抱歉，我们需要相机权限才能完成此操作！",
+    "appBarTitle": "编辑资料"
   },
 
   "memberGuestEditProfileFields": {

@@ -279,7 +279,9 @@
 
   "memberGuestSuggestionsSeeAll": {
     "backButton": "@/assets/images/notifications/backButton.png",
-    "appBarTitle": "Suggestions for You"
+    "appBarTitle": "Suggestions for You",
+    "loading": "Loading...",
+    "endText": "No more courses available"
   },
 
   "memberGuestTopCoursesSeeAll": {
@@ -310,60 +312,99 @@
     "coreMemberDisplayName": "Senior"
   },
   "memberGuestEditProfilePage": {
-    "appBarTitle": "Edit Profile",
-    "editProfilePicture": "@/assets/images/icons/editProfilePicture.png",
-    "fields": [
-      {
-        "name": {
-          "inputTitle": "Your username",
-          "modalDetails": [
-            {
-              "inputTitle": "Username",
-              "placeholder": "Please enter username"
-            }
-          ]
-        }
+    "fields": {
+      "name": {
+        "inputTitle": "Your username",
+        "modalDetails": [
+          {
+            "inputTitle": "Username",
+            "placeholder": "Please enter username"
+          }
+        ]
       },
-      {
-        "email": {
-          "inputTitle": "Email",
-          "modalDetails": [
-            {
-              "inputTitle": "Email",
-              "placeholder": "Please enter email"
-            }
-          ]
-        }
+      "email": {
+        "inputTitle": "Email",
+        "modalDetails": [
+          {
+            "inputTitle": "Email",
+            "placeholder": "Please enter email"
+          }
+        ]
       },
-      {
-        "gender": {
-          "inputTitle": "Gender",
-          "modalDetails": [
-            {
-              "inputTitle": "Gender",
-              "options": ["Male", "Female"]
-            }
-          ]
-        }
+      "gender": {
+        "inputTitle": "Gender",
+        "modalDetails": [
+          {
+            "inputTitle": "Gender",
+            "options": ["Male", "Female"]
+          }
+        ]
       },
-      {
-        "password": {
-          "inputTitle": "Password",
-          "modalDetails": [
-            {
-              "inputTitle": "Old Password",
-              "placeholder": "******"
-            },
-            {
-              "inputTitle": "New Password",
-              "placeholder": "******"
-            }
-          ]
-        }
+      "password": {
+        "inputTitle": "Password",
+        "modalDetails": [
+          {
+            "inputTitle": "Old Password",
+            "placeholder": "******"
+          },
+          {
+            "inputTitle": "New Password",
+            "placeholder": "******"
+          }
+        ]
+      },
+      "company": {
+        "inputTitle": "Company",
+        "modalDetails": [
+          {
+            "inputTitle": "Company"
+          }
+        ]
+      },
+      "position": {
+        "inputTitle": "Position",
+        "modalDetails": [
+          {
+            "inputTitle": "Position",
+            "placeholder": "Please enter position"
+          }
+        ]
+      },
+      "phone_number": {
+        "inputTitle": "Phone Number",
+        "modalDetails": [
+          {
+            "inputTitle": "Phone Number",
+            "placeholder": "+11234567890"
+          }
+        ]
       }
-    ],
+    },
     "saveChanges": "Save",
-    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg"
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg",
+    "usernameUndefined": "Username is undefined.",
+    "usernameEmpty": "Username cannot be empty.",
+    "usernameNotChanged": "Username not changed.",
+    "emailUndefined": "Email is undefined.",
+    "emailEmpty": "Email cannot be empty.",
+    "emailNotChanged": "Email not changed.",
+    "emailUpdated": "Email has been updated.",
+    "genderUndefined": "Gender is undefined.",
+    "genderEmpty": "Gender is empty.",
+    "genderUpdated": "Gender has been updated.",
+    "genderNotChanged": "Gender has not been changed.",
+    "passwordUndefined": "Password is undefined.",
+    "passwordEmpty": "Password cannot be empty.",
+    "passwordNotChanged": "Password not changed.",
+    "passwordUpdated": "Password has been updated.",
+    "undefinedValue": "Input is undefined.",
+    "emptyValue": "Input cannot be empty.",
+    "notChanged": "Input not changed.",
+    "updated": "This field has been updated.",
+    "phone_invalid": "Phone number is not valid. Please check area code and number.",
+    "tryAgain": "Please try again later.",
+    "cameraRollPermission": "Sorry, we need camera roll permissions to make this work!",
+    "appBarTitle": "Edit Profile"
   },
 
   "memberGuestEditProfileFields": {

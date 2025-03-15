@@ -83,7 +83,7 @@ export interface AuthState {
   editNameInstructor: (new_name: string) => Promise<string>;
   editPhoneNumberInstructor: (new_phone_number: string) => Promise<string>;
   editPositionInstructor: (new_position: string) => Promise<string>;
-  editProfilePictureInstructor: (file: File) => Promise<string>;
+  editProfilePictureInstructor: (file: any) => Promise<string>;
   getGenderInstructor: () => Promise<string>;
   getNameInstructor: () => Promise<string>;
   getPhoneNumberInstructor: () => Promise<string>;
