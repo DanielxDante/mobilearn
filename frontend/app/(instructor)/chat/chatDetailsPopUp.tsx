@@ -11,8 +11,9 @@ import {
 import React from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-import { chatDetailsPopUp as Constants } from "@/constants/textConstants";
+//import { chatDetailsPopUp as Constants } from "@/constants/textConstants";
 import useAppStore from "@/store/appStore";
+import { useTranslation } from "react-i18next";
 
 interface ChatDetailsPopUpProps {
   handleModal: () => void;
@@ -35,6 +36,7 @@ const ChatDetailsPopUp: React.FC<ChatDetailsPopUpProps> = ({
   const removeParticipant = useAppStore(
     (state) => state.removeGroupChatParticipant
   );
+  const { t } = useTranslation();
   const handleElevate = async () => {
     const response = await elevateParticipant(
       "instructor",
@@ -47,11 +49,11 @@ const ChatDetailsPopUp: React.FC<ChatDetailsPopUpProps> = ({
       refreshData();
     } else {
       Alert.alert(
-        Constants.error,
-        Constants.participantNotElevated,
+        t("chatDetailsPopUp.error"),
+        t("chatDetailsPopUp.participantNotElevated"),
         [
           {
-            text: "Ok",
+            text: t("chatDetailsPopUp.ok"),
             onPress: () => handleModal(),
           },
         ],
@@ -71,11 +73,11 @@ const ChatDetailsPopUp: React.FC<ChatDetailsPopUpProps> = ({
       refreshData();
     } else {
       Alert.alert(
-        Constants.error,
-        Constants.participantNotRemoved,
+        t("chatDetailsPopUp.error"),
+        t("chatDetailsPopUp.participantNotRemoved"),
         [
           {
-            text: Constants.ok,
+            text: t("chatDetailsPopUp.ok"),
             onPress: () => handleModal(),
           },
         ],
@@ -106,7 +108,7 @@ const ChatDetailsPopUp: React.FC<ChatDetailsPopUpProps> = ({
                   size={22}
                   style={styles.icon}
                 />
-                <Text style={styles.text}>{Constants.promote}</Text>
+                <Text style={styles.text}>{t("chatDetailsPopUp.promote")}</Text>
               </TouchableOpacity>
               {/* Remove from group */}
               <TouchableOpacity
@@ -119,7 +121,7 @@ const ChatDetailsPopUp: React.FC<ChatDetailsPopUpProps> = ({
                   size={22}
                   style={styles.icon}
                 />
-                <Text style={styles.text}>{Constants.remove}</Text>
+                <Text style={styles.text}>{t("chatDetailsPopUp.remove")}</Text>
               </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>

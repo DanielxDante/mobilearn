@@ -22,6 +22,7 @@ import { formatTime } from "@/components/DateFormatter";
 import useAppStore from "@/store/appStore";
 import Message from "@/types/shared/Message";
 import useAuthStore from "@/store/authStore";
+import { useTranslation } from "react-i18next";
 
 interface MsgBubbleProps {
   message_id?: number;
@@ -57,6 +58,7 @@ const MsgBubble: React.FC<MsgBubbleProps> = ({
   );
 };
 const PrivateChatChannel = () => {
+  const { t } = useTranslation();
   const { chat_id } = useLocalSearchParams<{
     chat_id: string;
   }>();
@@ -219,7 +221,7 @@ const PrivateChatChannel = () => {
           </View>
           <View style={styles.msgContainer}>
             <TextInput
-              placeholder={Constants.msgInputPlaceholder}
+              placeholder={t("chatChannel.msgInputPlaceholder")}
               numberOfLines={4}
               value={message}
               onChangeText={setMessage}

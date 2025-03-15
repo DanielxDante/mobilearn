@@ -13,8 +13,10 @@ import { router, useLocalSearchParams } from "expo-router";
 import useAppStore from "@/store/appStore";
 import { privateChatDetails as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
+import { useTranslation } from "react-i18next";
 
 const PrivateChatDetails = () => {
+  const { t } = useTranslation();
   const getChatDetails = useAppStore((state) => state.getChatDetails);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -71,7 +73,7 @@ const PrivateChatDetails = () => {
           <Text style={styles.name}>{name}</Text>
           <View style={styles.emailView}>
             <Text>
-              {Constants.email}
+              {t("privateChatDetails.email")}
               {email}
             </Text>
           </View>

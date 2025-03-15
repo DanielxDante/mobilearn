@@ -21,6 +21,7 @@ import { formatTime } from "@/components/DateFormatter";
 import useAppStore from "@/store/appStore";
 import Message from "@/types/shared/Message";
 import useAuthStore from "@/store/authStore";
+import { useTranslation } from "react-i18next";
 
 interface MsgBubbleProps {
   message_id?: number;
@@ -97,6 +98,7 @@ const GroupChatChannel = () => {
   const [message, setMessage] = useState<string>(""); //Refers to instructor's own message to be sent
 
   const scrollViewRef = useRef<RNScrollView | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchChatInfo = async () => {
@@ -260,7 +262,7 @@ const GroupChatChannel = () => {
           </View>
           <View style={styles.msgContainer}>
             <TextInput
-              placeholder={Constants.msgInputPlaceholder}
+              placeholder={t("chatChannel.msgInputPlaceholder")}
               numberOfLines={4}
               value={message}
               onChangeText={setMessage}
