@@ -542,12 +542,12 @@
     "courseName": "Course Title",
     "courseDescription": "Course Description",
     "courseType": "Course Type",
-    "courseType_options": [
-      "Academic",
-      "Professional",
-      "Specialization",
-      "Project"
-    ],
+    "courseType_options": {
+      "academic": "Academic",
+      "professional": "Professional",
+      "specialization": "Specialization",
+      "project": "Project"
+    },
     "courseDuration": "Course Duration",
     "coursePicture": "Course Picture",
     "coursePicturePlaceholder": "Upload a picture",
@@ -555,7 +555,11 @@
     "coursePrice": "Course Price",
     "coursePricePlaceholder": "Enter course price",
     "courseDifficulty": "Course Difficulty",
-    "courseDifficulty_options": ["Beginner", "Intermediate", "Advanced"],
+    "courseDifficulty_options": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
     "courseSkills": "Course Skills",
     "courseSkillsPlaceholder": "Python, Java, C++",
     "courseSchoolName": "School Name",
@@ -579,14 +583,14 @@
     "editLessonTitle": "Edit Lesson",
     "chapterInfo": "Chapter Information",
     "manageLessons": "Manage Lessons",
-    "lesson_options": [
-      "1 Lesson",
-      "2 Lessons",
-      "3 Lessons",
-      "4 Lessons",
-      "5 Lessons"
-    ],
     "numberOfLessons": "Number of Lessons",
+    "lesson_options": {
+      "1": "1 Lesson",
+      "2": "2 Lessons",
+      "3": "3 Lessons",
+      "4": "4 Lessons",
+      "5": "5 Lessons"
+    },
     "numberOfLessonsOptions": ["1", "2", "3", "4", "5"],
     "lesson_placeholder": "Lesson",
     "lessonTypePlaceholder": "Select lesson type",
@@ -617,7 +621,11 @@
     "minus": "-",
     "plus": "+",
     "lessonTypeTitle": "Lesson Type",
-    "lessonTypeOptions": ["Text", "Video", "Homework"],
+    "lessonTypeOptions": {
+      "text": "Text",
+      "video": "Video",
+      "homework": "Homework"
+    },
     "noUriReturnedError": "No uri returned from document picker.",
     "fillAllFieldsAlert": "Please fill all fields.",
     "courseCreatedAlert": "Course has been created.",
@@ -767,7 +775,13 @@
     "pageHeader": "Lesson Content",
     "homework": "Homework",
     "download": "Click to Download",
-    "upload": "Submit Homework"
+    "upload": "Submit Homework",
+    "error": "Error",
+    "lessonNotFound": "Lesson not found.",
+    "ok": "Ok",
+    "success": "Success",
+    "homeworkSubmitted": "Your homework has been submitted.",
+    "unknownLesson": "Unknown lesson."
   },
 
   "communityPage": {
@@ -779,7 +793,12 @@
     "backButton": "@/assets/images/notifications/backButton.png",
     "title": "Leave a Review",
     "submit": "Submit",
-    "placeholder": "Leave a review"
+    "placeholder": "Leave a review",
+    "enterFeedback": "Please enter feedback.",
+    "success": "Success",
+    "reviewSubmitted": "Review submitted successfully!",
+    "ok": "Ok",
+    "error": "Error"
   },
 
   "notificationUtility": {

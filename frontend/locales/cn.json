@@ -552,7 +552,12 @@
     "courseName": "课程标题",
     "courseDescription": "课程描述",
     "courseType": "课程类型",
-    "courseType_options": ["学术", "职业", "专业", "项目"],
+    "courseType_options": {
+      "academic": "学术",
+      "professional": "职业",
+      "specialization": "专业",
+      "project": "项目"
+    },
     "courseDuration": "课程时长",
     "coursePicture": "课程图片",
     "coursePicturePlaceholder": "上传图片",
@@ -560,7 +565,11 @@
     "coursePrice": "课程价格",
     "coursePricePlaceholder": "输入课程价格",
     "courseDifficulty": "课程难度",
-    "courseDifficulty_options": ["初级", "中级", "高级"],
+    "courseDifficulty_options": {
+      "beginner": "初级",
+      "intermediate": "中级",
+      "advanced": "高级"
+    },
     "courseSkills": "课程技能",
     "courseSkillsPlaceholder": "Python, Java, C++",
     "courseSchoolName": "学校名称",
@@ -584,7 +593,16 @@
     "editLessonTitle": "编辑课程",
     "chapterInfo": "章节信息",
     "manageLessons": "管理课程",
-    "lesson_options": ["1 节课", "2 节课", "3 节课", "4 节课", "5 节课"],
+    "instructorCreateCoursePageConstants": {
+      "numberOfLessons": "课程数量",
+      "lesson_options": {
+        "1": "1 节课",
+        "2": "2 节课",
+        "3": "3 节课",
+        "4": "4 节课",
+        "5": "5 节课"
+      }
+    },
     "numberOfLessons": "课程数量",
     "numberOfLessonsOptions": ["1", "2", "3", "4", "5"],
     "lesson_placeholder": "课程",
@@ -616,7 +634,11 @@
     "minus": "-",
     "plus": "+",
     "lessonTypeTitle": "课程类型",
-    "lessonTypeOptions": ["文本", "视频", "作业"],
+    "lessonTypeOptions": {
+      "text": "文本",
+      "video": "视频",
+      "homework": "作业"
+    },
     "noUriReturnedError": "未从文档选择器返回 uri。",
     "fillAllFieldsAlert": "请填写所有字段。",
     "courseCreatedAlert": "课程已创建。",
@@ -767,7 +789,13 @@
     "pageHeader": "课程内容",
     "homework": "作业",
     "download": "点击下载",
-    "upload": "提交作业"
+    "upload": "提交作业",
+    "error": "错误",
+    "lessonNotFound": "未找到课程。",
+    "ok": "确定",
+    "success": "成功",
+    "homeworkSubmitted": "作业已提交。",
+    "unknownLesson": "未知课程。"
   },
 
   "communityPage": {
@@ -779,7 +807,12 @@
     "backButton": "@/assets/images/notifications/backButton.png",
     "title": "留下评价",
     "submit": "提交",
-    "placeholder": "留下评价"
+    "placeholder": "留下评价",
+    "enterFeedback": "请输入您的反馈",
+    "success": "成功",
+    "reviewSubmitted": "评价已提交。",
+    "ok": "确定",
+    "error": "错误"
   },
 
   "notificationUtility": {
