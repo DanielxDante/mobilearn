@@ -13,19 +13,22 @@ import MediumButton from "@/components/MediumButton";
 import { ROLE_SELECTION_PAGE } from "@/constants/pages";
 import { CAROUSEL_PAGE } from "@/constants/pages";
 import { usePushNotifications } from "@/hooks/usePushNotificationState";
+import { useTranslation } from "react-i18next";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function OnboardingCarousel() {
+  const { t } = useTranslation();
   const { expoPushToken, notification } = usePushNotifications();
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const timerRef = useRef<any>(null);
   const currentIndexRef = useRef<number>(0);
-  const slides = Constants.slides;
+  const slides =
+    t("carouselPageConstants.slides", { returnObjects: true }) ||
+    Constants.slides;
 
   useEffect(() => {
-    // Automatically move to the next slide every 3 seconds
     timerRef.current = setInterval(() => {
       let nextIndex = (currentSlideIndex + 1) % slides.length;
       flatListRef.current?.scrollToIndex({
@@ -33,9 +36,9 @@ export default function OnboardingCarousel() {
         animated: true,
       });
       currentIndexRef.current = nextIndex;
-    }, 3000); // Change slide every 3 seconds
+    }, 3000);
 
-    return () => clearInterval(timerRef.current); // Clear the timer when unmounted
+    return () => clearInterval(timerRef.current);
   }, [currentSlideIndex]);
 
   const handleScroll = (event: any) => {
@@ -48,25 +51,22 @@ export default function OnboardingCarousel() {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
-        // Get the current route
         const currentRoute = segments[segments.length - 1];
-        // If we're on the member home page, go to hardware home
         if (currentRoute === "carouselPage") {
-          BackHandler.exitApp(); // Exit the app
+          BackHandler.exitApp();
           return true;
         }
-
         return false;
       }
     );
     return () => backHandler.remove();
   }, [segments]);
 
-  const renderItem = ({ item }: any) => (
+  const renderItem = ({ item, index }: { item: any; index: number }) => (
     <View style={{ width, alignItems: "center", justifyContent: "center" }}>
       <Image
-        source={item.image}
-        style={{ width: width * 0.8, height: height * 0.3 }} // Scale image proportionally
+        source={Constants.slides[index].image}
+        style={{ width: width * 0.8, height: height * 0.3 }}
         resizeMode="contain"
       />
       <Text
@@ -96,7 +96,6 @@ export default function OnboardingCarousel() {
   );
 
   return (
-    // this is the main view
     <View
       style={{
         flexDirection: "column",
@@ -117,10 +116,8 @@ export default function OnboardingCarousel() {
         keyExtractor={(item) => item.id}
       />
 
-      {/* Pagination dots */}
       <View
         style={{
-          //height: height * 0.05,
           flexDirection: "row",
           justifyContent: "center",
           marginTop: -60,
@@ -141,7 +138,6 @@ export default function OnboardingCarousel() {
         ))}
       </View>
 
-      {/* Continue and Skip buttons */}
       <View
         style={{
           alignItems: "center",
@@ -150,11 +146,10 @@ export default function OnboardingCarousel() {
         }}
       >
         <MediumButton
-          text={Constants.contButtonText}
+          text={t("carouselPageConstants.contButtonText")}
           isBlue={true}
           onPress={() => {
             router.push(ROLE_SELECTION_PAGE);
-            // console.log("Continue pressed");
           }}
         ></MediumButton>
       </View>

@@ -13,12 +13,14 @@ import {
   MEMBER_GUEST_HOME,
   MEMBER_GUEST_TABS,
 } from "@/constants/pages";
+import { useTranslation } from "react-i18next";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
   //const login = useAuthStore((state) => state.login);
   const segments = useSegments();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -73,7 +75,7 @@ export default function LoginPage() {
             marginBottom: 24,
           }}
         >
-          {Constants.pageTitle}
+          {t("registrationSuccessInstructor.pageTitle")}
         </Text>
         <Text // You have registered as an
           style={{
@@ -84,7 +86,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.blueSubTitle}
+          {t("registrationSuccessInstructor.blueSubTitle")}
         </Text>
         <Image
           source={Constants.image}
@@ -103,7 +105,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.role}
+          {t("registrationSuccessInstructor.role")}
         </Text>
         <Text // SubTitle
           style={{
@@ -114,7 +116,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.subTitle}
+          {t("registrationSuccessInstructor.subTitle")}
         </Text>
         <Link
           //href={MEMBER_GUEST_HOME}
@@ -129,7 +131,7 @@ export default function LoginPage() {
             textDecorationLine: "underline",
           }}
         >
-          {Constants.linkText}
+          {t("registrationSuccessInstructor.linkText")}
         </Link>
       </View>
     </SafeAreaView>

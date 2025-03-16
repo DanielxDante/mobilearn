@@ -7,8 +7,11 @@ import SignInUp from "../../assets/images/SignInUp.png";
 import { MEMBER_GUEST_NAMESPACE } from "@/constants/pages";
 import { MEMBER_LOGIN_PAGE } from "@/constants/pages";
 import { MEMBER_SIGNUP_PAGE } from "@/constants/pages";
+import { useTranslation } from "react-i18next";
 
 const SignUpPage = () => {
+  const { t } = useTranslation();
+
   return (
     <View
       style={{
@@ -40,7 +43,7 @@ const SignUpPage = () => {
           //paddingHorizontal: 40,
         }}
       >
-        {Constants.signUpPageTitle}
+        {t("memberSignInUpPageConstants.signUpPageTitle")}
       </Text>
       <Text
         style={{
@@ -50,7 +53,7 @@ const SignUpPage = () => {
           marginHorizontal: 32,
         }}
       >
-        {Constants.signUpPageSubtitle}
+        {t("memberSignInUpPageConstants.signUpPageSubtitle")}
       </Text>
       <View
         style={{
@@ -60,7 +63,7 @@ const SignUpPage = () => {
         }}
       >
         <Button
-          text={Constants.signInButtonText}
+          text={t("memberSignInUpPageConstants.signInButtonText")}
           isBlue={true}
           onPress={() => {
             router.push(MEMBER_LOGIN_PAGE);
@@ -68,7 +71,7 @@ const SignUpPage = () => {
           }}
         ></Button>
         <Button
-          text={Constants.signUpButtonText}
+          text={t("memberSignInUpPageConstants.signUpButtonText")}
           isBlue={false}
           onPress={() => {
             router.push(MEMBER_SIGNUP_PAGE);

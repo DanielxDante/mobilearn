@@ -20,6 +20,7 @@ import { COMMUNITIES_GET_ALL } from "@/constants/routes";
 import axios from "axios";
 import { validateEmail } from "@/constants/regex";
 import { usePushNotifications } from "@/hooks/usePushNotificationState";
+import { useTranslation } from "react-i18next";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
@@ -28,6 +29,7 @@ export default function signUpPage() {
   const [internalPage, setInternalPage] = useState(1); // 1 for first page, 2 for second page
   const [communities, setCommunities] = useState([]);
   const { expoPushToken, notification } = usePushNotifications();
+  const { t } = useTranslation();
   //use state for all inputs
   const [inputs, setInputs] = useState({
     name: "",
@@ -115,11 +117,11 @@ export default function signUpPage() {
 
   const handleRegistration = async () => {
     if (!validateInputs()) {
-      alert(instructorSignUpPageConstants.inputsEmptyAlert);
+      alert(t("instructorSignUpPageConstants.inputsEmptyAlert"));
       return;
     }
     if (inputs.password !== inputs.conPassword) {
-      alert(instructorSignUpPageConstants.passwordMismatchAlert);
+      alert(t("instructorSignUpPageConstants.passwordMismatchAlert"));
       return;
     }
     try {
@@ -136,8 +138,15 @@ export default function signUpPage() {
       router.push(INSTRUCTOR_REGISTRATION_SUCCESS);
     } catch (error) {
       console.log(error);
-      alert(instructorSignUpPageConstants.errorSigningUpAlert);
+      alert(t("instructorSignUpPageConstants.errorSigningUpAlert"));
     }
+  };
+
+  const GENDER_DICTIONARY = {
+    男: "Male",
+    女: "Female",
+    Male: "Male",
+    Female: "Female",
   };
 
   return (
@@ -179,7 +188,7 @@ export default function signUpPage() {
                 marginBottom: 24,
               }}
             >
-              {Constants.pageTitle}
+              {t("instructorSignUpPageConstants.pageTitle")}
             </Text>
             <Text
               style={{
@@ -189,7 +198,7 @@ export default function signUpPage() {
                 maxWidth: 0.8 * width,
               }}
             >
-              {Constants.pageSubTitle}
+              {t("instructorSignUpPageConstants.pageSubTitle")}
             </Text>
           </>
         )}
@@ -198,25 +207,70 @@ export default function signUpPage() {
       {internalPage === 1 && (
         <View style={{ width: "100%" }}>
           <InputField
-            inputTitle={Constants.fields[0].inputTitle}
-            placeholder={Constants.fields[0].placeHolder ?? ""}
+            inputTitle={t("instructorSignUpPageConstants.fields.0.inputTitle")}
+            placeholder={
+              t("instructorSignUpPageConstants.fields.0.placeHolder") ?? ""
+            }
             value={inputs.name}
             onChangeText={(text) => handleInputChange("name", text)}
           />
           <InputField
-            inputTitle={Constants.fields[1].inputTitle}
-            placeholder={Constants.fields[1].placeHolder ?? ""}
+            inputTitle={t("instructorSignUpPageConstants.fields.1.inputTitle")}
+            placeholder={
+              t("instructorSignUpPageConstants.fields.1.placeHolder") ?? ""
+            }
             value={inputs.email}
             onChangeText={(text) => handleInputChange("email", text)}
           />
           <InputDropDownField
-            inputTitle={Constants.fields[2].inputTitle}
-            options={Constants.fields[2].options ?? []}
-            value={inputs.gender}
-            onChange={(text) => handleInputChange("gender", text)}
+            inputTitle={t("instructorSignUpPageConstants.fields.2.inputTitle")}
+            options={[
+              t("instructorSignUpPageConstants.fields.2.options.0"), // Translated "Male" or "男"
+              t("instructorSignUpPageConstants.fields.2.options.1"), // Translated "Female" or "女"
+            ]}
+            value={t(
+              `instructorSignUpPageConstants.fields.2.options.${
+                inputs.gender === "Male" ? 0 : 1
+              }`
+            )}
+            onChange={(selectedLabel) => {
+              // Map the selected translated label back to the original English value
+              const selectedValue =
+                GENDER_DICTIONARY[
+                  selectedLabel as keyof typeof GENDER_DICTIONARY
+                ];
+              handleInputChange("gender", selectedValue);
+            }}
           />
           <PhoneNumberInputField
-            areaCodes={Constants.areaCodes}
+            // areaCodes={t("instructorSignUpPageConstants.areaCodes.0")}
+            areaCodes={[
+              t("instructorSignUpPageConstants.areaCodes.0"),
+              t("instructorSignUpPageConstants.areaCodes.1"),
+              t("instructorSignUpPageConstants.areaCodes.2"),
+              t("instructorSignUpPageConstants.areaCodes.3"),
+              t("instructorSignUpPageConstants.areaCodes.4"),
+              t("instructorSignUpPageConstants.areaCodes.5"),
+              t("instructorSignUpPageConstants.areaCodes.6"),
+              t("instructorSignUpPageConstants.areaCodes.7"),
+              t("instructorSignUpPageConstants.areaCodes.8"),
+              t("instructorSignUpPageConstants.areaCodes.9"),
+              t("instructorSignUpPageConstants.areaCodes.10"),
+              t("instructorSignUpPageConstants.areaCodes.11"),
+              t("instructorSignUpPageConstants.areaCodes.12"),
+              t("instructorSignUpPageConstants.areaCodes.13"),
+              t("instructorSignUpPageConstants.areaCodes.14"),
+              t("instructorSignUpPageConstants.areaCodes.15"),
+              t("instructorSignUpPageConstants.areaCodes.16"),
+              t("instructorSignUpPageConstants.areaCodes.17"),
+              t("instructorSignUpPageConstants.areaCodes.18"),
+              t("instructorSignUpPageConstants.areaCodes.19"),
+              t("instructorSignUpPageConstants.areaCodes.20"),
+              t("instructorSignUpPageConstants.areaCodes.21"),
+              t("instructorSignUpPageConstants.areaCodes.22"),
+              t("instructorSignUpPageConstants.areaCodes.23"),
+              t("instructorSignUpPageConstants.areaCodes.24"),
+            ]}
             phoneNumber={
               inputs.combinedPhoneNumber.split(" ").slice(1).join(" ") || ""
             } // Extract phone number
@@ -224,40 +278,49 @@ export default function signUpPage() {
             onAreaCodeChange={handleAreaCodeChange}
             selectedAreaCode={inputs.combinedPhoneNumber.split(" ")[0] || "+1"} // Extract area code
           />
-          <RegisterButton text="Next" onPress={handleNextPage} />
+          <RegisterButton
+            text={t("instructorSignUpPageConstants.nextButtonText")}
+            onPress={handleNextPage}
+          />
         </View>
       )}
       {/* Internal Second Page */}
       {internalPage === 2 && (
         <View style={{ width: "100%" }}>
           <InputDropDownField
-            inputTitle={Constants.fields[4].inputTitle}
+            inputTitle={t("instructorSignUpPageConstants.fields.4.inputTitle")}
             options={communities}
             value={inputs.company}
             onChange={(text) => handleInputChange("company", text)}
           />
           <InputField
-            inputTitle={Constants.fields[5].inputTitle}
-            placeholder={Constants.fields[5].placeHolder ?? ""}
+            inputTitle={t("instructorSignUpPageConstants.fields.5.inputTitle")}
+            placeholder={
+              t("instructorSignUpPageConstants.fields.5.placeHolder") ?? ""
+            }
             value={inputs.position}
             onChangeText={(text) => handleInputChange("position", text)}
           />
           <InputField
-            inputTitle={Constants.fields[6].inputTitle}
-            placeholder={Constants.fields[6].placeHolder ?? ""}
+            inputTitle={t("instructorSignUpPageConstants.fields.6.inputTitle")}
+            placeholder={
+              t("instructorSignUpPageConstants.fields.6.placeHolder") ?? ""
+            }
             secureTextEntry={true}
             value={inputs.password}
             onChangeText={(text) => handleInputChange("password", text)}
           />
           <InputField
-            inputTitle={Constants.fields[7].inputTitle}
-            placeholder={Constants.fields[7].placeHolder ?? ""}
+            inputTitle={t("instructorSignUpPageConstants.fields.7.inputTitle")}
+            placeholder={
+              t("instructorSignUpPageConstants.fields.7.placeHolder") ?? ""
+            }
             secureTextEntry={true}
             value={inputs.conPassword}
             onChangeText={(text) => handleInputChange("conPassword", text)}
           />
           <RegisterButton
-            text={Constants.regButtonText}
+            text={t("instructorSignUpPageConstants.regButtonText")}
             onPress={handleRegistration}
           />
           <View

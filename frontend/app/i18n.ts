@@ -9,8 +9,8 @@ i18n
   .use(initReactI18next) // Bind react-i18next
   .init({
     debug: true,
-    fallbackLng: "cn", // Default language
-    lng: "cn", // Initially set to English
+    fallbackLng: "en", // Default language
+    lng: "en", // Initially set to English
     resources: {
       en: { translation: en },
       cn: { translation: cn },

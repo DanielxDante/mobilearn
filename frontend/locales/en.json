@@ -1,4 +1,9 @@
 {
+  "languageSelection": {
+    "title": "Choose Your Language",
+    "english": "English",
+    "chinese": "Chinese"
+  },
   "carouselPageConstants": {
     "slides": [
       {
@@ -113,6 +118,7 @@
     "forgotPassword": "Forgot password?"
   },
   "signUpPageConstants": {
+    "nextButtonText": "Next",
     "pageTitle": "SIGN UP",
     "pageSubTitle": "Create Your Account To Embark On A Journey Of Learning.",
     "fields": [
@@ -429,7 +435,8 @@
   "phoneNumberInputFieldConstants": {
     "search": "Search...",
     "enterPhone": "Enter your phone number",
-    "seachAreaCode": "Search area codes"
+    "seachAreaCode": "Search area codes",
+    "title": "Phone Number"
   },
 
   "courseDetailsConstants": {
@@ -738,7 +745,11 @@
     "inviteCodeTitle1": "Please enter an invite code",
     "inviteCodeTitle2": "Or enter an invite code",
     "inviteCodePlaceholder": "Enter invite code",
-    "inviteCodeTitle": "Or enter an invite code"
+    "inviteCodeTitle": "Or enter an invite code",
+    "channelAlreadyJoined": "Channel already joined",
+    "channelNotFound": "Channel not found",
+    "selectEnterCode": "Please select a channel or enter an invite code.",
+    "joinChannel": "Join Channel"
   },
 
   "memberDonatePage": {
@@ -839,7 +850,11 @@
     "title": "Reset Password",
     "placeholder1": "New Password",
     "placeholder2": "Confirm Password",
-    "submitButton": "Reset Password"
+    "submitButton": "Reset Password",
+    "success": "Success",
+    "passwordChanged": "Your password has been changed",
+    "ok": "Ok",
+    "error": "There has been an error"
   },
 
   "privateChatDetails": {
