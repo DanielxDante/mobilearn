@@ -4,6 +4,13 @@
     "english": "English",
     "chinese": "Chinese"
   },
+  "settings": {
+    "title": "Settings",
+    "languageButton": "Switch to ",
+    "en": "Chinese",
+    "cn": "English",
+    "changeLanguage": "Change Language"
+  },
   "carouselPageConstants": {
     "slides": [
       {

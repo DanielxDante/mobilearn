@@ -9,7 +9,7 @@ import { useFonts } from "expo-font";
 import IconTextButton from "@/components/IconTextButton";
 import icons from "@/constants/icons";
 import { router } from "expo-router";
-import { CAROUSEL_PAGE, DONATION_PAGE } from "@/constants/pages";
+import { CAROUSEL_PAGE, DONATION_PAGE, SETTINGS_PAGE } from "@/constants/pages";
 import { useTranslation } from "react-i18next";
 
 const Profile = () => {
@@ -109,9 +109,7 @@ const Profile = () => {
           icon={icons.card}
           text={t("memberGuestProfilePage.settingsTitle")}
           onPress={() => {
-            // router.push(
-            //     "/(member_guest)/profile/userPaymentMethod"
-            // );
+            router.push(SETTINGS_PAGE);
             console.log("(User) Entering settings page");
           }}
           style={styles.iconTextButton}
