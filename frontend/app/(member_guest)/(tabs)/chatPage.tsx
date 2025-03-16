@@ -11,13 +11,14 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Socket } from "socket.io-client";
 
-import { chat, chat as Constants } from "@/constants/textConstants";
+import { chat as Constants } from "@/constants/textConstants";
 import { router, useSegments } from "expo-router";
 import { Colors } from "@/constants/colors";
 import { formatTime } from "@/components/DateFormatter";
 import useAppStore from "@/store/appStore";
 import useAuthStore from "@/store/authStore";
 import Chat from "@/types/shared/Chat";
+import { useTranslation } from "react-i18next";
 
 interface ChatItemProps {
   id: number;
@@ -54,6 +55,8 @@ const ChatItem: React.FC<ChatItemProps> = ({
       });
     }
   };
+  const { t } = useTranslation();
+
   return (
     <TouchableOpacity
       style={styles.chatItemContainer}
@@ -124,13 +127,8 @@ const ChatPage = () => {
       if (socketInstance) {
         console.log("THERE IS A SOCKET INSTANCE");
         socketInstance.on("update_chat", (chatData) => {
-          const {
-            chat_id,
-            message_id,
-            sender_id,
-            content,
-            timestamp,
-          } = chatData;
+          const { chat_id, message_id, sender_id, content, timestamp } =
+            chatData;
           console.log("(ChatPage) Received update chat");
           setChats((prevChats) => {
             return prevChats.map((chat) => {
@@ -144,9 +142,9 @@ const ChatPage = () => {
                 };
               }
               return chat;
-            })
-          })
-        })
+            });
+          });
+        });
       }
 
       return () => {
@@ -154,9 +152,9 @@ const ChatPage = () => {
         if (socketInstance) {
           socketInstance.off("update_chat");
         }
-      }
+      };
     }
-  }, [segments])
+  }, [segments]);
 
   const handleSearchChat = () => {
     router.push("/(member_guest)/chat/searchChat");
@@ -165,12 +163,13 @@ const ChatPage = () => {
   const handleGroupSearch = () => {
     router.push("/(member_guest)/chat/groupSearchPage");
   };
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView style={styles.container}>
       {/* AppBar */}
       <View style={styles.appBarContainer}>
-        <Text style={styles.appBarTitle}>{Constants.appBarTitle}</Text>
+        <Text style={styles.appBarTitle}>{t("chat.appBarTitle")}</Text>
       </View>
       {/* Add chat and search chat */}
       <View style={styles.addChatRow}>
@@ -213,7 +212,7 @@ const ChatPage = () => {
         </ScrollView>
       ) : (
         <View style={styles.noChat}>
-          <Text style={styles.noChatText}>{Constants.noChatText}</Text>
+          <Text style={styles.noChatText}>{t("chat.noChatText")}</Text>
         </View>
       )}
     </SafeAreaView>

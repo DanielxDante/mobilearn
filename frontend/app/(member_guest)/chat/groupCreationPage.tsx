@@ -16,8 +16,10 @@ import useAuthStore from "@/store/authStore";
 import { Colors } from "@/constants/colors";
 import { groupCreationPage as Constants } from "@/constants/textConstants";
 import InputField from "@/components/InputField";
+import { useTranslation } from "react-i18next";
 
 const GroupCreationPage = () => {
+  const { t } = useTranslation();
   const { data } = useLocalSearchParams();
   const email = useAuthStore((state) => state.email);
   //console.log(data);
@@ -28,7 +30,7 @@ const GroupCreationPage = () => {
 
   const handleCreateGroup = async () => {
     if (!groupName.trim() || selectedUsers.length === 0) {
-      alert(Constants.createGroupAlertCheck);
+      alert(t("groupCreationPage.createGroupAlertCheck"));
       return;
     }
 
@@ -42,13 +44,13 @@ const GroupCreationPage = () => {
 
     const chatId = await createGroupChat("user", groupName, participantInfo);
     if (chatId) {
-      alert(Constants.groupChatCreated);
+      alert(t("groupCreationPage.groupChatCreated"));
       router.push({
         pathname: "../../../chatPage",
         // params: {},
       });
     } else {
-      alert(Constants.failedGroupChatCreation);
+      alert(t("groupCreationPage.failedGroupChatCreation"));
     }
   };
 
@@ -59,7 +61,7 @@ const GroupCreationPage = () => {
           <TouchableOpacity onPress={() => router.back()}>
             <Image source={Constants.backButton} style={styles.backButton} />
           </TouchableOpacity>
-          <Text style={styles.title}>{Constants.createGroup}</Text>
+          <Text style={styles.title}>{t("groupCreationPage.createGroup")}</Text>
         </View>
         <TouchableOpacity
           style={styles.reviewsButton}
@@ -67,13 +69,13 @@ const GroupCreationPage = () => {
             handleCreateGroup();
           }}
         >
-          <Text>{Constants.done}</Text>
+          <Text>{t("groupCreationPage.done")}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.inputField}>
         <InputField
-          inputTitle={Constants.groupNameInputTitle}
-          placeholder={Constants.groupNamePlaceholder}
+          inputTitle={t("groupCreationPage.groupNameInputTitle")}
+          placeholder={t("groupCreationPage.groupNamePlaceholder")}
           value={groupName}
           onChangeText={setGroupName}
         />
@@ -102,7 +104,9 @@ const GroupCreationPage = () => {
               </View>
             </TouchableOpacity>
           ))}
-        {!selectedUsers && <Text>{Constants.noUsersSelected}</Text>}
+        {!selectedUsers && (
+          <Text>{t("groupCreationPage.noUsersSelected")}</Text>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

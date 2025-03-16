@@ -22,6 +22,7 @@ import { formatTime } from "@/components/DateFormatter";
 import useAppStore from "@/store/appStore";
 import Message from "@/types/shared/Message";
 import useAuthStore from "@/store/authStore";
+import { useTranslation } from "react-i18next";
 
 interface MsgBubbleProps {
   message_id?: number;
@@ -57,6 +58,7 @@ const MsgBubble: React.FC<MsgBubbleProps> = ({
   );
 };
 const PrivateChatChannel = () => {
+  const { t } = useTranslation();
   const { chat_id } = useLocalSearchParams<{
     chat_id: string;
   }>();
@@ -65,13 +67,13 @@ const PrivateChatChannel = () => {
   const getChatMessages = useAppStore((state) => state.getChatMessages);
   const email = useAuthStore((state) => state.email);
   const [name, setName] = useState(""); //name refers to name of chat
-  const [chatParticipantId, setChatParticipantId] = useState(""); //chatParticipantId refers to own user's ID
+  const [chatParticipantId, setChatParticipantId] = useState(""); //chatParticipantId refers to own instructor's ID
   const [profilePicture, setProfilePicture] = useState(
     Constants.default_profile_picture
   );
   const [socket, setSocket] = useState<Socket | null>();
   const [messages, setMessages] = useState<Message[]>([]); //Refers to list of existing chat messages
-  const [message, setMessage] = useState<string>(""); //Refers to user's own message to be sent
+  const [message, setMessage] = useState<string>(""); //Refers to instructor's own message to be sent
 
   const scrollViewRef = useRef<RNScrollView | null>(null);
 
@@ -80,7 +82,7 @@ const PrivateChatChannel = () => {
       const chat_info = await getChatDetails("instructor", Number(chat_id));
       // Set Chat name
       setName(chat_info.chat_name);
-      // Identify own user
+      // Identify own instructor
       const participant = chat_info.participants.find(
         (person: any) => person.participant_email === email
       );
@@ -112,7 +114,13 @@ const PrivateChatChannel = () => {
         chat_participant_id: chatParticipantId,
       });
       socketInstance.on("chat_participant_joined", () => {
-        console.log("(Private Chat) Instructor has joined the chat");
+        console.log("(Private Chat) instructor has joined the chat");
+      });
+      socketInstance.on("new_message", (message_data: any) => {
+        console.log("(Chat Channel) Received new_message");
+        if (message_data.sender_id.toString() != chatParticipantId) {
+          setMessages((prevMessages) => [...prevMessages, message_data]);
+        }
       });
     }
 
@@ -120,6 +128,7 @@ const PrivateChatChannel = () => {
       if (socketInstance) {
         socketInstance.emit("leave_chat");
         socketInstance.off("chat_participant_joined");
+        socketInstance.off("new_message");
       }
     };
   }, [chatParticipantId]);
@@ -128,7 +137,7 @@ const PrivateChatChannel = () => {
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }, 1);
-  }, []);
+  }, [messages]);
 
   const openChatDetails = () => {
     if (chat_id) {
@@ -212,7 +221,7 @@ const PrivateChatChannel = () => {
           </View>
           <View style={styles.msgContainer}>
             <TextInput
-              placeholder={Constants.msgInputPlaceholder}
+              placeholder={t("chatChannel.msgInputPlaceholder")}
               numberOfLines={4}
               value={message}
               onChangeText={setMessage}

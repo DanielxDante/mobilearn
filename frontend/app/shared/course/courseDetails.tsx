@@ -21,31 +21,32 @@ import useAuthStore from "@/store/authStore";
 import useAppStore from "@/store/appStore";
 import BackButton from "@/components/BackButton";
 import FavouriteButton from "@/components/FavouriteButton";
+import { useTranslation } from "react-i18next";
 
 const CourseDetails = () => {
   // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
   const certicationType = "Online Certification";
-
+  const { t } = useTranslation();
   const { courseId } = useLocalSearchParams();
 
   const segments = useSegments();
-      useEffect(() => {
-          const backHandler = BackHandler.addEventListener(
-              "hardwareBackPress",
-              () => {
-                  // Get the current route
-                  const currentRoute = segments[segments.length - 1];
-                  if (currentRoute === `courseDetails`) {
-                      router.navigate("/(member_guest)/(tabs)") // Return to homepage
-                      return true;
-                  }
-  
-                  return false;
-              }
-          );
-  
-          return () => backHandler.remove();
-      }, [router, segments]);
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        // Get the current route
+        const currentRoute = segments[segments.length - 1];
+        if (currentRoute === `courseDetails`) {
+          router.navigate("/(member_guest)/(tabs)"); // Return to homepage
+          return true;
+        }
+
+        return false;
+      }
+    );
+
+    return () => backHandler.remove();
+  }, [router, segments]);
 
   const handleSkillPress = (skill: string) => {
     console.log(skill);
@@ -86,20 +87,17 @@ const CourseDetails = () => {
       });
     }
   }, [course_image]);
-  
+
   return (
     <SafeAreaView style={styles.container}>
       {/* AppBar */}
       <View style={styles.appBarContainer}>
         <TouchableOpacity
-            onPress={() => {
-                router.replace("/(member_guest)/(tabs)")
-            }}
+          onPress={() => {
+            router.replace("/(member_guest)/(tabs)");
+          }}
         >
-            <Image
-                source={icons.backButton}
-                style={[styles.backButton]}
-            />
+          <Image source={icons.backButton} style={[styles.backButton]} />
         </TouchableOpacity>
 
         <FavouriteButton course_id={courseId.toString()} />
@@ -129,11 +127,11 @@ const CourseDetails = () => {
               />
               <Text style={styles.enrolledCount}>
                 {courseData.enrollment_count ? courseData.enrollment_count : 0}
-                {Constants.enrolledCountText}
+                {t("courseDetailsConstants.enrolledCountText")}
               </Text>
             </View>
             <Text style={styles.courseDetailsHeader}>
-              {Constants.courseDetails}
+              {t("courseDetailsConstants.courseDetails")}
             </Text>
             <Text style={styles.courseDescription}>
               {courseData.description}
@@ -147,7 +145,7 @@ const CourseDetails = () => {
                     style={styles.courseInfoLeftIcon}
                   />
                   <Text style={styles.courseInfoLeftText}>
-                    {Constants.lecture}
+                    {t("courseDetailsConstants.lecture")}
                   </Text>
                 </View>
                 <View style={styles.courseInfoLeftTitle}>
@@ -156,7 +154,7 @@ const CourseDetails = () => {
                     style={styles.courseInfoLeftIcon}
                   />
                   <Text style={styles.courseInfoLeftText}>
-                    {Constants.learningTime}
+                    {t("courseDetailsConstants.learningTime")}
                   </Text>
                 </View>
                 <View style={styles.courseInfoLeftTitle}>
@@ -165,14 +163,14 @@ const CourseDetails = () => {
                     style={styles.courseInfoLeftIcon}
                   />
                   <Text style={styles.courseInfoLeftText}>
-                    {Constants.certification}
+                    {t("courseDetailsConstants.certification")}
                   </Text>
                 </View>
               </View>
               <View style={styles.courseInfoRight}>
                 <Text style={styles.courseInfoRightText}>
                   {courseData.lesson_count}
-                  {Constants.numLectures}
+                  {t("courseDetailsConstants.numLectures")}
                 </Text>
                 <Text style={styles.courseInfoRightText}>
                   {courseData.duration}
@@ -184,7 +182,9 @@ const CourseDetails = () => {
             </View>
             {/* Skills section */}
             <View>
-              <Text style={styles.skillsTitle}>{Constants.skillsTitle}</Text>
+              <Text style={styles.skillsTitle}>
+                {t("courseDetailsConstants.skillsTitle")}
+              </Text>
               <View style={styles.skillsContainer}>
                 {courseData.skills.split(", ").map((skill, index) => (
                   <TouchableOpacity
@@ -211,7 +211,7 @@ const CourseDetails = () => {
                 }
               >
                 <Text style={styles.enrollNowButtonText}>
-                  {Constants.enrollNowButton}
+                  {t("courseDetailsConstants.enrollNowButton")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     width: 20,
     marginLeft: 20,
     padding: 5,
-},
+  },
   body: {
     flex: 1,
   },

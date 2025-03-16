@@ -1,0 +1,941 @@
+{
+  "languageSelection": {
+    "title": "选择您的语言",
+    "english": "英语",
+    "chinese": "中文"
+  },
+  "settings": {
+    "title": "设置",
+    "languageButton": "切换到{language}",
+    "en": "中文",
+    "cn": "英文",
+    "changeLanguage": "更改语言"
+  },
+  "carouselPageConstants": {
+    "slides": [
+      {
+        "id": "1",
+        "image": "../assets/images/slide1.png",
+        "title": "进入电子学习的世界",
+        "subtitle": "通过访问多样化的课程，开启您的教育之旅。"
+      },
+      {
+        "id": "2",
+        "image": "../assets/images/slide2.png",
+        "title": "开始您的学习冒险",
+        "subtitle": "探索互动课程、测验和多媒体内容，以增强您的理解。"
+      },
+      {
+        "id": "3",
+        "image": "../assets/images/slide3.png",
+        "title": "与专家导师互动",
+        "subtitle": "与知识渊博的导师联系，获得个性化指导。"
+      },
+      {
+        "id": "4",
+        "image": "../assets/images/slide4.png",
+        "title": "个性化您的学习路径",
+        "subtitle": "通过进度跟踪和互动活动，定制您的学习体验。"
+      }
+    ],
+    "contButtonText": "继续"
+  },
+
+  "signUpSelectionConstants": {
+    "pageTitle": "我是...",
+    "roles": [
+      {
+        "image": "../assets/images/Instructor.png",
+        "buttonText": "导师"
+      },
+      {
+        "image": "../assets/images/Students.png",
+        "buttonText": "学生"
+      }
+    ],
+    "pageSubTitle": "无限机会。为每个人。"
+  },
+
+  "memberSignInUpPageConstants": {
+    "signUpPageTitle": "解锁您的学习潜力",
+    "signUpPageSubtitle": "通往个性化课程和成功指导的门户。",
+    "signInButtonText": "登录",
+    "signUpButtonText": "注册",
+    "homepageButtonText": "主页",
+    "adminButtonText": "管理员"
+  },
+
+  "instructorSignInUpPageConstants": {
+    "signUpPageTitle": "分享您的知识",
+    "signUpPageSubtitle": "通往赋能和指导他人的门户。",
+    "signInButtonText": "登录",
+    "signUpButtonText": "注册",
+    "homepageButtonText": "主页",
+    "adminButtonText": "管理员",
+    "nextButtonText": "下一步"
+  },
+
+  "memberLoginPageConstants": {
+    "pageTitle": "登录",
+    "pageSubTitle": "登录以访问您的个性化学习之旅",
+    "fields": [
+      {
+        "inputTitle": "邮箱",
+        "placeHolder": "邮箱"
+      },
+      {
+        "inputTitle": "密码",
+        "placeHolder": "密码"
+      },
+      {
+        "inputTitle": "域名",
+        "options": ["会员", "导师"]
+      }
+    ],
+    "signInButtonText": "登录",
+    "invalidCredentialsAlert": "请检查您的邮箱和密码，然后重试。",
+    "errorSigningUpAlert": "注册时发生错误。",
+    "unexpectedErrorAlert": "发生意外错误。",
+    "accountDisabledAlert": "您的账户已被禁用。",
+    "dontHaveAccountText": "新用户？",
+    "signUpText": "注册",
+    "inputsEmptyAlert": "请填写所有字段。",
+    "forgotPassword": "忘记密码？"
+  },
+  "instructorLoginPageConstants": {
+    "pageTitle": "登录",
+    "pageSubTitle": "登录以开始您赋能他人的旅程。",
+    "fields": [
+      {
+        "inputTitle": "邮箱",
+        "placeHolder": "邮箱"
+      },
+      {
+        "inputTitle": "密码",
+        "placeHolder": "密码"
+      },
+      {
+        "inputTitle": "域名",
+        "options": ["会员", "导师"]
+      }
+    ],
+    "signInButtonText": "登录",
+    "invalidCredentialsAlert": "请检查您的邮箱和密码，然后重试。",
+    "accountDisabledAlert": "您的账户已被禁用。",
+    "errorSigningUpAlert": "注册时发生错误。",
+    "unexpectedErrorAlert": "发生意外错误。",
+    "dontHaveAccountText": "没有账户？",
+    "signUpText": "在此注册",
+    "inputsEmptyAlert": "请填写所有字段。",
+    "forgotPassword": "忘记密码？"
+  },
+
+  "signUpPageConstants": {
+    "pageTitle": "注册",
+    "pageSubTitle": "创建您的账户，开启学习之旅。",
+    "fields": [
+      {
+        "inputTitle": "用户名",
+        "placeHolder": "约翰·塞纳"
+      },
+      {
+        "inputTitle": "邮箱",
+        "placeHolder": "youremail@gmail.com"
+      },
+      {
+        "inputTitle": "性别",
+        "options": ["男", "女"]
+      },
+      {
+        "inputTitle": "密码",
+        "placeHolder": "密码"
+      },
+      {
+        "inputTitle": "确认密码",
+        "placeHolder": "密码"
+      }
+    ],
+    "regButtonText": "注册",
+    "inputsEmptyAlert": "请填写所有字段。",
+    "passwordMismatchAlert": "密码不匹配。",
+    "accountDisabledAlert": "您的账户已被禁用。",
+    "invalidCredentialsAlert": "请检查您的邮箱和密码，然后重试。",
+    "errorSigningUpAlert": "注册时发生错误。",
+    "emailInUseAlert": "该邮箱已被使用。"
+  },
+
+  "instructorSignUpPageConstants": {
+    "nextButtonText": "下一步",
+    "pageTitle": "注册",
+    "pageSubTitle": "创建您的账户，开启启迪心灵的使命。",
+    "fields": [
+      {
+        "inputTitle": "用户名",
+        "placeHolder": "约翰·塞纳"
+      },
+      {
+        "inputTitle": "邮箱",
+        "placeHolder": "youremail@gmail.com"
+      },
+      {
+        "inputTitle": "性别",
+        "options": ["男", "女"]
+      },
+      {
+        "inputTitle": "电话号码",
+        "placeHolder": "+6591825901"
+      },
+      {
+        "inputTitle": "公司",
+        "placeHolder": "DanielDantePteLtd"
+      },
+      {
+        "inputTitle": "公司职位",
+        "placeHolder": "首席技术官"
+      },
+      {
+        "inputTitle": "密码",
+        "placeHolder": "密码"
+      },
+      {
+        "inputTitle": "确认密码",
+        "placeHolder": "密码"
+      }
+    ],
+    "areaCodes": [
+      "+1 美国",
+      "+65 新加坡",
+      "+86 中国",
+      "+44 英国",
+      "+49 德国",
+      "+33 法国",
+      "+61 澳大利亚",
+      "+62 印度尼西亚",
+      "+64 新西兰",
+      "+91 印度",
+      "+52 墨西哥",
+      "+81 日本",
+      "+82 韩国",
+      "+7 俄罗斯",
+      "+55 巴西",
+      "+234 尼日利亚",
+      "+351 葡萄牙",
+      "+46 瑞典",
+      "+48 波兰",
+      "+971 阿联酋",
+      "+94 斯里兰卡",
+      "+27 南非",
+      "+39 意大利",
+      "+34 西班牙",
+      "+93 阿富汗"
+    ],
+    "inputsEmptyAlert": "请填写所有字段。",
+    "passwordMismatchAlert": "密码不匹配。",
+    "errorSigningUpAlert": "该邮箱已被使用。",
+    "regButtonText": "注册",
+    "accountDisabledAlert": "您的账户已被禁用。",
+    "invalidCredentialsAlert": "请检查您的邮箱和密码，然后重试。"
+  },
+
+  "registrationSuccessMember": {
+    "pageTitle": "MobiLearn",
+    "blueSubTitle": "您已注册为",
+    "role": "学生",
+    "subTitle": "欢迎开启终身学习之旅。",
+    "linkText": "开始学习",
+    "image": "../assets/images/Students.png"
+  },
+
+  "registrationSuccessInstructor": {
+    "pageTitle": "MobiLearn",
+    "blueSubTitle": "您已注册为",
+    "role": "导师",
+    "subTitle": "欢迎开启启迪心灵的终身使命。",
+    "linkText": "登录",
+    "image": "../assets/images/Instructor.png"
+  },
+
+  "waitingPageInstructor": {
+    "pageTitle": "MobiLearn",
+    "blueSubTitle": "您的账户",
+    "status": "待批准",
+    "subTitle": "管理员将很快审核您的账户。",
+    "linkText": "登录",
+    "image": "../assets/images/Instructor.png"
+  },
+
+  "notificationsConstants": {
+    "pageTitle": "通知"
+  },
+
+  "memberGuestHomeConstants": {
+    "notifBellButton": "@/assets/images/member_guest_images/notifBell.png",
+    "suggestionsSubHeader": "为您推荐",
+    "topCoursesSubHeader": "热门课程",
+    "seeAllText": "查看全部"
+  },
+
+  "memberGuestAppBarConstants": {
+    "hamburgerIcon": "@/assets/images/member_guest_images/hamburger.png",
+    "dropDownPlaceholder": "切换频道",
+    "searchPlaceholder": "搜索..."
+  },
+
+  "memberGuestSearchConstants": {
+    "inputPlaceholder": "搜索"
+  },
+
+  "memberGuestContinueWatchingConstants": {
+    "starIcon": "@/assets/images/member_guest_images/starRating.png",
+    "completionRateText": "% 已完成",
+    "continueWatchingSubtitle": "继续观看"
+  },
+
+  "memberGuestSuggestionsSectionConstants": {
+    "starIcon": "@/assets/images/member_guest_images/starRating.png"
+  },
+
+  "memberGuestTopCoursesSectionConstants": {
+    "starIcon": "@/assets/images/member_guest_images/starRating.png"
+  },
+
+  "memberGuestSuggestionsSeeAll": {
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "appBarTitle": "为您推荐",
+    "loading": "加载中...",
+    "endText": "没有更多课程了"
+  },
+
+  "memberGuestTopCoursesSeeAll": {
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "appBarTitle": "热门课程",
+    "loading": "加载中...",
+    "endText": "没有更多课程了"
+  },
+
+  "memberGuestCoursePage": {
+    "appBarTitle": "我的课程",
+    "notifBellButton": "@/assets/images/member_guest_images/notifBell.png",
+    "savedCoursesTitle": "已保存的课程",
+    "inProgressCoursesTitle": "进行中",
+    "completedCoursesTitle": "已完成"
+  },
+
+  "memberGuestProfilePage": {
+    "appBarTitle": "我的资料",
+    "editIcon": "@/assets/images/icons/edit.png",
+    "paymentMethodTitle": "支付方式",
+    "settingsTitle": "设置",
+    "donateTitle": "捐赠",
+    "logOutTitle": "退出登录",
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg",
+    "normalDisplayName": "学习者",
+    "memberDisplayName": "会员",
+    "coreMemberDisplayName": "高级会员"
+  },
+
+  "memberGuestEditProfilePage": {
+    "fields": {
+      "name": {
+        "inputTitle": "您的用户名",
+        "modalDetails": [
+          {
+            "inputTitle": "用户名",
+            "placeholder": "请输入用户名"
+          }
+        ]
+      },
+      "email": {
+        "inputTitle": "邮箱",
+        "modalDetails": [
+          {
+            "inputTitle": "邮箱",
+            "placeholder": "请输入邮箱"
+          }
+        ]
+      },
+      "gender": {
+        "inputTitle": "性别",
+        "modalDetails": [
+          {
+            "inputTitle": "性别",
+            "options": ["男", "女"]
+          }
+        ]
+      },
+      "password": {
+        "inputTitle": "密码",
+        "modalDetails": [
+          {
+            "inputTitle": "旧密码",
+            "placeholder": "******"
+          },
+          {
+            "inputTitle": "新密码",
+            "placeholder": "******"
+          }
+        ]
+      },
+      "company": {
+        "inputTitle": "公司",
+        "modalDetails": [
+          {
+            "inputTitle": "公司"
+          }
+        ]
+      },
+      "position": {
+        "inputTitle": "职位",
+        "modalDetails": [
+          {
+            "inputTitle": "职位",
+            "placeholder": "请输入职位"
+          }
+        ]
+      },
+      "phone_number": {
+        "inputTitle": "电话号码",
+        "modalDetails": [
+          {
+            "inputTitle": "电话号码",
+            "placeholder": "+11234567890"
+          }
+        ]
+      }
+    },
+    "saveChanges": "保存",
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg",
+    "usernameUndefined": "用户名未定义。",
+    "usernameEmpty": "用户名不能为空。",
+    "usernameNotChanged": "用户名未更改。",
+    "emailUndefined": "邮箱未定义。",
+    "emailEmpty": "邮箱不能为空。",
+    "emailNotChanged": "邮箱未更改。",
+    "emailUpdated": "邮箱已更新。",
+    "genderUndefined": "性别未定义。",
+    "genderEmpty": "性别不能为空。",
+    "genderUpdated": "性别已更新。",
+    "genderNotChanged": "性别未更改。",
+    "passwordUndefined": "密码未定义。",
+    "passwordEmpty": "密码不能为空。",
+    "passwordNotChanged": "密码未更改。",
+    "passwordUpdated": "密码已更新。",
+    "undefinedValue": "输入未定义。",
+    "emptyValue": "输入不能为空。",
+    "notChanged": "输入未更改。",
+    "updated": "此字段已更新。",
+    "phone_invalid": "电话号码无效。请检查区号和号码。",
+    "tryAgain": "请稍后重试。",
+    "cameraRollPermission": "抱歉，我们需要相机权限才能完成此操作！",
+    "appBarTitle": "编辑资料"
+  },
+
+  "memberGuestEditProfileFields": {
+    "edit": "编辑",
+    "notAdded": "未添加",
+    "maskedPassword": "******"
+  },
+
+  "memberGuestEditProfilePopUp": {
+    "save": "保存"
+  },
+
+  "memberGuestPaymentMethodPage": {
+    "appBarTitle": "支付方式",
+    "title": "选择支付方式"
+  },
+
+  "inputDropDownFieldConstants": {
+    "selectOption": "请选择一个选项"
+  },
+
+  "phoneNumberInputFieldConstants": {
+    "search": "搜索...",
+    "enterPhone": "输入您的电话号码",
+    "seachAreaCode": "搜索区号",
+    "title": "电话号码"
+  },
+
+  "courseDetailsConstants": {
+    "enrolledCountText": " 名学生已注册",
+    "courseDetails": "课程详情",
+    "lecture": "讲座",
+    "learningTime": "学习时间",
+    "certification": "认证",
+    "numLectures": "+ 讲座",
+    "skillsTitle": "技能",
+    "enrollNowButton": "立即注册"
+  },
+
+  "paymentProgressBarConstants": {
+    "stepText": [1, 2, 3],
+    "stepLabel": ["概览", "支付方式", "完成"]
+  },
+
+  "paymentOverviewConstants": {
+    "title": "概览",
+    "courseNameSubtitle": "课程名称：",
+    "numLectures": "+ 讲座",
+    "skillsTitle": "技能",
+    "totalPrice": "总价",
+    "dollar": "$",
+    "continueButton": "继续",
+    "dollarIcon": "icons.dollar",
+    "currency": "$",
+    "merchantDisplayName": "MobiLearn, Inc.",
+    "free": "免费",
+    "paymentCancelled": "支付已取消，您已取消支付。",
+    "courseEnrollmentNotificationTitle": "课程注册完成。",
+    "courseEnrollmentNotificationSubTitle": "您已成功注册课程！",
+    "error": "错误",
+    "storeError": "商店中发生错误。",
+    "donationError": "处理您的捐赠时发生错误。请稍后重试。"
+  },
+
+  "paymentMethodConstants": {
+    "title": "选择支付方式",
+    "dollarIcon": "icons.dollar",
+    "totalPrice": "总价",
+    "currency": "$",
+    "continueButton": "继续"
+  },
+
+  "paymentCardDetailsConstants": {
+    "title": "添加卡片信息",
+    "cardNumberPlaceholder": "卡号",
+    "cvvNumberPlaceholder": "CVV 号码",
+    "expiryDatePlaceholder": "有效期",
+    "namePlaceholder": "卡片上的姓名",
+    "dollarIcon": "icons.dollar",
+    "totalPrice": "总价",
+    "currency": "$",
+    "continueButton": "继续",
+    "disclaimer": "我们将存储并使用您的卡片信息，以便未来进行顺利且安全的购买。"
+  },
+
+  "paymentCompletedConstants": {
+    "completePurchase": "@/assets/images/member_guest_images/completePurchase.png",
+    "completePurchaseSlide": "@/assets/images/member_guest_images/completePurchaseSlide.png",
+    "congratulations": "恭喜！",
+    "congratulationSubtext": "今天开始学习",
+    "continueButton": "继续"
+  },
+
+  "courseContentConstants": {
+    "chapter": "章节",
+    "pickerPlaceholder": "选择一个章节",
+    "courseContents": "课程内容",
+    "lesson": "课程",
+    "tick": "@/assets/images/icons/tick.png",
+    "noLessonsAvailable": "没有可用的课程",
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "editCourseTitle": "编辑课程",
+    "reviewButton": "评价"
+  },
+
+  "instructorHomePageConstants": {
+    "pageTitle": "主页"
+  },
+
+  "instructorStatisticsConstants": {
+    "pageTitle": "统计",
+    "dropdown": ["每周", "每月", "每年"],
+    "totalLessons": "总课程数",
+    "totalEnrollments": "总注册人数",
+    "averageCourseProgress": "平均课程进度",
+    "totalReviews": "总评价数"
+  },
+
+  "instructorNewsConstants": {
+    "pageTitle": "最新消息",
+    "seeAll": "查看全部"
+  },
+
+  "instructorCoursePageConstants": {
+    "appBarTitle": "我的课程",
+    "createCourseText": "创建课程",
+    "searchBarPlaceholder": "搜索课程"
+  },
+
+  "instructorCourseListItemsConstants": {
+    "viewCourse": "查看课程"
+  },
+
+  "instructorCreateCoursePageConstants": {
+    "createCoursePageTitle": "创建课程",
+    "editCoursePageTitle": "编辑课程",
+    "courseName": "课程标题",
+    "courseDescription": "课程描述",
+    "courseType": "课程类型",
+    "courseType_options": {
+      "academic": "学术",
+      "professional": "职业",
+      "specialization": "专业",
+      "project": "项目"
+    },
+    "courseDuration": "课程时长",
+    "coursePicture": "课程图片",
+    "coursePicturePlaceholder": "上传图片",
+    "coursePictureUploadedPlaceholder": "图片已上传",
+    "coursePrice": "课程价格",
+    "coursePricePlaceholder": "输入课程价格",
+    "courseDifficulty": "课程难度",
+    "courseDifficulty_options": {
+      "beginner": "初级",
+      "intermediate": "中级",
+      "advanced": "高级"
+    },
+    "courseSkills": "课程技能",
+    "courseSkillsPlaceholder": "Python, Java, C++",
+    "courseSchoolName": "学校名称",
+    "courseSchoolNamePlaceholder": "输入学校名称",
+    "programType": "项目类型",
+    "major": "专业",
+    "majorPlaceholder": "计算机科学",
+    "department": "院系",
+    "departmentPlaceholder": "工程",
+    "subject": "科目",
+    "subjectPlaceholder": "数学",
+    "platform": "平台",
+    "field": "研究领域",
+    "field_options": ["工程", "数学", "物理", "生物"],
+    "field_placeholder": "选择一个领域",
+    "manageChapters": "管理章节",
+    "addChapter": "添加章节",
+    "chapter_placeholder": "章节",
+    "chapterPageTitle": "编辑章节",
+    "editChapterTitle": "章节标题",
+    "editLessonTitle": "编辑课程",
+    "chapterInfo": "章节信息",
+    "manageLessons": "管理课程",
+    "instructorCreateCoursePageConstants": {
+      "numberOfLessons": "课程数量",
+      "lesson_options": {
+        "1": "1 节课",
+        "2": "2 节课",
+        "3": "3 节课",
+        "4": "4 节课",
+        "5": "5 节课"
+      }
+    },
+    "numberOfLessons": "课程数量",
+    "numberOfLessonsOptions": ["1", "2", "3", "4", "5"],
+    "lesson_placeholder": "课程",
+    "lessonTypePlaceholder": "选择课程类型",
+    "placeholder": "Lorem ipsum",
+    "duration_placeholder": "10",
+    "homework": "上传作业",
+    "homework_placeholder": "上传作业",
+    "video": "上传视频",
+    "video_placeholder": "上传视频",
+    "asyncLoadMessage": "从 AsyncStorage 加载课程数据",
+    "asyncFailLoadMessage": "从 AsyncStorage 加载课程数据失败",
+    "asyncFailSaveMessage": "保存课程数据到 AsyncStorage 失败",
+    "asyncFailClearMessage": "从 AsyncStorage 清除课程数据失败",
+    "profilePictureUploadAlert": "个人资料图片已更新。",
+    "fileUndefinedAlert": "文件未定义。",
+    "handleEditProfilePictureError": "handleEditProfilePicture 出错：",
+    "videoUploadedAlert": "视频已上传。",
+    "handleUploadVideoError": "handleUploadVideo 出错：",
+    "pdfUploadedAlert": "PDF 已上传。",
+    "noFileSelectedError": "未选择文件。",
+    "handleUploadPdfError": "handleUploadPdf 出错：",
+    "checkingPermissionError": "检查权限时出错：",
+    "permissionDeniedAlert": "抱歉，我们需要相机权限才能完成此操作！",
+    "nextButtonText": "下一步",
+    "saveButtonText": "保存",
+    "updateButtonText": "更新",
+    "createButtonText": "创建课程",
+    "minus": "-",
+    "plus": "+",
+    "lessonTypeTitle": "课程类型",
+    "lessonTypeOptions": {
+      "text": "文本",
+      "video": "视频",
+      "homework": "作业"
+    },
+    "noUriReturnedError": "未从文档选择器返回 uri。",
+    "fillAllFieldsAlert": "请填写所有字段。",
+    "courseCreatedAlert": "课程已创建。",
+    "emptyLessonAlert": "您有一个没有内容的课程。请删除它或添加内容。",
+    "courseCreationFailedAlert": "创建课程失败。",
+    "emptyChapterAlert": "您需要至少创建一个章节！",
+    "courseUpdatedAlert": "课程已更新。",
+    "chapterRemovalDenial": "现有章节无法删除。"
+  },
+  "instructorEditProfilePage": {
+    "fields": {
+      "name": {
+        "inputTitle": "您的用户名",
+        "modalDetails": [
+          {
+            "inputTitle": "用户名",
+            "placeholder": "请输入用户名"
+          }
+        ]
+      },
+      "email": {
+        "inputTitle": "邮箱",
+        "modalDetails": [
+          {
+            "inputTitle": "邮箱",
+            "placeholder": "请输入邮箱"
+          }
+        ]
+      },
+      "gender": {
+        "inputTitle": "性别",
+        "modalDetails": [
+          {
+            "inputTitle": "性别",
+            "options": ["男", "女"]
+          }
+        ]
+      },
+      "password": {
+        "inputTitle": "密码",
+        "modalDetails": [
+          {
+            "inputTitle": "旧密码",
+            "placeholder": "******"
+          },
+          {
+            "inputTitle": "新密码",
+            "placeholder": "******"
+          }
+        ]
+      },
+      "company": {
+        "inputTitle": "公司",
+        "modalDetails": [
+          {
+            "inputTitle": "公司"
+          }
+        ]
+      },
+      "position": {
+        "inputTitle": "职位",
+        "modalDetails": [
+          {
+            "inputTitle": "职位",
+            "placeholder": "请输入职位"
+          }
+        ]
+      },
+      "phone_number": {
+        "inputTitle": "电话号码",
+        "modalDetails": [
+          {
+            "inputTitle": "电话号码",
+            "placeholder": "+11234567890"
+          }
+        ]
+      }
+    },
+    "saveChanges": "保存",
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg",
+    "usernameUndefined": "用户名未定义。",
+    "usernameEmpty": "用户名不能为空。",
+    "usernameNotChanged": "用户名未更改。",
+    "emailUndefined": "邮箱未定义。",
+    "emailEmpty": "邮箱不能为空。",
+    "emailNotChanged": "邮箱未更改。",
+    "emailUpdated": "邮箱已更新。",
+    "genderUndefined": "性别未定义。",
+    "genderEmpty": "性别不能为空。",
+    "genderUpdated": "性别已更新。",
+    "genderNotChanged": "性别未更改。",
+    "passwordUndefined": "密码未定义。",
+    "passwordEmpty": "密码不能为空。",
+    "passwordNotChanged": "密码未更改。",
+    "passwordUpdated": "密码已更新。",
+    "undefinedValue": "输入未定义。",
+    "emptyValue": "输入不能为空。",
+    "notChanged": "输入未更改。",
+    "updated": "此字段已更新。",
+    "phone_invalid": "电话号码无效。请检查区号和号码。",
+    "tryAgain": "请稍后重试。",
+    "cameraRollPermission": "抱歉，我们需要相机权限才能完成此操作！",
+    "appBarTitle": "编辑资料"
+  },
+
+  "memberChannelSignUpPage": {
+    "pageTitle": "频道注册",
+    "noChannelsAvailable": "没有可用的频道",
+    "dropDownTitle": "选择一个频道",
+    "inviteCodeTitle1": "请输入邀请码",
+    "inviteCodeTitle2": "或输入邀请码",
+    "inviteCodePlaceholder": "输入邀请码",
+    "inviteCodeTitle": "或输入邀请码",
+    "channelAlreadyJoined": "您已加入此频道。",
+    "channelNotFound": "未找到频道。",
+    "selectEnterCode": "请选择或输入邀请码。",
+    "joinChannel": "加入频道"
+  },
+
+  "memberDonatePage": {
+    "appBarTitle": "支持我们",
+    "donateText1": "您的捐赠帮助我们为全球学习者提供有价值的内容。",
+    "donateText2": "感谢您的支持！",
+    "donateButtonText": "捐赠",
+    "merchantDisplayName": "MobiLearn, Inc.",
+    "paymentCancelledAlert": "支付已取消。您已取消捐赠。",
+    "paymentSuccessAlert": "支付成功。感谢您的捐赠！",
+    "donationSuccessful": "捐赠成功。",
+    "yourDonationMessage": "您已捐赠 $",
+    "error": "错误",
+    "donationErrorMessage": "处理您的捐赠时发生错误。请稍后重试。"
+  },
+
+  "chat": {
+    "appBarTitle": "聊天",
+    "addChat": "@/assets/images/addChat.png",
+    "searchChat": "@/assets/images/searchChat.png",
+    "noChatText": "没有可用的聊天。开始对话吧！",
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg"
+  },
+
+  "chatChannel": {
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "clipIcon": "@/assets/images/icons/clipIcon.png",
+    "msgInputPlaceholder": "写一条消息...",
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg",
+    "WAchatBackgroundEdited": "@/assets/images/WAchatbackgroundEdited.jpg",
+    "sendMsgButton": "@/assets/images/icons/sendMsgButton.png"
+  },
+
+  "lessonContentPage": {
+    "pageHeader": "课程内容",
+    "homework": "作业",
+    "download": "点击下载",
+    "upload": "提交作业",
+    "error": "错误",
+    "lessonNotFound": "未找到课程。",
+    "ok": "确定",
+    "success": "成功",
+    "homeworkSubmitted": "作业已提交。",
+    "unknownLesson": "未知课程。"
+  },
+
+  "communityPage": {
+    "instructors": "导师",
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg"
+  },
+
+  "reviewPageConstants": {
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "title": "留下评价",
+    "submit": "提交",
+    "placeholder": "留下评价",
+    "enterFeedback": "请输入您的反馈",
+    "success": "成功",
+    "reviewSubmitted": "评价已提交。",
+    "ok": "确定",
+    "error": "错误"
+  },
+
+  "notificationUtility": {
+    "pushTokenRequiredError": "发送通知需要 Expo Push Token。",
+    "failedSendNotification": "发送通知失败：",
+    "notificationSuccess": "通知发送成功！",
+    "errorSendingNotification": "发送通知时出错："
+  },
+
+  "lessonContentConstants": {
+    "complete": "完成",
+    "noUriReturnedError": "未从文档选择器返回 uri。",
+    "pdfUploadedAlert": "PDF 已上传。",
+    "noFileSelectedError": "未选择文件。",
+    "handleUploadPdfError": "handleUploadPDF 出错："
+  },
+
+  "resetPasswordPage": {
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "title": "忘记密码",
+    "subtitle": "输入与您的账户关联的邮箱，我们将发送密码重置说明。",
+    "emailFieldHeader": "您的邮箱",
+    "emailButton": "发送重置说明",
+    "invalidEmail": "请输入有效的邮箱。"
+  },
+
+  "resetPasswordAwait": {
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "title": "检查您的邮箱",
+    "subtitle1": "请检查邮箱地址 ",
+    "subtitle2": " 以获取重置密码的说明。"
+  },
+
+  "newPasswordPage": {
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "emptyPassword": "请输入密码",
+    "differentPassword": "密码不匹配",
+    "title": "重置密码",
+    "placeholder1": "新密码",
+    "placeholder2": "确认密码",
+    "submitButton": "重置密码",
+    "success": "成功",
+    "passwordChanged": "密码已更改。",
+    "ok": "确定",
+    "error": "错误"
+  },
+
+  "privateChatDetails": {
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg",
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "email": "邮箱："
+  },
+
+  "groupChatDetails": {
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg",
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "editProfilePicture": "@/assets/images/icons/editProfilePicture.png",
+    "edit": "编辑",
+    "save": "保存",
+    "leave": "退出群组",
+    "admin": "管理员",
+    "undefinedFile": "文件未定义。",
+    "handleEditProfilePictureError": "handleEditProfilePicture 出错：",
+    "checkPermissionError": "检查权限时出错：",
+    "requestPermissionFail": "抱歉，我们需要相机权限才能完成此操作！",
+    "deleteGroup": "删除群组",
+    "deleteGroupConfirmation": "您确定要删除此群组吗？",
+    "cancel": "取消",
+    "loadImageError": "加载图片时出错："
+  },
+
+  "searchChat": {
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "title": "搜索",
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg",
+    "searchBar": "搜索..."
+  },
+
+  "reviewsPageConstants": {
+    "title": "评价",
+    "noReviewsText": "暂无评价",
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg",
+    "sorts": ["最近", "5 星", "4 星", "3 星", "2 星", "1 星"]
+  },
+
+  "chatDetailsPopUp": {
+    "promote": "提升为管理员",
+    "remove": "从群组中移除",
+    "error": "错误",
+    "participantNotElevated": "未将参与者提升为管理员",
+    "participantNotRemoved": "未移除参与者",
+    "ok": "确定"
+  },
+
+  "groupCreationPage": {
+    "createGroupAlertCheck": "请输入群组名称并选择参与者。",
+    "groupChatCreated": "群组聊天创建成功！",
+    "failedGroupChatCreation": "创建群组聊天失败。",
+    "backButton": "@/assets/images/notifications/backButton.png",
+    "createGroup": "创建群组",
+    "groupNameInputTitle": "群组名称",
+    "groupNamePlaceholder": "输入群组名称",
+    "default_profile_picture": "@/assets/images/member_guest_images/blank_profile_pic.jpg",
+    "noUsersSelected": "未选择用户",
+    "done": "完成"
+  }
+}

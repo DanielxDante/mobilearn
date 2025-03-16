@@ -20,8 +20,10 @@ import { Colors } from "@/constants/colors";
 import Participant from "@/types/shared/Participant";
 import useAuthStore from "@/store/authStore";
 import ChatDetailsPopUp from "./chatDetailsPopUp";
+import { useTranslation } from "react-i18next";
 
 const GroupChatDetails = () => {
+  const { t } = useTranslation();
   const getChatDetails = useAppStore((state) => state.getChatDetails);
   const editGroupChatPicture = useAppStore(
     (state) => state.editGroupChatPicture
@@ -105,10 +107,10 @@ const GroupChatDetails = () => {
           await fetchChatInfo();
         }
       } else {
-        alert(Constants.undefinedFile);
+        alert(t("groupChatDetails.undefinedFile"));
       }
     } catch (error) {
-      console.error(Constants.handleEditProfilePictureError, error);
+      console.error(t("groupChatDetails.handleEditProfilePictureError"), error);
     }
   };
   const checkPermissions = async () => {
@@ -123,33 +125,37 @@ const GroupChatDetails = () => {
         console.log("Permissions already granted");
       }
     } catch (error) {
-      console.error(Constants.checkPermissionError, error);
+      console.error(t("groupChatDetails.checkPermissionError"), error);
     }
   };
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      alert(Constants.requestPermissionFail);
+      alert(t("groupChatDetails.requestPermissionFail"));
     }
   };
 
   const handleExit = async () => {
-    Alert.alert(Constants.deleteGroup, Constants.deleteGroupConfirmation, [
-      {
-        text: Constants.cancel,
-      },
-      {
-        text: Constants.deleteGroup,
-        onPress: async () => {
-          const response = await removeGroupChatParticipant(
-            Number(chat_id),
-            email,
-            "user"
-          );
-          router.replace("/(member_guest)/(tabs)/chatPage");
+    Alert.alert(
+      t("groupChatDetails.deleteGroup"),
+      t("groupChatDetails.deleteGroupConfirmation"),
+      [
+        {
+          text: t("groupChatDetails.cancel"),
         },
-      },
-    ]);
+        {
+          text: t("groupChatDetails.deleteGroup"),
+          onPress: async () => {
+            const response = await removeGroupChatParticipant(
+              Number(chat_id),
+              email,
+              "user"
+            );
+            router.replace("/(member_guest)/(tabs)/chatPage");
+          },
+        },
+      ]
+    );
   };
 
   const participantPopUp = async () => {
@@ -193,7 +199,10 @@ const GroupChatDetails = () => {
               source={profilePicture}
               style={styles.profilePicture}
               onError={(error) =>
-                console.error(Constants.loadImageError, error.nativeEvent.error)
+                console.error(
+                  t("groupChatDetails.loadImageError"),
+                  error.nativeEvent.error
+                )
               }
             />
             <View style={styles.editProfilePicture}>
@@ -223,9 +232,9 @@ const GroupChatDetails = () => {
               onPress={handleEditButton}
             >
               {editingName ? (
-                <Text>{Constants.save}</Text>
+                <Text>{t("groupChatDetails.save")}</Text>
               ) : (
-                <Text>{Constants.edit}</Text>
+                <Text>{t("groupChatDetails.edit")}</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -258,7 +267,9 @@ const GroupChatDetails = () => {
                   </View>
                   <View style={styles.participantViewRight}>
                     {person.is_admin && (
-                      <Text style={styles.adminText}>{Constants.admin}</Text>
+                      <Text style={styles.adminText}>
+                        {t("groupChatDetails.admin")}
+                      </Text>
                     )}
                     <Text>
                       {person.participant_type.charAt(0).toUpperCase()}
@@ -302,7 +313,9 @@ const GroupChatDetails = () => {
                   </View>
                   <View style={styles.participantViewRight}>
                     {person.is_admin && (
-                      <Text style={styles.adminText}>{Constants.admin}</Text>
+                      <Text style={styles.adminText}>
+                        {t("groupChatDetails.admin")}
+                      </Text>
                     )}
                     <Text>
                       {person.participant_type.charAt(0).toUpperCase()}
@@ -325,7 +338,7 @@ const GroupChatDetails = () => {
         </View>
       </ScrollView>
       <TouchableOpacity style={styles.leaveButton} onPress={handleExit}>
-        <Text style={styles.leaveText}>{Constants.leave}</Text>
+        <Text style={styles.leaveText}>{t("groupChatDetails.leave")}</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

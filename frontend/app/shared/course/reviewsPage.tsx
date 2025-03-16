@@ -14,8 +14,10 @@ import icons from "@/constants/icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { reviewsPageConstants } from "@/constants/textConstants";
 import DropDownPicker from "react-native-dropdown-picker";
+import { useTranslation } from "react-i18next";
 
 const ReviewsPage = () => {
+  const { t } = useTranslation();
   const reviews = useAppStore((state) => state.reviews) || [];
   const [open, setOpen] = useState(false);
   const [sortSetting, setSortSetting] = useState("recent");
@@ -56,7 +58,7 @@ const ReviewsPage = () => {
             }}
           />
         </TouchableOpacity>
-        <Text style={styles.pageHeader}>{reviewsPageConstants.title}</Text>
+        <Text style={styles.pageHeader}>{t("reviewsPageConstants.title")}</Text>
       </View>
       <View style={styles.container}>
         {/* Dropdown for sorting */}
@@ -65,12 +67,12 @@ const ReviewsPage = () => {
             open={open}
             value={sortSetting}
             items={[
-              { label: reviewsPageConstants.sorts[0], value: "recent" },
-              { label: reviewsPageConstants.sorts[1], value: "5" },
-              { label: reviewsPageConstants.sorts[2], value: "4" },
-              { label: reviewsPageConstants.sorts[3], value: "3" },
-              { label: reviewsPageConstants.sorts[4], value: "2" },
-              { label: reviewsPageConstants.sorts[5], value: "1" },
+              { label: t("reviewsPageConstants.sorts.0"), value: "recent" },
+              { label: t("reviewsPageConstants.sorts.1"), value: "5" },
+              { label: t("reviewsPageConstants.sorts.2"), value: "4" },
+              { label: t("reviewsPageConstants.sorts.3"), value: "3" },
+              { label: t("reviewsPageConstants.sorts.4"), value: "2" },
+              { label: t("reviewsPageConstants.sorts.5"), value: "1" },
             ]}
             setOpen={setOpen}
             setValue={setSortSetting}
@@ -111,7 +113,7 @@ const ReviewsPage = () => {
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >
-            <Text>{reviewsPageConstants.noReviewsText}</Text>
+            <Text>{t("reviewsPageConstants.noReviewsText")}</Text>
           </View>
         )}
       </View>

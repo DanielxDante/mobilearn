@@ -18,14 +18,17 @@ import { Colors } from "@/constants/colors";
 import { memberGuestHomeConstants as Constants } from "@/constants/textConstants";
 import Statistics from "@/components/Statistics";
 import LatestNews from "@/components/LatestNews";
-import { instructorHomePageConstants as textConstants } from "@/constants/textConstants";
+//import { instructorHomePageConstants as textConstants } from "@/constants/textConstants";
 import useAppStore from "@/store/appStore";
 import Course from "@/types/shared/Course/Course";
+import { useTranslation } from "react-i18next";
 import {
   NOTIFICATION_PAGE,
   COURSE_DETAILS_PAGE,
   TOP_COURSES_SEE_ALL,
 } from "@/constants/pages";
+//import { instructorHomePageConstants } from "@/constants/textConstants";
+//import { memberGuestHomeConstants } from "@/locales/en";
 
 const newsData = [
   {
@@ -70,6 +73,7 @@ const Home = () => {
   );
 
   const [timePeriod, setTimePeriod] = useState("week");
+  const { t } = useTranslation();
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -102,7 +106,9 @@ const Home = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.appBarContainer}>
         {/* App bar for Home and notifications*/}
-        <Text style={styles.homePageHeader}>{textConstants.pageTitle}</Text>
+        <Text style={styles.homePageHeader}>
+          {t("instructorHomePageConstants.pageTitle")}
+        </Text>
         {/* Notification bell icon */}
         <TouchableOpacity
           style={styles.notificationButton}
@@ -133,14 +139,16 @@ const Home = () => {
         <View>
           <View style={styles.topCoursesHeader}>
             <Text style={styles.topCoursesTitle}>
-              {Constants.topCoursesSubHeader}
+              {t("memberGuestHomeConstants.topCoursesSubHeader")}
             </Text>
             <TouchableOpacity
               onPress={() => {
                 router.push(TOP_COURSES_SEE_ALL);
               }}
             >
-              <Text style={styles.seeAllText}>{Constants.seeAllText}</Text>
+              <Text style={styles.seeAllText}>
+                {t("memberGuestHomeConstants.seeAllText")}
+              </Text>
             </TouchableOpacity>
           </View>
           <TopCourses onSelect={handleSelectCourse} />

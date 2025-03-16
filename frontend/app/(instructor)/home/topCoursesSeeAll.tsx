@@ -15,10 +15,12 @@ import CourseListItem from "@/components/InstructorCourseListItem";
 import Course from "@/types/shared/Course/Course";
 import { memberGuestTopCoursesSeeAll as Constants } from "@/constants/textConstants";
 import useAppStore from "@/store/appStore";
+import { useTranslation } from "react-i18next";
 
 const LIMIT = 20; // Set the maximum number of courses to fetch
 
 const TopCoursesSeeAll = () => {
+  const { t } = useTranslation();
   const [page, setPage] = useState(2);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -71,7 +73,9 @@ const TopCoursesSeeAll = () => {
         >
           <Image source={Constants.backButton} style={styles.backButton} />
         </TouchableOpacity>
-        <Text style={styles.suggestionsHeader}>{Constants.appBarTitle}</Text>
+        <Text style={styles.suggestionsHeader}>
+          {t("memberGuestTopCoursesSeeAll.appBarTitle")}
+        </Text>
       </View>
       {/* Suggestions Display Section */}
       <View style={styles.scrollContainerOutside}>
@@ -86,9 +90,15 @@ const TopCoursesSeeAll = () => {
             />
           ))}
           {loading && (
-            <Text style={styles.loadingText}>{Constants.loading}</Text>
+            <Text style={styles.loadingText}>
+              {t("memberGuestTopCoursesSeeAll.loading")}
+            </Text>
           )}
-          {!hasMore && <Text style={styles.endText}>{Constants.endText}</Text>}
+          {!hasMore && (
+            <Text style={styles.endText}>
+              {t("memberGuestTopCoursesSeeAll.endText")}
+            </Text>
+          )}
         </ScrollView>
       </View>
     </SafeAreaView>

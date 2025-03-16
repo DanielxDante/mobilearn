@@ -14,13 +14,15 @@ export const INSTRUCTOR_SIGNUP_PAGE =
   "/shared/instructorSignUpPage" as Href<string>;
 export const MEMBER_LOGIN_PAGE = "/shared/memberLoginPage" as Href<string>;
 export const MEMBER_SIGNUP_PAGE = "/shared/memberSignUpPage" as Href<string>;
-export const MEMBER_RESET_PASSWORD_PAGE = "/shared/resetPasswordPage" as Href<string>;
+export const MEMBER_RESET_PASSWORD_PAGE =
+  "/shared/resetPasswordPage" as Href<string>;
 export const INSTRUCTOR_REGISTRATION_SUCCESS =
   "/shared/registrationSuccessInstructorPage" as Href<string>;
 export const INSTRUCTOR_WAITING_PAGE =
   "/shared/instructorWaitingPage" as Href<string>;
 export const MEMBER_REGISTRATION_SUCCESS =
   "/shared/registrationSuccessMemberPage" as Href<string>;
+export const SETTINGS_PAGE = "/shared/profile/settings" as Href<string>;
 export const DONATION_PAGE = "/shared/profile/donate" as Href<string>;
 export const MEMBER_CHANNEL_REGISTRATION =
   `/shared/memberChannelSignUpPage` as Href<string>;

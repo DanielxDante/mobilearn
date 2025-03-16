@@ -17,6 +17,7 @@ import BackButton from "@/components/BackButton";
 import { notificationsConstants as Constants } from "@/constants/textConstants";
 import notification from "@/types/shared/notification";
 import { set } from "lodash";
+import { useTranslation } from "react-i18next";
 
 // placeholder for notification data
 // const notificationData: AppNotification[] = [
@@ -56,6 +57,7 @@ const sort = (notificationData: notification[]) => {
 const Notification = () => {
   // Accept passed-in params
   const params = useLocalSearchParams();
+  const { t } = useTranslation();
 
   // Parse the `notifications` parameter
   const notificationData = React.useMemo(() => {
@@ -71,7 +73,9 @@ const Notification = () => {
       {/* AppBar */}
       <View style={styles.appBarContainer}>
         <BackButton />
-        <Text style={styles.notificationHeader}>{Constants.pageTitle}</Text>
+        <Text style={styles.notificationHeader}>
+          {t("notificationsConstants.pageTitle")}
+        </Text>
       </View>
       {/* Notification Area */}
       <FlatList

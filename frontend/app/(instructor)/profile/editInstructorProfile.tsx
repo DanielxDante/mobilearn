@@ -19,6 +19,7 @@ import EditProfileFields from "@/components/EditProfileFields";
 import axios from "axios";
 import { COMMUNITIES_GET_ALL } from "@/constants/routes";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
+import { useTranslation } from "react-i18next";
 
 const EditProfile = () => {
   const authStore = useAuthStore((state) => state);
@@ -55,12 +56,11 @@ const EditProfile = () => {
   const [newPosition, setNewPosition] = useState(position);
   const [communities, setCommunities] = useState([]);
   const [displayedPhoneNumber, setDisplayedPhoneNumber] = useState(phoneNumber);
+  const { t } = useTranslation();
 
   const profile_picture = newPictureUrl
     ? { uri: newPictureUrl, cache: "reload" }
     : Constants.default_profile_picture;
-
-  const testCompanies = ["Mobilearn Network", "Mobilearn", "Mobilearn Inc."];
 
   const getCommunities = async () => {
     try {
@@ -77,11 +77,11 @@ const EditProfile = () => {
 
   const handleEditName = async (newName: string | undefined) => {
     if (newName === undefined) {
-      alert("Username is undefined");
+      alert(t("instructorEditProfilePage.usernameUndefined"));
       return;
     }
     if (newName.length == 0) {
-      alert("Username is empty");
+      alert(t("instructorEditProfilePage.usernameEmpty"));
     } else {
       try {
         const response = await editName(newName);
@@ -90,48 +90,48 @@ const EditProfile = () => {
         return { isValid: true, validatedValue: newName.trim() };
       } catch (error) {
         console.log(error);
-        alert("Username has not been changed");
+        alert(t("instructorEditProfilePage.usernameNotChanged"));
       }
     }
   };
   const handleEditEmail = async (newEmail: string | undefined) => {
     if (newEmail === undefined) {
-      alert("Username is undefined");
+      alert(t("instructorEditProfilePage.emailUndefined"));
       return;
     }
     if (newEmail.length == 0) {
-      alert("Email is empty");
+      alert(t("instructorEditProfilePage.emailEmpty"));
     }
     if (newEmail === email) {
-      alert("Email was not changed.");
+      alert(t("instructorEditProfilePage.emailNotChanged"));
     } else {
       try {
         const response = await editEmail(newEmail);
         setNewEmail(newEmail);
-        alert("Email has been updated.");
+        alert(t("instructorEditProfilePage.emailUpdated"));
         return { isValid: true, validatedValue: newEmail.trim() };
       } catch (error) {
         console.log(error);
-        alert("Email has not been changed");
+        alert(t("instructorEditProfilePage.emailNotChanged"));
       }
     }
   };
   const handleEditGender = async (newGender: string | undefined) => {
     if (newGender === undefined) {
-      alert("Gender is undefined");
+      alert(t("instructorEditProfilePage.genderUndefined"));
       return;
     }
     if (newGender.length == 0) {
-      alert("Gender is empty");
+      alert(t("instructorEditProfilePage.genderEmpty"));
     } else {
       try {
         const response = await editGender(newGender);
         setNewGender(newGender);
-        alert("Gender has been updated.");
+        alert(t("instructorEditProfilePage.genderUpdated"));
         return { isValid: true, validatedValue: newGender };
       } catch (error) {
         console.log(error);
-        alert("Gender has not been changed");
+        alert(t("instructorEditProfilePage.genderNotChanged"));
       }
     }
   };
@@ -140,19 +140,19 @@ const EditProfile = () => {
     newPassword: string | undefined
   ) => {
     if (oldPassword === undefined || newPassword === undefined) {
-      alert("Passwords are undefined");
+      alert(t("instructorEditProfilePage.passwordUndefined"));
       return;
     }
     if (newPassword.length == 0) {
-      alert("Password is empty");
+      alert(t("instructorEditProfilePage.passwordEmpty"));
     } else {
       try {
         const response = await editPassword(oldPassword, newPassword);
-        alert("Password has been updated.");
+        alert(t("instructorEditProfilePage.passwordUpdated"));
         return { isValid: true };
       } catch (error) {
         console.log(error);
-        alert("Password has not been changed");
+        alert(t("instructorEditProfilePage.passwordNotChanged"));
       }
     }
   };
@@ -187,9 +187,9 @@ const EditProfile = () => {
 
         const response = await editProfilePicture(formData);
         setNewPictureUrl(response);
-        alert("Profile picture has been updated.");
+        alert(t("instructorEditProfilePage.updated"));
       } else {
-        alert("File is undefined!");
+        alert(t("instructorEditProfilePage.undefinedValue"));
       }
     } catch (error) {
       console.error("Error in handleEditProfilePicture:", error);
@@ -197,62 +197,62 @@ const EditProfile = () => {
   };
   const handleEditPhoneNumber = async (editedNumber: string | undefined) => {
     if (!editedNumber) {
-      alert("Phone number cannot be empty.");
+      alert(t("instructorEditProfilePage.emptyValue"));
       return { isValid: false };
     }
 
     const parsedPhoneNumber = parsePhoneNumberFromString(editedNumber);
     if (!parsedPhoneNumber?.isValid()) {
-      alert("Phone number is not valid. Please check area code and number.");
+      alert(t("instructorEditProfilePage.phone_invalid"));
       return { isValid: false };
     }
 
     try {
       await editPhoneNumber(parsedPhoneNumber.number!);
-      alert("Phone number has been updated.");
+      alert(t("instructorEditProfilePage.updated"));
       return { isValid: true, validatedValue: parsedPhoneNumber.number };
     } catch (error) {
       console.error(error);
-      alert("Phone number could not be updated. Please try again.");
+      alert(t("instructorEditProfilePage.tryAgain"));
       return { isValid: false };
     }
   };
 
   const handleEditCompany = async (newCompany: string | undefined) => {
     if (newCompany === undefined) {
-      alert("Company is undefined");
+      alert(t("instructorEditProfilePage.undefinedValue"));
       return;
     }
     if (newCompany.length == 0) {
-      alert("Company is empty");
+      alert(t("instructorEditProfilePage.emptyValue"));
     } else {
       try {
         const response = await editCompany(newCompany);
         setNewCompany(newCompany);
-        alert("Company has been updated.");
+        alert(t("instructorEditProfilePage.updated"));
         return { isValid: true, validatedValue: newCompany.trim() };
       } catch (error) {
         console.log(error);
-        alert("Company has not been changed");
+        alert(t("instructorEditProfilePage.notChanged"));
       }
     }
   };
   const handleEditPosition = async (newPosition: string | undefined) => {
     if (newPosition === undefined) {
-      alert("Position is undefined");
+      alert(t("instructorEditProfilePage.undefinedValue"));
       return;
     }
     if (newPosition.length == 0) {
-      alert("Position is empty");
+      alert(t("instructorEditProfilePage.emptyValue"));
     } else {
       try {
         const response = await editPosition(newPosition);
         setNewPosition(newPosition);
-        alert("Position has been updated.");
+        alert(t("instructorEditProfilePage.updated"));
         return { isValid: true, validatedValue: newPosition.trim() };
       } catch (error) {
         console.log(error);
-        alert("Position has not been changed");
+        alert(t("instructorEditProfilePage.notChanged"));
       }
     }
   };
@@ -274,7 +274,7 @@ const EditProfile = () => {
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
+      alert(t("instructorEditProfilePage.cameraRollPermission"));
     }
   };
 
@@ -287,7 +287,9 @@ const EditProfile = () => {
       {/* AppBar */}
       <View style={styles.appBarContainer}>
         <BackButton />
-        <Text style={styles.header}>{Constants.appBarTitle}</Text>
+        <Text style={styles.header}>
+          {t("instructorEditProfilePage.appBarTitle")}
+        </Text>
       </View>
       {/* Page body */}
       <ScrollView>
@@ -320,92 +322,138 @@ const EditProfile = () => {
             </TouchableOpacity>
             {/* Edit fields */}
             <View style={styles.editFields}>
-              {/* FYI: To reuse this component, ensure modalDetails structure is consistent */}
+              {/* Username Field */}
               <EditProfileFields
-                title={
-                  Constants.fields.find((field) => field.name)?.name
-                    ?.inputTitle ?? "Your username"
-                }
+                title={t("instructorEditProfilePage.fields.name.inputTitle")}
                 initialValue={newUsername}
-                modalDetails={
-                  Constants.fields.find((field) => field.name)?.name
-                    ?.modalDetails ?? "Error"
-                }
+                modalDetails={[
+                  {
+                    inputTitle: t(
+                      "instructorEditProfilePage.fields.name.modalDetails.0.inputTitle"
+                    ),
+                    placeholder: t(
+                      "instructorEditProfilePage.fields.name.modalDetails.0.placeholder"
+                    ),
+                  },
+                ]}
                 onSave={handleEditName}
               />
+
+              {/* Email Field */}
               <EditProfileFields
-                title={
-                  Constants.fields.find((field) => field.email)?.email
-                    ?.inputTitle ?? "Your email"
-                }
+                title={t("instructorEditProfilePage.fields.email.inputTitle")}
                 initialValue={newEmail}
-                modalDetails={
-                  Constants.fields.find((field) => field.email)?.email
-                    ?.modalDetails ?? "Error"
-                }
+                modalDetails={[
+                  {
+                    inputTitle: t(
+                      "instructorEditProfilePage.fields.email.modalDetails.0.inputTitle"
+                    ),
+                    placeholder: t(
+                      "instructorEditProfilePage.fields.email.modalDetails.0.placeholder"
+                    ),
+                  },
+                ]}
                 onSave={handleEditEmail}
               />
+
+              {/* Gender Field */}
               <EditProfileFields
-                title={
-                  Constants.fields.find((field) => field.gender)?.gender
-                    ?.inputTitle ?? "Your gender"
-                }
+                title={t("instructorEditProfilePage.fields.gender.inputTitle")}
                 initialValue={newGender}
-                modalDetails={
-                  Constants.fields.find((field) => field.gender)?.gender
-                    ?.modalDetails ?? "Error"
-                }
+                modalDetails={[
+                  {
+                    inputTitle: t(
+                      "instructorEditProfilePage.fields.gender.modalDetails.0.inputTitle"
+                    ),
+                    options: [
+                      t(
+                        "instructorEditProfilePage.fields.gender.modalDetails.0.options.0"
+                      ), // "男"
+                      t(
+                        "instructorEditProfilePage.fields.gender.modalDetails.0.options.1"
+                      ), // "女"
+                    ],
+                  },
+                ]}
                 onSave={handleEditGender}
               />
+
+              {/* Password Field */}
               <EditProfileFields
-                title={
-                  Constants.fields.find((field) => field.password)?.password
-                    ?.inputTitle ?? "Your password"
-                }
-                modalDetails={
-                  Constants.fields.find((field) => field.password)?.password
-                    ?.modalDetails ?? "Error"
-                }
+                title={t(
+                  "instructorEditProfilePage.fields.password.inputTitle"
+                )}
+                modalDetails={[
+                  {
+                    inputTitle: t(
+                      "instructorEditProfilePage.fields.password.modalDetails.0.inputTitle"
+                    ),
+                    placeholder: t(
+                      "instructorEditProfilePage.fields.password.modalDetails.0.placeholder"
+                    ),
+                  },
+                  {
+                    inputTitle: t(
+                      "instructorEditProfilePage.fields.password.modalDetails.1.inputTitle"
+                    ),
+                    placeholder: t(
+                      "instructorEditProfilePage.fields.password.modalDetails.1.placeholder"
+                    ),
+                  },
+                ]}
                 onSave={handleEditPassword}
               />
+
+              {/* Company Field */}
               <EditProfileFields
-                title={
-                  Constants.fields.find((field) => field.company)?.company
-                    ?.inputTitle ?? "Your company"
-                }
+                title={t("instructorEditProfilePage.fields.company.inputTitle")}
                 initialValue={newCompany}
                 modalDetails={[
                   {
-                    inputTitle:
-                      Constants.fields.find((field) => field.company)?.company
-                        ?.modalDetails[0].inputTitle ?? "Error",
+                    inputTitle: t(
+                      "instructorEditProfilePage.fields.company.modalDetails.0.inputTitle"
+                    ),
                     options: communities,
                   },
                 ]}
                 onSave={handleEditCompany}
               />
+
+              {/* Position Field */}
               <EditProfileFields
-                title={
-                  Constants.fields.find((field) => field.position)?.position
-                    ?.inputTitle ?? "Your position"
-                }
+                title={t(
+                  "instructorEditProfilePage.fields.position.inputTitle"
+                )}
                 initialValue={newPosition}
-                modalDetails={
-                  Constants.fields.find((field) => field.position)?.position
-                    ?.modalDetails ?? "Error"
-                }
+                modalDetails={[
+                  {
+                    inputTitle: t(
+                      "instructorEditProfilePage.fields.position.modalDetails.0.inputTitle"
+                    ),
+                    placeholder: t(
+                      "instructorEditProfilePage.fields.position.modalDetails.0.placeholder"
+                    ),
+                  },
+                ]}
                 onSave={handleEditPosition}
               />
+
+              {/* Phone Number Field */}
               <EditProfileFields
-                title={
-                  Constants.fields.find((field) => field.phone_number)
-                    ?.phone_number?.inputTitle ?? "Your phone number"
-                }
+                title={t(
+                  "instructorEditProfilePage.fields.phone_number.inputTitle"
+                )}
                 initialValue={displayedPhoneNumber}
-                modalDetails={
-                  Constants.fields.find((field) => field.phone_number)
-                    ?.phone_number?.modalDetails ?? "Error"
-                }
+                modalDetails={[
+                  {
+                    inputTitle: t(
+                      "instructorEditProfilePage.fields.phone_number.modalDetails.0.inputTitle"
+                    ),
+                    placeholder: t(
+                      "instructorEditProfilePage.fields.phone_number.modalDetails.0.placeholder"
+                    ),
+                  },
+                ]}
                 onSave={handleEditPhoneNumber}
               />
             </View>

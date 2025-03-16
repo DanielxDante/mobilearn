@@ -9,7 +9,8 @@ import { useFonts } from "expo-font";
 import IconTextButton from "@/components/IconTextButton";
 import icons from "@/constants/icons";
 import { router } from "expo-router";
-import { CAROUSEL_PAGE, DONATION_PAGE } from "@/constants/pages";
+import { CAROUSEL_PAGE, DONATION_PAGE, SETTINGS_PAGE } from "@/constants/pages";
+import { useTranslation } from "react-i18next";
 
 const Profile = () => {
   const username = useAuthStore((state) => state.username);
@@ -32,12 +33,15 @@ const Profile = () => {
     router.replace(CAROUSEL_PAGE);
     console.log("Member logout");
   };
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView style={styles.container}>
       {/* AppBar */}
       <View style={styles.appBarContainer}>
-        <Text style={styles.myCoursesHeader}>{Constants.appBarTitle}</Text>
+        <Text style={styles.myCoursesHeader}>
+          {t("memberGuestProfilePage.appBarTitle")}
+        </Text>
       </View>
       {/* Profile details */}
       <View style={styles.profileDetails}>
@@ -71,19 +75,17 @@ const Profile = () => {
       <View style={styles.optionsContainer}>
         <IconTextButton
           icon={icons.card}
-          text={Constants.settingsTitle}
+          text={t("memberGuestProfilePage.settingsTitle")}
           onPress={() => {
-              // router.push(
-              //     "/(member_guest)/profile/userPaymentMethod"
-              // );
-              console.log("(Instructor) Entering settings page")
+            router.push(SETTINGS_PAGE);
+            console.log("(Instructor) Entering settings page");
           }}
           style={styles.iconTextButton}
         />
         {/* TODO: add help center and privacy notice here */}
         <IconTextButton
           icon={icons.tele}
-          text={Constants.donateTitle}
+          text={t("memberGuestProfilePage.donateTitle")}
           onPress={() => {
             router.push(DONATION_PAGE);
           }}
@@ -91,7 +93,7 @@ const Profile = () => {
         />
         <IconTextButton
           icon={icons.logout}
-          text={Constants.logOutTitle}
+          text={t("memberGuestProfilePage.logOutTitle")}
           onPress={handleLogout}
           style={styles.iconTextButton}
         />

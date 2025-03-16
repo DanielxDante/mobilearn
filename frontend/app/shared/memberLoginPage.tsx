@@ -16,6 +16,7 @@ import {
 } from "@/constants/pages";
 import InputDropDownField from "@/components/InputDropDownField";
 import { Colors } from "@/constants/colors";
+import { useTranslation } from "react-i18next";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
@@ -24,10 +25,11 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [domain, setDomain] = useState("member");
+  const { t } = useTranslation();
 
   const handleSignIn = async () => {
     if (email.length === 0 || password.length === 0) {
-      alert(Constants.inputsEmptyAlert);
+      alert(t("memberLoginPageConstants.inputsEmptyAlert"));
     } else {
       try {
         const response = await login(email.toLowerCase(), password);
@@ -35,15 +37,15 @@ export default function LoginPage() {
         if (response === "normal" || response === "core_member") {
           router.push(MEMBER_CHANNEL_REGISTRATION);
         } else if (response === "User disabled") {
-          alert(Constants.accountDisabledAlert);
+          alert(t("memberLoginPageConstants.accountDisabledAlert"));
         } else if (response === "Invalid credentials") {
-          alert(Constants.invalidCredentialsAlert);
+          alert(t("memberLoginPageConstants.invalidCredentialsAlert"));
         } else if (response === "admin") {
           router.push(ADMIN_HOME);
         }
       } catch (error) {
         console.log(error);
-        alert(Constants.errorSigningUpAlert);
+        alert(t("memberLoginPageConstants.errorSigningUpAlert"));
       }
     }
   };
@@ -83,7 +85,7 @@ export default function LoginPage() {
             marginBottom: 24,
           }}
         >
-          {Constants.pageTitle}
+          {t("memberLoginPageConstants.pageTitle")}
         </Text>
         <Text
           style={{
@@ -93,38 +95,41 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.pageSubTitle}
+          {t("memberLoginPageConstants.pageSubTitle")}
         </Text>
       </View>
       <View style={{ width: "100%" }}>
         <InputField
-          inputTitle={Constants.fields[0].inputTitle}
-          placeholder={Constants.fields[0].placeHolder || ""}
+          inputTitle={t("memberLoginPageConstants.fields.0.inputTitle")}
+          placeholder={t("memberLoginPageConstants.fields.0.placeHolder") || ""}
           value={email}
           onChangeText={setEmail}
         />
         <InputField
-          inputTitle={Constants.fields[1].inputTitle}
-          placeholder={Constants.fields[1].placeHolder || ""}
+          inputTitle={t("memberLoginPageConstants.fields.1.inputTitle")}
+          placeholder={t("memberLoginPageConstants.fields.1.placeHolder") || ""}
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
         />
-        <View style={{
-          marginTop: -10,
-          marginBottom: 15,
-        }}>
-          <TouchableOpacity 
-            onPress = {() => router.push("/shared/resetPasswordPage")}
+        <View
+          style={{
+            marginTop: -10,
+            marginBottom: 15,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => router.push("/shared/resetPasswordPage")}
           >
-            <Text style={{ color: Colors.defaultBlue, fontFamily: "Inter-Regular" }}>
-              {Constants.forgotPassword}
+            <Text
+              style={{ color: Colors.defaultBlue, fontFamily: "Inter-Regular" }}
+            >
+              {t("memberLoginPageConstants.forgotPassword")}
             </Text>
-            
           </TouchableOpacity>
         </View>
         <SignInButton
-          text={Constants.signInButtonText}
+          text={t("memberLoginPageConstants.signInButtonText")}
           onPress={handleSignIn}
         />
         <View
@@ -139,13 +144,13 @@ export default function LoginPage() {
               paddingRight: 3,
             }}
           >
-            {Constants.dontHaveAccountText}
+            {t("memberLoginPageConstants.dontHaveAccountText")}
           </Text>
           <Link
             style={{ color: Colors.darkerBlue }}
             href={{ pathname: MEMBER_SIGNUP_PAGE }}
           >
-            {Constants.signUpText}
+            {t("memberLoginPageConstants.signUpText")}
           </Link>
         </View>
       </View>

@@ -22,6 +22,7 @@ import { memberDonatePage as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
 import { sendNotification } from "@/components/notificationUtils";
 import { usePushNotifications } from "@/hooks/usePushNotificationState";
+import { useTranslation } from "react-i18next";
 
 const Donate = () => {
   const name = useAuthStore((state) => state.username);
@@ -38,6 +39,7 @@ const Donate = () => {
   const [loading, setLoading] = useState(false);
 
   const { expoPushToken, notification } = usePushNotifications();
+  const { t } = useTranslation();
 
   const handlePayment = async (
     donationAmount: number,
@@ -71,16 +73,16 @@ const Donate = () => {
       });
       const { error } = await presentPaymentSheet();
       if (error) {
-        Alert.alert(Constants.paymentCancelledAlert);
+        Alert.alert(t("memberDonatePage.paymentCancelledAlert"));
       } else {
-        Alert.alert(Constants.paymentSuccessAlert);
+        Alert.alert(t("memberDonatePage.paymentSuccessAlert"));
 
         if (expoPushToken) {
           try {
             await sendNotification(
               expoPushToken.data,
-              Constants.donationSuccessful,
-              `${Constants.yourDonationMessage}${amount}`
+              t("memberDonatePage.donationSuccessful"),
+              `${t("memberDonatePage.yourDonationMessage")}${amount}`
             );
           } catch {
             console.log(error);
@@ -90,7 +92,10 @@ const Donate = () => {
         router.back();
       }
     } catch (error) {
-      Alert.alert(Constants.error, Constants.donationErrorMessage);
+      Alert.alert(
+        t("memberDonatePage.error"),
+        t("memberDonatePage.donationErrorMessage")
+      );
     } finally {
       setLoading(false);
     }
@@ -101,7 +106,7 @@ const Donate = () => {
       {/* AppBar */}
       <View style={styles.appBarContainer}>
         <BackButton />
-        <Text style={styles.header}>{Constants.appBarTitle}</Text>
+        <Text style={styles.header}>{t("memberDonatePage.appBarTitle")}</Text>
       </View>
       <ScrollView ref={scrollViewRef}>
         <View style={styles.body}>
@@ -109,8 +114,12 @@ const Donate = () => {
             <Image
               source={require("@/assets/images/member_guest_images/donate.png")}
             />
-            <Text style={styles.donateText}>{Constants.donateText1}</Text>
-            <Text style={styles.donateText}>{Constants.donateText2}</Text>
+            <Text style={styles.donateText}>
+              {t("memberDonatePage.donateText1")}
+            </Text>
+            <Text style={styles.donateText}>
+              {t("memberDonatePage.donateText2")}
+            </Text>
           </View>
           <View style={styles.lowerBody}>
             <View style={styles.donateInputContainer}>
@@ -164,7 +173,7 @@ const Donate = () => {
               disabled={donateButtonDisabled}
             >
               <Text style={styles.donateButtonText}>
-                {Constants.donateButtonText}
+                {t("memberDonatePage.donateButtonText")}
               </Text>
             </TouchableOpacity>
             {loading && (
