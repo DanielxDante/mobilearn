@@ -121,6 +121,8 @@ const LessonContent = () => {
     }
   };
 
+  console.log("lesson", lesson);
+
   return (
     lesson && (
       <SafeAreaView style={styles.container}>
@@ -180,7 +182,7 @@ const LessonContent = () => {
                     {t("lessonContentPage.download")}
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={styles.uploadWrapper}
                   onPress={() => {
                     handleUpload();
@@ -192,7 +194,7 @@ const LessonContent = () => {
                 </TouchableOpacity>
                 <Text style={styles.fileName}>
                   {homeworkName ?? t("lessonContentPage.upload")}
-                </Text>
+                </Text> */}
               </View>
             )}
           </View>

@@ -82,7 +82,7 @@ export default function LoginPage() {
             marginBottom: 24,
           }}
         >
-          {t("registrationSuccessInstructor.pageTitle")}
+          {t("registrationSuccessMember.pageTitle")}
         </Text>
         <Text // You have registered as an
           style={{
@@ -93,7 +93,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {t("registrationSuccessInstructor.blueSubTitle")}
+          {t("registrationSuccessMember.blueSubTitle")}
         </Text>
         <Image
           source={Constants.image}
@@ -112,7 +112,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {t("registrationSuccessInstructor.role")}
+          {t("registrationSuccessMember.role")}
         </Text>
         <Text // SubTitle
           style={{
@@ -123,7 +123,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {t("registrationSuccessInstructor.subTitle")}
+          {t("registrationSuccessMember.subTitle")}
         </Text>
         <TouchableOpacity
           style={styles.button}
@@ -132,7 +132,7 @@ export default function LoginPage() {
           }}
         >
           <Text style={styles.buttonText}>
-            {t("registrationSuccessInstructor.linkText")}
+            {t("registrationSuccessMember.linkText")}
           </Text>
         </TouchableOpacity>
       </View>

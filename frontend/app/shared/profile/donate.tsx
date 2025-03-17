@@ -156,7 +156,7 @@ const Donate = () => {
               style={styles.donateNoteInput}
               multiline
               numberOfLines={4}
-              placeholder="Enter a note (optional)"
+              placeholder={t("memberDonatePage.optionalNote")}
               placeholderTextColor={Colors.darkGray}
               onChangeText={(text) => setNoteText(text)}
             />
