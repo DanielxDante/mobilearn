@@ -124,7 +124,7 @@ const InstructorCourseDetails = () => {
                     style={styles.courseInfoLeftIcon}
                   />
                   <Text style={styles.courseInfoLeftText}>
-                    {t("Constants.learningTime")}
+                    {t("courseDetailsConstants.learningTime")}
                   </Text>
                 </View>
                 <View style={styles.courseInfoLeftTitle}>

@@ -32,9 +32,9 @@ export default function LoginPage() {
         const response = await login(email.toLowerCase(), password);
 
         if (response === "active") {
-          router.push(INSTRUCTOR_HOME);
+          router.replace(INSTRUCTOR_HOME);
         } else if (response === "not_approved") {
-          router.push(INSTRUCTOR_WAITING_PAGE);
+          router.replace(INSTRUCTOR_WAITING_PAGE);
         } else if (response === "disabled") {
           alert(t("instructorLoginPageConstants.accountDisabledAlert"));
         } else if (response === "Invalid credentials") {
