@@ -1,0 +1,23 @@
+appId: com.musketeers.mobilearn
+---
+- launchApp
+- tapOn: "CONTINUE"
+- tapOn: "STUDENT"
+- tapOn: "SIGN UP"
+- tapOn: "John Cena"
+- inputText: "dan"
+- tapOn: "youremail@gmail.com"
+- inputText: "dan@gmail.com"
+- tapOn: "Please select an option"
+- tapOn: "Male"
+- tapOn: "Male"
+- tapOn: 
+    text: "Password"
+    index: 1
+- inputText: 123
+- tapOn:
+    text: "Password"
+    index: 2
+- inputText: 123
+- tapOn: "Register"
+- assertVisible: "Begin Learning"

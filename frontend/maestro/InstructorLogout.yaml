@@ -1,0 +1,17 @@
+appId: com.musketeers.mobilearn
+---
+- launchApp
+- tapOn: "CONTINUE"
+- tapOn: "INSTRUCTOR"
+- tapOn: "SIGN IN"
+- tapOn: "Email"
+- inputText: "scott_piper@edu.com"
+- tapOn: "Password"
+- inputText: "Scott_Piper"
+- tapOn:
+    text: "Sign In"
+    index: 1
+- tapOn:
+    point: 88%, 91%
+- tapOn: "Logout"
+- assertVisible: "CONTINUE"

@@ -1,9 +1,11 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
+
 import { Colors } from "@/constants/colors";
 import { instructorNewsConstants as textConstants } from "@/constants/textConstants";
 
-//Create api to fetch latest news
+// TODO: Create api to fetch latest news
 const LatestNews = ({
   news,
 }: {
@@ -13,12 +15,14 @@ const LatestNews = ({
     text?: string;
   }[];
 }) => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.latestNewsContainer}>
       <View style={styles.newsHeader}>
-        <Text style={styles.newsTitle}>{textConstants.pageTitle}</Text>
+        <Text style={styles.newsTitle}>{t("instructorNewsConstants.pageTitle")}</Text>
         <TouchableOpacity>
-          <Text style={styles.seeAllText}>{textConstants.seeAll}</Text>
+          <Text style={styles.seeAllText}>{t("instructorNewsConstants.seeAll")}</Text>
         </TouchableOpacity>
       </View>
       {news.map((item, index) => (

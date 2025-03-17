@@ -1,0 +1,14 @@
+appId: com.musketeers.mobilearn
+---
+- launchApp
+- tapOn: "CONTINUE"
+- tapOn: "STUDENT"
+- tapOn: "SIGN IN"
+- tapOn: "Email"
+- inputText: "mobilearn_daniel@gmail.com"
+- tapOn: "Password"
+- inputText: "admin"
+- tapOn:
+    text: "Sign In"
+    index: 1
+- assertVisible: "Channel Registration"

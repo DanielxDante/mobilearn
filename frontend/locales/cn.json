@@ -9,7 +9,10 @@
     "languageButton": "切换到{language}",
     "en": "中文",
     "cn": "英文",
-    "changeLanguage": "更改语言"
+    "changeLanguage": "更改语言",
+    "termsOfUse": "使用条款",
+    "privacyPolicy": "隐私声明",
+    "bugReport": "反馈问题"
   },
   "carouselPageConstants": {
     "slides": [

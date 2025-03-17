@@ -1,0 +1,49 @@
+appId: com.musketeers.mobilearn
+---
+- launchApp
+- tapOn: "CONTINUE"
+- tapOn: "STUDENT"
+- tapOn: "SIGN IN"
+- tapOn: "Email"
+- inputText: "mobilearn_daniel@gmail.com"
+- tapOn: "Password"
+- inputText: "admin"
+- tapOn:
+    text: "Sign In"
+    index: 1
+- runFlow:
+    when:
+      visible:
+        text: "Select a channel"
+        index: 0
+    commands:
+      - tapOn:
+          text: "Select a Channel"
+          index: 1
+      - tapOn: "Mobilearn Public"
+- runFlow:
+    when:
+      visible:
+        text: "Enter invite code"
+        index: 0
+    commands:
+      - tapOn: "Enter invite code"
+      - inputText: "mobilearn"
+      - tapOn: "Join Channel"
+- tapOn:
+    point: 88%, 91%
+- tapOn:
+    point: 89%, 18%
+- tapOn: 
+    text: "Edit"
+    index: 0
+- tapOn: Please enter username
+- eraseText
+- inputText: "Daniel Admin"
+- tapOn: "SAVE"
+- tapOn: "SAVE"
+- tapOn:
+    id: android:id/button1
+- tapOn:
+    point: 50%, 50%
+- assertVisible: "Daniel Admin"

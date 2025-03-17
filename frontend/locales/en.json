@@ -9,7 +9,10 @@
     "languageButton": "Switch to ",
     "en": "Chinese",
     "cn": "English",
-    "changeLanguage": "Change Language"
+    "changeLanguage": "Change Language",
+    "termsOfUse": "Terms of Use",
+    "privacyPolicy": "Privacy Policy",
+    "bugReport": "Report an issue"
   },
   "carouselPageConstants": {
     "slides": [
