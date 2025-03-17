@@ -160,7 +160,7 @@ const Home = () => {
           <TopCourses onSelect={handleSelectCourse} />
         </View>
         {/* News */}
-        {/* <LatestNews news={newsData} /> */}
+        <LatestNews news={newsData} />
       </ScrollView>
     </SafeAreaView>
   );

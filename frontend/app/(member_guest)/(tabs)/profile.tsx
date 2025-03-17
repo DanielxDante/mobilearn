@@ -114,8 +114,6 @@ const Profile = () => {
           }}
           style={styles.iconTextButton}
         />
-        {/* https://forms.gle/snCu4EmktxYqDqge6 */}
-        {/* TODO: add help center and privacy notice here */}
         <IconTextButton
           icon={icons.tele}
           text={t("memberGuestProfilePage.donateTitle")}

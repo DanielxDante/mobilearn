@@ -132,23 +132,8 @@ export default function LoginPage() {
               router.push(INSTRUCTOR_LOGIN_PAGE);
             }}
           >
-            <Text style={styles.buttonText}>{Constants.linkText}</Text>
+            <Text style={styles.buttonText}>{t("registrationSuccessInstructor.linkText")}</Text>
           </TouchableOpacity>
-        <Link
-          //href={MEMBER_GUEST_HOME}
-          href={INSTRUCTOR_LOGIN_PAGE}
-          style={{
-            fontSize: 18,
-            color: "#356FC5",
-            textAlign: "center",
-            marginTop: 32,
-            marginBottom: 16,
-            maxWidth: 0.8 * width,
-            textDecorationLine: "underline",
-          }}
-        >
-          {t("registrationSuccessInstructor.linkText")}
-        </Link>
       </View>
     </SafeAreaView>
   );
