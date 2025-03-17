@@ -88,13 +88,13 @@ backend/
 
     ├── __init__.py          # API initialization
 
-├── models/              # Database models
+├── models/                  # Database models
 
     │   ├── __init__.py
 
     │   └── user.py          # User model example
 
-├── services/            # Business logic services
+├── services/                # Business logic services
 
     │   ├── __init__.py
 
