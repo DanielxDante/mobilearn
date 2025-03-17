@@ -57,6 +57,7 @@ const Home = () => {
   const getNotifications = useAppStore(
     (state) => state.getNotificationsInstructor
   );
+  //getNotifications();
   const statistics = useAppStore((state) => state.statistics) || {
     total_lessons: 0,
     total_enrollments: 0,
@@ -74,6 +75,10 @@ const Home = () => {
 
   const [timePeriod, setTimePeriod] = useState("week");
   const { t } = useTranslation();
+
+  useEffect(() => {
+    getNotifications();
+  }, []);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -96,6 +101,7 @@ const Home = () => {
   useEffect(() => {
     //console.log("Notifications in homepage: ", notifications);
     getStatistics(timePeriod);
+    //getNotifications();
   }, [notifications, timePeriod]);
 
   useEffect(() => {

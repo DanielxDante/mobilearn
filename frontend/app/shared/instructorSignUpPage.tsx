@@ -34,7 +34,7 @@ export default function signUpPage() {
   const [inputs, setInputs] = useState({
     name: "",
     email: "",
-    gender: "",
+    gender: "male",
     password: "",
     conPassword: "",
     combinedPhoneNumber: "",
@@ -230,7 +230,7 @@ export default function signUpPage() {
             ]}
             value={t(
               `instructorSignUpPageConstants.fields.2.options.${
-                inputs.gender === "Male" ? 0 : 1
+                inputs.gender === "male" ? 0 : 1
               }`
             )}
             onChange={(selectedLabel) => {

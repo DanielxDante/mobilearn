@@ -265,7 +265,12 @@
   },
 
   "notificationsConstants": {
-    "pageTitle": "通知"
+    "pageTitle": "通知",
+    "infoTitle": "信息",
+    "paymentTitle": "支付更新",
+    "courseTitle": "课程更新",
+    "chatTitle": "聊天",
+    "defaultTitle": "通知"
   },
 
   "memberGuestHomeConstants": {
