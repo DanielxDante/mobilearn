@@ -18,6 +18,7 @@ import {
   MEMBER_REGISTRATION_SUCCESS,
 } from "@/constants/pages";
 import { usePushNotifications } from "@/hooks/usePushNotificationState";
+import { useTranslation } from "react-i18next";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
@@ -25,11 +26,12 @@ export default function signUpPage() {
   const signup = useAuthStore((state) => state.signupUser);
   const login = useAuthStore((state) => state.loginUser);
   const { expoPushToken, notification } = usePushNotifications();
+  const { t } = useTranslation();
 
   const [inputs, setInputs] = useState({
     name: "",
     email: "",
-    gender: "",
+    gender: "male",
     password: "",
     conPassword: "",
     //membership: "normal",
@@ -67,11 +69,11 @@ export default function signUpPage() {
 
   const handleRegistration = async () => {
     if (!validateInputs()) {
-      alert(signUpPageConstants.inputsEmptyAlert);
+      alert(t("signUpPageConstants.inputsEmptyAlert"));
       return;
     }
     if (inputs.password !== inputs.conPassword) {
-      alert(signUpPageConstants.passwordMismatchAlert);
+      alert(t("signUpPageConstants.passwordMismatchAlert"));
       return;
     }
     try {
@@ -88,7 +90,7 @@ export default function signUpPage() {
         response_signup !== undefined &&
         response_signup === "The email is already in use."
       ) {
-        alert(signUpPageConstants.emailInUseAlert);
+        alert(t("signUpPageConstants.emailInUseAlert"));
         return;
       }
       const response = await login(inputs.email.toLowerCase(), inputs.password);
@@ -96,16 +98,23 @@ export default function signUpPage() {
       if (response === "normal") {
         router.push(MEMBER_REGISTRATION_SUCCESS);
       } else if (response === "User disabled") {
-        alert(signUpPageConstants.accountDisabledAlert);
+        alert(t("signUpPageConstants.accountDisabledAlert"));
       } else if (response === "Invalid credentials") {
-        alert(signUpPageConstants.invalidCredentialsAlert);
+        alert(t("signUpPageConstants.invalidCredentialsAlert"));
       } else {
-        alert(signUpPageConstants.errorSigningUpAlert);
+        alert(t("signUpPageConstants.errorSigningUpAlert"));
       }
     } catch (error) {
       console.log(error);
-      alert(signUpPageConstants.errorSigningUpAlert);
+      alert(t("signUpPageConstants.errorSigningUpAlert"));
     }
+  };
+
+  const GENDER_DICTIONARY = {
+    男: "Male",
+    女: "Female",
+    Male: "Male",
+    Female: "Female",
   };
 
   return (
@@ -143,7 +152,7 @@ export default function signUpPage() {
             marginBottom: 24,
           }}
         >
-          {Constants.pageTitle}
+          {t("signUpPageConstants.pageTitle")}
         </Text>
         <Text
           style={{
@@ -153,44 +162,58 @@ export default function signUpPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.pageSubTitle}
+          {t("signUpPageConstants.pageSubTitle")}
         </Text>
       </View>
       <View style={{ width: "100%" }}>
         <InputField
-          inputTitle={Constants.fields[0].inputTitle}
-          placeholder={Constants.fields[0].placeHolder ?? ""}
+          inputTitle={t("signUpPageConstants.fields.0.inputTitle")}
+          placeholder={t("signUpPageConstants.fields.0.placeHolder") ?? ""}
           value={inputs.name}
           onChangeText={(value) => handleInputChange("name", value)}
         />
         <InputField
-          inputTitle={Constants.fields[1].inputTitle}
-          placeholder={Constants.fields[1].placeHolder ?? ""}
+          inputTitle={t("signUpPageConstants.fields.1.inputTitle")}
+          placeholder={t("signUpPageConstants.fields.1.placeHolder") ?? ""}
           value={inputs.email}
           onChangeText={(value) => handleInputChange("email", value)}
         />
         <InputDropDownField
-          inputTitle={Constants.fields[2].inputTitle}
-          options={Constants.fields[2].options ?? []}
-          value={inputs.gender}
-          onChange={(value) => handleInputChange("gender", value)}
+          inputTitle={t("signUpPageConstants.fields.2.inputTitle")}
+          options={[
+            t("signUpPageConstants.fields.2.options.0"), // Translated "Male" or "男"
+            t("signUpPageConstants.fields.2.options.1"), // Translated "Female" or "女"
+          ]}
+          value={t(
+            `signUpPageConstants.fields.2.options.${
+              inputs.gender === "male" ? 0 : 1
+            }`
+          )}
+          onChange={(selectedLabel) => {
+            // Map the selected translated label back to the original English value
+            const selectedValue =
+              GENDER_DICTIONARY[
+                selectedLabel as keyof typeof GENDER_DICTIONARY
+              ];
+            handleInputChange("gender", selectedValue);
+          }}
         />
         <InputField
-          inputTitle={Constants.fields[3].inputTitle}
-          placeholder={Constants.fields[3].placeHolder ?? ""}
+          inputTitle={t("signUpPageConstants.fields.3.inputTitle")}
+          placeholder={t("signUpPageConstants.fields.3.placeHolder") ?? ""}
           secureTextEntry={true}
           value={inputs.password}
           onChangeText={(value) => handleInputChange("password", value)}
         />
         <InputField
-          inputTitle={Constants.fields[4].inputTitle}
-          placeholder={Constants.fields[4].placeHolder ?? ""}
+          inputTitle={t("signUpPageConstants.fields.4.inputTitle")}
+          placeholder={t("signUpPageConstants.fields.4.placeHolder") ?? ""}
           secureTextEntry={true}
           value={inputs.conPassword}
           onChangeText={(value) => handleInputChange("conPassword", value)}
         />
         <RegisterButton
-          text={Constants.regButtonText}
+          text={t("signUpPageConstants.regButtonText")}
           onPress={handleRegistration}
         />
         <View

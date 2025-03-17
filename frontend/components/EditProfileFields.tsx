@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { memberGuestEditProfileFields as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
 import EditProfileFieldPopUp from "./EditProfileFieldPopUp";
+import { useTranslation } from "react-i18next";
 
 interface EditProfileFieldsProps {
   title: string;
@@ -44,20 +45,23 @@ const EditProfileFields: React.FC<EditProfileFieldsProps> = ({
   const handleLocalModal = () => {
     setLocalModalVisible(!localModalVisible);
   };
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
       <View style={styles.titleRow}>
         <Text style={styles.title}>{title}</Text>
         <TouchableOpacity onPress={handleLocalModal}>
-          <Text style={styles.edit}>{Constants.edit}</Text>
+          <Text style={styles.edit}>
+            {t("memberGuestEditProfileFields.edit")}
+          </Text>
         </TouchableOpacity>
       </View>
       <Text style={styles.value}>
         {/* Have to revisit if we change language */}
         {title === "Password"
-          ? Constants.maskedPassword
-          : value || Constants.notAdded}
+          ? t("memberGuestEditProfileFields.maskedPassword")
+          : value || t("memberGuestEditProfileFields.notAdded")}
       </Text>
       <View style={styles.line}></View>
       {localModalVisible && (

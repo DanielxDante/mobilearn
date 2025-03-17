@@ -16,6 +16,7 @@ import debounce from "lodash.debounce";
 import { searchChat as Constants } from "@/constants/textConstants";
 import { Colors } from "@/constants/colors";
 import useAppStore from "@/store/appStore";
+import { useTranslation } from "react-i18next";
 
 interface ChatItemProps {
   id: number;
@@ -26,6 +27,7 @@ interface ChatItemProps {
 }
 
 const GroupSearchPage = () => {
+  const { t } = useTranslation();
   const searchParticipants = useAppStore((state) => state.searchParticipants);
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState<ChatItemProps[]>([]);
@@ -65,14 +67,14 @@ const GroupSearchPage = () => {
           <TouchableOpacity onPress={() => router.back()}>
             <Image source={Constants.backButton} style={styles.backButton} />
           </TouchableOpacity>
-          <Text style={styles.title}>{Constants.title}</Text>
+          <Text style={styles.title}>{t("searchChat.title")}</Text>
         </View>
         <TouchableOpacity onPress={handleNextPress}>
           <Image source={Constants.backButton} style={styles.nextButton} />
         </TouchableOpacity>
       </View>
       <Searchbar
-        placeholder={Constants.searchBar}
+        placeholder={t("searchChat.searchBar")}
         onChangeText={(text) => {
           setSearchQuery(text);
           handleSearch(text);

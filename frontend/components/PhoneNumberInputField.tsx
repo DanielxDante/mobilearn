@@ -9,6 +9,7 @@ import {
   Dimensions,
 } from "react-native";
 import { phoneNumberInputFieldConstants as Constants } from "@/constants/textConstants";
+import { useTranslation } from "react-i18next";
 
 const { width } = Dimensions.get("window"); // Get the screen width
 
@@ -22,11 +23,12 @@ interface SearchableDropdownProps {
 const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   data,
   onSelect,
-  placeholder = Constants.search,
+  placeholder,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState(data);
-
+  const { t } = useTranslation();
+  placeholder = placeholder || t("phoneNumberInputFieldConstants.search");
   // Filter the data as the user types
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -81,6 +83,7 @@ const PhoneNumberInputField: React.FC<PhoneNumberInputFieldProps> = ({
   selectedAreaCode,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleAreaCodeSelect = (code: string) => {
     onAreaCodeChange(code);
@@ -90,7 +93,7 @@ const PhoneNumberInputField: React.FC<PhoneNumberInputFieldProps> = ({
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 18, color: "#356FC5", marginBottom: 8 }}>
-        Phone Number
+        {t("phoneNumberInputFieldConstants.title")}
       </Text>
       <View style={styles.phoneInputContainer}>
         {/* Area Code Dropdown */}
@@ -107,7 +110,7 @@ const PhoneNumberInputField: React.FC<PhoneNumberInputFieldProps> = ({
           keyboardType="numeric"
           value={phoneNumber}
           onChangeText={onPhoneNumberChange}
-          placeholder={Constants.enterPhone}
+          placeholder={t("phoneNumberInputFieldConstants.enterPhone")}
         />
       </View>
 
@@ -117,7 +120,7 @@ const PhoneNumberInputField: React.FC<PhoneNumberInputFieldProps> = ({
           <SearchableDropdown
             data={areaCodes}
             onSelect={handleAreaCodeSelect}
-            placeholder={Constants.seachAreaCode}
+            placeholder={t("phoneNumberInputFieldConstants.seachAreaCode")}
           />
         </View>
       )}

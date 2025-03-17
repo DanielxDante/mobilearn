@@ -28,8 +28,10 @@ import Editor from "@/components/dom-components/RichTextEditor";
 import useAppStore from "@/store/appStore";
 import { INSTRUCTOR_HOME } from "@/constants/pages";
 import { update } from "lodash";
+import { useTranslation } from "react-i18next";
 
 export default function createCoursePage() {
+  const { t } = useTranslation();
   const token = useAuthStore((state) => state.access_token);
   const createCourse = useAppStore(
     (state) => state.createCourse
@@ -86,14 +88,19 @@ export default function createCoursePage() {
     })) || [
       {
         chapter_id: `${Date.now()}-${Math.random()}`, // unique id
-        chapter_title: textConstants.chapter_placeholder + " 1",
+        chapter_title:
+          t("instructorCreateCoursePageConstants.chapter_placeholder") + " 1",
         order: 1,
         lessons: [
           {
             lesson_id: `${Date.now()}-${Math.random()}`,
-            lesson_name: textConstants.lesson_placeholder + " 1",
+            lesson_name:
+              t("instructorCreateCoursePageConstants.lesson_placeholder") +
+              " 1",
             order: 1,
-            lesson_type: textConstants.lessonTypePlaceholder,
+            lesson_type: t(
+              "instructorCreateCoursePageConstants.lessonTypePlaceholder"
+            ),
           },
         ],
       },
@@ -122,7 +129,7 @@ export default function createCoursePage() {
   function validateChapters(chapters: any, alertFlag: number) {
     //loop through all lessons, make sure every lesson, has content, video_key, and homework_key
     if (chapters.length === 0) {
-      alert(textConstants.emptyChapterAlert);
+      alert(t("instructorCreateCoursePageConstants.emptyChapterAlert"));
       return true;
     }
     for (let i = 0; i < chapters.length; i++) {
@@ -135,7 +142,7 @@ export default function createCoursePage() {
           !chapters[i].lessons[j].homework_url
         ) {
           if (alertFlag == 0) {
-            alert(textConstants.emptyLessonAlert);
+            alert(t("instructorCreateCoursePageConstants.emptyLessonAlert"));
           } else {
           }
           return true;
@@ -296,16 +303,20 @@ export default function createCoursePage() {
         ...prev.chapters,
         {
           chapter_id: `${Date.now()}-${Math.random()}`, // unique id
-          chapter_title: `${textConstants.chapter_placeholder} ${
-            prev.chapters.length + 1
-          }`,
+          chapter_title: `${t(
+            "instructorCreateCoursePageConstants.chapter_placeholder"
+          )} ${prev.chapters.length + 1}`,
           order: prev.chapters.length + 1,
           lessons: [
             {
               lesson_id: `${Date.now()}-${Math.random()}`,
-              lesson_name: textConstants.lesson_placeholder + " 1",
+              lesson_name:
+                t("instructorCreateCoursePageConstants.lesson_placeholder") +
+                " 1",
               order: 1,
-              lesson_type: textConstants.lessonTypePlaceholder,
+              lesson_type: t(
+                "instructorCreateCoursePageConstants.lessonTypePlaceholder"
+              ),
             },
           ],
         },
@@ -327,11 +338,15 @@ export default function createCoursePage() {
       // If the chapter name is in the format 'Chapter {number}', update it
       if (
         chapter.chapter_title &&
-        chapter.chapter_title.startsWith(textConstants.chapter_placeholder)
+        chapter.chapter_title.startsWith(
+          t("instructorCreateCoursePageConstants.chapter_placeholder")
+        )
       ) {
         return {
           ...chapter,
-          chapter_title: `${textConstants.chapter_placeholder} ${index + 1}`, // Update the chapter name to the new order
+          chapter_title: `${t(
+            "instructorCreateCoursePageConstants.chapter_placeholder"
+          )} ${index + 1}`, // Update the chapter name to the new order
         };
       }
       return chapter;
@@ -342,7 +357,7 @@ export default function createCoursePage() {
     if (!id.toString().includes("-")) {
       // sensing ID from backend
       // cannot remove
-      alert(textConstants.chapterRemovalDenial);
+      alert(t("instructorCreateCoursePageConstants.chapterRemovalDenial"));
       return;
     }
 
@@ -379,10 +394,12 @@ export default function createCoursePage() {
                 .map(
                   (_, index) =>
                     chapter.lessons[index] || {
-                      lesson_name: `${textConstants.lesson_placeholder} ${
-                        index + 1
-                      }`,
-                      lesson_type: textConstants.lessonTypePlaceholder,
+                      lesson_name: `${t(
+                        "instructorCreateCoursePageConstants.lesson_placeholder"
+                      )} ${index + 1}`,
+                      lesson_type: t(
+                        "instructorCreateCoursePageConstants.lessonTypePlaceholder"
+                      ),
                       order: index + 1,
                       lesson_id: `${Date.now()}-${Math.random()}`,
                     }
@@ -481,12 +498,17 @@ export default function createCoursePage() {
           ...prev,
           coursePicture: { uri, name: filename, type },
         }));
-        alert(textConstants.profilePictureUploadAlert);
+        alert(
+          t("instructorCreateCoursePageConstants.profilePictureUploadAlert")
+        );
       } else {
-        alert(textConstants.fileUndefinedAlert);
+        alert(t("instructorCreateCoursePageConstants.fileUndefinedAlert"));
       }
     } catch (error) {
-      console.error(textConstants.handleEditProfilePictureError, error);
+      console.error(
+        t("instructorCreateCoursePageConstants.handleEditProfilePictureError"),
+        error
+      );
     }
   };
 
@@ -512,12 +534,15 @@ export default function createCoursePage() {
           updateLesson(selectedLessonIndex, "video_key", file_name);
           addFile(selectedLessonId, { uri, name: file_name, type });
         }
-        alert(textConstants.videoUploadedAlert);
+        alert(t("instructorCreateCoursePageConstants.videoUploadedAlert"));
       } else {
-        alert(textConstants.fileUndefinedAlert);
+        alert(t("instructorCreateCoursePageConstants.fileUndefinedAlert"));
       }
     } catch (error) {
-      console.error(textConstants.handleUploadVideoError, error);
+      console.error(
+        t("instructorCreateCoursePageConstants.handleUploadVideoError"),
+        error
+      );
     }
   };
 
@@ -537,7 +562,9 @@ export default function createCoursePage() {
 
         // Check if uri is valid before using it
         if (!uri) {
-          console.error(textConstants.noUriReturnedError);
+          console.error(
+            t("instructorCreateCoursePageConstants.noUriReturnedError")
+          );
           return;
         }
 
@@ -550,12 +577,17 @@ export default function createCoursePage() {
           addFile(selectedLessonId, { uri, name: file_name, type });
         }
 
-        alert(textConstants.pdfUploadedAlert);
+        alert(t("instructorCreateCoursePageConstants.pdfUploadedAlert"));
       } else {
-        console.error(textConstants.noFileSelectedError);
+        console.error(
+          t("instructorCreateCoursePageConstants.noFileSelectedError")
+        );
       }
     } catch (error) {
-      console.error(textConstants.handleUploadPdfError, error);
+      console.error(
+        t("instructorCreateCoursePageConstants.handleUploadPdfError"),
+        error
+      );
     }
   };
 
@@ -569,14 +601,17 @@ export default function createCoursePage() {
       } else {
       }
     } catch (error) {
-      console.error(textConstants.checkingPermissionError, error);
+      console.error(
+        t("instructorCreateCoursePageConstants.checkingPermissionError"),
+        error
+      );
     }
   };
 
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      alert(textConstants.permissionDeniedAlert);
+      alert(t("instructorCreateCoursePageConstants.permissionDeniedAlert"));
     }
   };
 
@@ -625,7 +660,7 @@ export default function createCoursePage() {
     filterFilesByChapters(inputs.chapters, inputs.files);
     // Validate inputs
     if (!validate(0)) {
-      alert(textConstants.fillAllFieldsAlert);
+      alert(t("instructorCreateCoursePageConstants.fillAllFieldsAlert"));
       return;
     }
     const formData = new FormData();
@@ -660,7 +695,7 @@ export default function createCoursePage() {
     const content = {
       chapters: modifiedChapters,
     };
-    //console.log("content: ", content);
+    console.log("content: ", content);
     formData.append("content", JSON.stringify(content));
     // Append files
     Object.entries(inputs.files).forEach(([key, file]) => {
@@ -671,7 +706,7 @@ export default function createCoursePage() {
       //console.log("updated course data: ", formData);
       updateCourse(formData);
     } else {
-      //console.log("course created: ", formData);
+      console.log("course created: ", formData);
       postCourse(formData);
     }
   }
@@ -679,11 +714,11 @@ export default function createCoursePage() {
   async function postCourse(formData: FormData): Promise<void> {
     const response = await createCourse(formData);
     if (response.message.includes("success")) {
-      alert(textConstants.courseCreatedAlert);
+      alert(t("instructorCreateCoursePageConstants.courseCreatedAlert"));
       AsyncStorage.removeItem("courseData");
       router.push(INSTRUCTOR_HOME);
     } else {
-      alert(textConstants.courseCreationFailedAlert);
+      alert(t("instructorCreateCoursePageConstants.courseCreationFailedAlert"));
     }
   }
 
@@ -695,12 +730,53 @@ export default function createCoursePage() {
     //console.log("Updating.......");
     const response = await editCourse(formData);
     if (response.message.includes("success")) {
-      alert(textConstants.courseUpdatedAlert);
+      alert(t("instructorCreateCoursePageConstants.courseUpdatedAlert"));
       AsyncStorage.removeItem("courseData");
       router.push(INSTRUCTOR_HOME);
     }
   }
 
+  const COURSE_DIFFICULTY_DICTIONARY = {
+    初级: "Beginner",
+    中级: "Intermediate",
+    高级: "Advanced",
+    Beginner: "Beginner",
+    Intermediate: "Intermediate",
+    Advanced: "Advanced",
+  };
+
+  const COURSE_TYPE_DICTIONARY = {
+    学术: "Academic",
+    职业: "Professional",
+    专业: "Specialization",
+    项目: "Project",
+    Academic: "Academic",
+    Professional: "Professional",
+    Specialization: "Specialization",
+    Project: "Project",
+  };
+
+  const NUMBER_OF_LESSONS_DICTIONARY = {
+    "1 节课": "1",
+    "2 节课": "2",
+    "3 节课": "3",
+    "4 节课": "4",
+    "5 节课": "5",
+    "1 Lesson": "1",
+    "2 Lessons": "2",
+    "3 Lessons": "3",
+    "4 Lessons": "4",
+    "5 Lessons": "5",
+  };
+
+  const LESSON_TYPE_DICTIONARY = {
+    文本: "Text",
+    视频: "Video",
+    作业: "Homework",
+    Text: "Text",
+    Video: "Video",
+    Homework: "Homework",
+  };
   // useEffect(() => {
   //   const loadData = async () => {
   //     try {
@@ -720,7 +796,10 @@ export default function createCoursePage() {
       try {
         await AsyncStorage.multiRemove(["courseData"]);
       } catch (error) {
-        console.error(textConstants.asyncFailClearMessage, error);
+        console.error(
+          t("instructorCreateCoursePageConstants.asyncFailClearMessage"),
+          error
+        );
       }
     };
     clearData();
@@ -732,7 +811,10 @@ export default function createCoursePage() {
       try {
         await AsyncStorage.setItem("courseData", JSON.stringify(inputs));
       } catch (error) {
-        console.error(textConstants.asyncFailSaveMessage, error);
+        console.error(
+          t("instructorCreateCoursePageConstants.asyncFailSaveMessage"),
+          error
+        );
       }
     };
     saveData();
@@ -773,12 +855,12 @@ export default function createCoursePage() {
           </TouchableOpacity>
           <Text style={styles.homePageHeader}>
             {internalPage === 5
-              ? textConstants.editLessonTitle
+              ? t("instructorCreateCoursePageConstants.editLessonTitle")
               : internalPage === 4
-              ? textConstants.chapterPageTitle
+              ? t("instructorCreateCoursePageConstants.chapterPageTitle")
               : course
-              ? textConstants.editCoursePageTitle
-              : textConstants.createCoursePageTitle}
+              ? t("instructorCreateCoursePageConstants.editCoursePageTitle")
+              : t("instructorCreateCoursePageConstants.createCoursePageTitle")}
           </Text>
         </View>
 
@@ -787,8 +869,12 @@ export default function createCoursePage() {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
               <View style={styles.inputContainer}>
                 <InputField // Course Title
-                  inputTitle={textConstants.courseName}
-                  placeholder={textConstants.placeholder ?? ""}
+                  inputTitle={t(
+                    "instructorCreateCoursePageConstants.courseName"
+                  )}
+                  placeholder={
+                    t("instructorCreateCoursePageConstants.placeholder") ?? ""
+                  }
                   value={inputs.courseTitle}
                   onChange={(e) => e.persist()}
                   onChangeText={(text) => {
@@ -796,8 +882,12 @@ export default function createCoursePage() {
                   }}
                 />
                 <InputField // Course Description
-                  inputTitle={textConstants.courseDescription}
-                  placeholder={textConstants.placeholder ?? ""}
+                  inputTitle={t(
+                    "instructorCreateCoursePageConstants.courseDescription"
+                  )}
+                  placeholder={
+                    t("instructorCreateCoursePageConstants.placeholder") ?? ""
+                  }
                   value={inputs.courseInfo}
                   onChange={(e) => e.persist()}
                   onChangeText={(text) => {
@@ -807,8 +897,14 @@ export default function createCoursePage() {
                   maxLength={500}
                 />
                 <InputField // Duration
-                  inputTitle={textConstants.courseDuration}
-                  placeholder={textConstants.duration_placeholder ?? ""}
+                  inputTitle={t(
+                    "instructorCreateCoursePageConstants.courseDuration"
+                  )}
+                  placeholder={
+                    t(
+                      "instructorCreateCoursePageConstants.duration_placeholder"
+                    ) ?? ""
+                  }
                   value={inputs.duration}
                   onChange={(e) => e.persist()}
                   onChangeText={(text) => {
@@ -822,34 +918,73 @@ export default function createCoursePage() {
                   }}
                 >
                   <InputField
-                    inputTitle={textConstants.coursePicture}
-                    placeholder={textConstants.coursePicturePlaceholder}
+                    inputTitle={t(
+                      "instructorCreateCoursePageConstants.coursePicture"
+                    )}
+                    placeholder={t(
+                      "instructorCreateCoursePageConstants.coursePicturePlaceholder"
+                    )}
                     value={
                       inputs.coursePicture
-                        ? textConstants.coursePictureUploadedPlaceholder
+                        ? t(
+                            "instructorCreateCoursePageConstants.coursePictureUploadedPlaceholder"
+                          )
                         : ""
                     }
                     editable={false} // Prevent manual text editing
                   />
                 </TouchableOpacity>
                 <InputField // Price
-                  inputTitle={textConstants.coursePrice}
-                  placeholder={textConstants.coursePricePlaceholder ?? ""}
+                  inputTitle={t(
+                    "instructorCreateCoursePageConstants.coursePrice"
+                  )}
+                  placeholder={
+                    t(
+                      "instructorCreateCoursePageConstants.coursePricePlaceholder"
+                    ) ?? ""
+                  }
                   value={inputs.price}
                   onChange={(e) => e.persist()}
                   onChangeText={(text) => {
                     handleChange(text, "price");
                   }}
                 />
-                <InputDropDownField // Course difficulty
-                  inputTitle={textConstants.courseDifficulty}
-                  options={textConstants.courseDifficulty_options ?? []}
-                  value={inputs.difficulty}
-                  onChange={(e) => handleChange(e, "difficulty")}
+                <InputDropDownField
+                  inputTitle={t(
+                    "instructorCreateCoursePageConstants.courseDifficulty"
+                  )}
+                  options={[
+                    t(
+                      "instructorCreateCoursePageConstants.courseDifficulty_options.beginner"
+                    ),
+                    t(
+                      "instructorCreateCoursePageConstants.courseDifficulty_options.intermediate"
+                    ),
+                    t(
+                      "instructorCreateCoursePageConstants.courseDifficulty_options.advanced"
+                    ),
+                  ]}
+                  value={t(
+                    `instructorCreateCoursePageConstants.courseDifficulty_options.${inputs.difficulty?.toLowerCase()}`
+                  )}
+                  onChange={(selectedLabel) => {
+                    // Map the selected translated label back to the original English value
+                    const selectedValue =
+                      COURSE_DIFFICULTY_DICTIONARY[
+                        selectedLabel as keyof typeof COURSE_DIFFICULTY_DICTIONARY
+                      ];
+                    handleChange(selectedValue, "difficulty");
+                  }}
                 />
                 <InputField // Skills
-                  inputTitle={textConstants.courseSkills}
-                  placeholder={textConstants.courseSkillsPlaceholder ?? ""}
+                  inputTitle={t(
+                    "instructorCreateCoursePageConstants.courseSkills"
+                  )}
+                  placeholder={
+                    t(
+                      "instructorCreateCoursePageConstants.courseSkillsPlaceholder"
+                    ) ?? ""
+                  }
                   value={inputs.skills}
                   onChange={(e) => e.persist()}
                   onChangeText={(text) => {
@@ -857,7 +992,7 @@ export default function createCoursePage() {
                   }}
                 />
                 <RegisterButton
-                  text={textConstants.nextButtonText}
+                  text={t("instructorCreateCoursePageConstants.nextButtonText")}
                   onPress={() => setInternalPage(2)}
                 />
               </View>
@@ -868,18 +1003,47 @@ export default function createCoursePage() {
           <>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
               <View style={styles.inputContainer}>
-                <InputDropDownField // Course Type
-                  inputTitle={textConstants.courseType}
-                  options={textConstants.courseType_options ?? []}
-                  value={inputs.courseType}
-                  onChange={(e) => handleChange(e, "courseType")}
+                <InputDropDownField // course type
+                  inputTitle={t(
+                    "instructorCreateCoursePageConstants.courseType"
+                  )}
+                  options={[
+                    t(
+                      "instructorCreateCoursePageConstants.courseType_options.academic"
+                    ),
+                    t(
+                      "instructorCreateCoursePageConstants.courseType_options.professional"
+                    ),
+                    t(
+                      "instructorCreateCoursePageConstants.courseType_options.specialization"
+                    ),
+                    t(
+                      "instructorCreateCoursePageConstants.courseType_options.project"
+                    ),
+                  ]}
+                  //value={inputs.courseType}
+                  value={t(
+                    `instructorCreateCoursePageConstants.courseType_options.${inputs.courseType?.toLowerCase()}`
+                  )}
+                  onChange={(selectedLabel) => {
+                    // Map the selected translated label back to the original English value
+                    const selectedValue =
+                      COURSE_TYPE_DICTIONARY[
+                        selectedLabel as keyof typeof COURSE_TYPE_DICTIONARY
+                      ];
+                    handleChange(selectedValue, "courseType");
+                  }}
                 />
                 {inputs.courseType == textConstants.courseType_options[0] && (
                   <>
                     <InputField // School name
-                      inputTitle={textConstants.courseSchoolName}
+                      inputTitle={t(
+                        "instructorCreateCoursePageConstants.courseSchoolName"
+                      )}
                       placeholder={
-                        textConstants.courseSchoolNamePlaceholder ?? ""
+                        t(
+                          "instructorCreateCoursePageConstants.courseSchoolNamePlaceholder"
+                        ) ?? ""
                       }
                       value={inputs.school}
                       onChange={(e) => e.persist()}
@@ -888,8 +1052,13 @@ export default function createCoursePage() {
                       }}
                     />
                     <InputField // program type
-                      inputTitle={textConstants.programType}
-                      placeholder={textConstants.placeholder ?? ""}
+                      inputTitle={t(
+                        "instructorCreateCoursePageConstants.programType"
+                      )}
+                      placeholder={
+                        t("instructorCreateCoursePageConstants.placeholder") ??
+                        ""
+                      }
                       value={inputs.programType}
                       onChange={(e) => e.persist()}
                       onChangeText={(text) => {
@@ -897,8 +1066,14 @@ export default function createCoursePage() {
                       }}
                     />
                     <InputField // Field
-                      inputTitle={textConstants.field}
-                      placeholder={textConstants.field_placeholder ?? ""}
+                      inputTitle={t(
+                        "instructorCreateCoursePageConstants.field"
+                      )}
+                      placeholder={
+                        t(
+                          "instructorCreateCoursePageConstants.field_placeholder"
+                        ) ?? ""
+                      }
                       value={inputs.field}
                       onChange={(e) => e.persist()}
                       onChangeText={(text) => {
@@ -906,8 +1081,14 @@ export default function createCoursePage() {
                       }}
                     />
                     <InputField // Major
-                      inputTitle={textConstants.major}
-                      placeholder={textConstants.majorPlaceholder ?? ""}
+                      inputTitle={t(
+                        "instructorCreateCoursePageConstants.major"
+                      )}
+                      placeholder={
+                        t(
+                          "instructorCreateCoursePageConstants.majorPlaceholder"
+                        ) ?? ""
+                      }
                       value={inputs.major}
                       onChange={(e) => e.persist()}
                       onChangeText={(text) => {
@@ -918,8 +1099,14 @@ export default function createCoursePage() {
                 )}
                 {inputs.courseType == textConstants.courseType_options[1] && (
                   <InputField // Department
-                    inputTitle={textConstants.department}
-                    placeholder={textConstants.departmentPlaceholder ?? ""}
+                    inputTitle={t(
+                      "instructorCreateCoursePageConstants.department"
+                    )}
+                    placeholder={
+                      t(
+                        "instructorCreateCoursePageConstants.departmentPlaceholder"
+                      ) ?? ""
+                    }
                     value={inputs.department}
                     onChange={(e) => e.persist()}
                     onChangeText={(text) => {
@@ -929,8 +1116,14 @@ export default function createCoursePage() {
                 )}
                 {inputs.courseType == textConstants.courseType_options[2] && (
                   <InputField // Subject
-                    inputTitle={textConstants.subject}
-                    placeholder={textConstants.subjectPlaceholder ?? ""}
+                    inputTitle={t(
+                      "instructorCreateCoursePageConstants.subject"
+                    )}
+                    placeholder={
+                      t(
+                        "instructorCreateCoursePageConstants.subjectPlaceholder"
+                      ) ?? ""
+                    }
                     value={inputs.subject}
                     onChange={(e) => e.persist()}
                     onChangeText={(text) => {
@@ -940,8 +1133,12 @@ export default function createCoursePage() {
                 )}
                 {inputs.courseType == textConstants.courseType_options[3] && (
                   <InputField // Platform
-                    inputTitle={textConstants.platform}
-                    placeholder={textConstants.placeholder ?? ""}
+                    inputTitle={t(
+                      "instructorCreateCoursePageConstants.platform"
+                    )}
+                    placeholder={
+                      t("instructorCreateCoursePageConstants.placeholder") ?? ""
+                    }
                     value={inputs.platform}
                     onChange={(e) => e.persist()}
                     onChangeText={(text) => {
@@ -950,7 +1147,7 @@ export default function createCoursePage() {
                   />
                 )}
                 <RegisterButton
-                  text={textConstants.nextButtonText}
+                  text={t("instructorCreateCoursePageConstants.nextButtonText")}
                   onPress={() => {
                     // validate(2);
                     setInternalPage(3);
@@ -964,7 +1161,7 @@ export default function createCoursePage() {
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             {/* Chapter List */}
             <Text style={styles.sectionHeader}>
-              {textConstants.manageChapters}
+              {t("instructorCreateCoursePageConstants.manageChapters")}
             </Text>
             {inputs.chapters.map((chapter: Chapter, index: number) => (
               <View key={chapter.chapter_id} style={styles.chapterBar}>
@@ -974,14 +1171,16 @@ export default function createCoursePage() {
                   <Text style={styles.chapterText}>
                     {chapter.chapter_title
                       ? chapter.chapter_title
-                      : `${textConstants.chapter_placeholder} ${index + 1}`}
+                      : `${t(
+                          "instructorCreateCoursePageConstants.chapter_placeholder"
+                        )} ${index + 1}`}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => removeChapter(chapter.chapter_id)}
                 >
                   <Text style={styles.removeButtonText}>
-                    {textConstants.minus}
+                    {t("instructorCreateCoursePageConstants.minus")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -989,9 +1188,11 @@ export default function createCoursePage() {
 
             <TouchableOpacity onPress={addChapter} style={styles.addChapterBar}>
               <Text style={styles.addChapterText}>
-                {textConstants.addChapter}
+                {t("instructorCreateCoursePageConstants.addChapter")}
               </Text>
-              <Text style={styles.addButtonText}>{textConstants.plus}</Text>
+              <Text style={styles.addButtonText}>
+                {t("instructorCreateCoursePageConstants.plus")}
+              </Text>
             </TouchableOpacity>
           </ScrollView>
         )}
@@ -999,8 +1200,12 @@ export default function createCoursePage() {
         {internalPage === 4 && selectedChapter && (
           <View style={styles.inputContainer}>
             <InputField
-              inputTitle={textConstants.editChapterTitle}
-              placeholder={textConstants.placeholder ?? ""}
+              inputTitle={t(
+                "instructorCreateCoursePageConstants.editChapterTitle"
+              )}
+              placeholder={
+                t("instructorCreateCoursePageConstants.placeholder") ?? ""
+              }
               value={selectedChapter.chapter_title}
               onChangeText={(text) =>
                 setInputs((prev) => ({
@@ -1014,13 +1219,38 @@ export default function createCoursePage() {
               }
             />
             <InputDropDownField
-              inputTitle={textConstants.numberOfLessons}
+              inputTitle={t(
+                "instructorCreateCoursePageConstants.numberOfLessons"
+              )}
+              options={[
+                t(
+                  "instructorCreateCoursePageConstants.numberOfLessonsOptions.0"
+                ),
+                t(
+                  "instructorCreateCoursePageConstants.numberOfLessonsOptions.1"
+                ),
+                t(
+                  "instructorCreateCoursePageConstants.numberOfLessonsOptions.2"
+                ),
+                t(
+                  "instructorCreateCoursePageConstants.numberOfLessonsOptions.3"
+                ),
+                t(
+                  "instructorCreateCoursePageConstants.numberOfLessonsOptions.4"
+                ),
+              ]}
               value={selectedChapter.lessons.length.toString()}
-              options={textConstants.numberOfLessonsOptions}
-              onChange={handleNumberOfLessonsChange}
+              onChange={(value) => {
+                // Map the selected translated label back to the original value
+                // const selectedValue =
+                //   NUMBER_OF_LESSONS_DICTIONARY[
+                //     selectedLabel as keyof typeof NUMBER_OF_LESSONS_DICTIONARY
+                //   ];
+                handleNumberOfLessonsChange(value);
+              }}
             />
             <Text style={styles.sectionHeader}>
-              {textConstants.manageLessons}
+              {t("instructorCreateCoursePageConstants.manageLessons")}
             </Text>
             <ScrollView
               style={{
@@ -1039,7 +1269,9 @@ export default function createCoursePage() {
                     <Text style={styles.chapterText}>
                       {lesson.lesson_name
                         ? lesson.lesson_name
-                        : `${textConstants.lesson_placeholder} ${index + 1}`}
+                        : `${t(
+                            "instructorCreateCoursePageConstants.lesson_placeholder"
+                          )} ${index + 1}`}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -1052,8 +1284,13 @@ export default function createCoursePage() {
           <View style={styles.container}>
             <View style={styles.inputContainer}>
               <InputField // Lesson name
-                inputTitle={textConstants.lesson_placeholder}
-                placeholder={textConstants.lesson_placeholder ?? ""}
+                inputTitle={t(
+                  "instructorCreateCoursePageConstants.lesson_placeholder"
+                )}
+                placeholder={
+                  t("instructorCreateCoursePageConstants.lesson_placeholder") ??
+                  ""
+                }
                 value={selectedLesson.lesson_name}
                 onChangeText={(text) =>
                   selectedLessonIndex !== null &&
@@ -1061,13 +1298,44 @@ export default function createCoursePage() {
                 }
               />
               <InputDropDownField
-                inputTitle={textConstants.lessonTypeTitle}
-                options={textConstants.lessonTypeOptions}
-                value={selectedLesson.lesson_type}
-                onChange={(value) =>
-                  selectedLessonIndex !== null &&
-                  updateLesson(selectedLessonIndex, "lesson_type", value)
+                inputTitle={t(
+                  "instructorCreateCoursePageConstants.lessonTypeTitle"
+                )}
+                options={[
+                  t(
+                    "instructorCreateCoursePageConstants.lessonTypeOptions.text"
+                  ),
+                  t(
+                    "instructorCreateCoursePageConstants.lessonTypeOptions.video"
+                  ),
+                  t(
+                    "instructorCreateCoursePageConstants.lessonTypeOptions.homework"
+                  ),
+                ]}
+                //value={selectedLesson.lesson_type}
+                value={
+                  (LESSON_TYPE_DICTIONARY.hasOwnProperty(
+                    selectedLesson.lesson_type
+                  ) &&
+                    t(
+                      `instructorCreateCoursePageConstants.lessonTypeOptions.${selectedLesson.lesson_type.toLowerCase()}`
+                    )) ||
+                  selectedLesson.lesson_type
                 }
+                onChange={(selectedLabel) => {
+                  // Map the selected translated label back to the original English value
+                  const selectedValue =
+                    LESSON_TYPE_DICTIONARY[
+                      selectedLabel as keyof typeof LESSON_TYPE_DICTIONARY
+                    ];
+                  if (selectedLessonIndex !== null) {
+                    updateLesson(
+                      selectedLessonIndex,
+                      "lesson_type",
+                      selectedValue
+                    );
+                  }
+                }}
               />
             </View>
             {selectedLesson.lesson_type ===
@@ -1090,11 +1358,15 @@ export default function createCoursePage() {
                   }}
                 >
                   <InputField
-                    inputTitle={textConstants.video}
-                    placeholder={textConstants.video_placeholder}
+                    inputTitle={t("instructorCreateCoursePageConstants.video")}
+                    placeholder={t(
+                      "instructorCreateCoursePageConstants.video_placeholder"
+                    )}
                     value={
                       selectedLesson.video_url
-                        ? textConstants.videoUploadedAlert
+                        ? t(
+                            "instructorCreateCoursePageConstants.videoUploadedAlert"
+                          )
                         : selectedLesson.video_key
                     }
                     editable={false} // Prevent manual text editing
@@ -1112,11 +1384,17 @@ export default function createCoursePage() {
                   }}
                 >
                   <InputField
-                    inputTitle={textConstants.homework}
-                    placeholder={textConstants.homework_placeholder}
+                    inputTitle={t(
+                      "instructorCreateCoursePageConstants.homework"
+                    )}
+                    placeholder={t(
+                      "instructorCreateCoursePageConstants.homework_placeholder"
+                    )}
                     value={
                       selectedLesson.homework_url
-                        ? textConstants.pdfUploadedAlert
+                        ? t(
+                            "instructorCreateCoursePageConstants.pdfUploadedAlert"
+                          )
                         : selectedLesson.homework_key
                     }
                     editable={false} // Prevent manual text editing
@@ -1133,8 +1411,8 @@ export default function createCoursePage() {
           <RegisterButton
             text={
               courseToEdit
-                ? textConstants.updateButtonText
-                : textConstants.createButtonText
+                ? t("instructorCreateCoursePageConstants.updateButtonText")
+                : t("instructorCreateCoursePageConstants.createButtonText")
             }
             style={validated ? styles.registerButton : styles.disabledButton}
             onPress={() => {
@@ -1142,7 +1420,9 @@ export default function createCoursePage() {
                 registerCourse();
               } else {
                 validateChapters(inputs.chapters, 0);
-                alert(textConstants.fillAllFieldsAlert);
+                alert(
+                  t("instructorCreateCoursePageConstants.fillAllFieldsAlert")
+                );
               }
             }}
           />
@@ -1150,7 +1430,7 @@ export default function createCoursePage() {
         {(internalPage === 5 || internalPage === 4) && (
           <View style={styles.fixedButtonContainer}>
             <RegisterButton
-              text={textConstants.saveButtonText}
+              text={t("instructorCreateCoursePageConstants.saveButtonText")}
               onPress={() => {
                 if (internalPage == 4) {
                   filterFilesByChapters(inputs.chapters, inputs.files);
@@ -1158,7 +1438,7 @@ export default function createCoursePage() {
                 } else if (
                   internalPage == 5 &&
                   selectedLesson.lesson_type ===
-                    textConstants.lessonTypeOptions[0]
+                    t("instructorCreateCoursePageConstants.lessonTypeOptions.0")
                 ) {
                   if (selectedLessonIndex !== null && editorState) {
                     updateLesson(selectedLessonIndex, "content", editorState);

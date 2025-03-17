@@ -20,8 +20,11 @@ import Chapter from "@/types/shared/Course/Chapter";
 import Lesson from "@/types/shared/Course/Lesson";
 import useAppStore from "@/store/appStore";
 import icons from "@/constants/icons";
+import { useTranslation } from "react-i18next";
+import { INSTRUCTOR_COURSEPAGE } from "@/constants/pages";
 
 const CourseContent = () => {
+  const { t } = useTranslation();
   const course = useAppStore((state) => state.selectedCourse);
 
   const [selectedChapterId, setSelectedChapterId] = useState<string>(
@@ -64,7 +67,11 @@ const CourseContent = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.appBarContainer}>
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() =>
+              router.replace({
+                pathname: INSTRUCTOR_COURSEPAGE,
+              })
+            }
             style={{ marginBottom: 16, alignSelf: "flex-start" }}
           >
             <Image
@@ -89,7 +96,7 @@ const CourseContent = () => {
               }}
             >
               <Text style={styles.editCourseButtonText}>
-                {Constants.reviewButton}
+                {t("courseContentConstants.reviewButton")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -103,7 +110,7 @@ const CourseContent = () => {
               }}
             >
               <Text style={styles.editCourseButtonText}>
-                {Constants.editCourseTitle}
+                {t("courseContentConstants.editCourseTitle")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -121,7 +128,7 @@ const CourseContent = () => {
           <Text style={styles.title}>{course.course_name}</Text>
           <Text style={styles.school}>{course.community_name}</Text>
           <Text style={styles.courseContentsTitle}>
-            {Constants.courseContents}
+            {t("courseContentConstants.courseContents")}
           </Text>
           {/* Chapter buttons */}
           <View style={styles.chapterButtonContainer}>
@@ -152,7 +159,7 @@ const CourseContent = () => {
                       },
                     ]}
                   >
-                    {Constants.chapter} {chapter.order}
+                    {t("courseContentConstants.chapter")} {chapter.order}
                   </Text>
                 </TouchableOpacity>
               ))
@@ -168,7 +175,7 @@ const CourseContent = () => {
                     value: chapter.chapter_id,
                   }))}
                   placeholder={{
-                    label: Constants.pickerPlaceholder,
+                    label: t("courseContentConstants.pickerPlaceholder"),
                     value: null,
                   }}
                   style={{
@@ -195,7 +202,7 @@ const CourseContent = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <Text>{Constants.noLessonsAvailable}</Text> // Fallback if no lectures
+            <Text>{t("courseContentConstants.noLessonsAvailable")}</Text> // Fallback if no lectures
           )}
           <View style={styles.spaceBelow}></View>
         </ScrollView>

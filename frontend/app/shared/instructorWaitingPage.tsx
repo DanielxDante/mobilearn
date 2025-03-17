@@ -16,11 +16,13 @@ import mobilearnHat from "@/assets/images/MobilearnHat.png";
 import useAuthStore from "@/store/authStore";
 import { waitingPageInstructor as Constants } from "@/constants/textConstants";
 import { INSTRUCTOR_LOGIN_PAGE, MEMBER_GUEST_HOME } from "@/constants/pages";
+import { useTranslation } from "react-i18next";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
   //const login = useAuthStore((state) => state.login);
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView
@@ -57,7 +59,7 @@ export default function LoginPage() {
             marginBottom: 24,
           }}
         >
-          {Constants.pageTitle}
+          {t("waitingPageInstructor.pageTitle")}
         </Text>
         <Text // You have registered as an
           style={{
@@ -68,7 +70,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.blueSubTitle}
+          {t("waitingPageInstructor.blueSubTitle")}
         </Text>
         <Image
           source={Constants.image}
@@ -87,7 +89,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.status}
+          {t("waitingPageInstructor.status")}
         </Text>
         <Text // SubTitle
           style={{
@@ -98,7 +100,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.subTitle}
+          {t("waitingPageInstructor.subTitle")}
         </Text>
         <TouchableOpacity
             style={styles.button}
@@ -108,6 +110,21 @@ export default function LoginPage() {
           >
             <Text style={styles.buttonText}>{Constants.linkText}</Text>
           </TouchableOpacity>
+        <Link
+          //href={MEMBER_GUEST_HOME}
+          href={INSTRUCTOR_LOGIN_PAGE}
+          style={{
+            fontSize: 18,
+            color: "#356FC5",
+            textAlign: "center",
+            marginTop: 32,
+            marginBottom: 16,
+            maxWidth: 0.8 * width,
+            textDecorationLine: "underline",
+          }}
+        >
+          {t("waitingPageInstructor.linkText")}
+        </Link>
       </View>
     </SafeAreaView>
   );

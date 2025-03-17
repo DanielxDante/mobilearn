@@ -5,11 +5,15 @@ import { signUpSelectionConstants as Constants } from "@/constants/textConstants
 import { router } from "expo-router";
 import { MEMBER_FLOW_PAGE } from "@/constants/pages";
 import { INSTRUCTOR_FLOW_PAGE } from "@/constants/pages";
+import { useTranslation } from "react-i18next";
 
 const RoleSelectionScreen = () => {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
-      <Text style={styles.prompt}>{Constants.pageTitle}</Text>
+      <Text style={styles.prompt}>
+        {t("signUpSelectionConstants.pageTitle")}
+      </Text>
 
       <View style={styles.roleContainer}>
         <Image
@@ -18,7 +22,7 @@ const RoleSelectionScreen = () => {
           resizeMode="contain"
         />
         <MediumButton
-          text={Constants.roles[0].buttonText}
+          text={t("signUpSelectionConstants.roles.0.buttonText")}
           onPress={() => router.push(INSTRUCTOR_FLOW_PAGE)}
         ></MediumButton>
       </View>
@@ -30,12 +34,14 @@ const RoleSelectionScreen = () => {
           resizeMode="contain"
         />
         <MediumButton
-          text={Constants.roles[1].buttonText}
+          text={t("signUpSelectionConstants.roles.1.buttonText")}
           onPress={() => router.push(MEMBER_FLOW_PAGE)}
         ></MediumButton>
       </View>
 
-      <Text style={styles.message}>{Constants.pageSubTitle}</Text>
+      <Text style={styles.message}>
+        {t("signUpSelectionConstants.pageSubTitle")}
+      </Text>
     </View>
   );
 };

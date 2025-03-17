@@ -21,6 +21,7 @@ import { formatTime } from "@/components/DateFormatter";
 import useAppStore from "@/store/appStore";
 import Message from "@/types/shared/Message";
 import useAuthStore from "@/store/authStore";
+import { useTranslation } from "react-i18next";
 
 interface MsgBubbleProps {
   message_id?: number;
@@ -97,6 +98,7 @@ const GroupChatChannel = () => {
   const [message, setMessage] = useState<string>(""); //Refers to user's own message to be sent
 
   const scrollViewRef = useRef<RNScrollView | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchChatInfo = async () => {
@@ -150,16 +152,16 @@ const GroupChatChannel = () => {
       socketInstance.on("new_message", (message_data: any) => {
         console.log("(Chat Channel) Received new_message");
         console.log(message_data);
-          if (message_data.sender_id.toString() != chatParticipantId) {
-            const formattedMessage = {
-              chat_participant_id: message_data.sender_id,
-              content: message_data.content,
-              message_id: message_data.message_id,
-              timestamp: message_data.timestamp
-            }
-            setMessages((prevMessages) => [...prevMessages, formattedMessage])
-          }
-      })
+        if (message_data.sender_id.toString() != chatParticipantId) {
+          const formattedMessage = {
+            chat_participant_id: message_data.sender_id,
+            content: message_data.content,
+            message_id: message_data.message_id,
+            timestamp: message_data.timestamp,
+          };
+          setMessages((prevMessages) => [...prevMessages, formattedMessage]);
+        }
+      });
     }
 
     return () => {
@@ -260,7 +262,7 @@ const GroupChatChannel = () => {
           </View>
           <View style={styles.msgContainer}>
             <TextInput
-              placeholder={Constants.msgInputPlaceholder}
+              placeholder={t("chatChannel.msgInputPlaceholder")}
               numberOfLines={4}
               value={message}
               onChangeText={setMessage}

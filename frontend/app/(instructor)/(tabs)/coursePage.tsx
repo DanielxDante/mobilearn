@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import { Colors } from "@/constants/colors";
-import { instructorCoursePageConstants as textConstants } from "@/constants/textConstants";
+//import { instructorCoursePageConstants as textConstants } from "@/constants/textConstants";
 import CourseListItem from "@/components/InstructorCourseListItem";
 import SearchBar from "../../../components/SearchBar";
 import useAuthStore from "@/store/authStore";
@@ -23,9 +23,12 @@ import {
   INSTRUCTOR_COURSECONTENT,
   INSTRUCTOR_CREATE_COURSE,
 } from "@/constants/pages";
+import { useTranslation } from "react-i18next";
+//import { instructorCoursePageConstants } from "@/locales/en";
 
 const CoursePage = () => {
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
+  const { t } = useTranslation();
   const getCourseDetails = useAppStore((state) => state.getCourseDetails);
   const getInstructorCourses = useAppStore(
     (state) => state.getInstructorCourses
@@ -65,7 +68,9 @@ const CoursePage = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.appBarContainer}>
-        <Text style={styles.myCoursesHeader}>{textConstants.appBarTitle}</Text>
+        <Text style={styles.myCoursesHeader}>
+          {t("instructorCoursePageConstants.appBarTitle")}
+        </Text>
         <TouchableOpacity
           style={styles.createCourseButton}
           onPress={() => {
@@ -73,13 +78,13 @@ const CoursePage = () => {
           }}
         >
           <Text style={styles.createCourseButtonText}>
-            {textConstants.createCourseText}
+            {t("instructorCoursePageConstants.createCourseText")}
           </Text>
         </TouchableOpacity>
       </View>
       <View>
         <SearchBar
-          placeholder={textConstants.searchBarPlaceholder}
+          placeholder={t("instructorCoursePageConstants.searchBarPlaceholder")}
           courseListData={instructorCourse_approved}
           onSearchResultsChange={setFilteredCourses} // Update the list when search results change
         />

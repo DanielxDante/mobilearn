@@ -24,8 +24,10 @@ import icons from "@/constants/icons";
 import { lessonContentPage } from "@/constants/textConstants";
 import useAuthStore from "@/store/authStore";
 import { lessonContentConstants as Constants } from "@/constants/textConstants";
+import { useTranslation } from "react-i18next";
 
 const LessonContent = () => {
+  const { t } = useTranslation();
   const completeLesson = useAppStore((state) => state.completeLesson);
   const submitHomework = useAppStore((state) => state.submitHomework);
   const selectedCourse = useAppStore((state) => state.selectedCourse);
@@ -38,26 +40,31 @@ const LessonContent = () => {
     if (selectedCourse && lessonId) {
       const allLessons = selectedCourse?.chapters
         .map((chapter) => chapter.lessons)
-        .flat()
-      const lesson = allLessons.find((lesson) => lesson.lesson_id.toString() === lessonId);
+        .flat();
+      const lesson = allLessons.find(
+        (lesson) => lesson.lesson_id.toString() === lessonId
+      );
       if (lesson) {
         setLesson(lesson);
       } else {
-        Alert.alert("Error", "Lesson not found!", [
-          {
-              text: "Ok",
+        Alert.alert(
+          t("lessonContentPage.error"),
+          t("lessonContentPage.lessonNotFound"),
+          [
+            {
+              text: t("lessonContentPage.ok"),
               onPress: () => router.back(),
-          },
-          
-      ], {cancelable: false}
-  );
+            },
+          ],
+          { cancelable: false }
+        );
       }
     }
-  }, [lessonId, selectedCourse])
-  
-  const [homework, setHomework] = useState<any>()
-  const [homeworkName, setHomeworkName] = useState<any>()
-          
+  }, [lessonId, selectedCourse]);
+
+  const [homework, setHomework] = useState<any>();
+  const [homeworkName, setHomeworkName] = useState<any>();
+
   const handleDownload = async () => {
     if (lesson?.homework_url) {
       const supported = await Linking.canOpenURL(lesson.homework_url);
@@ -87,7 +94,7 @@ const LessonContent = () => {
 
         // Check if uri is valid before using it
         if (!uri) {
-          console.error(Constants.noUriReturnedError);
+          console.error(t("lessonContentConstants.noUriReturnedError"));
           return;
         }
 
@@ -101,18 +108,18 @@ const LessonContent = () => {
           type: type,
         } as any);
         if (lesson)
-        formData.append("homework_lesson_id", lesson.lesson_id.valueOf());
+          formData.append("homework_lesson_id", lesson.lesson_id.valueOf());
 
         setHomework(formData);
         setHomeworkName(filename);
-        alert(Constants.pdfUploadedAlert);
+        alert(t("lessonContentConstants.pdfUploadedAlert"));
       } else {
-        console.error(Constants.noFileSelectedError);
+        console.error(t("lessonContentConstants.noFileSelectedError"));
       }
     } catch (error) {
-      console.error(Constants.handleUploadPdfError, error);
+      console.error(t("lessonContentConstants.handleUploadPdfError"), error);
     }
-  }
+  };
 
   return (
     lesson && (
@@ -121,11 +128,12 @@ const LessonContent = () => {
           <TouchableOpacity
             onPress={() => {
               router.replace({
-                pathname: "/shared/course/courseContent",
+                pathname: "/shared/course/instructorCourseContent",
                 params: {
                   courseId: selectedCourse?.course_id,
                 },
-              })
+              });
+              //router.back();
             }} // Return to courseContent}
           >
             <Image source={icons.backButton} style={styles.iconStyle} />
@@ -164,10 +172,12 @@ const LessonContent = () => {
                     />
                   </View>
                 </TouchableOpacity>
-                <Text style={styles.fileName}>{lessonContentPage.homework}</Text>
+                <Text style={styles.fileName}>
+                  {t("lessonContentPage.homework")}
+                </Text>
                 <TouchableOpacity onPress={handleDownload}>
                   <Text style={styles.downloadText}>
-                    {lessonContentPage.download}
+                    {t("lessonContentPage.download")}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -177,13 +187,12 @@ const LessonContent = () => {
                   }}
                 >
                   <View>
-                    <Image 
-                      source={icons.upload}
-                      style={styles.uploadIcon}
-                    />
+                    <Image source={icons.upload} style={styles.uploadIcon} />
                   </View>
                 </TouchableOpacity>
-                <Text style={styles.fileName}>{homeworkName ?? lessonContentPage.upload}</Text>
+                <Text style={styles.fileName}>
+                  {homeworkName ?? t("lessonContentPage.upload")}
+                </Text>
               </View>
             )}
           </View>
@@ -216,11 +225,11 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   content: {
     flex: 1,
-    padding: 16
+    padding: 16,
   },
   title: {
     color: Colors.defaultBlue,
@@ -302,7 +311,7 @@ const styles = StyleSheet.create({
   completeText: {
     fontSize: 16,
     color: "#FFFFFF",
-    fontFamily: "Inter-Regular"
+    fontFamily: "Inter-Regular",
   },
   uploadWrapper: {
     width: 80,
@@ -322,7 +331,7 @@ const styles = StyleSheet.create({
     // backgroundColor: Colors.darkGray,
     borderRadius: 4,
     marginLeft: 6,
-  }
+  },
 });
 
 export default LessonContent;

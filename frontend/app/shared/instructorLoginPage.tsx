@@ -15,16 +15,18 @@ import {
 } from "@/constants/pages";
 import InputDropDownField from "@/components/InputDropDownField";
 import { Colors } from "@/constants/colors";
+import { useTranslation } from "react-i18next";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 export default function LoginPage() {
   const login = useAuthStore((state) => state.loginInstructor);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { t } = useTranslation();
 
   const handleSignIn = async () => {
     if (email.length === 0 || password.length === 0) {
-      alert(Constants.inputsEmptyAlert);
+      alert(t("instructorLoginPageConstants.inputsEmptyAlert"));
     } else {
       try {
         const response = await login(email.toLowerCase(), password);
@@ -34,13 +36,16 @@ export default function LoginPage() {
         } else if (response === "not_approved") {
           router.push(INSTRUCTOR_WAITING_PAGE);
         } else if (response === "disabled") {
-          alert(Constants.accountDisabledAlert);
+          alert(t("instructorLoginPageConstants.accountDisabledAlert"));
         } else if (response === "Invalid credentials") {
-          alert(Constants.invalidCredentialsAlert);
+          alert(t("instructorLoginPageConstants.invalidCredentialsAlert"));
         }
       } catch (error) {
-        console.error(Constants.unexpectedErrorAlert, error);
-        alert(Constants.errorSigningUpAlert);
+        console.error(
+          t("instructorLoginPageConstants.unexpectedErrorAlert"),
+          error
+        );
+        alert(t("instructorLoginPageConstants.errorSigningUpAlert"));
       }
     }
   };
@@ -80,7 +85,7 @@ export default function LoginPage() {
             marginBottom: 24,
           }}
         >
-          {Constants.pageTitle}
+          {t("instructorLoginPageConstants.pageTitle")}
         </Text>
         <Text
           style={{
@@ -90,19 +95,23 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.pageSubTitle}
+          {t("instructorLoginPageConstants.pageSubTitle")}
         </Text>
       </View>
       <View style={{ width: "100%" }}>
         <InputField
-          inputTitle={Constants.fields[0].inputTitle}
-          placeholder={Constants.fields[0].placeHolder || ""}
+          inputTitle={t("instructorLoginPageConstants.fields.0.inputTitle")}
+          placeholder={
+            t("instructorLoginPageConstants.fields.0.placeHolder") || ""
+          }
           value={email}
           onChangeText={setEmail}
         />
         <InputField
-          inputTitle={Constants.fields[1].inputTitle}
-          placeholder={Constants.fields[1].placeHolder || ""}
+          inputTitle={t("instructorLoginPageConstants.fields.1.inputTitle")}
+          placeholder={
+            t("instructorLoginPageConstants.fields.1.placeHolder") || ""
+          }
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
@@ -119,12 +128,12 @@ export default function LoginPage() {
             <Text
               style={{ color: Colors.defaultBlue, fontFamily: "Inter-Regular" }}
             >
-              {Constants.forgotPassword}
+              {t("instructorLoginPageConstants.forgotPassword")}
             </Text>
           </TouchableOpacity>
         </View>
         <SignInButton
-          text={Constants.signInButtonText}
+          text={t("instructorLoginPageConstants.signInButtonText")}
           onPress={handleSignIn}
         />
         <View
@@ -139,13 +148,13 @@ export default function LoginPage() {
               paddingRight: 3,
             }}
           >
-            {Constants.dontHaveAccountText}
+            {t("instructorLoginPageConstants.dontHaveAccountText")}
           </Text>
           <Link
             style={{ color: Colors.darkerBlue }}
             href={{ pathname: INSTRUCTOR_SIGNUP_PAGE }}
           >
-            {Constants.signUpText}
+            {t("instructorLoginPageConstants.signUpText")}
           </Link>
         </View>
       </View>

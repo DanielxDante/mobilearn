@@ -24,6 +24,7 @@ import icons from "@/constants/icons";
 import { lessonContentPage } from "@/constants/textConstants";
 import useAuthStore from "@/store/authStore";
 import { lessonContentConstants as Constants } from "@/constants/textConstants";
+import { useTranslation } from "react-i18next";
 
 const LessonContent = () => {
   const completeLesson = useAppStore((state) => state.completeLesson);
@@ -33,13 +34,16 @@ const LessonContent = () => {
   const membership_types = ["normal", "member", "core_member"];
   const { lessonId } = useLocalSearchParams();
   const [lesson, setLesson] = useState<Lesson>();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (selectedCourse && lessonId) {
       const allLessons = selectedCourse?.chapters
         .map((chapter) => chapter.lessons)
-        .flat()
-      const lesson = allLessons.find((lesson) => lesson.lesson_id.toString() === lessonId);
+        .flat();
+      const lesson = allLessons.find(
+        (lesson) => lesson.lesson_id.toString() === lessonId
+      );
       if (lesson) {
         setLesson(lesson);
         if (lesson.lesson_type === "text" || lesson.lesson_type === "video") {
@@ -48,47 +52,49 @@ const LessonContent = () => {
           setHomeworkUploaded(false);
         }
       } else {
-        Alert.alert("Error", "Lesson not found!", [
-          {
-              text: "Ok",
+        Alert.alert(
+          t("lessonContentPage.error"),
+          t("lessonContentPage.lessonNotFound"),
+          [
+            {
+              text: t("lessonContentPage.ok"),
               onPress: () => router.back(),
-          },
-          
-      ], {cancelable: false}
-  );
+            },
+          ],
+          { cancelable: false }
+        );
       }
     }
-  }, [lessonId, selectedCourse])
-  
-  const [homeworkUploaded, setHomeworkUploaded] = useState<Boolean>()
-  const [homework, setHomework] = useState<any>()
-  const [homeworkName, setHomeworkName] = useState<any>()
+  }, [lessonId, selectedCourse]);
+
+  const [homeworkUploaded, setHomeworkUploaded] = useState<Boolean>();
+  const [homework, setHomework] = useState<any>();
+  const [homeworkName, setHomeworkName] = useState<any>();
 
   const segments = useSegments();
-          useEffect(() => {
-              const backHandler = BackHandler.addEventListener(
-                  "hardwareBackPress",
-                  () => {
-                      // Get the current route
-                      const currentRoute = segments[segments.length - 1];
-                      if (currentRoute === "[lessonId]") {
-                          
-                          router.replace({
-                            pathname: "/shared/course/courseContent",
-                            params: {
-                              courseId: selectedCourse?.course_id,
-                            },
-                          }) // Return to courseContent
-                          return true;
-                      }
-      
-                      return false;
-                  }
-              );
-      
-              return () => backHandler.remove();
-          }, [router, segments]);
-          
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        // Get the current route
+        const currentRoute = segments[segments.length - 1];
+        if (currentRoute === "[lessonId]") {
+          router.replace({
+            pathname: "/shared/course/courseContent",
+            params: {
+              courseId: selectedCourse?.course_id,
+            },
+          }); // Return to courseContent
+          return true;
+        }
+
+        return false;
+      }
+    );
+
+    return () => backHandler.remove();
+  }, [router, segments]);
+
   const handleDownload = async () => {
     if (lesson?.homework_url) {
       const supported = await Linking.canOpenURL(lesson.homework_url);
@@ -132,20 +138,19 @@ const LessonContent = () => {
           type: type,
         } as any);
         if (lesson)
-        formData.append("homework_lesson_id", lesson.lesson_id.valueOf());
+          formData.append("homework_lesson_id", lesson.lesson_id.valueOf());
 
         setHomework(formData);
         setHomeworkName(filename);
         setHomeworkUploaded(true);
-        alert(Constants.pdfUploadedAlert);
+        alert(t("lessonContentConstants.pdfUploadedAlert"));
       } else {
-        console.error(Constants.noFileSelectedError);
+        console.error(t("lessonContentConstants.noFileSelectedError"));
       }
     } catch (error) {
-      console.error(Constants.handleUploadPdfError, error);
+      console.error(t("lessonContentConstants.handleUploadPdfError"), error);
     }
-  }
-
+  };
 
   const handleLessonComplete = async () => {
     if (lesson?.lesson_type === "text" || lesson?.lesson_type === "video") {
@@ -154,73 +159,82 @@ const LessonContent = () => {
         let nextLesson = null;
         const allLessons = selectedCourse?.chapters
           .map((chapter) => chapter.lessons)
-          .flat()
+          .flat();
         if (allLessons) {
           const currentLessonIndex = allLessons.findIndex(
             (l) => l.lesson_id === lesson.lesson_id
           );
           // Find the next lesson by looking at the index
-          if (currentLessonIndex !== -1 && currentLessonIndex + 1 < allLessons.length) {
+          if (
+            currentLessonIndex !== -1 &&
+            currentLessonIndex + 1 < allLessons.length
+          ) {
             nextLesson = allLessons[currentLessonIndex + 1];
           }
           if (nextLesson) {
-            router.replace(`../lessonContent/${nextLesson.lesson_id}`)
+            router.replace(`../lessonContent/${nextLesson.lesson_id}`);
           } else {
             router.replace({
               pathname: "/shared/course/courseContent",
               params: {
                 courseId: selectedCourse?.course_id,
               },
-            })
+            });
           }
         }
       }
     } else if (lesson?.lesson_type === "homework") {
       if (homework) {
-        const response = await submitHomework(homework)
+        const response = await submitHomework(homework);
         if (response === true) {
-            Alert.alert("Success", "Your homework has been submitted.",
-                [
-                    {
-                        text: "Ok",
-                        onPress: () => {
-                          let nextLesson = null;
-                          const allLessons = selectedCourse?.chapters
-                            .map((chapter) => chapter.lessons)
-                            .flat()
-                          if (allLessons) {
-                            const currentLessonIndex = allLessons.findIndex(
-                              (l) => l.lesson_id === lesson.lesson_id
-                            );
-                            // Find the next lesson by looking at the index
-                            if (currentLessonIndex !== -1 && currentLessonIndex + 1 < allLessons.length) {
-                              nextLesson = allLessons[currentLessonIndex + 1];
-                            }
-                            if (nextLesson) {
-                              router.replace(`../lessonContent/${nextLesson.lesson_id}`)
-                            } else {
-                              router.replace({
-                                pathname: "/shared/course/courseContent",
-                                params: {
-                                  courseId: selectedCourse?.course_id,
-                                },
-                              })
-                            }
-                          }
+          Alert.alert(
+            t("lessonContentPage.success"),
+            t("lessonContentPage.homeworkSubmitted"),
+            [
+              {
+                text: t("lessonContentPage.ok"),
+                onPress: () => {
+                  let nextLesson = null;
+                  const allLessons = selectedCourse?.chapters
+                    .map((chapter) => chapter.lessons)
+                    .flat();
+                  if (allLessons) {
+                    const currentLessonIndex = allLessons.findIndex(
+                      (l) => l.lesson_id === lesson.lesson_id
+                    );
+                    // Find the next lesson by looking at the index
+                    if (
+                      currentLessonIndex !== -1 &&
+                      currentLessonIndex + 1 < allLessons.length
+                    ) {
+                      nextLesson = allLessons[currentLessonIndex + 1];
+                    }
+                    if (nextLesson) {
+                      router.replace(
+                        `../lessonContent/${nextLesson.lesson_id}`
+                      );
+                    } else {
+                      router.replace({
+                        pathname: "/shared/course/courseContent",
+                        params: {
+                          courseId: selectedCourse?.course_id,
                         },
-                    },
-                    
-                ], {cancelable: false}
-            );
+                      });
+                    }
+                  }
+                },
+              },
+            ],
+            { cancelable: false }
+          );
         } else {
-            alert("There has been an error.")
+          alert(t("lessonContentPage.error"));
         }
       }
+    } else {
+      alert(t("lessonContentPage.unknownLesson"));
     }
-    else {
-      alert("Unknown lesson")
-    }
-  }
+  };
 
   return (
     lesson && (
@@ -233,7 +247,7 @@ const LessonContent = () => {
                 params: {
                   courseId: selectedCourse?.course_id,
                 },
-              })
+              });
             }} // Return to courseContent}
           >
             <Image source={icons.backButton} style={styles.iconStyle} />
@@ -272,10 +286,12 @@ const LessonContent = () => {
                     />
                   </View>
                 </TouchableOpacity>
-                <Text style={styles.fileName}>{lessonContentPage.homework}</Text>
+                <Text style={styles.fileName}>
+                  {t("lessonContentPage.homework")}
+                </Text>
                 <TouchableOpacity onPress={handleDownload}>
                   <Text style={styles.downloadText}>
-                    {lessonContentPage.download}
+                    {t("lessonContentPage.download")}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -285,29 +301,34 @@ const LessonContent = () => {
                   }}
                 >
                   <View>
-                    <Image 
-                      source={icons.upload}
-                      style={styles.uploadIcon}
-                    />
+                    <Image source={icons.upload} style={styles.uploadIcon} />
                   </View>
                 </TouchableOpacity>
-                <Text style={styles.fileName}>{homeworkName ?? lessonContentPage.upload}</Text>
+                <Text style={styles.fileName}>
+                  {homeworkName ?? t("lessonContentPage.upload")}
+                </Text>
               </View>
             )}
           </View>
           {/* Complete Lesson button */}
-          {
-            membership && membership_types.includes(membership) && (
-              <View>
-                <TouchableOpacity 
-                  style={[styles.completeButton, homeworkUploaded ? {backgroundColor: Colors.defaultBlue,} : {backgroundColor: "#B0B0B0"}]} 
-                  onPress={handleLessonComplete} 
-                  disabled={!homeworkUploaded}>
-                  <Text style={styles.completeText}>{Constants.complete}</Text>
-                </TouchableOpacity>
-              </View>
-            )
-          }
+          {membership && membership_types.includes(membership) && (
+            <View>
+              <TouchableOpacity
+                style={[
+                  styles.completeButton,
+                  homeworkUploaded
+                    ? { backgroundColor: Colors.defaultBlue }
+                    : { backgroundColor: "#B0B0B0" },
+                ]}
+                onPress={handleLessonComplete}
+                disabled={!homeworkUploaded}
+              >
+                <Text style={styles.completeText}>
+                  {t("lessonContentConstants.complete")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </SafeAreaView>
     )
@@ -337,11 +358,11 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   content: {
     flex: 1,
-    padding: 16
+    padding: 16,
   },
   title: {
     color: Colors.defaultBlue,
@@ -423,7 +444,7 @@ const styles = StyleSheet.create({
   completeText: {
     fontSize: 16,
     color: "#FFFFFF",
-    fontFamily: "Inter-Regular"
+    fontFamily: "Inter-Regular",
   },
   uploadWrapper: {
     width: 80,
@@ -443,7 +464,7 @@ const styles = StyleSheet.create({
     // backgroundColor: Colors.darkGray,
     borderRadius: 4,
     marginLeft: 6,
-  }
+  },
 });
 
 export default LessonContent;

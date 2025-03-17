@@ -20,6 +20,7 @@ import useAuthStore from "@/store/authStore";
 import useAppStore from "@/store/appStore";
 import BackButton from "@/components/BackButton";
 import FavouriteButton from "@/components/FavouriteButton";
+import { useTranslation } from "react-i18next";
 
 const InstructorCourseDetails = () => {
   // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
@@ -43,6 +44,7 @@ const InstructorCourseDetails = () => {
   const [courseData, setCourseData] = useState<Course | null>(null);
   const getUnenrolledCourse = useAppStore((state) => state.getUnenrolledCourse);
   const [course_image, setCourseImage] = useState<string>("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -95,11 +97,11 @@ const InstructorCourseDetails = () => {
               />
               <Text style={styles.enrolledCount}>
                 {courseData.enrollment_count ? courseData.enrollment_count : 0}
-                {Constants.enrolledCountText}
+                {t("courseDetailsConstants.enrolledCountText")}
               </Text>
             </View>
             <Text style={styles.courseDetailsHeader}>
-              {Constants.courseDetails}
+              {t("courseDetailsConstants.courseDetails")}
             </Text>
             <Text style={styles.courseDescription}>
               {courseData.description}
@@ -113,7 +115,7 @@ const InstructorCourseDetails = () => {
                     style={styles.courseInfoLeftIcon}
                   />
                   <Text style={styles.courseInfoLeftText}>
-                    {Constants.lecture}
+                    {t("courseDetailsConstants.lecture")}
                   </Text>
                 </View>
                 <View style={styles.courseInfoLeftTitle}>
@@ -122,7 +124,7 @@ const InstructorCourseDetails = () => {
                     style={styles.courseInfoLeftIcon}
                   />
                   <Text style={styles.courseInfoLeftText}>
-                    {Constants.learningTime}
+                    {t("Constants.learningTime")}
                   </Text>
                 </View>
                 <View style={styles.courseInfoLeftTitle}>
@@ -131,14 +133,14 @@ const InstructorCourseDetails = () => {
                     style={styles.courseInfoLeftIcon}
                   />
                   <Text style={styles.courseInfoLeftText}>
-                    {Constants.certification}
+                    {t("courseDetailsConstants.certification")}
                   </Text>
                 </View>
               </View>
               <View style={styles.courseInfoRight}>
                 <Text style={styles.courseInfoRightText}>
                   {courseData.lesson_count}
-                  {Constants.numLectures}
+                  {t("courseDetailsConstants.numLectures")}
                 </Text>
                 <Text style={styles.courseInfoRightText}>
                   {courseData.duration}
@@ -150,7 +152,9 @@ const InstructorCourseDetails = () => {
             </View>
             {/* Skills section */}
             <View>
-              <Text style={styles.skillsTitle}>{Constants.skillsTitle}</Text>
+              <Text style={styles.skillsTitle}>
+                {t("courseDetailsConstants.skillsTitle")}
+              </Text>
               <View style={styles.skillsContainer}>
                 {courseData.skills.split(", ").map((skill, index) => (
                   <TouchableOpacity

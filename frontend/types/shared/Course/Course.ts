@@ -17,19 +17,20 @@ import Instructor from "./Instructor";
 // }
 
 export default interface Course {
-    course_id: number; // Matches "course_id"
-    community_id: number; // Matches "community_id"
-    course_image: string; // Matches "course_image"
-    course_name: string; // Matches "course_name"
-    community_name: string; // Matches "community_name"
-    price: string;
-    description: string; // Matches "description"
-    instructors: Instructor[]; // Matches "instructors"
-    chapters: Chapter[]; // Matches "chapters"
-    rating: string;
-    enrollment_count: number; // Matches "enrollment_count"
-    completion_rate: number;
-    lesson_count: string;
-    duration: string;
-    skills: string;
+  image: string | undefined;
+  course_id: number; // Matches "course_id"
+  community_id: number; // Matches "community_id"
+  course_image: string; // Matches "course_image"
+  course_name: string; // Matches "course_name"
+  community_name: string; // Matches "community_name"
+  price: string;
+  description: string; // Matches "description"
+  instructors: Instructor[]; // Matches "instructors"
+  chapters: Chapter[]; // Matches "chapters"
+  rating: string;
+  enrollment_count: number; // Matches "enrollment_count"
+  completion_rate: number;
+  lesson_count: string;
+  duration: string;
+  skills: string;
 }

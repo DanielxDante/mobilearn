@@ -23,6 +23,7 @@ import useAppStore from "@/store/appStore";
 import useAuthStore from "@/store/authStore";
 import { sendNotification } from "@/components/notificationUtils";
 import { usePushNotifications } from "@/hooks/usePushNotificationState";
+import { useTranslation } from "react-i18next";
 
 const PaymentOverview = () => {
   // CONSTANTS TO BE USED UNTIL COURSE DATA IS FINALISED
@@ -40,6 +41,7 @@ const PaymentOverview = () => {
   );
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleSkillPress = (skill: string) => {
     console.log(skill);
@@ -76,7 +78,7 @@ const PaymentOverview = () => {
       });
       const { error } = await presentPaymentSheet();
       if (error) {
-        Alert.alert(Constants.paymentCancelled);
+        Alert.alert(t("paymentOverviewConstants.paymentCancelled"));
       } else {
         const response = await enrollCourse(Number(courseId));
         if (response === 200) {
@@ -84,8 +86,10 @@ const PaymentOverview = () => {
             try {
               await sendNotification(
                 expoPushToken.data,
-                Constants.courseEnrollmentNotificationTitle,
-                Constants.courseEnrollmentNotificationSubTitle
+                t("paymentOverviewConstants.courseEnrollmentNotificationTitle"),
+                t(
+                  "paymentOverviewConstants.courseEnrollmentNotificationSubTitle"
+                )
               );
             } catch {
               console.log(error);
@@ -98,11 +102,17 @@ const PaymentOverview = () => {
             },
           });
         } else {
-          Alert.alert(Constants.error + response, Constants.storeError);
+          Alert.alert(
+            t("paymentOverviewConstants.error") + response,
+            t("paymentOverviewConstants.storeError")
+          );
         }
       }
     } catch (error) {
-      Alert.alert(Constants.error, Constants.donationError);
+      Alert.alert(
+        t("paymentOverviewConstants.error"),
+        t("paymentOverviewConstants.donationError")
+      );
     } finally {
       setLoading(false);
     }
@@ -119,12 +129,14 @@ const PaymentOverview = () => {
           <View>
             {/* Title */}
             <View style={styles.titleView}>
-              <Text style={styles.title}>{Constants.title}</Text>
+              <Text style={styles.title}>
+                {t("paymentOverviewConstants.title")}
+              </Text>
             </View>
             {/* Course title */}
             <View style={styles.courseTitleContainer}>
               <Text style={styles.courseTitle}>
-                {Constants.courseNameSubtitle}
+                {t("paymentOverviewConstants.courseNameSubtitle")}
               </Text>
               <View style={styles.courseNameContainer}>
                 <Text
@@ -143,7 +155,7 @@ const PaymentOverview = () => {
                 <Text style={styles.courseInfoText}>
                   {"   "}
                   {courseData.lesson_count}
-                  {Constants.numLectures}
+                  {t("paymentOverviewConstants.numLectures")}
                 </Text>
               </View>
               <View style={styles.courseInfo}>
@@ -166,7 +178,9 @@ const PaymentOverview = () => {
             </View>
             {/* Skills section */}
             <View style={styles.skillSection}>
-              <Text style={styles.skillsTitle}>{Constants.skillsTitle}</Text>
+              <Text style={styles.skillsTitle}>
+                {t("paymentOverviewConstants.skillsTitle")}
+              </Text>
               <View style={styles.skillsContainer}>
                 {courseData.skills?.split(", ").map((skill, index) => (
                   <TouchableOpacity
@@ -188,16 +202,18 @@ const PaymentOverview = () => {
                 />
                 <Text style={styles.totalPrice}>
                   {"  "}
-                  {Constants.totalPrice}
+                  {t("paymentOverviewConstants.totalPrice")}
                 </Text>
               </View>
               {courseData.price === "0.00" ||
               parseFloat(courseData.price) === 0 ? (
-                <Text style={styles.totalPrice}>{Constants.free}</Text>
+                <Text style={styles.totalPrice}>
+                  {t("paymentOverviewConstants.free")}
+                </Text>
               ) : (
                 <Text style={styles.totalPrice}>
                   {courseData.price}
-                  {Constants.currency}
+                  {t("paymentOverviewConstants.currency")}
                 </Text>
               )}
             </View>
@@ -215,11 +231,15 @@ const PaymentOverview = () => {
                       try {
                         await sendNotification(
                           expoPushToken.data,
-                          Constants.courseEnrollmentNotificationTitle,
-                          Constants.courseEnrollmentNotificationSubTitle
+                          t(
+                            "paymentOverviewConstants.courseEnrollmentNotificationTitle"
+                          ),
+                          t(
+                            "paymentOverviewConstants.courseEnrollmentNotificationSubTitle"
+                          )
                         );
                       } catch {
-                        console.log(Constants.error);
+                        console.log(t("paymentOverviewConstants.error"));
                       }
                     }
                     router.push({
@@ -232,7 +252,7 @@ const PaymentOverview = () => {
                 }}
               >
                 <Text style={styles.continueText}>
-                  {Constants.continueButton}
+                  {t("paymentOverviewConstants.continueButton")}
                 </Text>
               </TouchableOpacity>
             ) : (
@@ -244,7 +264,7 @@ const PaymentOverview = () => {
                 }}
               >
                 <Text style={styles.continueText}>
-                  {Constants.continueButton}
+                  {t("paymentOverviewConstants.continueButton")}
                 </Text>
               </TouchableOpacity>
             )}

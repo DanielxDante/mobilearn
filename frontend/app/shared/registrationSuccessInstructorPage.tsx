@@ -21,12 +21,14 @@ import {
   MEMBER_GUEST_HOME,
   MEMBER_GUEST_TABS,
 } from "@/constants/pages";
+import { useTranslation } from "react-i18next";
 
 const { height, width } = Dimensions.get("window"); // Get the screen width
 
 export default function LoginPage() {
   //const login = useAuthStore((state) => state.login);
   const segments = useSegments();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -81,7 +83,7 @@ export default function LoginPage() {
             marginBottom: 24,
           }}
         >
-          {Constants.pageTitle}
+          {t("registrationSuccessInstructor.pageTitle")}
         </Text>
         <Text // You have registered as an
           style={{
@@ -92,7 +94,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.blueSubTitle}
+          {t("registrationSuccessInstructor.blueSubTitle")}
         </Text>
         <Image
           source={Constants.image}
@@ -111,7 +113,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.role}
+          {t("registrationSuccessInstructor.role")}
         </Text>
         <Text // SubTitle
           style={{
@@ -122,7 +124,7 @@ export default function LoginPage() {
             maxWidth: 0.8 * width,
           }}
         >
-          {Constants.subTitle}
+          {t("registrationSuccessInstructor.subTitle")}
         </Text>
         <TouchableOpacity
             style={styles.button}
@@ -132,6 +134,21 @@ export default function LoginPage() {
           >
             <Text style={styles.buttonText}>{Constants.linkText}</Text>
           </TouchableOpacity>
+        <Link
+          //href={MEMBER_GUEST_HOME}
+          href={INSTRUCTOR_LOGIN_PAGE}
+          style={{
+            fontSize: 18,
+            color: "#356FC5",
+            textAlign: "center",
+            marginTop: 32,
+            marginBottom: 16,
+            maxWidth: 0.8 * width,
+            textDecorationLine: "underline",
+          }}
+        >
+          {t("registrationSuccessInstructor.linkText")}
+        </Link>
       </View>
     </SafeAreaView>
   );

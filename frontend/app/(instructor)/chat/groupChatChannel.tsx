@@ -21,6 +21,7 @@ import { formatTime } from "@/components/DateFormatter";
 import useAppStore from "@/store/appStore";
 import Message from "@/types/shared/Message";
 import useAuthStore from "@/store/authStore";
+import { useTranslation } from "react-i18next";
 
 interface MsgBubbleProps {
   message_id?: number;
@@ -82,7 +83,7 @@ const GroupChatChannel = () => {
   const getChatMessages = useAppStore((state) => state.getChatMessages);
   const email = useAuthStore((state) => state.email);
   const [name, setName] = useState(""); //name refers to name of chat
-  const [chatParticipantId, setChatParticipantId] = useState(""); //chatParticipantId refers to own user's ID
+  const [chatParticipantId, setChatParticipantId] = useState(""); //chatParticipantId refers to own instructor's ID
   const [participants, setParticipants] = useState<
     {
       id: number;
@@ -94,16 +95,17 @@ const GroupChatChannel = () => {
   );
   const [socket, setSocket] = useState<Socket | null>();
   const [messages, setMessages] = useState<Message[]>([]); //Refers to list of existing chat messages
-  const [message, setMessage] = useState<string>(""); //Refers to user's own message to be sent
+  const [message, setMessage] = useState<string>(""); //Refers to instructor's own message to be sent
 
   const scrollViewRef = useRef<RNScrollView | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchChatInfo = async () => {
       const chat_info = await getChatDetails("instructor", Number(chat_id));
       // Set Chat name
       setName(chat_info.chat_name);
-      // Identify own user
+      // Identify own instructor
       const participant = chat_info.participants.find(
         (person: any) => person.participant_email === email
       );
@@ -115,6 +117,7 @@ const GroupChatChannel = () => {
           participant.participant_id,
           "1"
         );
+        console.log(messagesResponse);
         setMessages(messagesResponse);
       }
       const participantList = chat_info.participants.map(
@@ -144,7 +147,20 @@ const GroupChatChannel = () => {
         chat_participant_id: chatParticipantId,
       });
       socketInstance.on("chat_participant_joined", () => {
-        console.log("(Group Chat) Instructor has joined the chat");
+        console.log("(Group Chat) instructor has joined the chat");
+      });
+      socketInstance.on("new_message", (message_data: any) => {
+        console.log("(Chat Channel) Received new_message");
+        console.log(message_data);
+        if (message_data.sender_id.toString() != chatParticipantId) {
+          const formattedMessage = {
+            chat_participant_id: message_data.sender_id,
+            content: message_data.content,
+            message_id: message_data.message_id,
+            timestamp: message_data.timestamp,
+          };
+          setMessages((prevMessages) => [...prevMessages, formattedMessage]);
+        }
       });
     }
 
@@ -152,6 +168,7 @@ const GroupChatChannel = () => {
       if (socketInstance) {
         socketInstance.emit("leave_chat");
         socketInstance.off("chat_participant_joined");
+        socketInstance.off("new_message");
       }
     };
   }, [chatParticipantId]);
@@ -160,7 +177,7 @@ const GroupChatChannel = () => {
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }, 1);
-  }, []);
+  }, [messages]);
 
   const openChatDetails = () => {
     if (chat_id) {
@@ -245,7 +262,7 @@ const GroupChatChannel = () => {
           </View>
           <View style={styles.msgContainer}>
             <TextInput
-              placeholder={Constants.msgInputPlaceholder}
+              placeholder={t("chatChannel.msgInputPlaceholder")}
               numberOfLines={4}
               value={message}
               onChangeText={setMessage}

@@ -13,6 +13,7 @@ import {
 import { instructorStatisticsConstants as textConstants } from "@/constants/textConstants";
 import DropDownPicker from "react-native-dropdown-picker";
 import Statistics_type from "@/types/shared/statistics";
+import { useTranslation } from "react-i18next";
 
 interface StatisticsProps {
   timePeriod: string;
@@ -26,28 +27,28 @@ const Statistics: React.FC<StatisticsProps> = ({
   statistics,
 }) => {
   const [open, setOpen] = useState(false);
-
+  const { t } = useTranslation();
   const statsData = [
     {
       key: "total_lessons",
-      label: textConstants.totalLessons,
+      label: t("instructorStatisticsConstants.totalLessons"),
       value: statistics.total_lessons,
     },
     {
       key: "total_enrollments",
-      label: textConstants.totalEnrollments,
+      label: t("instructorStatisticsConstants.totalEnrollments"),
       value: statistics.total_enrollments,
       change: statistics.enrollments_percentage_change,
     },
     {
       key: "average_course_progress",
-      label: textConstants.averageCourseProgress,
+      label: t("instructorStatisticsConstants.averageCourseProgress"),
       value: `${statistics.average_course_progress}%`,
       change: statistics.progress_percentage_change,
     },
     {
       key: "total_reviews",
-      label: textConstants.totalReviews,
+      label: t("instructorStatisticsConstants.totalReviews"),
       value: statistics.total_reviews,
       change: statistics.reviews_percentage_change,
     },
@@ -63,7 +64,7 @@ const Statistics: React.FC<StatisticsProps> = ({
           {/* Dropdown Picker (must be above ScrollView) */}
           <View style={styles.statisticsHeader}>
             <Text style={styles.statisticsTitle}>
-              {textConstants.pageTitle}
+              {t("instructorStatisticsConstants.pageTitle")}
             </Text>
 
             {/* Dropdown Box */}
@@ -72,9 +73,18 @@ const Statistics: React.FC<StatisticsProps> = ({
                 open={open}
                 value={timePeriod}
                 items={[
-                  { label: textConstants.dropdown[0], value: "week" },
-                  { label: textConstants.dropdown[1], value: "month" },
-                  { label: textConstants.dropdown[2], value: "year" },
+                  {
+                    label: t("instructorStatisticsConstants.dropdown.0"),
+                    value: "week",
+                  },
+                  {
+                    label: t("instructorStatisticsConstants.dropdown.1"),
+                    value: "month",
+                  },
+                  {
+                    label: t("instructorStatisticsConstants.dropdown.2"),
+                    value: "year",
+                  },
                 ]}
                 setOpen={setOpen}
                 setValue={(callback) => {

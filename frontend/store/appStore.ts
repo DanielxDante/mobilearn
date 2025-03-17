@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosError } from "axios";
-import io, { Socket } from 'socket.io-client';
+import io, { Socket } from "socket.io-client";
 
 import {
   PAYMENT_STRIPE_FETCH_PAYMENT_SHEET_URL,
@@ -69,21 +69,21 @@ const socketSlice = (set: any, get: any) => ({
 
   createSocket: () => {
     const socketInstance = io(BACKEND_BASE_URL, {
-      transports: ['websocket'],
+      transports: ["websocket"],
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
       // Enable if you need to bypass SSL verification (development only)
       // rejectUnauthorized: false
     });
-    set({chat_socket: socketInstance});
+    set({ chat_socket: socketInstance });
 
-    socketInstance.on('connect', () => {
-      console.log("(Store) Socket is connected")
+    socketInstance.on("connect", () => {
+      console.log("(Store) Socket is connected");
       set({ isConnected: true });
     });
 
-    socketInstance.on('disconnect', () => {
+    socketInstance.on("disconnect", () => {
       get().disconnectSocket();
     });
   },
@@ -96,10 +96,10 @@ const socketSlice = (set: any, get: any) => ({
     if (socketInstance) {
       socketInstance.emit("leave_chat");
       socketInstance.disconnect();
-      set({ isConnected: false, socketInstance: null })
+      set({ isConnected: false, socketInstance: null });
     }
-  }
-})
+  },
+});
 
 export interface AppState {
   channels: Channel[]; // List of Channels that user has access to
@@ -967,17 +967,17 @@ export const useAppStore = create<AppState>()(
             }
           );
           const responseData = response.data;
-          console.log("Raw User Notifications: ", responseData);
-          const notifications: notification[] = responseData.notifications.map(
-            (notification: any) => ({
-              type: notification.type,
-              title: notification.title,
-              subtitle: notification.subtitle,
-              timestamp: notification.timestamp,
-            })
-          );
+          // console.log("Raw User Notifications: ", responseData);
+          // const notifications: notification[] = responseData.notifications.map(
+          //   (notification: any) => ({
+          //     type: notification.type,
+          //     title: notification.title,
+          //     subtitle: notification.subtitle,
+          //     timestamp: notification.timestamp,
+          //   })
+          // );
           set({
-            notifications: notifications,
+            notifications: responseData.notifications,
           });
         } catch (error: any) {
           console.error(error);
@@ -1227,7 +1227,7 @@ export const useAppStore = create<AppState>()(
               chat_participant_id: message.chat_participant_id,
               content: message.content,
               timestamp: message.timestamp,
-            }))
+            }));
             return messages;
           }
         } catch (error: any) {
@@ -1275,7 +1275,9 @@ export const useAppStore = create<AppState>()(
           const response = await axios.post(
             `${CHAT_REMOVE_GROUP_CHAT_PARTICIPANTS_URL}`,
             {
-              chat_id, participant_email, participant_type,
+              chat_id,
+              participant_email,
+              participant_type,
             },
             {
               headers: { "Content-Type": "application/json" },
@@ -1406,7 +1408,7 @@ export const useAppStore = create<AppState>()(
         recommended_courses: state.recommended_courses,
         top_enrolled_courses: state.top_enrolled_courses,
         instructor_courses: state.instructor_courses,
-      })
+      }),
     }
   )
 );
