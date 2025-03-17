@@ -21,6 +21,7 @@ import Lesson from "@/types/shared/Course/Lesson";
 import useAppStore from "@/store/appStore";
 import icons from "@/constants/icons";
 import { useTranslation } from "react-i18next";
+import { INSTRUCTOR_COURSEPAGE } from "@/constants/pages";
 
 const CourseContent = () => {
   const { t } = useTranslation();
@@ -66,7 +67,11 @@ const CourseContent = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.appBarContainer}>
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() =>
+              router.replace({
+                pathname: INSTRUCTOR_COURSEPAGE,
+              })
+            }
             style={{ marginBottom: 16, alignSelf: "flex-start" }}
           >
             <Image

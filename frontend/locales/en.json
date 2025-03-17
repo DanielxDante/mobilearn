@@ -257,7 +257,12 @@
     "image": "../assets/images/Instructor.png"
   },
   "notificationsConstants": {
-    "pageTitle": "Notifications"
+    "pageTitle": "Notifications",
+    "infoTitle": "Information",
+    "paymentTitle": "Payment Update",
+    "courseTitle": "Course Update",
+    "chatTitle": "New Message",
+    "defaultTitle": "Notification"
   },
 
   "memberGuestHomeConstants": {

@@ -128,11 +128,12 @@ const LessonContent = () => {
           <TouchableOpacity
             onPress={() => {
               router.replace({
-                pathname: "/shared/course/courseContent",
+                pathname: "/shared/course/instructorCourseContent",
                 params: {
                   courseId: selectedCourse?.course_id,
                 },
               });
+              //router.back();
             }} // Return to courseContent}
           >
             <Image source={icons.backButton} style={styles.iconStyle} />

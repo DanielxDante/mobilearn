@@ -6,6 +6,7 @@ import { useFonts } from "expo-font";
 import { Colors } from "@/constants/colors";
 import { TimeAgo } from "./TimeAgo";
 import notification from "@/types/shared/notification";
+import { useTranslation } from "react-i18next";
 
 // export interface AppNotification {
 //   type: "success" | "failure" | "completed";
@@ -21,6 +22,21 @@ interface NotificationItemProps {
 const NotificationItem: React.FC<NotificationItemProps> = ({
   notification,
 }) => {
+  const { t } = useTranslation();
+
+  // Define translations for notification titles based on type
+  const notificationTitles: { [key: string]: string } = {
+    info: t("notificationsConstants.infoTitle", "Information"),
+    payment: t("notificationsConstants.paymentTitle", "Payment Update"),
+    course: t("notificationsConstants.courseTitle", "Course Update"),
+    chat: t("notificationsConstants.chatTitle", "New Message"),
+  };
+
+  // Assign default title if type is not found
+  const title =
+    notificationTitles[notification.notification_type] ||
+    t("notificationsConstants.defaultTitle", "Notification");
+
   let icon;
   let iconBackground;
   let redBackgroundSize = { width: 50, height: 50 };
@@ -39,9 +55,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       iconBackground = Icons.blueBackground;
       break;
     default:
-      icon = Icons.successIcon;
+      icon = Icons.completedIcon;
       iconBackground = Icons.blueBackground;
   }
+  console.log(notification);
 
   return (
     <TouchableOpacity style={styles.container}>
@@ -60,7 +77,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         </View>
         <View style={styles.description}>
           <Text style={styles.title} numberOfLines={1}>
-            {notification.title}
+            {title} {/* Use the mapped title */}
           </Text>
           <Text style={styles.timestamp}>
             {TimeAgo(notification.timestamp)}

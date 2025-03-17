@@ -15,7 +15,7 @@ import AppBar from "@/components/AppBar";
 import Search from "@/components/Search";
 import ContinueWatching from "@/app/(member_guest)/home/continueWatching";
 import TopCourses from "@/app/(member_guest)/home/topCourses";
-import { MEMBER_GUEST_TABS } from "@/constants/pages";
+import { MEMBER_GUEST_TABS, NOTIFICATION_PAGE } from "@/constants/pages";
 import useAppStore from "@/store/appStore";
 
 import { AutocompleteDropdownContextProvider } from "react-native-autocomplete-dropdown";
@@ -26,6 +26,9 @@ import { useTranslation } from "react-i18next";
 const Home = () => {
   const { t } = useTranslation();
   const handleSelectCourse = useAppStore((state) => state.handleSelectCourse);
+
+  const notifications = useAppStore((state) => state.notifications);
+  const getNotifications = useAppStore((state) => state.getNotificationsUser);
   const segments = useSegments();
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -50,6 +53,10 @@ const Home = () => {
     console.log("handleSelectChannel called");
   };
 
+  useEffect(() => {
+    getNotifications();
+  }, []);
+
   return (
     <AutocompleteDropdownContextProvider>
       <SafeAreaView style={styles.container}>
@@ -62,7 +69,13 @@ const Home = () => {
           <TouchableOpacity
             style={styles.notificationButton}
             onPress={() => {
-              router.push("/shared/notification");
+              // add params to pass to notification page
+              router.push({
+                pathname: NOTIFICATION_PAGE,
+                params: {
+                  notifications: JSON.stringify(notifications),
+                },
+              });
             }}
           >
             <Image
