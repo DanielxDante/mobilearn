@@ -1,0 +1,30 @@
+appId: com.musketeers.mobilearn
+---
+- launchApp
+- tapOn: "CONTINUE"
+- tapOn: "INSTRUCTOR"
+- tapOn: "SIGN IN"
+- tapOn: "Email"
+- inputText: "scott_piper@edu.com"
+- tapOn: "Password"
+- inputText: "Scott_Piper"
+- tapOn:
+    text: "Sign In"
+    index: 1
+- tapOn:
+    point: 88%, 91%
+- tapOn:
+    point: 89%, 18%
+- tapOn: 
+    text: "Edit"
+    index: 0
+- tapOn: Please enter username
+- eraseText
+- inputText: "Scott Piped"
+- tapOn: "SAVE"
+- tapOn: "SAVE"
+- tapOn:
+    id: android:id/button1
+- tapOn:
+    point: 50%, 50%
+- assertVisible: "Scott Piped"

@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, Image, Dimensions, BackHandler } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  Dimensions,
+  BackHandler,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router, useSegments } from "expo-router";
 
@@ -118,22 +126,34 @@ export default function LoginPage() {
         >
           {t("registrationSuccessInstructor.subTitle")}
         </Text>
-        <Link
-          //href={MEMBER_GUEST_HOME}
-          href={INSTRUCTOR_LOGIN_PAGE}
-          style={{
-            fontSize: 18,
-            color: "#356FC5",
-            textAlign: "center",
-            marginTop: 32,
-            marginBottom: 16,
-            maxWidth: 0.8 * width,
-            textDecorationLine: "underline",
-          }}
-        >
-          {t("registrationSuccessInstructor.linkText")}
-        </Link>
+        <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push(INSTRUCTOR_LOGIN_PAGE);
+            }}
+          >
+            <Text style={styles.buttonText}>{t("registrationSuccessInstructor.linkText")}</Text>
+          </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 100,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "#356FC5",
+    alignItems: "center",
+    marginBottom: 16,
+    backgroundColor: "#356FC5",
+  },
+  buttonText: {
+    fontWeight: "500",
+    color: "#FFFFFF",
+    fontSize: 16,
+    textAlign: "center", 
+  },
+});

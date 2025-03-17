@@ -82,7 +82,6 @@ const Profile = () => {
           }}
           style={styles.iconTextButton}
         />
-        {/* TODO: add help center and privacy notice here */}
         <IconTextButton
           icon={icons.tele}
           text={t("memberGuestProfilePage.donateTitle")}

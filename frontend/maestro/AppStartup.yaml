@@ -1,0 +1,4 @@
+appId: com.musketeers.mobilearn
+---
+- launchApp
+- assertVisible: 'CONTINUE'
