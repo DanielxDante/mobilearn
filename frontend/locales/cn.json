@@ -789,7 +789,8 @@
     "donationSuccessful": "捐赠成功。",
     "yourDonationMessage": "您已捐赠 $",
     "error": "错误",
-    "donationErrorMessage": "处理您的捐赠时发生错误。请稍后重试。"
+    "donationErrorMessage": "处理您的捐赠时发生错误。请稍后重试。",
+    "optionalNote": "可选备注"
   },
 
   "chat": {

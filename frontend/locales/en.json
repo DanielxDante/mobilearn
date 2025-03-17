@@ -775,7 +775,8 @@
     "donationSuccessful": "Donation successful.",
     "yourDonationMessage": "You have donated $",
     "error": "Error",
-    "donationErrorMessage": "An error occurred while processing your donation. Please try again later."
+    "donationErrorMessage": "An error occurred while processing your donation. Please try again later.",
+    "optionalNote": "Enter a note (optional)"
   },
   "chat": {
     "appBarTitle": "Chats",
