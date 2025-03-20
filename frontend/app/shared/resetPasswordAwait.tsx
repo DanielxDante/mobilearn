@@ -33,14 +33,14 @@ const ResetPasswordAwait = () => {
       <View style={styles.body}>
         {/* Title */}
         <Text style={styles.title}>
-          {t("registrationSuccessInstructor.title")}
+          {t("resetPasswordAwait.title")}
         </Text>
         {/* Subtitle */}
         <View style={styles.subtitleContainer}>
           <Text style={styles.subtitle}>
-            {t("registrationSuccessInstructor.subtitle1")}
+            {t("resetPasswordAwait.subtitle1")}
             <Text style={{ fontWeight: "800" }}>{email}</Text>
-            {t("registrationSuccessInstructor.subtitle2")}
+            {t("resetPasswordAwait.subtitle2")}
           </Text>
         </View>
       </View>
