@@ -1,6 +1,7 @@
 appId: com.musketeers.mobilearn
 ---
 - launchApp
+# - tapOn: "English"
 - tapOn: "CONTINUE"
 - tapOn: "STUDENT"
 - tapOn: "SIGN IN"
