@@ -12,6 +12,9 @@
       "resizeMode": "cover",
       "backgroundColor": "#356FC5"
     },
+    "assetBundlePatterns": [
+      "locales/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.musketeers.mobilearn"
@@ -24,7 +27,8 @@
       "package": "com.musketeers.mobilearn",
       "googleServicesFile": "./google-services.json",
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "INTERNET"
       ],
       "intentFilters": [
         {
@@ -66,6 +70,18 @@
         {
           "merchantIdentifier": "merchant.com.musketeers.mobilearn",
           "publishableKey": "pk_test_51QbZOORsdPYDCPrIN6smC8oy8w7CRKybObJqIFUcWLXaLrB1gVHa8rUPWIx75xEtFJ1ZTjjQ7T2QIMr2AWe0jUss00AGvllmKe"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "35.0.0",
+            "kotlinVersion": "1.9.25",
+            "usesCleartextTraffic": true
+          }
         }
       ]
     ],

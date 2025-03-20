@@ -3,6 +3,7 @@ import { ActivityIndicator, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import LanguageSelectionPage from "./shared/languageSelectionPage";
+import "@/app/i18n";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
