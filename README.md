@@ -5,7 +5,7 @@ Welcome to  **MobiLearn** , an online platform designed to empower learners by p
 ## Features
 
 - Diverse Course Categories: Explore a wide range of courses in various domains including technology, business, arts, sciences, and more.
-- Personalized Recommendations: LifeLearn leverages a Two-Tower model to analyze your learning history, preferences, and goals to offer personalized course suggestions.
+- Personalized Recommendations: Leverages a Two-Tower model to analyze your learning history, preferences, and goals to offer personalized course suggestions.
 - Community Support: Engage with a community of learners with an in-built chat feature.
 - Language Support: Not a native english speaker? Our application currently supports other languages like Mandarin (other language support planned in the future!).
 - Instructor and Administrator Features: Statistics are made visible to both the providers of courses as well as the maintainers for full transparency.
