@@ -1,3 +1,9 @@
+
+
+
+https://github.com/user-attachments/assets/fe93b8c0-7309-45f7-b17c-a521d237dd40
+
+
 # MobiLearn - Online Life-Long Learning App with Personalized Recommendation
 
 Welcome to  **MobiLearn**, an online platform designed to empower learners by providing personalized learning experiences. Whether you're pursuing professional development or personal growth, MobiLearn uses advanced AI algorithms to recommend courses that best suit your learning style, progress, and goals.
